@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Wizard.cxx,v 1.4 2001/01/22 15:03:34 mike Exp $"
+// "$Id: Fl_Wizard.cxx,v 1.5 2001/01/22 15:03:44 mike Exp $"
 //
 //   Fl_Wizard widget routines.
 //
@@ -197,5 +197,5 @@ Fl_Wizard::value(Fl_Widget *kid)
 
 
 //
-// End of "$Id: Fl_Wizard.cxx,v 1.4 2001/01/22 15:03:34 mike Exp $".
+// End of "$Id: Fl_Wizard.cxx,v 1.5 2001/01/22 15:03:44 mike Exp $".
 //
