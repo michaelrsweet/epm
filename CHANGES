@@ -12,6 +12,8 @@ WHAT'S NEW IN EPM 3.1?
 	- Added new --software-dir option which specifies the
 	  location of the EPM software directory (default
 	  /etc/software).
+	- Added new %if, %ifdef, %else, and %endif directives
+	  for list files (addition contributed by J. Nordell.)
 	- The GUI setup program left the "Next" button enabled
 	  after the license check.
 	- Fixed the dependency strings created for HP-UX
