@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.66 2002/06/04 19:53:42 mike Exp $"
+ * "$Id: portable.c,v 1.67 2002/06/04 21:12:20 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1329,7 +1329,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("if test -f /usr/.writetest; then\n", scriptfile);
   fputs("	rm -f /usr/.writetest\n", scriptfile);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (strncmp(file->dst, "/usr", 4) != 0 &&
+    if (strncmp(file->dst, "/usr", 4) == 0 &&
         strcmp(file->user, "root") != 0)
       switch (tolower(file->type))
       {
@@ -1612,7 +1612,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("if test -f /usr/.writetest; then\n", scriptfile);
   fputs("	rm -f /usr/.writetest\n", scriptfile);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (strncmp(file->dst, "/usr", 4) != 0 &&
+    if (strncmp(file->dst, "/usr", 4) == 0 &&
         strcmp(file->user, "root") != 0)
       switch (file->type)
       {
@@ -2067,5 +2067,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.66 2002/06/04 19:53:42 mike Exp $".
+ * End of "$Id: portable.c,v 1.67 2002/06/04 21:12:20 mike Exp $".
  */
