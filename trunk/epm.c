@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.19 1999/08/27 14:37:32 mike Exp $"
+ * "$Id: epm.c,v 1.20 1999/08/28 18:59:32 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -1604,10 +1604,16 @@ write_install(dist_t *dist,	/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc4.d/S99$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc4.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc5.d/S99$file\n", scriptfile);
 #ifdef __sgi
     fputs("		/etc/chkconfig -f $file on\n", scriptfile);
 #endif /* __sgi */
@@ -1917,10 +1923,16 @@ write_patch(dist_t *dist,	/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc4.d/S99$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc4.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc5.d/S99$file\n", scriptfile);
 #ifdef __sgi
     fputs("		/etc/chkconfig -f $file on\n", scriptfile);
 #endif /* __sgi */
@@ -2063,7 +2075,10 @@ write_remove(dist_t *dist,	/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc4.d/S99$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
 #ifdef __sgi
     fputs("		/bin/rm -f /etc/config/$file\n", scriptfile);
 #endif /* __sgi */
@@ -2096,5 +2111,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.19 1999/08/27 14:37:32 mike Exp $".
+ * End of "$Id: epm.c,v 1.20 1999/08/28 18:59:32 mike Exp $".
  */
