@@ -6,6 +6,8 @@ WHAT'S NEW IN EPM 3.5.2?
     EPM 3.5.2 adds the following features, fixes, and changes to
     EPM 3.5.1:
 
+	- Now handle dependencies of the form "package >=
+	  version" in Debian packages.
 	- Portable distributions that didn't have any files in
 	  /usr or in / would look for a non-existent .sw or .ss
 	  file.

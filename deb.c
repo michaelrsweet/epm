@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.19 2002/10/17 14:56:13 mike Exp $"
+ * "$Id: deb.c,v 1.20 2002/12/11 14:45:23 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -137,7 +137,12 @@ make_deb(const char     *prodname,	/* I - Product short name */
               fprintf(fp, " (<= %s)", d->version[1]);
 	  }
 	  else
-	    fprintf(fp, " (>= %s, <= %s)", d->version[0], d->version[1]);
+	  {
+	    if (d->vernumber[1] < INT_MAX)
+	      fprintf(fp, " (>= %s, <= %s)", d->version[0], d->version[1]);
+	    else
+	      fprintf(fp, " (>= %s)", d->version[0]);
+	  }
 	}
 
       putc('\n', fp);
@@ -437,5 +442,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.19 2002/10/17 14:56:13 mike Exp $".
+ * End of "$Id: deb.c,v 1.20 2002/12/11 14:45:23 mike Exp $".
  */
