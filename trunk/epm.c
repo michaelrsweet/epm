@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.9 1999/07/30 13:40:19 mike Exp $"
+ * "$Id: epm.c,v 1.10 1999/07/30 14:12:14 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -17,6 +17,23 @@
  *
  * Contents:
  *
+ *   main()          - Read a patch listing and produce a compressed tar file.
+ *   add_string()    - Add a command to an array of commands...
+ *   copy_file()     - Copy a file...
+ *   free_dist()     - Free memory used by a distribution.
+ *   free_strings()  - Free memory used by the array of strings.
+ *   get_line()      - Get a line from a file, filtering for uname lines...
+ *   get_platform()  - Get the operating system information...
+ *   expand_name()   - Expand a filename with environment variables.
+ *   read_dist()     - Read a software distribution.
+ *   usage()         - Show command-line usage instructions.
+ *   write_dist()    - Write a software distribution...
+ *   write_file()    - Write the contents of a file...
+ *   write_header()  - Write a TAR header for the specified file...
+ *   write_install() - Write the installation script.
+ *   write_padding() - Write the padding block(s) to the end of the
+ *   write_patch()   - Write the patch script.
+ *   write_remove()  - Write the removal script.
  */
 
 /*
@@ -1929,5 +1946,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.9 1999/07/30 13:40:19 mike Exp $".
+ * End of "$Id: epm.c,v 1.10 1999/07/30 14:12:14 mike Exp $".
  */
