@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.3 2000/01/04 13:45:40 mike Exp $"
+ * "$Id: file.c,v 1.4 2000/07/09 23:11:00 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -137,7 +137,7 @@ make_directory(const char *directory,	/* I - Directory */
       if (access(buffer, F_OK))
       {
 	mkdir(buffer, 0777);
-	chmod(buffer, mode);
+	chmod(buffer, mode | 0700);
 	chown(buffer, owner, group);
       }
     }
@@ -150,7 +150,7 @@ make_directory(const char *directory,	/* I - Directory */
   if (access(buffer, F_OK))
   {
     mkdir(buffer, 0777);
-    chmod(buffer, mode);
+    chmod(buffer, mode | 0700);
     chown(buffer, owner, group);
   }
 
@@ -220,5 +220,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.3 2000/01/04 13:45:40 mike Exp $".
+ * End of "$Id: file.c,v 1.4 2000/07/09 23:11:00 mike Exp $".
  */
