@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.19 2001/06/25 17:27:17 mike Exp $"
+ * "$Id: epm.h,v 1.20 2001/06/25 19:48:47 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -79,6 +79,7 @@ typedef struct direct DIRENT;
 enum
 {
   PACKAGE_PORTABLE,			/* Shell-script based EPM */
+  PACKAGE_AIX,				/* AIX package format */
   PACKAGE_BSD,				/* BSD package format */
   PACKAGE_DEB,				/* Debian package format */
   PACKAGE_INST,				/* IRIX package format */
@@ -212,6 +213,9 @@ extern file_t	*add_file(dist_t *dist);
 extern int	copy_file(const char *dst, const char *src,
 		          int mode, int owner, int group);
 extern void	free_dist(dist_t *dist);
+extern int	make_aix(const char *prodname, const char *directory,
+		         const char *platname, dist_t *dist,
+			 struct utsname *platform);
 extern int	make_bsd(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform);
@@ -254,5 +258,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.19 2001/06/25 17:27:17 mike Exp $".
+ * End of "$Id: epm.h,v 1.20 2001/06/25 19:48:47 mike Exp $".
  */

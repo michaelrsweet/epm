@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.52 2001/06/25 17:27:17 mike Exp $"
+ * "$Id: epm.c,v 1.53 2001/06/25 19:48:47 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -71,6 +71,8 @@ main(int  argc,			/* I - Number of command-line arguments */
   static char	*formats[] =	/* Distribution format strings */
 		{
 		  "portable",
+		  "aix",
+		  "bsd",
 		  "deb",
 		  "inst",
 		  "pkg",
@@ -139,6 +141,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 
 	    if (strcasecmp(temp, "portable") == 0)
 	      format = PACKAGE_PORTABLE;
+	    else if (strcasecmp(temp, "aix") == 0)
+	      format = PACKAGE_AIX;
 	    else if (strcasecmp(temp, "bsd") == 0)
 	      format = PACKAGE_BSD;
 	    else if (strcasecmp(temp, "deb") == 0)
@@ -166,6 +170,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      format = PACKAGE_SETLD;
 #elif defined(__hpux)
 	      format = PACKAGE_SWINSTALL;
+#elif defined(_AIX)
+              format = PACKAGE_AIX;
 #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
 	      format = PACKAGE_BSD;
 #else
@@ -570,5 +576,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.52 2001/06/25 17:27:17 mike Exp $".
+ * End of "$Id: epm.c,v 1.53 2001/06/25 19:48:47 mike Exp $".
  */
