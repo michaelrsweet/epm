@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.31 2001/06/26 16:22:22 mike Exp $"
+ * "$Id: rpm.c,v 1.32 2001/06/28 16:20:10 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -100,6 +100,8 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   {
     if (d->type == DEPEND_REQUIRES)
       fprintf(fp, "Requires: %s", d->product);
+    else if (d->type == DEPEND_PROVIDES)
+      fprintf(fp, "Provides: %s", d->product);
     else
       fprintf(fp, "Conflicts: %s", d->product);
 
@@ -386,5 +388,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.31 2001/06/26 16:22:22 mike Exp $".
+ * End of "$Id: rpm.c,v 1.32 2001/06/28 16:20:10 mike Exp $".
  */
