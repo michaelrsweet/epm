@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.94 2005/01/14 16:40:31 mike Exp $"
+ * "$Id: portable.c,v 1.95 2005/02/08 15:52:34 swdev Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -782,10 +782,21 @@ write_common(dist_t     *dist,		/* I - Distribution */
           dist->product, dist->version);
   fputs("# Produced using " EPM_VERSION "; report problems to epm@easysw.com.\n",
         fp);
-  fprintf(fp, "#%%product %s\n", dist->product);
+  fprintf(fp, "#%%product %s", dist->product);
+  if (subpackage)
+  {
+    for (i = 0; i < dist->num_descriptions; i ++)
+      if (dist->descriptions[i].subpackage == subpackage)
+	break;
+
+    if (i < dist->num_descriptions)
+      fprintf(fp, " - %s", dist->descriptions[i].description);
+  }
+  fputs("\n", fp);
   fprintf(fp, "#%%vendor %s\n", dist->vendor);
   fprintf(fp, "#%%copyright %s\n", dist->copyright);
   fprintf(fp, "#%%version %s %d\n", dist->version, dist->vernumber);
+
   for (i = 0; i < dist->num_descriptions; i ++)
     if (dist->descriptions[i].subpackage == subpackage)
       break;
@@ -2683,5 +2694,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.94 2005/01/14 16:40:31 mike Exp $".
+ * End of "$Id: portable.c,v 1.95 2005/02/08 15:52:34 swdev Exp $".
  */
