@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.37 2002/08/29 11:44:48 mike Exp $"
+ * "$Id: rpm.c,v 1.38 2002/08/30 02:00:42 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -88,55 +88,55 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "Summary: %s\n", dist->product);
-  fprintf(fp, "Name: %s\n", prodname);
-  fprintf(fp, "Version: %s\n", dist->version);
-  fprintf(fp, "Release: %d\n", dist->relnumber);
-  fprintf(fp, "Copyright: %s\n", dist->copyright);
-  fprintf(fp, "Packager: %s\n", dist->packager);
-  fprintf(fp, "Vendor: %s\n", dist->vendor);
-  fprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
+  qprintf(fp, "Summary: %s\n", dist->product);
+  qprintf(fp, "Name: %s\n", prodname);
+  qprintf(fp, "Version: %s\n", dist->version);
+  qprintf(fp, "Release: %d\n", dist->relnumber);
+  qprintf(fp, "Copyright: %s\n", dist->copyright);
+  qprintf(fp, "Packager: %s\n", dist->packager);
+  qprintf(fp, "Vendor: %s\n", dist->vendor);
+  qprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
   fputs("Group: Applications\n", fp);
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
   {
     if (d->type == DEPEND_REQUIRES)
-      fprintf(fp, "Requires: %s", d->product);
+      qprintf(fp, "Requires: %s", d->product);
     else if (d->type == DEPEND_PROVIDES)
-      fprintf(fp, "Provides: %s", d->product);
+      qprintf(fp, "Provides: %s", d->product);
     else
-      fprintf(fp, "Conflicts: %s", d->product);
+      qprintf(fp, "Conflicts: %s", d->product);
 
     if (d->vernumber[0] == 0)
     {
       if (d->vernumber[1] < INT_MAX)
-        fprintf(fp, " <= %s\n", d->version[1]);
+        qprintf(fp, " <= %s\n", d->version[1]);
       else
         putc('\n', fp);
     }
     else if (d->vernumber[0] && d->vernumber[1] < INT_MAX)
     {
       if (d->vernumber[0] < INT_MAX && d->vernumber[1] < INT_MAX)
-        fprintf(fp, " >= %s, %s <= %s\n", d->version[0], d->product,
+        qprintf(fp, " >= %s, %s <= %s\n", d->version[0], d->product,
 	        d->version[1]);
     }
     else
-      fprintf(fp, " = %s\n", d->version[0]);
+      qprintf(fp, " = %s\n", d->version[0]);
   }
 
   fputs("%description\n", fp);
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(fp, "%s\n", dist->descriptions[i]);
+    qprintf(fp, "%s\n", dist->descriptions[i]);
 
   fputs("%pre\n", fp);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_INSTALL)
-      fprintf(fp, "%s\n", c->command);
+      qprintf(fp, "%s\n", c->command);
 
   fputs("%post\n", fp);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_POST_INSTALL)
-      fprintf(fp, "%s\n", c->command);
+      qprintf(fp, "%s\n", c->command);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
@@ -163,13 +163,13 @@ make_rpm(const char     *prodname,	/* I - Product short name */
       if (tolower(file->type) == 'i')
       {
 	fputs("	if test -d $rcdir/init.d; then\n", fp);
-	fprintf(fp, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
-	fprintf(fp, "		/bin/ln -s %s/init.d/%s "
+	qprintf(fp, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
+	qprintf(fp, "		/bin/ln -s %s/init.d/%s "
                     "$rcdir/init.d/%s\n", SoftwareDir, file->dst, file->dst);
 	fputs("	else\n", fp);
 	fputs("		if test -d /etc/init.d; then\n", fp);
-	fprintf(fp, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
-	fprintf(fp, "			/bin/ln -s %s/init.d/%s "
+	qprintf(fp, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
+	qprintf(fp, "			/bin/ln -s %s/init.d/%s "
                     "/etc/init.d/%s\n", SoftwareDir, file->dst, file->dst);
 	fputs("		fi\n", fp);
 	fputs("	fi\n", fp);
@@ -183,14 +183,14 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	  else
 	    number = get_start(file, 99);
 
-	  fprintf(fp, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
+	  qprintf(fp, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
 	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
-	  fprintf(fp, "	/bin/ln -s %s/init.d/%s "
+	  qprintf(fp, "	/bin/ln -s %s/init.d/%s "
                       "$rcdir/rc%c.d/%c%02d%s\n", SoftwareDir, file->dst,
 		  *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
         }
 
-        fprintf(fp, "	%s/init.d/%s start\n", SoftwareDir, file->dst);
+        qprintf(fp, "	%s/init.d/%s start\n", SoftwareDir, file->dst);
       }
 
     fputs("fi\n", fp);
@@ -221,13 +221,13 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     for (; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
       {
-        fprintf(fp, "	%s/init.d/%s stop\n", SoftwareDir, file->dst);
+        qprintf(fp, "	%s/init.d/%s stop\n", SoftwareDir, file->dst);
 
 	fputs("	if test -d $rcdir/init.d; then\n", fp);
-	fprintf(fp, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
+	qprintf(fp, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
 	fputs("	else\n", fp);
 	fputs("		if test -d /etc/init.d; then\n", fp);
-	fprintf(fp, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
+	qprintf(fp, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
 	fputs("		fi\n", fp);
 	fputs("	fi\n", fp);
 
@@ -240,7 +240,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	  else
 	    number = get_start(file, 99);
 
-	  fprintf(fp, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
+	  qprintf(fp, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
 	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
         }
       }
@@ -250,32 +250,32 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_REMOVE)
-      fprintf(fp, "%s\n", c->command);
+      qprintf(fp, "%s\n", c->command);
 
   fputs("%postun\n", fp);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_POST_REMOVE)
-      fprintf(fp, "%s\n", c->command);
+      qprintf(fp, "%s\n", c->command);
 
   fputs("%files\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     switch (tolower(file->type))
     {
       case 'c' :
-          fprintf(fp, "%%attr(%04o,%s,%s) %%config(noreplace) %s\n", file->mode,
+          qprintf(fp, "%%attr(%04o,%s,%s) %%config(noreplace) %s\n", file->mode,
 	          file->user, file->group, file->dst);
           break;
       case 'd' :
-          fprintf(fp, "%%attr(%04o,%s,%s) %%dir %s\n", file->mode, file->user,
+          qprintf(fp, "%%attr(%04o,%s,%s) %%dir %s\n", file->mode, file->user,
 	          file->group, file->dst);
           break;
       case 'f' :
       case 'l' :
-          fprintf(fp, "%%attr(%04o,%s,%s) %s\n", file->mode, file->user,
+          qprintf(fp, "%%attr(%04o,%s,%s) %s\n", file->mode, file->user,
 	          file->group, file->dst);
           break;
       case 'i' :
-          fprintf(fp, "%%attr(0555,root,root) %s/init.d/%s\n", SoftwareDir,
+          qprintf(fp, "%%attr(0555,root,root) %s/init.d/%s\n", SoftwareDir,
 	          file->dst);
           break;
     }
@@ -416,5 +416,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.37 2002/08/29 11:44:48 mike Exp $".
+ * End of "$Id: rpm.c,v 1.38 2002/08/30 02:00:42 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.10 2002/08/29 11:44:46 mike Exp $"
+ * "$Id: aix.c,v 1.11 2002/08/30 02:00:41 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -119,8 +119,8 @@ make_aix(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "4 R I %s {\n", prodname);
-  fprintf(fp, "%s %s 01 N B x %s\n", prodname,
+  qprintf(fp, "4 R I %s {\n", prodname);
+  qprintf(fp, "%s %s 01 N B x %s\n", prodname,
           aix_version(dist->version), dist->product);
 
  /*
@@ -130,7 +130,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   fputs("[\n", fp);
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
     if (d->type == DEPEND_REQUIRES)
-      fprintf(fp, "*prereq %s %s\n", d->product, aix_version(d->version[0]));
+      qprintf(fp, "*prereq %s %s\n", d->product, aix_version(d->version[0]));
 
  /*
   * Installation sizes...
@@ -151,7 +151,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
 	      blocks += (fileinfo.st_size + 511) / 512;
 	    break;
       }
-  fprintf(fp, "/ %d\n", blocks);
+  qprintf(fp, "/ %d\n", blocks);
 
   for (i = dist->num_files, file = dist->files, blocks = 0; i > 0; i --, file ++)
     if (strncmp(file->dst, "/usr/", 5) == 0)
@@ -167,7 +167,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
 	      blocks += (fileinfo.st_size + 511) / 512;
 	    break;
       }
-  fprintf(fp, "/usr %d\n", blocks);
+  qprintf(fp, "/usr %d\n", blocks);
 
  /*
   * This package supercedes which others?
@@ -176,7 +176,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   fputs("%\n", fp);
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
     if (d->type == DEPEND_REPLACES)
-      fprintf(fp, "%s %s", d->product, aix_version(d->version[0]));
+      qprintf(fp, "%s %s", d->product, aix_version(d->version[0]));
 
  /*
   * Fix information is only used for updates (patches)...
@@ -398,11 +398,11 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     {
       case 'i' :
           if (root)
-            fprintf(fp, "./etc/rc.d/rc2.d/S99%s\n", file->dst);
+            qprintf(fp, "./etc/rc.d/rc2.d/S99%s\n", file->dst);
 	  break;
       default :
           if ((strncmp(file->dst, "/usr/", 5) != 0) == root)
-            fprintf(fp, ".%s\n", file->dst);
+            qprintf(fp, ".%s\n", file->dst);
 	  break;
     }
 
@@ -428,7 +428,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     if (tolower(file->type) == 'c' &&
         (strncmp(file->dst, "/usr/", 5) != 0) == root)
     {
-      fprintf(fp, ".%s hold_new\n", file->dst);
+      qprintf(fp, ".%s hold_new\n", file->dst);
     }
 
   fclose(fp);
@@ -449,7 +449,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "%s, %s\n%s\n%s\n", dist->product, aix_version(dist->version),
+  qprintf(fp, "%s, %s\n%s\n%s\n", dist->product, aix_version(dist->version),
           dist->vendor, dist->copyright);
 
   fclose(fp);
@@ -479,7 +479,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_INSTALL)
-	fprintf(fp, "%s\n", c->command);
+	qprintf(fp, "%s\n", c->command);
 
     fclose(fp);
 
@@ -506,7 +506,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_INSTALL)
-	fprintf(fp, "%s\n", c->command);
+	qprintf(fp, "%s\n", c->command);
 
     fclose(fp);
 
@@ -533,7 +533,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_REMOVE)
-	fprintf(fp, "%s\n", c->command);
+	qprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -571,14 +571,14 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     switch (tolower(file->type))
     {
       case 'i' :
-          fprintf(fp, "/etc/rc.d/rc2.d/S99%s:\n", file->dst);
+          qprintf(fp, "/etc/rc.d/rc2.d/S99%s:\n", file->dst);
 	  break;
       default :
-          fprintf(fp, "%s:\n", file->dst);
+          qprintf(fp, "%s:\n", file->dst);
 	  break;
     }
 
-    fprintf(fp, "    class=apply,inventory,%s\n", prodname);
+    qprintf(fp, "    class=apply,inventory,%s\n", prodname);
 
     switch (tolower(file->type))
     {
@@ -587,17 +587,17 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
           break;
       case 'l' :
           fputs("    type=SYMLINK\n", fp);
-	  fprintf(fp, "    target=%s\n", file->src);
+	  qprintf(fp, "    target=%s\n", file->src);
           break;
       default :
           fputs("    type=FILE\n", fp);
           if (!stat(file->src, &fileinfo))
-	    fprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
+	    qprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
 	  break;
     }
-    fprintf(fp, "    owner=%s\n", file->user);
-    fprintf(fp, "    group=%s\n", file->group);
-    fprintf(fp, "    mode=%04o\n", file->mode);
+    qprintf(fp, "    owner=%s\n", file->user);
+    qprintf(fp, "    group=%s\n", file->group);
+    qprintf(fp, "    mode=%04o\n", file->mode);
     fputs("\n", fp);
   }
 
@@ -653,5 +653,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 }
 
 /*
- * End of "$Id: aix.c,v 1.10 2002/08/29 11:44:46 mike Exp $".
+ * End of "$Id: aix.c,v 1.11 2002/08/30 02:00:41 mike Exp $".
  */

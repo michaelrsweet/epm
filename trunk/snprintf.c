@@ -1,5 +1,5 @@
 /*
- * "$Id: snprintf.c,v 1.2 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: snprintf.c,v 1.3 2002/08/30 02:00:43 mike Exp $"
  *
  *   snprintf functions for the ESP Package Manager (EPM).
  *
@@ -168,8 +168,26 @@ vsnprintf(char       *buffer,	/* O - Output buffer */
 	    break;
 	    
 	case 'p' : /* Pointer value */
-	    if ((chars = va_arg(ap, int *)) != NULL)
-	      *chars = bufptr - buffer;
+	    if ((format - bufformat + 1) > sizeof(tformat) ||
+	        (width + 2) > sizeof(temp))
+	      break;
+
+	    strncpy(tformat, bufformat, format - bufformat);
+	    tformat[format - bufformat] = '\0';
+
+	    sprintf(temp, tformat, va_arg(ap, void *));
+
+	    if ((bufptr + strlen(temp)) > bufend)
+	    {
+	      strncpy(bufptr, temp, bufend - bufptr);
+	      bufptr = bufend;
+	      break;
+	    }
+	    else
+	    {
+	      strcpy(bufptr, temp);
+	      bufptr += strlen(temp);
+	    }
 	    break;
 
         case 'c' : /* Character or character array */
@@ -276,6 +294,6 @@ snprintf(char       *buffer,	/* O - Output buffer */
 
 
 /*
- * End of "$Id: snprintf.c,v 1.2 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: snprintf.c,v 1.3 2002/08/30 02:00:43 mike Exp $".
  */
 

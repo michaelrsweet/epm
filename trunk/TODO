@@ -1,7 +1,5 @@
 TODO for EPM:
 
-	- Fix special char handling for strings that are in
-	  portable scripts.
 	- Add /opt relocation hack and allow for relocatable and
 	  non-root packages in general.
 	- Add support for executables and libraries created with
@@ -18,8 +16,6 @@ TODO for EPM:
 	  dependencies against portable, RPM, Debian, etc.
 	  packages, rather than just packages of the same
 	  format.
-	- Support filenames with spaces.
-	- Support run levels for init scripts.
 	- Add support for checksums (probably just "sum"
 	  command) to verify the tar files and installed files.
 	- Don't install the root/usr tar files unless they are >

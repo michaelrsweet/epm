@@ -1,5 +1,5 @@
 /*
- * "$Id: mkepmlist.c,v 1.1 2002/02/17 20:46:07 mike Exp $"
+ * "$Id: mkepmlist.c,v 1.2 2002/08/30 02:00:42 mike Exp $"
  *
  *   List file generation utility for the ESP Package Manager (EPM).
  *
@@ -496,8 +496,8 @@ process_dir(const char *srcpath,/* I - Source path */
       * Directory...
       */
 
-      printf("d %o %s %s %s -\n", (unsigned)(srcinfo.st_mode & 07777),
-	     get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), dst);
+      qprintf(stdout, "d %o %s %s %s -\n", (unsigned)(srcinfo.st_mode & 07777),
+	      get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), dst);
 
       if (process_dir(src, dst))
         return (-1);
@@ -515,8 +515,9 @@ process_dir(const char *srcpath,/* I - Source path */
         continue;
       }
 
-      printf("l %o %s %s %s %s\n", (unsigned)(srcinfo.st_mode & 07777),
-	     get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), dst, srclink);
+      qprintf(stdout, "l %o %s %s %s %s\n",
+              (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid),
+	      get_group(srcinfo.st_gid), dst, srclink);
     }
     else if (S_ISREG(srcinfo.st_mode))
     {
@@ -524,8 +525,9 @@ process_dir(const char *srcpath,/* I - Source path */
       * Regular file...
       */
 
-      printf("f %o %s %s %s %s\n", (unsigned)(srcinfo.st_mode & 07777),
-	     get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), dst, src);
+      qprintf(stdout, "f %o %s %s %s %s\n",
+              (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid),
+	      get_group(srcinfo.st_gid), dst, src);
     }
   }
 
@@ -554,5 +556,5 @@ usage(void)
 
 
 /*
- * End of "$Id: mkepmlist.c,v 1.1 2002/02/17 20:46:07 mike Exp $".
+ * End of "$Id: mkepmlist.c,v 1.2 2002/08/30 02:00:42 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.19 2002/08/29 11:44:48 mike Exp $"
+ * "$Id: swinstall.c,v 1.20 2002/08/30 02:00:43 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -108,7 +108,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_INSTALL)
-        fprintf(fp, "%s\n", c->command);
+        qprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -154,11 +154,11 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_INSTALL)
-        fprintf(fp, "%s\n", c->command);
+        qprintf(fp, "%s\n", c->command);
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
-	fprintf(fp, "/sbin/init.d/%s start\n", file->dst);
+	qprintf(fp, "/sbin/init.d/%s start\n", file->dst);
 
     fclose(fp);
   }
@@ -203,11 +203,11 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
     for (j = dist->num_files, file = dist->files; j > 0; j --, file ++)
       if (tolower(file->type) == 'i')
-	fprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
+	qprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_REMOVE)
-        fprintf(fp, "%s\n", c->command);
+        qprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -248,7 +248,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_REMOVE)
-        fprintf(fp, "%s\n", c->command);
+        qprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -332,18 +332,18 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   }
 
   fputs("product\n", fp);
-  fprintf(fp, "  tag %s\n", prodname);
-  fprintf(fp, "  revision %s\n", dist->version);
-  fprintf(fp, "  title %s, %s\n", dist->product, dist->version);
+  qprintf(fp, "  tag %s\n", prodname);
+  qprintf(fp, "  revision %s\n", dist->version);
+  qprintf(fp, "  title %s, %s\n", dist->product, dist->version);
   if (dist->num_descriptions)
-    fprintf(fp, "  description %s\n", dist->descriptions[0]);
-  fprintf(fp, "  copyright Copyright %s\n", dist->copyright);
-  fprintf(fp, "  readme < %s\n", dist->license);
+    qprintf(fp, "  description %s\n", dist->descriptions[0]);
+  qprintf(fp, "  copyright Copyright %s\n", dist->copyright);
+  qprintf(fp, "  readme < %s\n", dist->license);
   fputs("  is_locatable false\n", fp);
 
   fputs("  fileset\n", fp);
   fputs("    tag all\n", fp);
-  fprintf(fp, "    title %s, %s\n", dist->product, dist->version);
+  qprintf(fp, "    title %s, %s\n", dist->product, dist->version);
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
     if (d->type == DEPEND_REQUIRES && d->product[0] != '/')
@@ -356,14 +356,14 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
       fputs("    prerequisites", fp);
       if (d->type == DEPEND_REQUIRES && d->product[0] != '/')
       {
-        fprintf(fp, " %s", d->product);
+        qprintf(fp, " %s", d->product);
 	if (d->vernumber[0] == 0)
 	{
 	  if (d->vernumber[1] < INT_MAX)
-            fprintf(fp, ",r<=%s", d->version[1]);
+            qprintf(fp, ",r<=%s", d->version[1]);
 	}
 	else
-	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
+	  qprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
       }
       fputs("\n", fp);
     }
@@ -380,27 +380,27 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
       fputs("    ancestor", fp);
       if (d->type == DEPEND_REPLACES && d->product[0] != '/')
       {
-        fprintf(fp, " %s", d->product);
+        qprintf(fp, " %s", d->product);
 	if (d->vernumber[0] == 0)
 	{
 	  if (d->vernumber[1] < INT_MAX)
-            fprintf(fp, ",r<=%s", d->version[1]);
+            qprintf(fp, ",r<=%s", d->version[1]);
 	}
 	else
-	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
+	  qprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
       }
       fputs("\n", fp);
     }
   }
 
   if (preinstall[0])
-    fprintf(fp, "    preinstall %s\n", preinstall);
+    qprintf(fp, "    preinstall %s\n", preinstall);
   if (postinstall[0])
-    fprintf(fp, "    postinstall %s\n", postinstall);
+    qprintf(fp, "    postinstall %s\n", postinstall);
   if (preremove[0])
-    fprintf(fp, "    preremove %s\n", preremove);
+    qprintf(fp, "    preremove %s\n", preremove);
   if (postremove[0])
-    fprintf(fp, "    postremove %s\n", postremove);
+    qprintf(fp, "    postremove %s\n", postremove);
 
   for (i = dist->num_files, file = dist->files, linknum = 0;
        i > 0;
@@ -409,23 +409,23 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     switch (tolower(file->type))
     {
       case 'd' :
-          fprintf(fp, "    file -m %o -o %s -g %s . %s\n", file->mode | S_IFDIR,
+          qprintf(fp, "    file -m %o -o %s -g %s . %s\n", file->mode | S_IFDIR,
 	          file->user, file->group, file->dst);
           break;
       case 'c' :
-          fprintf(fp, "    file -m %04o -o %s -g %s -v %s %s\n", file->mode,
+          qprintf(fp, "    file -m %04o -o %s -g %s -v %s %s\n", file->mode,
 	          file->user, file->group, file->src, file->dst);
           break;
       case 'f' :
       case 'i' :
-          fprintf(fp, "    file -m %04o -o %s -g %s %s %s\n", file->mode,
+          qprintf(fp, "    file -m %04o -o %s -g %s %s %s\n", file->mode,
 	          file->user, file->group, file->src, file->dst);
           break;
       case 'l' :
           snprintf(filename, sizeof(filename), "%s/%s.link%04d", directory,
 	           prodname, linknum);
           linknum ++;
-          fprintf(fp, "    file -o %s -g %s %s %s\n", file->user, file->group,
+          qprintf(fp, "    file -o %s -g %s %s %s\n", file->user, file->group,
 	          filename, file->dst);
           break;
     }
@@ -508,5 +508,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.19 2002/08/29 11:44:48 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.20 2002/08/30 02:00:43 mike Exp $".
  */

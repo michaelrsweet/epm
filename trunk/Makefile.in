@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.36 2002/06/08 02:04:45 mike Exp $"
+# "$Id: Makefile.in,v 1.37 2002/08/30 02:00:41 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -92,8 +92,8 @@ VPATH		=	$(srcdir)
 
 TARGETS	=	epm epminstall mkepmlist @SETUP@
 EPM_OBJS =	aix.o bsd.o deb.o dist.o epm.o file.o inst.o pkg.o \
-		portable.o rpm.o run.o setld.o snprintf.o string.o \
-		swinstall.o tar.o
+		portable.o qprintf.o rpm.o run.o setld.o snprintf.o \
+		string.o swinstall.o tar.o
 SETUP_OBJS =	setup.o setup2.o
 OBJS	=	$(EPM_OBJS) epminstall.o $(SETUP_OBJS)
 
@@ -239,16 +239,19 @@ config.h:	config.h.in configure
 #
 
 test:	$(TARGETS)
-	if ./epm epm; then \
+	if ./epm -v epm >test.log; then \
 		echo Portable distribution build test PASSED.; \
 	else \
 		echo Portable distribution build test FAILED.; \
+		cat test.log; \
 	fi
-	if ./epm -f native epm; then \
+	if ./epm -v -f native epm >test.log; then \
 		echo Native distribution build test PASSED.; \
 	else \
 		echo Native distribution build test FAILED.; \
+		cat test.log; \
 	fi
+	$(RM) test.log
 
 
 #
@@ -299,9 +302,9 @@ $(EPM_OBJS):	epm.h epmstring.h
 # epminstall
 #
 
-epminstall:	epminstall.o dist.o snprintf.o
+epminstall:	epminstall.o dist.o qprintf.o snprintf.o
 	echo Linking epminstall...
-	$(CC) $(LDFLAGS) -o epminstall epminstall.o dist.o snprintf.o $(LIBS)
+	$(CC) $(LDFLAGS) -o epminstall epminstall.o dist.o qprintf.o snprintf.o $(LIBS)
 
 epminstall.o:	epm.h epmstring.h
 
@@ -310,9 +313,9 @@ epminstall.o:	epm.h epmstring.h
 # mkepmlist
 #
 
-mkepmlist:	mkepmlist.o snprintf.o
+mkepmlist:	mkepmlist.o qprintf.o snprintf.o
 	echo Linking mkepmlist...
-	$(CC) $(LDFLAGS) -o mkepmlist mkepmlist.o snprintf.o $(LIBS)
+	$(CC) $(LDFLAGS) -o mkepmlist mkepmlist.o qprintf.o snprintf.o $(LIBS)
 
 mkepmlist.o:	epm.h epmstring.h
 
@@ -332,5 +335,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.36 2002/06/08 02:04:45 mike Exp $".
+# End of "$Id: Makefile.in,v 1.37 2002/08/30 02:00:41 mike Exp $".
 #
