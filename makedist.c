@@ -1,5 +1,5 @@
 /*
- * "$Id: makedist.c,v 1.8 1999/05/26 19:38:31 mike Exp $"
+ * "$Id: makedist.c,v 1.9 1999/06/04 21:12:11 mike Exp $"
  *
  *   Makedist, a simple binary distribution generator for UNIX.
  *
@@ -118,6 +118,7 @@ main(int  argc,			/* I - Number of command-line arguments */
      char *argv[])		/* I - Command-line arguments */
 {
   int		i;		/* Looping var */
+  int		strip;		/* 1 if we should strip executables */
   int		havepatchfiles;	/* 1 if we have patch files, 0 otherwise */
   int		vernumber;	/* Version number */
   FILE		*listfile,	/* File list */
@@ -227,6 +228,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   readme[0]    = '\0';
   version[0]   = '\0';
   vernumber    = 0;
+  strip        = 1;
 
   sprintf(platname, "%s-%s-%s", platform.sysname, platform.release,
           platform.machine);
@@ -254,6 +256,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      usage();
 
             strcpy(license, argv[i]);
+	    break;
+
+        case 'g' : /* Don't strip */
+	    strip = 0;
 	    break;
 
         case 'n' : /* Name with sysname, machine, and/or release */
@@ -830,7 +836,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
       case 'f' : /* Regular file */
       case 'F' :
-          if (mode & 0111)
+          if ((mode & 0111) && strip)
 	  {
 	   /*
 	    * Strip executables...
@@ -1337,12 +1343,12 @@ write_file(FILE *fp,
 static void
 usage(void)
 {
-  puts("Usage: makedist [-n[mrs]] [-p product-name] [-c copyright] [-l license]");
+  puts("Usage: makedist [-n[mrs]] [-g] [-p product-name] [-c copyright] [-l license]");
   puts("                [-r readme] [-v version] [-V vendor] product [list-file]");
   exit(1);
 }
 
 
 /*
- * End of "$Id: makedist.c,v 1.8 1999/05/26 19:38:31 mike Exp $".
+ * End of "$Id: makedist.c,v 1.9 1999/06/04 21:12:11 mike Exp $".
  */
