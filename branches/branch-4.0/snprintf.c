@@ -1,5 +1,5 @@
 /*
- * "$Id: snprintf.c,v 1.2.2.2 2003/01/03 20:23:23 mike Exp $"
+ * "$Id: snprintf.c,v 1.2.2.3 2003/01/09 12:45:45 mike Exp $"
  *
  *   snprintf functions for the ESP Package Manager (EPM).
  *
@@ -51,7 +51,6 @@ vsnprintf(char       *buffer,	/* O - Output buffer */
 		prec;		/* Number of characters of precision */
   char		tformat[100],	/* Temporary format string for sprintf() */
 		temp[1024];	/* Buffer for formatted numbers */
-  int		*chars;		/* Pointer to integer for %p */
   char		*s;		/* Pointer to string */
   int		slen;		/* Length of string */
 
@@ -294,6 +293,6 @@ snprintf(char       *buffer,	/* O - Output buffer */
 
 
 /*
- * End of "$Id: snprintf.c,v 1.2.2.2 2003/01/03 20:23:23 mike Exp $".
+ * End of "$Id: snprintf.c,v 1.2.2.3 2003/01/09 12:45:45 mike Exp $".
  */
 
