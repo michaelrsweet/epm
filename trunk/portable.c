@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.80 2003/01/13 21:02:09 mike Exp $"
+ * "$Id: portable.c,v 1.81 2003/01/24 02:58:12 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -661,15 +661,31 @@ write_common(dist_t     *dist,		/* I - Distribution */
 
   fputs("PATH=/usr/xpg4/bin:/bin:/usr/bin:/usr/ucb:${PATH}\n", fp);
   fputs("SHELL=/bin/sh\n", fp);
-  fputs("case \"`id`\" in\n", fp);
-  fputs("\tuid=0*)\n", fp);
+  fputs("case \"`uname`\" in\n", fp);
+  fputs("\tDarwin*)\n", fp);
+  fputs("\tcase \"`id -un`\" in\n", fp);
+  fputs("\t\troot)\n", fp);
   fputs("\t\t;;\n", fp);
+  fputs("\t\t*)\n", fp);
+  fprintf(fp, "\t\techo Sorry, you must have administrative priviledges to %s this software.\n",
+          title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
+  fputs("\t\texit 1\n", fp);
+  fputs("\t\t;;\n", fp);
+  fputs("\tesac\n", fp);
+  fputs("\t;;\n", fp);
   fputs("\t*)\n", fp);
+  fputs("\tcase \"`id`\" in\n", fp);
+  fputs("\t\tuid=0*)\n", fp);
+  fputs("\t\t;;\n", fp);
+  fputs("\t\t*)\n", fp);
   fprintf(fp, "\t\techo Sorry, you must be root to %s this software.\n",
           title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
   fputs("\t\texit 1\n", fp);
   fputs("\t\t;;\n", fp);
+  fputs("\tesac\n", fp);
+  fputs("\t;;\n", fp);
   fputs("esac\n", fp);
+
   qprintf(fp, "echo Copyright %s\n", dist->copyright);
   fprintf(fp, "# Reset umask for %s...\n",
           title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
@@ -2133,5 +2149,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.80 2003/01/13 21:02:09 mike Exp $".
+ * End of "$Id: portable.c,v 1.81 2003/01/24 02:58:12 mike Exp $".
  */

@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.31 2002/12/17 18:57:56 swdev Exp $"
+// "$Id: setup2.cxx,v 1.32 2003/01/24 02:58:12 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -66,6 +66,13 @@ extern int statfs(const char *, struct statfs *);
 }
 #endif // __osf__
 
+#ifdef __APPLE__
+#  include <Security/Authorization.h>
+#  include <Security/AuthorizationTags.h>
+
+AuthorizationRef SetupAuthorizationRef;
+#endif // __APPLE__
+
 
 //
 // Define a C API function type for comparisons...
@@ -88,20 +95,90 @@ static void	update_sizes(void);
 // 'main()' - Main entry for software wizard...
 //
 
-int			// O - Exit status
-main(int  argc,		// I - Number of command-line arguments
-     char *argv[])	// I - Command-line arguments
+int				// O - Exit status
+main(int  argc,			// I - Number of command-line arguments
+     char *argv[])		// I - Command-line arguments
 {
-  Fl_Window	*w;	// Main window...
+  Fl_Window	*w;		// Main window...
+  const char	*distdir;	// Distribution directory
 
 
+#ifdef __APPLE__
+  // MacOS X always gets "plastic" scheme...
+  Fl::scheme("plastic");
+
+  // OSX passes an extra command-line option when run from the Finder.
+  // If the first command-line argument is "-psn..." then skip it and use the full path
+  // to the executable to figure out the distribution directory...
+  if (argc > 1)
+  {
+    if (strncmp(argv[1], "-psn", 4) == 0)
+    {
+      char		*ptr;		// Pointer into basedir
+      static char	basedir[1024];	// Base directory (static so it can be used below)
+
+
+      strlcpy(basedir, argv[0], sizeof(basedir));
+      if ((ptr = strrchr(basedir, '/')) != NULL)
+        *ptr = '\0';
+      if ((ptr = strrchr(basedir, '/')) != NULL && !strcasecmp(ptr, "/MacOS"))
+      {
+        // Got the base directory, now add "Resources" to it...
+	*ptr = '\0';
+	strlcat(basedir, "/Resources", sizeof(basedir));
+	distdir = basedir;
+	chdir(basedir);
+      }
+      else
+        distdir = ".";
+
+    }
+    else
+      distdir = argv[1];
+  }
+  else
+    distdir = ".";
+#else
+  // Use the default scheme on this system...
   Fl::scheme(NULL);
 
+  // Get the directory that has the software in it...
+  if (argc > 1)
+    distdir = argv[1]);
+  else
+    distdir = ".";
+#endif // __APPLE__
+
+#ifdef __APPLE__
+  OSStatus status;
+
+  status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagDefaults,
+				&SetupAuthorizationRef);
+  if (status != errAuthorizationSuccess)
+  {
+    fl_alert("You must have administrative priviledges to install this software!");
+    return (1);
+  }
+
+  AuthorizationItem	items = { kAuthorizationRightExecute, 0, NULL, 0 };
+  AuthorizationRights	rights = { 1, &items };
+
+  status = AuthorizationCopyRights(SetupAuthorizationRef, &rights, NULL,
+				    kAuthorizationFlagDefaults |  kAuthorizationFlagInteractionAllowed |
+					kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights, NULL);
+
+  if (status != errAuthorizationSuccess)
+  {
+    fl_alert("You must have administrative priviledges to install this software!");
+    return (1);
+  }
+#else
   if (getuid() != 0)
   {
     fl_alert("You must be logged in as root to run setup!");
     return (1);
   }
+#endif // __APPLE__
 
   w = make_window();
 
@@ -109,11 +186,7 @@ main(int  argc,		// I - Number of command-line arguments
   PrevButton->deactivate();
 
   get_installed();
-
-  if (argc > 1)
-    get_dists(argv[1]);
-  else
-    get_dists(".");
+  get_dists(distdir);
 
   load_types();
   load_image();
@@ -121,6 +194,10 @@ main(int  argc,		// I - Number of command-line arguments
   w->show(1, argv);
 
   Fl::run();
+
+#ifdef __APPLE__
+  AuthorizationFree(SetupAuthorizationRef, kAuthorizationFlagDefaults);
+#endif // __APPLE__
 
   return (0);
 }
@@ -483,9 +560,28 @@ install_dist(const dist_t *dist)// I - Distribution to install
     }
   }
 
+  sprintf(command, "%s.install", dist->product);
+
+#ifdef __APPLE__
+  // Run the install script using Apple's authorization API...
+  FILE		*fp = NULL;
+  char		*args[2] = { "now", NULL };
+  OSStatus	astatus;
+
+
+  astatus = AuthorizationExecuteWithPrivileges(SetupAuthorizationRef, command, kAuthorizationFlagDefaults,
+                                               args, &fp);
+
+  if (astatus != errAuthorizationSuccess)
+  {
+    InstallLog->add("Failed to execute install script!");
+    return (1);
+  }
+
+  fds[0] = fileno(fp);
+#else
   // Fork the command and redirect errors and info to stdout...
   pipe(fds);
-  sprintf(command, "%s.install", dist->product);
 
   if ((pid = fork()) == 0)
   {
@@ -520,6 +616,7 @@ install_dist(const dist_t *dist)// I - Distribution to install
 
   // Close the output pipe (used by the child)...
   close(fds[1]);
+#endif // __APPLE__
 
   // Listen for data on the input pipe...
   Fl::add_fd(fds[0], (void (*)(int, void *))log_cb, fds);
@@ -534,6 +631,10 @@ install_dist(const dist_t *dist)// I - Distribution to install
     if (waitpid(0, &status, WNOHANG) == pid)
       break;
   }
+
+#ifdef __APPLE__
+  fclose(fp);
+#endif // __APPLE__
 
   if (fds[0])
   {
@@ -1064,5 +1165,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.31 2002/12/17 18:57:56 swdev Exp $".
+// End of "$Id: setup2.cxx,v 1.32 2003/01/24 02:58:12 mike Exp $".
 //
