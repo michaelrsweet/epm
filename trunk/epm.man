@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.26 2001/05/22 18:54:42 mike Exp $"
+.\" "$Id: epm.man,v 1.27 2001/05/28 13:44:36 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "22 May 2001" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "28 May 2001" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -157,6 +157,7 @@ file.
 %install \fIscript or program\fR
 .br
 Specifies a script or program to be run after all files are installed.
+(This has been obsoleted by the %postinstall directive)
 .TP 5
 %license \fIlicense file\fR
 .br
@@ -169,6 +170,31 @@ Specifies the name of the packager.
 %patch \fIscript or program\fR
 .br
 Specifies a script or program to be run after all files are patched.
+(This has been obsoleted by the %postpatch directive)
+.TP 5
+%postinstall \fIscript or program\fR
+.br
+Specifies a script or program to be run after all files are installed.
+.TP 5
+%postpatch \fIscript or program\fR
+.br
+Specifies a script or program to be run after all files are patched.
+.TP 5
+%postremove \fIscript or program\fR
+.br
+Specifies a script or program to be run after removing files.
+.TP 5
+%preinstall \fIscript or program\fR
+.br
+Specifies a script or program to be run before all files are installed.
+.TP 5
+%prepatch \fIscript or program\fR
+.br
+Specifies a script or program to be run before all files are patched.
+.TP 5
+%preremove \fIscript or program\fR
+.br
+Specifies a script or program to be run before removing files.
 .TP 5
 %product \fIproduct name\fR
 .br
@@ -180,7 +206,8 @@ Specifies a README file to be included in the distribution.
 .TP 5
 %remove \fIscript or program\fR
 .br
-Specifies a script or program to be run before removing or patching files.
+Specifies a script or program to be run before removing files.
+(This has been obsoleted by the %preremove directive)
 .TP 5
 %release \fInumber\fR
 .br
@@ -316,5 +343,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.26 2001/05/22 18:54:42 mike Exp $".
+.\" End of "$Id: epm.man,v 1.27 2001/05/28 13:44:36 mike Exp $".
 .\"

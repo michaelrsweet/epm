@@ -5,6 +5,6 @@ TODO for EPM:
 	- Add /opt relocation hack (and maybe allow for
 	  relocatable packages in general?)
 	- Add %pre/postinstall/remove <filename
-	- Add %pre/postinstall/remove <<string
+	- Add %pre/postinstall/remove ... %end
 	- Add epminstall command for building a list file from
 	  a "make INSTALL=epminstall install".
