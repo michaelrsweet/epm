@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.89 2004/05/26 19:55:30 mike Exp $"
+ * "$Id: portable.c,v 1.90 2004/08/29 01:06:56 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -936,6 +936,7 @@ write_dist(const char *title,		/* I - Title to show */
 		dstname[1024];		/* Name of destination file in distribution */
   struct stat	srcstat;		/* Source file information */
   const char	*setup_img;		/* Setup image name */
+
 
   if (Verbosity)
   {
@@ -2557,5 +2558,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.89 2004/05/26 19:55:30 mike Exp $".
+ * End of "$Id: portable.c,v 1.90 2004/08/29 01:06:56 mike Exp $".
  */
