@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.23 2001/03/03 21:29:48 mike Exp $"
+ * "$Id: dist.c,v 1.24 2001/03/03 21:41:49 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -115,29 +115,20 @@ add_depend(dist_t     *dist,		/* I - Distribution */
   }
 
   dist->depends = temp;
-  temp           += dist->num_depends;
+  temp          += dist->num_depends;
 
-  temp->type    = type;
-  temp->product = strdup(product);
+  temp->type = type;
 
-  if (temp->depend == NULL)
-  {
-    perror("epm: Out of memory duplicating a product string");
-    return;
-  }
+  strncpy(temp->product, product, sizeof(temp->product) - 1);
+  temp->product[sizeof(temp->product) - 1] = '\0';
 
   if (version)
   {
-    temp->version = strdup(version);
-
-    if (temp->version == NULL)
-    {
-      perror("epm: Out of memory duplicating a version string");
-      return;
-    }
+    strncpy(temp->version, version, sizeof(temp->version) - 1);
+    temp->version[sizeof(temp->version) - 1] = '\0';
   }
   else
-    temp->version = NULL;
+    temp->version[0] = '\0';
 
   temp->vernumber = vernumber;
 
@@ -958,5 +949,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.23 2001/03/03 21:29:48 mike Exp $".
+ * End of "$Id: dist.c,v 1.24 2001/03/03 21:41:49 mike Exp $".
  */
