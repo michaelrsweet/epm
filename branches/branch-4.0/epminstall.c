@@ -1,5 +1,5 @@
 /*
- * "$Id: epminstall.c,v 1.8.2.4 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: epminstall.c,v 1.8.2.5 2004/11/01 12:19:44 mike Exp $"
  *
  *   Install program replacement for the ESP Package Manager (EPM).
  *
@@ -172,9 +172,9 @@ main(int  argc,			/* I - Number of command-line arguments */
 
       file->type = 'd';
       file->mode = mode & 07777;
-      strncpy(file->user, user, sizeof(file->user) - 1);
-      strncpy(file->group, group, sizeof(file->group) - 1);
-      strncpy(file->dst, files[i], sizeof(file->dst) - 1);
+      strlcpy(file->user, user, sizeof(file->user));
+      strlcpy(file->group, group, sizeof(file->group));
+      strlcpy(file->dst, files[i], sizeof(file->dst));
       strcpy(file->src, "-");
     }
   }
@@ -227,10 +227,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	else
 	  file->mode = 0644;
 
-	strncpy(file->user, user, sizeof(file->user) - 1);
-	strncpy(file->group, group, sizeof(file->group) - 1);
-	strncpy(file->dst, files[1], sizeof(file->dst) - 1);
-	strncpy(file->src, files[0], sizeof(file->src) - 1);
+	strlcpy(file->user, user, sizeof(file->user));
+	strlcpy(file->group, group, sizeof(file->group));
+	strlcpy(file->dst, files[1], sizeof(file->dst));
+	strlcpy(file->src, files[0], sizeof(file->src));
       }
       else
         num_files --;
@@ -251,9 +251,9 @@ main(int  argc,			/* I - Number of command-line arguments */
 
 	file->type = 'd';
 	file->mode = 0755;
-	strncpy(file->user, user, sizeof(file->user) - 1);
-	strncpy(file->group, group, sizeof(file->group) - 1);
-	strncpy(file->dst, files[num_files], sizeof(file->dst) - 1);
+	strlcpy(file->user, user, sizeof(file->user));
+	strlcpy(file->group, group, sizeof(file->group));
+	strlcpy(file->dst, files[num_files], sizeof(file->dst));
 	strcpy(file->src, "-");
       }
       else if (file->type != 'd')
@@ -312,10 +312,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	else
 	  file->mode = 0644;
 
-	strncpy(file->user, user, sizeof(file->user) - 1);
-	strncpy(file->group, group, sizeof(file->group) - 1);
-	strncpy(file->dst, dst, sizeof(file->dst) - 1);
-	strncpy(file->src, files[i], sizeof(file->src) - 1);
+	strlcpy(file->user, user, sizeof(file->user));
+	strlcpy(file->group, group, sizeof(file->group));
+	strlcpy(file->dst, dst, sizeof(file->dst));
+	strlcpy(file->src, files[i], sizeof(file->src));
       }
     }
   }
@@ -407,5 +407,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epminstall.c,v 1.8.2.4 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: epminstall.c,v 1.8.2.5 2004/11/01 12:19:44 mike Exp $".
  */

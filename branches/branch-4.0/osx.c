@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.1.2.11 2004/08/29 04:17:44 mike Exp $"
+ * "$Id: osx.c,v 1.1.2.12 2004/11/01 12:19:44 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -372,10 +372,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
     puts("Building OSX package...");
 
   if (directory[0] == '/')
-  {
-    strncpy(filename, directory, sizeof(filename) - 1);
-    filename[sizeof(filename) - 1] = '\0';
-  }
+    strlcpy(filename, directory, sizeof(filename));
   else
     snprintf(filename, sizeof(filename), "%s/%s", current, directory);
 
@@ -423,5 +420,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.1.2.11 2004/08/29 04:17:44 mike Exp $".
+ * End of "$Id: osx.c,v 1.1.2.12 2004/11/01 12:19:44 mike Exp $".
  */

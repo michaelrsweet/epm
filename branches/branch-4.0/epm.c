@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.67.2.10 2004/08/29 04:17:44 mike Exp $"
+ * "$Id: epm.c,v 1.67.2.11 2004/11/01 12:19:43 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -135,8 +135,7 @@ main(int  argc,			/* I - Number of command-line arguments */
               temp = argv[i];
 	    }
 
-	    strncpy(platform.machine, temp, sizeof(platform.machine) - 1);
-	    platform.machine[sizeof(platform.machine) - 1] = '\0';
+	    strlcpy(platform.machine, temp, sizeof(platform.machine));
 	    break;
 
         case 'f' : /* Format */
@@ -269,10 +268,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    {
 	      i ++;
 	      if (i < argc)
-	      {
-		strncpy(directory, argv[i], sizeof(directory) - 1);
-		directory[sizeof(directory) - 1] = '\0';
-	      }
+		strlcpy(directory, argv[i], sizeof(directory));
 	      else
 	      {
 		puts("epm: Expected output directory.");
@@ -603,5 +599,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.67.2.10 2004/08/29 04:17:44 mike Exp $".
+ * End of "$Id: epm.c,v 1.67.2.11 2004/11/01 12:19:43 mike Exp $".
  */

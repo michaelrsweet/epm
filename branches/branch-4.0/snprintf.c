@@ -1,5 +1,5 @@
 /*
- * "$Id: snprintf.c,v 1.2.2.5 2004/10/25 18:51:04 mike Exp $"
+ * "$Id: snprintf.c,v 1.2.2.6 2004/11/01 12:19:44 mike Exp $"
  *
  *   snprintf functions for the ESP Package Manager (EPM).
  *
@@ -118,8 +118,7 @@ epm_vsnprintf(char       *buffer,	/* O - Output buffer */
 	        (width + 2) > sizeof(temp))
 	      break;
 
-	    strncpy(tformat, bufformat, format - bufformat);
-	    tformat[format - bufformat] = '\0';
+	    strlcpy(tformat, bufformat, format - bufformat + 1);
 
 	    sprintf(temp, tformat, va_arg(ap, double));
 
@@ -148,8 +147,7 @@ epm_vsnprintf(char       *buffer,	/* O - Output buffer */
 	        (width + 2) > sizeof(temp))
 	      break;
 
-	    strncpy(tformat, bufformat, format - bufformat);
-	    tformat[format - bufformat] = '\0';
+	    strlcpy(tformat, bufformat, format - bufformat + 1);
 
 	    sprintf(temp, tformat, va_arg(ap, int));
 
@@ -171,22 +169,12 @@ epm_vsnprintf(char       *buffer,	/* O - Output buffer */
 	        (width + 2) > sizeof(temp))
 	      break;
 
-	    strncpy(tformat, bufformat, format - bufformat);
-	    tformat[format - bufformat] = '\0';
+	    strlcpy(tformat, bufformat, format - bufformat + 1);
 
 	    sprintf(temp, tformat, va_arg(ap, void *));
 
-	    if ((bufptr + strlen(temp)) > bufend)
-	    {
-	      strncpy(bufptr, temp, bufend - bufptr);
-	      bufptr = bufend;
-	      break;
-	    }
-	    else
-	    {
-	      strcpy(bufptr, temp);
-	      bufptr += strlen(temp);
-	    }
+	    strlcpy(bufptr, temp, bufend - bufptr + 1);
+	    bufptr += strlen(bufptr);
 	    break;
 
         case 'c' : /* Character or character array */
@@ -235,22 +223,12 @@ epm_vsnprintf(char       *buffer,	/* O - Output buffer */
 	        (width + 2) > sizeof(temp))
 	      break;
 
-	    strncpy(tformat, bufformat, format - bufformat);
-	    tformat[format - bufformat] = '\0';
+	    strlcpy(tformat, bufformat, format - bufformat + 1);
 
 	    sprintf(temp, tformat, va_arg(ap, int));
 
-	    if ((bufptr + strlen(temp)) > bufend)
-	    {
-	      strncpy(bufptr, temp, bufend - bufptr);
-	      bufptr = bufend;
-	      break;
-	    }
-	    else
-	    {
-	      strcpy(bufptr, temp);
-	      bufptr += strlen(temp);
-	    }
+	    strlcpy(bufptr, temp, bufend - bufptr + 1);
+	    bufptr += strlen(bufptr);
 	    break;
       }
     }
@@ -293,6 +271,6 @@ epm_snprintf(char       *buffer,	/* O - Output buffer */
 
 
 /*
- * End of "$Id: snprintf.c,v 1.2.2.5 2004/10/25 18:51:04 mike Exp $".
+ * End of "$Id: snprintf.c,v 1.2.2.6 2004/11/01 12:19:44 mike Exp $".
  */
 

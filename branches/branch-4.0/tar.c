@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.16.2.5 2004/10/31 17:22:54 mike Exp $"
+ * "$Id: tar.c,v 1.16.2.6 2004/11/01 12:19:44 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -164,10 +164,7 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
     if (dstpath[0])
       snprintf(dst, sizeof(dst), "%s/%s", dstpath, dent->d_name);
     else
-    {
-      strncpy(dst, dent->d_name, sizeof(dst) - 1);
-      dst[sizeof(dst) - 1] = '\0';
-    }
+      strlcpy(dst, dent->d_name, sizeof(dst));
 
     if (stat(src, &srcinfo))
     {
@@ -409,8 +406,8 @@ tar_header(tarf_t     *fp,		/* I - Tar file to write to */
     strlcpy(record.header.linkname, linkname, sizeof(record.header.linkname));
   strcpy(record.header.magic, TAR_MAGIC);
   memcpy(record.header.version, TAR_VERSION, 2);
-  strncpy(record.header.uname, user, sizeof(record.header.uname) - 1);
-  strncpy(record.header.gname, group, sizeof(record.header.uname) - 1);
+  strlcpy(record.header.uname, user, sizeof(record.header.uname));
+  strlcpy(record.header.gname, group, sizeof(record.header.uname));
 
  /*
   * Compute the checksum of the header...
@@ -485,5 +482,5 @@ tar_open(const char *filename,		/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.16.2.5 2004/10/31 17:22:54 mike Exp $".
+ * End of "$Id: tar.c,v 1.16.2.6 2004/11/01 12:19:44 mike Exp $".
  */

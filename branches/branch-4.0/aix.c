@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.8.2.9 2004/10/31 17:22:53 mike Exp $"
+ * "$Id: aix.c,v 1.8.2.10 2004/11/01 12:19:43 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -350,8 +350,7 @@ aix_addfile(int        type,		/* I  - Filetype */
   * Determine the destination path and block size...
   */
 
-  strncpy(dstpath, dst, sizeof(dstpath) - 1);
-  dstpath[sizeof(dstpath) - 1] = '\0';
+  strlcpy(dstpath, dst, sizeof(dstpath));
 
   if (type == 'd')
   {
@@ -806,5 +805,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: aix.c,v 1.8.2.9 2004/10/31 17:22:53 mike Exp $".
+ * End of "$Id: aix.c,v 1.8.2.10 2004/11/01 12:19:43 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.19 2004/10/31 17:22:53 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.20 2004/11/01 12:19:43 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -1083,8 +1083,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  else
 	    *temp++ = '\0';
 
-	  strncpy(pattern, temp, sizeof(pattern) - 1);
-	  pattern[sizeof(pattern) - 1] = '\0';
+	  strlcpy(pattern, temp, sizeof(pattern));
 
           if (dst[strlen(dst) - 1] != '/')
 	    strncat(dst, "/", sizeof(dst) - 1);
@@ -1428,7 +1427,6 @@ expand_name(char   *buffer,		/* O - Output string */
 {
   char	var[255],			/* Environment variable name */
 	*varptr;			/* Current position in name */
-  int	varlen;				/* Length of variable string */
 
 
   bufsize --;
@@ -1473,16 +1471,7 @@ expand_name(char   *buffer,		/* O - Output string */
 
       if ((varptr = getenv(var)) != NULL)
       {
-        varlen = strlen(varptr);
-
-	if (varlen > bufsize)
-	{
-	  strncpy(buffer, varptr, bufsize);
-	  buffer[bufsize] = '\0';
-	}
-	else
-          strcpy(buffer, varptr);
-
+	strlcpy(buffer, varptr, bufsize + 1);
         bufsize -= strlen(buffer);
 	buffer  += strlen(buffer);
       }
@@ -2337,5 +2326,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.19 2004/10/31 17:22:53 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.20 2004/11/01 12:19:43 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.35.2.19 2004/10/31 17:22:54 mike Exp $"
+ * "$Id: rpm.c,v 1.35.2.20 2004/11/01 12:19:44 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -109,10 +109,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   strcpy(rpmdir, absdir);
 #else
   if (getenv("RPMDIR"))
-  {
-    strncpy(rpmdir, getenv("RPMDIR"), sizeof(rpmdir) - 1);
-    rpmdir[sizeof(rpmdir) - 1] = '\0';
-  }
+    strlcpy(rpmdir, getenv("RPMDIR"), sizeof(rpmdir));
   else if (!access("/usr/src/redhat", 0))
     strcpy(rpmdir, "/usr/src/redhat");
   else if (!access("/usr/src/Mandrake", 0))
@@ -600,5 +597,5 @@ write_spec(const char *prodname,	/* I - Product name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.35.2.19 2004/10/31 17:22:54 mike Exp $".
+ * End of "$Id: rpm.c,v 1.35.2.20 2004/11/01 12:19:44 mike Exp $".
  */
