@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.5 2002/10/17 17:31:17 mike Exp $"
+ * "$Id: osx.c,v 1.6 2002/10/17 20:26:05 swdev Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -100,7 +100,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
   fclose(fp);
 
-  snprintf(filename, sizeof(filename), "%s/Resources/Description.plist", directory);
+  snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory, prodname);
   if ((fp = fopen(filename, "w")) == NULL)
   {
     fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
@@ -122,6 +122,37 @@ make_osx(const char     *prodname,	/* I - Product short name */
   fputs("        <key>IFPkgDescriptionTitle</key>\n", fp);
   fprintf(fp, "        <string>%s</string>\n", dist->product);
   fputs("        <key>IFPkgDescriptionVersion</key>\n", fp);
+  fprintf(fp, "        <string>%s</string>\n", dist->version);
+  fputs("</dict>\n", fp);
+  fputs("</plist>\n", fp);
+
+  fclose(fp);
+
+ /*
+  * Do the info file for the packager...
+  */
+
+  snprintf(filename, sizeof(filename), "%s/%s-info.plist", directory, prodname);
+  if ((fp = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create package information file \"%s\" - %s\n",
+            filename, strerror(errno));
+    return (1);
+  }
+
+  fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", fp);
+  fputs("<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n", fp);
+  fputs("<plist version=\"1.0\">\n", fp);
+  fputs("<dict>\n", fp);
+  fputs("        <key>IFPkgFormatVersion</key>\n", fp);
+  fputs("        <real>0.1</real>\n", fp);
+  fputs("        <key>IFPkgFlagAuthorizationAction</key>\n", fp);
+  fputs("        <string>RootAuthorization</string>\n", fp);
+  fputs("        <key>CFBundleName</key>\n", fp);
+  fprintf(fp, "        <string>%s</string>\n", dist->product);
+  fputs("        <key>CFBundleGetInfoString</key>\n", fp);
+  fprintf(fp, "        <string>%s %s</string>\n", dist->product, dist->version);
+  fputs("        <key>CFBundleShortVersionString</key>\n", fp);
   fprintf(fp, "        <string>%s</string>\n", dist->version);
   fputs("</dict>\n", fp);
   fputs("</plist>\n", fp);
@@ -320,7 +351,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
   }
 
  /*
-  * Build the distribution from the spec file...
+  * Build the distribution...
   */
 
   if (Verbosity)
@@ -336,8 +367,8 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
   run_command(NULL, "/Developer/Applications/PackageMaker.app/"
                     "Contents/MacOS/PackageMaker -build "
-		    "-p %s/%s.pkg -f %s/Package -r %s/Resources",
-	      filename, prodname, filename, filename);
+		    "-p %s/%s.pkg -f %s/Package -r %s/Resources -d %s/%s-desc.plist -i %s/%s-info.plist",
+	      filename, prodname, filename, filename, filename, prodname, filename, prodname);
 
   snprintf(filename, sizeof(filename), "%s/%s.pkg", directory, prodname);
   if (access(filename, 0))
@@ -354,6 +385,12 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
     run_command(NULL, "/bin/rm -rf %s/Resources", directory);
     run_command(NULL, "/bin/rm -rf %s/Package", directory);
+
+    snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory, prodname);
+    unlink(filename);
+
+    snprintf(filename, sizeof(filename), "%s/%s-info.plist", directory, prodname);
+    unlink(filename);
   }
 
   return (0);
@@ -361,5 +398,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.5 2002/10/17 17:31:17 mike Exp $".
+ * End of "$Id: osx.c,v 1.6 2002/10/17 20:26:05 swdev Exp $".
  */
