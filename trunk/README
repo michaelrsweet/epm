@@ -1,5 +1,5 @@
-README - ESP Package Manager (EPM) 2.1
---------------------------------------
+README - ESP Package Manager (EPM) 2.1.1
+----------------------------------------
 
 WHAT IS EPM?
 
@@ -96,6 +96,9 @@ WHAT'S NEW IN EPM 2.1.1?
 	  a non-root user.
 	- The setup GUI now provides "Install All" and "Install
 	  None" buttons in the software selection pane.
+	- Added a "native" distribution format to select the
+	  native format for a particular OS (Linux defaults to
+	  RPM format...)
 
 
 WHAT'S NEW IN EPM 2.1?
