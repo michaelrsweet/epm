@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.32 2003/01/24 02:58:12 mike Exp $"
+// "$Id: setup2.cxx,v 1.33 2003/01/27 16:27:42 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -144,7 +144,7 @@ main(int  argc,			// I - Number of command-line arguments
 
   // Get the directory that has the software in it...
   if (argc > 1)
-    distdir = argv[1]);
+    distdir = argv[1];
   else
     distdir = ".";
 #endif // __APPLE__
@@ -1165,5 +1165,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.32 2003/01/24 02:58:12 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.33 2003/01/27 16:27:42 mike Exp $".
 //
