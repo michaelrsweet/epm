@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.3 2000/01/04 13:45:40 mike Exp $"
+ * "$Id: pkg.c,v 1.4 2000/01/05 16:58:01 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -38,11 +38,278 @@ make_pkg(const char     *prodname,	/* I - Product short name */
          dist_t         *dist,		/* I - Distribution information */
 	 struct utsname *platform)	/* I - Platform information */
 {
-  puts("Sorry, AT&T PKG format is not yet supported.");
-  return (1);
+  int		i, j;			/* Looping vars */
+  FILE		*fp;			/* Control file */
+  char		name[1024];		/* Full product name */
+  char		filename[1024];		/* Destination filename */
+  char		command[1024];		/* Command to run */
+  char		current[1024];		/* Current directory */
+  file_t	*file;			/* Current distribution file */
+  tarf_t	*tarfile;		/* Distribution file */
+
+
+  if (Verbosity)
+    puts("Creating PKG distribution...");
+
+  if (platname[0])
+    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+  else
+    sprintf(name, "%s-%s", prodname, dist->version);
+
+  getcwd(current, sizeof(current));
+
+ /*
+  * Write the pkginfo file for pkgmk...
+  */
+
+  if (Verbosity)
+    puts("Creating package information file...");
+
+  sprintf(filename, "%s/%s", directory, name);
+  mkdir(filename, 0777);
+
+  sprintf(filename, "%s/%s.pkginfo", directory, prodname);
+
+  if ((fp = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create package information file \"%s\" - %s\n", filename,
+            strerror(errno));
+    return (1);
+  }
+
+  fprintf(fp, "PKG=%s\n", prodname);
+  fprintf(fp, "NAME=%s\n", dist->product);
+  fprintf(fp, "VERSION=%s\n", dist->version);
+  fprintf(fp, "VENDOR=%s\n", dist->vendor);
+
+  if (dist->num_descriptions > 0)
+    fprintf(fp, "DESC=%s\n", dist->descriptions[0]);
+
+  fputs("CATEGORY=application\n", fp);
+  fputs("CLASSES=none\n", fp);
+
+  if (strcmp(platform->machine, "intel") == 0)
+    fputs("ARCH=i86pc\n", fp);
+  else
+    fputs("ARCH=sparc\n", fp);
+
+  fclose(fp);
+
+ /*
+  * Write the depend file for pkgmk...
+  */
+
+  if (Verbosity)
+    puts("Creating package dependency file...");
+
+  sprintf(filename, "%s/%s.depend", directory, prodname);
+
+  if ((fp = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create package dependency file \"%s\" - %s\n", filename,
+            strerror(errno));
+    return (1);
+  }
+
+  for (i = 0; i < dist->num_requires; i ++)
+    if (dist->requires[i][0] != '/')
+      fprintf(fp, "P %s\n", dist->requires[i]);
+
+  for (i = 0; i < dist->num_incompats; i ++)
+    if (dist->incompats[i][0] != '/')
+      fprintf(fp, "I %s\n", dist->incompats[i]);
+
+  fclose(fp);
+
+ /*
+  * Write the postinstall file for pkgmk...
+  */
+
+  if (Verbosity)
+    puts("Creating postinstall script...");
+
+  sprintf(filename, "%s/%s.postinstall", directory, prodname);
+
+  if ((fp = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+            strerror(errno));
+    return (1);
+  }
+
+  fchmod(fileno(fp), 0755);
+
+  fputs("#!/bin/sh\n", fp);
+  fputs("# " EPM_VERSION "\n", fp);
+
+  for (i = 0; i < dist->num_installs; i ++)
+    fprintf(fp, "%s\n", dist->installs[i]);
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+      fprintf(fp, "/etc/init.d/%s start\n", file->dst);
+
+  fclose(fp);
+
+ /*
+  * Write the preremove file for pkgmk...
+  */
+
+  if (Verbosity)
+    puts("Creating preremove script...");
+
+  sprintf(filename, "%s/%s.preremove", directory, prodname);
+
+  if ((fp = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+            strerror(errno));
+    return (1);
+  }
+
+  fchmod(fileno(fp), 0755);
+
+  fputs("#!/bin/sh\n", fp);
+  fputs("# " EPM_VERSION "\n", fp);
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+      fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
+
+  for (i = 0; i < dist->num_removes; i ++)
+    fprintf(fp, "%s\n", dist->removes[i]);
+
+  fclose(fp);
+
+ /*
+  * Add symlinks for init scripts...
+  */
+
+  for (i = 0; i < dist->num_files; i ++)
+    if (tolower(dist->files[i].type) == 'i')
+    {
+      for (j = 0; j < 6; j ++)
+        if (j != 1)
+	{
+	  file = add_file(dist);
+
+          file->type = 'l';
+	  file->mode = 0;
+	  strcpy(file->user, "root");
+	  strcpy(file->group, "sys");
+	  sprintf(file->src, "../init.d/%s", dist->files[i].dst);
+	  sprintf(file->dst, "/etc/rc%d.d/%s%s", j, j == 0 ? "K00" : "S99",
+	          dist->files[i].dst);
+        }
+
+      file = dist->files + i;
+
+      sprintf(filename, "/etc/init.d/%s", file->dst);
+      strcpy(file->dst, filename);
+    }
+
+ /*
+  * Write the prototype file for pkgmk...
+  */
+
+  if (Verbosity)
+    puts("Creating prototype file...");
+
+  sprintf(filename, "%s/%s.prototype", directory, prodname);
+
+  if ((fp = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create prototype file \"%s\" - %s\n",
+            filename, strerror(errno));
+    return (1);
+  }
+
+  fprintf(fp, "i copyright=%s/%s\n", current, dist->license);
+  fprintf(fp, "i depend=%s/%s/%s.pkginfo\n", current, directory, prodname);
+  fprintf(fp, "i pkginfo=%s/%s/%s.pkginfo\n", current, directory, prodname);
+  fprintf(fp, "i postinstall=%s/%s/%s.postinstall\n", current, directory, prodname);
+  fprintf(fp, "i preremove=%s/%s/%s.preremove\n", current, directory, prodname);
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    switch (tolower(file->type))
+    {
+      case 'c' :
+          fprintf(fp, "e none %s=%s/%s %04o %s %s\n", file->dst,
+	          current, file->src, file->mode, file->user, file->group);
+          break;
+      case 'd' :
+	  fprintf(fp, "d none %s %04o %s %s\n", file->dst, file->mode,
+		  file->user, file->group);
+          break;
+      case 'f' :
+      case 'i' :
+          fprintf(fp, "f none %s=%s/%s %04o %s %s\n", file->dst,
+	          current, file->src, file->mode, file->user, file->group);
+          break;
+      case 'l' :
+          fprintf(fp, "s none %s=%s\n", file->dst, file->src);
+          break;
+    }
+
+  fclose(fp);
+
+ /*
+  * Build the distribution from the prototype file...
+  */
+
+  if (Verbosity)
+    puts("Building PKG binary distribution...");
+
+  sprintf(command, "pkgmk -o -f %s/%s.prototype -d %s/%s/%s",
+          directory, prodname, current, directory, name);
+
+  if (system(command))
+    return (1);
+
+ /*
+  * Tar and compress the distribution...
+  */
+
+  if (Verbosity)
+    puts("Creating tar.gz file for distribution...");
+
+  sprintf(filename, "%s/%s.tar.gz", directory, name);
+
+  if ((tarfile = tar_open(filename, 1)) == NULL)
+    return (1);
+
+  sprintf(filename, "%s/%s.tar.gz", directory, name);
+
+  if (tar_directory(tarfile, filename, ""))
+  {
+    tar_close(tarfile);
+    return (1);
+  }
+
+  tar_close(tarfile);
+
+ /*
+  * Remove temporary files...
+  */
+
+  if (Verbosity)
+    puts("Removing temporary distribution files...");
+
+  sprintf(filename, "%s/%s.pkginfo", directory, prodname);
+  unlink(filename);
+  sprintf(filename, "%s/%s.depend", directory, prodname);
+  unlink(filename);
+  sprintf(filename, "%s/%s.prototype", directory, prodname);
+  unlink(filename);
+  sprintf(filename, "%s/%s.postinstall", directory, prodname);
+  unlink(filename);
+  sprintf(filename, "%s/%s.preremove", directory, prodname);
+  unlink(filename);
+
+  return (0);
 }
 
 
 /*
- * End of "$Id: pkg.c,v 1.3 2000/01/04 13:45:40 mike Exp $".
+ * End of "$Id: pkg.c,v 1.4 2000/01/05 16:58:01 mike Exp $".
  */

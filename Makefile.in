@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile.in,v 1.6 1999/12/06 16:57:33 mike Exp $"
+# "$Id: Makefile.in,v 1.7 2000/01/05 16:58:00 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
-#   Copyright 1999 by Easy Software Products, all rights reserved.
+#   Copyright 1999-2000 by Easy Software Products, all rights reserved.
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -144,5 +144,5 @@ Fl_Check_Browser.o:	Fl_Check_Browser.h
 $(OBJS):	Makefile config.h
 
 #
-# End of "$Id: Makefile.in,v 1.6 1999/12/06 16:57:33 mike Exp $".
+# End of "$Id: Makefile.in,v 1.7 2000/01/05 16:58:00 mike Exp $".
 #
