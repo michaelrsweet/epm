@@ -1,6 +1,9 @@
 TODO - ESP Package Manager (EPM) 4.0
 ------------------------------------
 
+	- %option to pass in format-specific command-line options
+	  to the packaging program.
+	- %category to set the application category.
 	- Add noauto() option to init script files to disable
 	  auto start/stop of software.
 	- Do portable config file stuff for formats that don't
