@@ -84,7 +84,7 @@ Copyright 1999-2002 by Easy Software Products<BR>
 </UL>
 <B><A HREF="#RELNOTES">D - Release Notes</A></B>
 <UL>
-<LI><A HREF="#9_1">Changes in EPM v3.3</A></LI>
+<LI><A HREF="#9_1">Changes in EPM v3.4</A></LI>
 <LI><A HREF="#9_2">Changes in EPM v3.3</A></LI>
 <LI><A HREF="#9_3">Changes in EPM v3.2.1</A></LI>
 <LI><A HREF="#9_4">Changes in EPM v3.2</A></LI>
@@ -1625,7 +1625,7 @@ TYPE Custom Configuration
 <H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
 <P>This appendix lists the change log for each release of the EPM
  software.</P>
-<H2><A NAME="9_1">Changes in EPM v3.3</A></H2>
+<H2><A NAME="9_1">Changes in EPM v3.4</A></H2>
 <UL>
 <LI>No longer install init scripts in run levels 2 and 5 under Solaris,
  which runs all init scripts in each run level.</LI>
@@ -1635,6 +1635,10 @@ TYPE Custom Configuration
 <LI>AIX packages did not use the correct path for files placed in the
  root partition.</LI>
 <LI>Now install init scripts for *BSD in /usr/local/etc/rc.d.</LI>
+<LI>Portable installation scripts now issue chown and chgrp commands for
+ all installed files that are not owned by user root.</LI>
+<LI>No longer use or pad empty tar files, which saves 5k of disk space
+ per distribution.</LI>
 </UL>
 <H2><A NAME="9_2">Changes in EPM v3.3</A></H2>
 <UL>

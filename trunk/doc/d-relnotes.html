@@ -6,7 +6,7 @@
 <P>This appendix lists the change log for each release of the
 EPM software.</P>
 
-<H2>Changes in EPM v3.3</H2>
+<H2>Changes in EPM v3.4</H2>
 
 <UL>
 
@@ -24,6 +24,13 @@ EPM software.</P>
 
 	<LI>Now install init scripts for *BSD in
 	/usr/local/etc/rc.d.
+
+	<LI>Portable installation scripts now issue chown and
+	chgrp commands for all installed files that are not
+	owned by user root.
+
+	<LI>No longer use or pad empty tar files, which saves 5k
+	of disk space per distribution.
 
 </UL>
 
