@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 1.6
+README - ESP Package Manager (EPM) 1.7
 --------------------------------------
 
 WHAT IS EPM?
@@ -73,6 +73,14 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
     unencumbered by licensing of any kind (not even the GPL.)
 
 
+WHAT'S NEW IN EPM 1.7?
+
+    EPM 1.7 adds the following features and fixes to EPM 1.6:
+
+        - The progress messages for shared and non-shared software
+	  were the same.
+
+
 WHAT'S NEW IN EPM 1.6?
 
     EPM 1.6 adds the following features and fixes to EPM 1.5:
@@ -83,6 +91,7 @@ WHAT'S NEW IN EPM 1.6?
 	  had no non-shared components.
 	- The scripts didn't return a non-zero exit status if the
 	  user did not agree with the license or want to install.
+
 
 WHAT'S NEW IN EPM 1.5?
 

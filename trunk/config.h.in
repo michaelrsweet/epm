@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.7 1999/09/30 17:44:30 mike Exp $"
+ * "$Id: config.h.in,v 1.8 1999/10/20 14:50:20 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -20,7 +20,7 @@
  * Version of software...
  */
 
-#define EPM_VERSION	"ESP Package Manager v1.6"
+#define EPM_VERSION	"ESP Package Manager v1.7"
 
 /*
  * Where are files stored?
@@ -69,5 +69,5 @@
 #define EPM_GZIP	"gzip"
 
 /*
- * End of "$Id: config.h.in,v 1.7 1999/09/30 17:44:30 mike Exp $".
+ * End of "$Id: config.h.in,v 1.8 1999/10/20 14:50:20 mike Exp $".
  */
