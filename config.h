@@ -1,5 +1,6 @@
+/* config.h.  Generated automatically by configure.  */
 /*
- * "$Id: config.h.in,v 1.9 1999/11/04 20:31:06 mike Exp $"
+ * "$Id: config.h,v 1.1 1999/11/04 20:31:06 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -32,42 +33,42 @@
  * What options does the strip command take?
  */
 
-#define EPM_STRIP	"/bin/strip"
+#define EPM_STRIP	"/bin/strip -f -s -k -l -h"
 
 /*
  * Compiler stuff...
  */
 
-#undef const
-#undef __CHAR_UNSIGNED__
+/* #undef const */
+#define __CHAR_UNSIGNED__ 1
 
 /*
  * Do we have the strXXX() functions?
  */
 
-#undef HAVE_STRDUP
-#undef HAVE_STRCASECMP
-#undef HAVE_STRNCASECMP
+#define HAVE_STRDUP 1
+#define HAVE_STRCASECMP 1
+#define HAVE_STRNCASECMP 1
 
 /*
  * Are we using a broken "echo" command that doesn't support the \c
  * escape (like GNU echo?)
  */
 
-#undef HAVE_BROKEN_ECHO
+/* #undef HAVE_BROKEN_ECHO */
 
 /*
  * Where is the "whoami" executable?
  */
 
-#define EPM_WHOAMI	"whoami"
+#define EPM_WHOAMI	"/bin/whoami"
 
 /*
  * Where is the "gzip" executable?
  */
 
-#define EPM_GZIP	"gzip"
+#define EPM_GZIP	"/usr/sbin/gzip"
 
 /*
- * End of "$Id: config.h.in,v 1.9 1999/11/04 20:31:06 mike Exp $".
+ * End of "$Id: config.h,v 1.1 1999/11/04 20:31:06 mike Exp $".
  */
