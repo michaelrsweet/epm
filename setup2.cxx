@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.21 2001/07/24 11:57:58 mike Exp $"
+// "$Id: setup2.cxx,v 1.22 2001/08/07 15:31:52 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -657,7 +657,7 @@ load_image(void)
   char		line[1024];	// Line from file
   Fl_Pixmap	*image;		// New image
   int		num_lines;	// Number of lines in file
-  static char	*lines[1000];	// Pointer to lines
+  static const char *lines[1000];// Pointer to lines
 
 
   if ((fp = fopen("setup.xpm", "r")) == NULL)
@@ -1082,5 +1082,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.21 2001/07/24 11:57:58 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.22 2001/08/07 15:31:52 mike Exp $".
 //
