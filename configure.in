@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.21 2001/03/15 16:13:35 mike Exp $"
+dnl "$Id: configure.in,v 1.22 2001/03/16 21:31:09 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -135,7 +135,7 @@ if test x$fltklibs = x; then
 	for dir in "" /usr /usr/openwin /usr/X11R6 /usr/local; do
 		if test -f $dir/lib32/libfltk.a; then
 			fltklibs=$dir/lib32
-			if test $dir != /usr -a x$dir/include != x$x_includes; then
+			if test x$dir != x/usr -a x$dir/include != x$x_includes; then
 				CFLAGS="-I$dir/include $CFLAGS"
 				CXXFLAGS="-I$dir/include $CXXFLAGS"
 			fi
@@ -143,7 +143,7 @@ if test x$fltklibs = x; then
 		fi
 		if test -f $dir/lib/libfltk.a; then
 			fltklibs=$dir/lib
-			if test $dir != /usr -a x$dir/include != x$x_includes; then
+			if test x$dir != x/usr -a x$dir/include != x$x_includes; then
 				CFLAGS="-I$dir/include $CFLAGS"
 				CXXFLAGS="-I$dir/include $CXXFLAGS"
 			fi
@@ -333,5 +333,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list)
 
 dnl
-dnl End of "$Id: configure.in,v 1.21 2001/03/15 16:13:35 mike Exp $".
+dnl End of "$Id: configure.in,v 1.22 2001/03/16 21:31:09 mike Exp $".
 dnl
