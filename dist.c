@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.36 2001/07/02 20:55:15 mike Exp $"
+ * "$Id: dist.c,v 1.37 2001/07/03 15:21:08 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -39,6 +39,15 @@
 
 #include "epm.h"
 #include <pwd.h>
+
+
+/*
+ * Some versions of Solaris don't define gethostname()...
+ */
+
+#ifdef __sun
+extern int	gethostname(char *, size_t);
+#endif /* __sun */
 
 
 /*
@@ -1235,5 +1244,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.36 2001/07/02 20:55:15 mike Exp $".
+ * End of "$Id: dist.c,v 1.37 2001/07/03 15:21:08 mike Exp $".
  */
