@@ -94,6 +94,9 @@ WHAT'S NEW IN EPM 2.3?
     EPM 2.3 adds the following features, fixes, and changes to
     EPM 2.2:
 
+	- Fix for an incredibly stupid bug in the portable
+	  distribution code - was using ! instead of ~ to mask
+	  off the write bits in the distribution archive.
 	- Now use getpwuid() instead of getlogin() to get the
 	  username of the packager.
 	- The RPM distributions now use the same init.d script
@@ -292,7 +295,7 @@ REPORTING PROBLEMS
 
 COPYRIGHT AND LICENSE INFO
 
-    EPM is Copyright 1999-2000 by Easy Software Products, All Rights Reserved.
+    EPM is Copyright 1999-2001 by Easy Software Products, All Rights Reserved.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
