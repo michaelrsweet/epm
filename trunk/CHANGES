@@ -13,6 +13,8 @@ WHAT'S NEW IN EPM 3.5?
 	- QNX returns " 0" instead of "0" for the UID from the
 	  "id -u" command, which caused problems with portable
 	  installation script.
+	- RPM dependencies with a single version number didn't
+	  get written to the spec file properly.
 
 
 WHAT'S NEW IN EPM 3.4?
