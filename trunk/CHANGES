@@ -10,6 +10,8 @@ WHAT'S NEW IN EPM 3.6.1?
 	  was specified using an absolute path.
 	- Made cosmetic changes to the setup/uninstall GUIs.
 	- The setup GUI did not support software patches.
+	- The epm.list man page incorrectly specified runlevels()
+	  instead of runlevel().
 
 
 WHAT'S NEW IN EPM 3.6?
