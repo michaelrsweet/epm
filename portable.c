@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.38 2001/05/22 18:54:42 mike Exp $"
+ * "$Id: portable.c,v 1.39 2001/05/22 19:02:17 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1544,6 +1544,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 	     const char *directory)	/* I - Directory */
 {
   int		i;		/* Looping var */
+  int		col;		/* Current column */
   FILE		*scriptfile;	/* Remove script */
   char		filename[1024];	/* Name of temporary file */
   file_t	*file;		/* Software file */
@@ -1782,5 +1783,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.38 2001/05/22 18:54:42 mike Exp $".
+ * End of "$Id: portable.c,v 1.39 2001/05/22 19:02:17 mike Exp $".
  */
