@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63 2002/03/14 20:37:39 mike Exp $"
+ * "$Id: portable.c,v 1.64 2002/06/04 19:17:31 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1377,26 +1377,35 @@ write_install(dist_t     *dist,		/* I - Software distribution */
                         "/etc/init.d/$file\n", SoftwareDir);
     fputs("			fi\n", scriptfile);
     fputs("		fi\n", scriptfile);
+
     fputs("		if test -d $rcdir/rc0.d; then\n", scriptfile);
     fputs("			rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc0.d/K00$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
+
+#ifndef __sun
     fputs("		if test -d $rcdir/rc2.d; then\n", scriptfile);
     fputs("			rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
     fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc2.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
+#endif /* !__sun */
+
     fputs("		if test -d $rcdir/rc3.d; then\n", scriptfile);
     fputs("			rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
     fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc3.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
+
+#ifndef __sun
     fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
     fputs("			rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
     fprintf(scriptfile, "		ln -s %s/init.d/$file "
                         "$rcdir/rc5.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
+#endif /* !__sun */
+
     fputs("		if test -x /etc/chkconfig; then\n", scriptfile);
     fputs("			/etc/chkconfig -f $file on\n", scriptfile);
     fputs("		fi\n", scriptfile);
@@ -1626,26 +1635,35 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
                         "/etc/init.d/$file\n", SoftwareDir);
     fputs("			fi\n", scriptfile);
     fputs("		fi\n", scriptfile);
+
     fputs("		if test -d $rcdir/rc0.d; then\n", scriptfile);
     fputs("			rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc0.d/K00$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
+
+#ifndef __sun
     fputs("		if test -d $rcdir/rc2.d; then\n", scriptfile);
     fputs("			rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
     fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc2.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
-    fputs("		if test -d $rcdir/rc0.d; then\n", scriptfile);
+#endif /* !__sun */
+
+    fputs("		if test -d $rcdir/rc3.d; then\n", scriptfile);
     fputs("			rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
     fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc3.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
+
+#ifndef __sun
     fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
     fputs("			rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
     fprintf(scriptfile, "		ln -s %s/init.d/$file "
                         "$rcdir/rc5.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
+#endif /* !__sun */
+
     fputs("		if test -x /etc/chkconfig; then\n", scriptfile);
     fputs("			/etc/chkconfig -f $file on\n", scriptfile);
     fputs("		fi\n", scriptfile);
@@ -1957,5 +1975,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63 2002/03/14 20:37:39 mike Exp $".
+ * End of "$Id: portable.c,v 1.64 2002/06/04 19:17:31 mike Exp $".
  */

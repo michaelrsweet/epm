@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.52 2002/02/17 20:46:07 mike Exp $"
+dnl "$Id: configure.in,v 1.53 2002/06/04 19:17:31 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=3.3.0
-VERNUMBER=330
+VERSION=3.3.1
+VERNUMBER=331
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -202,18 +202,23 @@ if test -n "$GCC"; then
 		AC_MSG_RESULT(no))
 	CFLAGS="$OLDCFLAGS"
 
-	# See if we are running Solaris; if so, try the -fpermissive option...
-	if test "$uname" = SunOS; then
-		AC_MSG_CHECKING(if GCC supports -fpermissive)
+	# See if we are running HP-UX or Solaris; if so, try the
+	# -fpermissive option...
+	case $uname in
+		SunOS* | HP-UX*)
+			AC_MSG_CHECKING(if GCC supports -fpermissive)
 
-		OLDCFLAGS="$CFLAGS"
-		CFLAGS="$CFLAGS -fpermissive"
-		AC_TRY_COMPILE(,,
-			OPTIM="$OPTIM -fpermissive"
-			AC_MSG_RESULT(yes),
-			AC_MSG_RESULT(no))
-		CFLAGS="$OLDCFLAGS"
-	fi
+			OLDCFLAGS="$CFLAGS"
+			CFLAGS="$CFLAGS -fpermissive"
+			AC_TRY_COMPILE(,,
+				OPTIM="$OPTIM -fpermissive"
+				AC_MSG_RESULT(yes),
+				AC_MSG_RESULT(no))
+			CFLAGS="$OLDCFLAGS"
+			;;
+		*)
+			;;
+	esac
 else
 	case $uname in
 		AIX*)
@@ -323,7 +328,7 @@ AC_SUBST(EPM_GZIP)
 AC_DEFINE_UNQUOTED(EPM_STRIP, "$STRIP")
 AC_SUBST(EPM_STRIP)
 
-AC_DEFINE_UNQUOTED(EPM_BINDIR, "$prefix/bin")
+AC_DEFINE_UNQUOTED(EPM_BINDIR, "$exec_prefix/bin")
 AC_SUBST(EPM_BINDIR)
 
 AC_DEFINE_UNQUOTED(EPM_LIBDIR, "$prefix/lib/epm")
@@ -349,5 +354,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52 2002/02/17 20:46:07 mike Exp $".
+dnl End of "$Id: configure.in,v 1.53 2002/06/04 19:17:31 mike Exp $".
 dnl
