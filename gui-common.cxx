@@ -1,5 +1,5 @@
 //
-// "$Id: gui-common.cxx,v 1.2 2004/03/05 05:24:34 mike Exp $"
+// "$Id: gui-common.cxx,v 1.3 2005/01/11 21:20:17 mike Exp $"
 //
 //   ESP Software Wizard common functions for the ESP Package Manager (EPM).
 //
@@ -215,5 +215,5 @@ sort_dists(const dist_t *d0,	// I - First distribution
 
 
 //
-// End of "$Id: gui-common.cxx,v 1.2 2004/03/05 05:24:34 mike Exp $".
+// End of "$Id: gui-common.cxx,v 1.3 2005/01/11 21:20:17 mike Exp $".
 //

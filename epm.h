@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.37 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: epm.h,v 1.38 2005/01/11 21:20:17 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -20,19 +20,22 @@
  * Include necessary headers...
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <limits.h>
-#include "epmstring.h"
-#include <ctype.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <pwd.h>
-#include <grp.h>
-#include <sys/utsname.h>
+#ifndef _EPM_H_
+#  define _EPM_H_
+
+#  include <stdio.h>
+#  include <stdlib.h>
+#  include <unistd.h>
+#  include <limits.h>
+#  include "epmstring.h"
+#  include <ctype.h>
+#  include <errno.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <time.h>
+#  include <pwd.h>
+#  include <grp.h>
+#  include <sys/utsname.h>
 
 #  if HAVE_DIRENT_H
 #    include <dirent.h>
@@ -53,32 +56,37 @@ typedef struct direct DIRENT;
 #  endif
 
 
+#  ifdef __cplusplus
+extern "C" {
+#  endif /* __cplusplus */
+
+
 /*
  * Macro to eliminate "variable was never referenced" errors...
  */
 
-#define REF(x)	(void)(x);
+#  define REF(x)	(void)(x);
 
 
 /*
  * TAR constants...
  */
 
-#define TAR_BLOCK	512		/* Number of bytes in a block */
-#define TAR_BLOCKS	10		/* Blocking factor */
+#  define TAR_BLOCK	512		/* Number of bytes in a block */
+#  define TAR_BLOCKS	10		/* Blocking factor */
 
-#define	TAR_MAGIC	"ustar"		/* 5 chars and a null */
-#define TAR_VERSION	"00"		/* POSIX tar version */
+#  define TAR_MAGIC	"ustar"		/* 5 chars and a null */
+#  define TAR_VERSION	"00"		/* POSIX tar version */
 
-#define	TAR_OLDNORMAL	'\0'		/* Normal disk file, Unix compat */
-#define	TAR_NORMAL	'0'		/* Normal disk file */
-#define	TAR_LINK	'1'		/* Link to previously dumped file */
-#define	TAR_SYMLINK	'2'		/* Symbolic link */
-#define	TAR_CHR		'3'		/* Character special file */
-#define	TAR_BLK		'4'		/* Block special file */
-#define	TAR_DIR		'5'		/* Directory */
-#define	TAR_FIFO	'6'		/* FIFO special file */
-#define	TAR_CONTIG	'7'		/* Contiguous file */
+#  define TAR_OLDNORMAL	'\0'		/* Normal disk file, Unix compat */
+#  define TAR_NORMAL	'0'		/* Normal disk file */
+#  define TAR_LINK	'1'		/* Link to previously dumped file */
+#  define TAR_SYMLINK	'2'		/* Symbolic link */
+#  define TAR_CHR	'3'		/* Character special file */
+#  define TAR_BLK	'4'		/* Block special file */
+#  define TAR_DIR	'5'		/* Directory */
+#  define TAR_FIFO	'6'		/* FIFO special file */
+#  define TAR_CONTIG	'7'		/* Contiguous file */
 
 /*
  * Package formats...
@@ -132,59 +140,68 @@ enum
 
 typedef union				/**** TAR record format ****/
 {
-  unsigned char	all[TAR_BLOCK];
+  unsigned char	all[TAR_BLOCK];		/* Raw data block */
   struct
   {
-    char	pathname[100],
-		mode[8],
-		uid[8],
-		gid[8],
-		size[12],
-		mtime[12],
-		chksum[8],
-		linkflag,
-		linkname[100],
-		magic[6],
-		version[2],
-		uname[32],
-		gname[32],
-		devmajor[8],
-		devminor[8],
-		prefix[155];
+    char	pathname[100],		/* Destination path */
+		mode[8],		/* Octal file permissions */
+		uid[8],			/* Octal user ID */
+		gid[8],			/* Octal group ID */
+		size[12],		/* Octal size in bytes */
+		mtime[12],		/* Octal modification time */
+		chksum[8],		/* Octal checksum value */
+		linkflag,		/* File type */
+		linkname[100],		/* Source path for link */
+		magic[6],		/* Magic string */
+		version[2],		/* Format version */
+		uname[32],		/* User name */
+		gname[32],		/* Group name */
+		devmajor[8],		/* Octal device major number */
+		devminor[8],		/* Octal device minor number */
+		prefix[155];		/* Prefix for long filenames */
   }	header;
 } tar_t;
 
 typedef struct				/**** TAR file ****/
 {
-  FILE	*file;				/* File to write to */
-  int	blocks;				/* Number of blocks written */
-  int	compressed;			/* Compressed output? */
+  FILE		*file;			/* File to write to */
+  int		blocks,			/* Number of blocks written */
+		compressed;		/* Compressed output? */
 } tarf_t;
 
 typedef struct				/**** File to install ****/
 {
-  char	type;				/* Type of file */
-  int	mode;				/* Permissions of file */
-  char	user[32],			/* Owner of file */
-	group[32],			/* Group of file */
-	src[512],			/* Source path */
-	dst[512],			/* Destination path */
-	options[256];			/* File options (nostrip, etc.) */
+  int		type;			/* Type of file */
+  mode_t	mode;			/* Permissions of file */
+  char		user[32],		/* Owner of file */
+		group[32],		/* Group of file */
+		src[512],		/* Source path */
+		dst[512],		/* Destination path */
+		options[256];		/* File options */
+  const char	*subpackage;		/* Sub-package name */
 } file_t;
 
 typedef struct				/**** Install/Patch/Remove Commands ****/
 {
-  char	type;				/* Command type */
-  char	*command;			/* Command string */
+  int		type;			/* Command type */
+  char		*command;		/* Command string */
+  const char	*subpackage;		/* Sub-package name */
 } command_t;
 
 typedef struct				/**** Dependencies ****/
 {
-  char	type;				/* Dependency type */
-  char	product[256];			/* Product name */
-  char	version[2][256];		/* Product version string */
-  int	vernumber[2];			/* Product version number */
+  int		type;			/* Dependency type */
+  char		product[256];		/* Product name */
+  char		version[2][256];	/* Product version string */
+  int		vernumber[2];		/* Product version number */
+  const char	*subpackage;		/* Sub-package name */
 } depend_t;
+
+typedef struct				/**** Description Structure ****/
+{
+  char		*description;		/* Description */
+  const char	*subpackage;		/* Sub-package name */
+} description_t;
 
 typedef struct				/**** Distribution Structure ****/
 {
@@ -195,8 +212,10 @@ typedef struct				/**** Distribution Structure ****/
 		packager[256],		/* Packager name */
 		license[256],		/* License file to copy */
 		readme[256];		/* README file to copy */
+  int		num_subpackages;	/* Number of subpackages */
+  char		**subpackages;		/* Subpackage names */
   int		num_descriptions;	/* Number of description strings */
-  char		**descriptions;		/* Description strings */
+  description_t	*descriptions;		/* Description strings */
   int		vernumber;		/* Version number */
   int		relnumber;		/* Release number */
   int		num_commands;		/* Number of commands */
@@ -224,12 +243,17 @@ extern int		Verbosity;	/* Be verbose? */
  * Prototypes...
  */
 
-extern void	add_command(dist_t *dist, FILE *fp, char type,
-		            const char *command);
-extern void	add_depend(dist_t *dist, char type, const char *line);
-extern file_t	*add_file(dist_t *dist);
+extern void	add_command(dist_t *dist, FILE *fp, int type,
+		            const char *command, const char *subpkg);
+extern void	add_depend(dist_t *dist, int type, const char *line,
+		           const char *subpkg);
+extern void	add_description(dist_t *dist, FILE *fp, const char *description,
+		                const char *subpkg);
+extern file_t	*add_file(dist_t *dist, const char *subpkg);
+extern char	*add_subpackage(dist_t *dist, const char *subpkg);
 extern int	copy_file(const char *dst, const char *src,
-		          int mode, int owner, int group);
+		          mode_t mode, uid_t owner, gid_t group);
+extern char	*find_subpackage(dist_t *dist, const char *subpkg);
 extern void	free_dist(dist_t *dist);
 extern const char *get_option(file_t *file, const char *name, const char *defval);
 extern void	get_platform(struct utsname *platform);
@@ -245,8 +269,8 @@ extern int	make_bsd(const char *prodname, const char *directory,
 extern int	make_deb(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform);
-extern int	make_directory(const char *directory, int mode, int owner,
-		               int group);
+extern int	make_directory(const char *directory, mode_t mode, uid_t owner,
+		               gid_t group);
 extern int	make_inst(const char *prodname, const char *directory,
 		          const char *platname, dist_t *dist,
 			  struct utsname *platform);
@@ -273,6 +297,7 @@ extern int	make_slackware(const char *prodname, const char *directory,
 extern int	make_swinstall(const char *prodname, const char *directory,
 		               const char *platname, dist_t *dist,
 			       struct utsname *platform);
+extern dist_t	*new_dist(void);
 extern int	qprintf(FILE *fp, const char *format, ...);
 extern dist_t	*read_dist(const char *filename, struct utsname *platform,
 		           const char *format);
@@ -283,12 +308,20 @@ extern int	tar_close(tarf_t *tar);
 extern int	tar_directory(tarf_t *tar, const char *srcpath,
 		              const char *dstpath);
 extern int	tar_file(tarf_t *tar, const char *filename);
-extern int	tar_header(tarf_t *tar, char type, int mode, int size,
+extern int	tar_header(tarf_t *tar, int type, mode_t mode, off_t size,
 		           time_t mtime, const char *user, const char *group,
 			   const char *pathname, const char *linkname);
 extern tarf_t	*tar_open(const char *filename, int compress);
+extern int	write_dist(const char *listname, dist_t *dist);
+
+
+#  ifdef __cplusplus
+}
+#  endif /* __cplusplus */
+
+#endif /* !_EPM_H_ */
 
 
 /*
- * End of "$Id: epm.h,v 1.37 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: epm.h,v 1.38 2005/01/11 21:20:17 mike Exp $".
  */

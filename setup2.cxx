@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.40 2004/05/26 19:39:05 mike Exp $"
+// "$Id: setup2.cxx,v 1.41 2005/01/11 21:20:17 mike Exp $"
 //
 //   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -1018,5 +1018,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.40 2004/05/26 19:39:05 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.41 2005/01/11 21:20:17 mike Exp $".
 //

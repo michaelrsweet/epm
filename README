@@ -1,5 +1,5 @@
-README - ESP Package Manager (EPM) 3.7.1
-----------------------------------------
+README - ESP Package Manager (EPM) 4.0
+--------------------------------------
 
 WHAT IS EPM?
 
@@ -31,11 +31,11 @@ WHY ANOTHER SOFTWARE PACKAGING TOOL?
     testing N different software distributions, each with their
     own input files and setup requirements.
 
-    Also, when we started looking at selling software for Linux
-    we saw that there are at least four different "standard"
+    Also, when we looked at software distribution on Linux we
+    saw that there are at least four different "standard"
     distribution formats, and none of them are compatible with
     the other.  Clearly we needed something that could be used
-    for all platforms, *without* requiring special software
+    for all platforms *without* requiring special software
     packages on the customer's system!
 
 
@@ -83,7 +83,7 @@ OTHER RESOURCES
     If you don't have NNTP access from your systems, point your
     web browser at the following URL:
 
-        http://www.easysw.com/espnews.php
+        http://www.easysw.com/epm/newsgroups.php
 
 
 COPYRIGHT AND LICENSE INFO

@@ -1,13 +1,23 @@
-TODO for EPM:
+TODO - ESP Package Manager (EPM) 4.0
+------------------------------------
 
 	- Add noauto() option to init script files to disable
 	  auto start/stop of software.
 	- Do portable config file stuff for formats that don't
 	  support config files (HP-UX + others)
+	- Use dpkg-shlibdeps when generating Debian packages.
+	- "epm --build ..." to build software from source and
+	  make a distribution
+	- "%build foo" for build instructions
+	- Look for .list and .list.in; reload if building and
+	  filename == .list.in.
 	- Add /opt relocation hack and allow for relocatable and
 	  non-root packages in general.
 	- Add support for executables and libraries created with
 	  libtool.
+	- Add a small script that can be installed with every
+	  portable software package to list and remove installed
+	  packages.
 	- Add better manpage installation support -
 	  specifically, add code to automatically locate the
 	  correct man directory for each file depending on the
@@ -19,3 +29,4 @@ TODO for EPM:
 	  format.
 	- Add support for checksums (probably just "sum"
 	  command) to verify the tar files and installed files.
+	- Support package categories (RPM, Debian, AT&T PKG, etc.)

@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.70 2004/06/12 16:03:17 mike Exp $"
+dnl "$Id: configure.in,v 1.71 2005/01/11 21:20:17 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=3.7.1
-VERNUMBER=371
+VERSION=4.0b1
+VERNUMBER=390
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -67,6 +67,8 @@ AC_ARG_WITH(softwaredir, [  --with-softwaredir      set directory for EPM uninst
 dnl Checks for programs...
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_RANLIB
+AC_PATH_PROG(AR,ar)
 AC_PATH_PROG(CHMOD,chmod)
 AC_PATH_PROG(CP,cp)
 AC_PATH_PROG(GZIP,gzip)
@@ -109,14 +111,11 @@ AC_CHECK_HEADER(sys/statfs.h,AC_DEFINE(HAVE_SYS_STATFS_H))
 AC_CHECK_HEADER(sys/vfs.h,AC_DEFINE(HAVE_SYS_VFS_H))
 
 dnl Checks for string functions.
-AC_CHECK_FUNCS(strdup)
-AC_CHECK_FUNCS(strcasecmp)
-AC_CHECK_FUNCS(strncasecmp)
+AC_CHECK_FUNCS(strcasecmp strdup strlcat strlcpy strncasecmp)
 if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
 	AC_MSG_WARN(Forcing snprintf emulation for HP-UX.)
 else
-	AC_CHECK_FUNCS(snprintf)
-	AC_CHECK_FUNCS(vsnprintf)
+	AC_CHECK_FUNCS(snprintf vsnprintf)
 fi
 AC_SEARCH_LIBS(gethostname, socket)
 
@@ -131,7 +130,7 @@ if test "x$FLTKCONFIG" = x; then
 	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x.])
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
-	GUIS="setup uninst"
+	GUIS="epmeditor setup uninst"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
 
@@ -181,7 +180,8 @@ if test -n "$GCC"; then
 	fi
 
 	CXX="$CC"
-	OPTIM="-Wall -Wno-return-type $OPTIM"
+	OPTIM="-Wall -Wformat -Wunused -Wconversion $OPTIM"
+	OPTIM="-Wno-shadow -Wno-return-type -Wno-format-y2k $OPTIM"
 
 	# See if GCC supports -fno-rtti...
 	AC_MSG_CHECKING(if GCC supports -fno-rtti)
@@ -262,6 +262,18 @@ else
 			;;
 	esac
 fi
+
+dnl Flags for "ar" command...
+case $uname in
+        Darwin* | *BSD*)
+                ARFLAGS="-rc"
+                ;;
+        *)
+                ARFLAGS="crs"
+                ;;
+esac
+
+AC_SUBST(ARFLAGS)
 
 dnl Fix "prefix" variable if it hasn't been specified...
 if test "$prefix" = "NONE"; then
@@ -384,5 +396,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist)
 
 dnl
-dnl End of "$Id: configure.in,v 1.70 2004/06/12 16:03:17 mike Exp $".
+dnl End of "$Id: configure.in,v 1.71 2005/01/11 21:20:17 mike Exp $".
 dnl

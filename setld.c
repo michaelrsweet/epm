@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.18 2004/10/31 15:40:40 mike Exp $"
+ * "$Id: setld.c,v 1.19 2005/01/11 21:20:17 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -39,7 +39,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
            dist_t         *dist,	/* I - Distribution information */
            struct utsname *platform)	/* I - Platform information */
 {
-  int		i;			/* Looping var */
+  int		i, j;			/* Looping vars */
   FILE		*fp;			/* Spec file */
   tarf_t	*tarfile;		/* .tardist file */
   char		name[1024];		/* Full product name */
@@ -56,7 +56,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   const char	*runlevels;		/* Run levels */
 
 
-  (void)platform;
+  REF(platform);
 
  /*
   * Check the package information to make sure it complies with the
@@ -73,7 +73,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
   if (strlen(prodname) < 3)
   {
-    fprintf(stderr, "epm: Need a product name of at least 3 characters.\n"
+    fprintf(stderr, "epm: Need a product name of at least 3 uppercase characters.\n"
                     "     The current product name (%s) is not acceptable.\n",
             prodname);
     return (1);
@@ -82,11 +82,31 @@ make_setld(const char     *prodname,	/* I - Product short name */
   for (i = 0; prodname[i]; i ++)
     if (!isupper(prodname[i] & 255))
     {
-      fprintf(stderr, "epm: Need a product name containing uppercase letters.\n"
+      fprintf(stderr, "epm: Need a product name of at least 3 uppercase characters.\n"
                       "     The current product name (%s) is not acceptable.\n",
               prodname);
       return (1);
     }
+
+  for (i = 0; i < dist->num_subpackages; i ++)
+  {
+    if ((strlen(dist->subpackages[i]) + strlen(prodname)) > 77)
+    {
+      fprintf(stderr, "epm: Product + subpackage names must be less than 77 characters.\n"
+                      "     The current subpackage name (%s) is not acceptable.\n",
+              dist->subpackages[i]);
+      return (1);
+    }
+
+    for (j = 0; dist->subpackages[i][j]; j ++)
+      if (!isupper(dist->subpackages[i][j] & 255))
+      {
+	fprintf(stderr, "epm: Subpackage names may only contain uppercase letters.\n"
+                	"     The current subpackage name (%s) is not acceptable.\n",
+        	dist->subpackages[i]);
+	return (1);
+      }
+  }
 
  /*
   * Prepare for packaging...
@@ -108,8 +128,6 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
   getcwd(current, sizeof(current));
 
-  snprintf(subset, sizeof(subset), "%sALL%03d", prodname, dist->vernumber);
-
  /*
   * Add symlinks for init scripts...
   */
@@ -125,7 +143,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
            isdigit(*runlevels & 255);
 	   runlevels ++)
       {
-	file = add_file(dist);
+	file = add_file(dist, dist->files[i].subpackage);
 	file->type = 'l';
 	file->mode = 0;
 	strcpy(file->user, "root");
@@ -186,7 +204,8 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating subset control program...");
 
-  snprintf(scpname, sizeof(scpname), "%s/src/scps/%s.scp", directory, subset);
+  snprintf(scpname, sizeof(scpname), "%s/src/scps/%sALL%03d.scp", directory,
+           prodname, dist->vernumber);
 
   if ((fp = fopen(scpname, "w")) == NULL)
   {
@@ -273,6 +292,10 @@ make_setld(const char     *prodname,	/* I - Product short name */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+  {
+    snprintf(subset, sizeof(subset), "%s%s%03d", prodname,
+             file->subpackage ? file->subpackage : "ALL", dist->vernumber);
+
     switch (tolower(file->type))
     {
       case 'c' :
@@ -285,6 +308,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
           fprintf(fp, "0\t.%s\t%s\n", file->dst, subset);
 	  break;
     }
+  }
 
   fclose(fp);
 
@@ -295,7 +319,8 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating key file...");
 
-  snprintf(keyname, sizeof(keyname), "%s/src/%s%03d.k", directory, prodname, dist->vernumber);
+  snprintf(keyname, sizeof(keyname), "%s/src/%s%03d.k", directory, prodname,
+           dist->vernumber);
 
   if ((fp = fopen(keyname, "w")) == NULL)
   {
@@ -310,7 +335,11 @@ make_setld(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "MI=%s%03d.mi\n", prodname, dist->vernumber);
   fputs("COMPRESS=0\n", fp);
   fputs("%%\n", fp);
-  qprintf(fp, "%s\t.\t0\t'%s, %s'\n", subset, dist->product, dist->version);
+  qprintf(fp, "%sALL%03d\t.\t0\t'%s, %s'\n", prodname, dist->vernumber,
+          dist->product, dist->version);
+  for (i = 0; i < dist->num_subpackages; i ++)
+    qprintf(fp, "%s%s%03d\t.\t0\t'%s, %s'\n", prodname, dist->subpackages[i],
+            dist->vernumber, dist->product, dist->version);
   fclose(fp);
 
  /*
@@ -428,5 +457,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.18 2004/10/31 15:40:40 mike Exp $".
+ * End of "$Id: setld.c,v 1.19 2005/01/11 21:20:17 mike Exp $".
  */

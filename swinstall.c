@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.26 2004/10/31 15:40:40 mike Exp $"
+ * "$Id: swinstall.c,v 1.27 2005/01/11 21:20:17 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -18,6 +18,7 @@
  * Contents:
  *
  *   make_swinstall() - Make an HP-UX software distribution package.
+ *   write_fileset()  - Write a fileset specification for a subpackage.
  */
 
 /*
@@ -28,20 +29,32 @@
 
 
 /*
+ * Local functions...
+ */
+
+static void	write_fileset(FILE *fp, dist_t *dist, const char *directory,
+		              const char *prodname, const char *subpackage);
+
+
+/*
  * 'make_swinstall()' - Make an HP-UX software distribution package.
  */
 
-int						/* O - 0 = success, 1 = fail */
-make_swinstall(const char     *prodname,	/* I - Product short name */
-               const char     *directory,	/* I - Directory for distribution files */
-               const char     *platname,	/* I - Platform name */
-               dist_t         *dist,		/* I - Distribution information */
-	       struct utsname *platform)	/* I - Platform information */
+int					/* O - 0 = success, 1 = fail */
+make_swinstall(const char     *prodname,/* I - Product short name */
+               const char     *directory,
+					/* I - Directory for distribution files */
+               const char     *platname,/* I - Platform name */
+               dist_t         *dist,	/* I - Distribution information */
+	       struct utsname *platform)/* I - Platform information */
 {
   int		i, j;			/* Looping vars */
   FILE		*fp;			/* Spec/script file */
   tarf_t	*tarfile;		/* .tardist file */
   int		linknum;		/* Symlink number */
+  const char	*vendor;		/* Pointer into vendor name */
+  char		vtag[65],		/* Vendor tag */
+		*vtagptr;		/* Pointer into vendor tag */
   char		name[1024];		/* Full product name */
   char		infoname[1024],		/* Info filename */
 		preinstall[1024],	/* preinstall script */
@@ -51,11 +64,10 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   char		filename[1024];		/* Destination filename */
   file_t	*file;			/* Current distribution file */
   command_t	*c;			/* Current command */
-  depend_t	*d;			/* Current dependency */
   const char	*runlevels;		/* Run levels */
 
 
-  (void)platform; /* Eliminates compiler warning about unused variable */
+  REF(platform);
 
   if (Verbosity)
     puts("Creating swinstall distribution...");
@@ -270,7 +282,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
            isdigit(*runlevels & 255);
 	   runlevels ++)
       {
-	file = add_file(dist);
+	file = add_file(dist, dist->files[i].subpackage);
 	file->type = 'l';
 	file->mode = 0;
 	strcpy(file->user, "root");
@@ -316,6 +328,64 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     }
 
  /*
+  * Write the description file(s) for swpackage...
+  */
+
+  if (dist->num_descriptions > 0)
+  {
+    if (Verbosity)
+      puts("Creating description file(s)...");
+
+    for (i = 0; i < dist->num_descriptions; i ++)
+      if (!dist->descriptions[i].subpackage)
+        break;
+
+    if (i < dist->num_descriptions)
+    {
+      snprintf(filename, sizeof(filename), "%s/%s.desc", directory, prodname);
+
+      if ((fp = fopen(filename, "w")) == NULL)
+      {
+	fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
+        	filename, strerror(errno));
+	return (1);
+      }
+
+      for (; i < dist->num_descriptions; i ++)
+	if (!dist->descriptions[i].subpackage)
+	  fprintf(fp, "%s\n", dist->descriptions[i].description);
+
+      fclose(fp);
+    }
+
+    for (i = 0; i < dist->num_subpackages; i ++)
+    {
+      for (j = 0; j < dist->num_descriptions; j ++)
+	if (dist->descriptions[j].subpackage == dist->subpackages[i])
+          break;
+
+      if (j < dist->num_descriptions)
+      {
+	snprintf(filename, sizeof(filename), "%s/%s-%s.desc", directory,
+        	 prodname, dist->subpackages[i]);
+
+	if ((fp = fopen(filename, "w")) == NULL)
+	{
+	  fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
+        	  filename, strerror(errno));
+	  return (1);
+	}
+
+	for (; j < dist->num_descriptions; j ++)
+	  if (dist->descriptions[j].subpackage == dist->subpackages[i])
+	    fprintf(fp, "%s\n", dist->descriptions[j].description);
+
+	fclose(fp);
+      }
+    }
+  }
+
+ /*
   * Write the info file for swpackage...
   */
 
@@ -331,113 +401,105 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
+ /*
+  * Figure out the vendor tag and write a vendor class...
+  */
+
+  for (vendor = dist->vendor, vtagptr = vtag; *vendor; vendor ++)
+    if (isalnum(*vendor) && vtagptr < (vtag + sizeof(vtag) - 1))
+      *vtagptr++ = *vendor;
+
+  *vtagptr = '\0';
+
+  fputs("vendor\n", fp);
+  fprintf(fp, "  tag %s\n", vtag);
+  fprintf(fp, "  description %s\n", dist->vendor);
+  fprintf(fp, "  title %s\n", dist->vendor);
+  fputs("end\n", fp);
+
+ /*
+  * Then the product class...
+  */
+
   fputs("product\n", fp);
   fprintf(fp, "  tag %s\n", prodname);
   fprintf(fp, "  revision %s\n", dist->version);
   fprintf(fp, "  title %s, %s\n", dist->product, dist->version);
-  if (dist->num_descriptions)
-    fprintf(fp, "  description %s\n", dist->descriptions[0]);
-  fprintf(fp, "  copyright < %s\n", dist->license);
-  fprintf(fp, "  readme < %s\n", dist->readme);
+
+  snprintf(filename, sizeof(filename), "%s/%s.desc", directory, prodname);
+  if (!access(filename, 0))
+    fprintf(fp, "  description < %s\n", filename);
+  if (strncmp(dist->license, "./", 2))
+    fprintf(fp, "  copyright < %s\n", dist->license);
+  else
+    fprintf(fp, "  copyright < %s\n", dist->license + 2);
+  if (strncmp(dist->readme, "./", 2))
+    fprintf(fp, "  readme < %s\n", dist->readme);
+  else
+    fprintf(fp, "  readme < %s\n", dist->readme + 2);
+  fprintf(fp, "  vendor_tag %s\n", vtag);
   fputs("  is_locatable false\n", fp);
 
-  fputs("  fileset\n", fp);
-  fputs("    tag all\n", fp);
-  fprintf(fp, "    title %s, %s\n", dist->product, dist->version);
-
-  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (d->type == DEPEND_REQUIRES && d->product[0] != '/')
-      break;
-
-  if (i)
+  if (dist->num_subpackages > 0)
   {
-    for (; i > 0; i --, d ++)
-    {
-      fputs("    prerequisites", fp);
-      if (d->type == DEPEND_REQUIRES && d->product[0] != '/')
+   /*
+    * Write subproduct specifications...
+    */
+
+    fputs("  subproduct\n", fp);
+    fputs("    tag base\n", fp);
+    fputs("    contents fs_base\n", fp);
+    fprintf(fp, "    revision %s\n", dist->version);
+
+    for (i = 0; i < dist->num_descriptions; i ++)
+      if (!dist->descriptions[i].subpackage)
       {
-        fprintf(fp, " %s", d->product);
-	if (d->vernumber[0] == 0)
-	{
-	  if (d->vernumber[1] < INT_MAX)
-            fprintf(fp, ",r<=%s", d->version[1]);
-	}
-	else
-	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
+        fprintf(fp, "    title %s, %s\n", dist->descriptions[i].description,
+	        dist->version);
+        break;
       }
-      fputs("\n", fp);
-    }
-  }
 
-  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (d->type == DEPEND_REPLACES && d->product[0] != '/')
-      break;
+    if (!access(filename, 0))
+      fprintf(fp, "    description < %s\n", filename);
+    fputs("  end\n", fp);
 
-  if (i)
-  {
-    for (; i > 0; i --, d ++)
+    for (i = 0; i < dist->num_subpackages; i ++)
     {
-      fputs("    ancestor", fp);
-      if (d->type == DEPEND_REPLACES && d->product[0] != '/')
-      {
-        fprintf(fp, " %s", d->product);
-	if (d->vernumber[0] == 0)
+      fputs("  subproduct\n", fp);
+      fprintf(fp, "    tag %s\n", dist->subpackages[i]);
+      fprintf(fp, "    contents fs_%s\n", dist->subpackages[i]);
+      fprintf(fp, "    revision %s\n", dist->version);
+
+      for (j = 0; j < dist->num_descriptions; j ++)
+	if (dist->descriptions[j].subpackage == dist->subpackages[i])
 	{
-	  if (d->vernumber[1] < INT_MAX)
-            fprintf(fp, ",r<=%s", d->version[1]);
+          fprintf(fp, "    title %s, %s\n", dist->descriptions[j].description,
+	          dist->version);
+          break;
 	}
-	else
-	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
-      }
-      fputs("\n", fp);
+
+      snprintf(filename, sizeof(filename), "%s/%s-%s.desc", directory,
+               prodname, dist->subpackages[i]);
+      if (!access(filename, 0))
+	fprintf(fp, "    description < %s\n", filename);
+      fputs("  end\n", fp);
     }
   }
 
-  if (preinstall[0])
-    fprintf(fp, "    preinstall %s\n", preinstall);
-  if (postinstall[0])
-    fprintf(fp, "    postinstall %s\n", postinstall);
-  if (preremove[0])
-    fprintf(fp, "    preremove %s\n", preremove);
-  if (postremove[0])
-    fprintf(fp, "    postremove %s\n", postremove);
+ /*
+  * Write filesets...
+  */
 
-  for (i = dist->num_files, file = dist->files, linknum = 0;
-       i > 0;
-       i --, file ++)
-  {
-    switch (tolower(file->type))
-    {
-      case 'd' :
-          qprintf(fp, "    file -m %o -o %s -g %s . %s\n", file->mode | S_IFDIR,
-	          file->user, file->group, file->dst);
-          break;
-      case 'c' :
-          qprintf(fp, "    file -m %04o -o %s -g %s -v %s %s\n", file->mode,
-	          file->user, file->group, file->src, file->dst);
-          break;
-      case 'f' :
-      case 'i' :
-          qprintf(fp, "    file -m %04o -o %s -g %s %s %s\n", file->mode,
-	          file->user, file->group, file->src, file->dst);
-          break;
-      case 'l' :
-          snprintf(filename, sizeof(filename), "%s/%s.link%04d", directory,
-	           prodname, linknum);
-          linknum ++;
-          qprintf(fp, "    file -o %s -g %s %s %s\n", file->user, file->group,
-	          filename, file->dst);
-          break;
-    }
-  }
+  write_fileset(fp, dist, directory, prodname, NULL);
+  for (i = 0; i < dist->num_subpackages; i ++)
+    write_fileset(fp, dist, directory, prodname, dist->subpackages[i]);
 
-  fputs("  end\n", fp);
   fputs("end\n", fp);
 
   fclose(fp);
 
  /*
-  * Build the distribution from the spec file...
+  * Build the distributions from the spec file...
   */
 
   if (Verbosity)
@@ -452,10 +514,6 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
         	  Verbosity == 0 ? "" : "-v ", infoname, directory,
 		  name, prodname))
     return (1);
-
- /*
-  * Build the distribution from the spec file...
-  */
 
   if (Verbosity)
     puts("Building swinstall binary distribution...");
@@ -518,6 +576,16 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
                prodname, linknum);
       unlink(filename);
     }
+
+    snprintf(filename, sizeof(filename), "%s/%s.desc", directory, prodname);
+    unlink(filename);
+
+    for (i = 0; i < dist->num_subpackages; i ++)
+    {
+      snprintf(filename, sizeof(filename), "%s/%s-%s.desc", directory,
+               prodname, dist->subpackages[i]);
+      unlink(filename);
+    }
   }
 
   return (0);
@@ -525,5 +593,155 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.26 2004/10/31 15:40:40 mike Exp $".
+ * 'write_fileset()' - Write a fileset specification for a subpackage.
+ */
+
+static void
+write_fileset(FILE       *fp,		/* I - File to write to */
+              dist_t     *dist,		/* I - Distribution */
+	      const char *directory,	/* I - Output directory */
+	      const char *prodname,	/* I - Product name */
+	      const char *subpackage)	/* I - Subpackage to write */
+{
+  int		i;			/* Looping var */
+  char		filename[1024];		/* Temporary filename */
+  depend_t	*d;			/* Current dependency */
+  file_t	*file;			/* Current distribution file */
+  int		linknum;		/* Symlink number */
+
+
+  fputs("  fileset\n", fp);
+  fprintf(fp, "    tag fs_%s\n", subpackage ? subpackage : "base");
+  fprintf(fp, "    revision %s\n", dist->version);
+
+  for (i = 0; i < dist->num_descriptions; i ++)
+    if (dist->descriptions[i].subpackage == subpackage)
+    {
+      fprintf(fp, "    title %s, %s\n", dist->descriptions[i].description,
+              dist->version);
+      break;
+    }
+
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REQUIRES && d->product[0] != '/' &&
+        d->subpackage == subpackage)
+      break;
+
+  if (i)
+  {
+    for (; i > 0; i --, d ++)
+    {
+      if (d->type == DEPEND_REQUIRES && d->product[0] != '/' &&
+          d->subpackage == subpackage)
+      {
+        if (!strcmp(d->product, "_self"))
+	  fprintf(fp, "    prerequisites %s", prodname);
+	else
+	  fprintf(fp, "    prerequisites %s", d->product);
+
+	if (d->vernumber[0] == 0)
+	{
+	  if (d->vernumber[1] < INT_MAX)
+            fprintf(fp, ",r<=%s\n", d->version[1]);
+	  else
+	    putc('\n', fp);
+	}
+	else
+	  fprintf(fp, ",r>=%s,r<=%s\n", d->version[0], d->version[1]);
+      }
+    }
+  }
+
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REPLACES && d->product[0] != '/' &&
+        d->subpackage == subpackage)
+      break;
+
+  if (i)
+  {
+    for (; i > 0; i --, d ++)
+    {
+      if (d->type == DEPEND_REPLACES && d->product[0] != '/' &&
+          d->subpackage == subpackage)
+      {
+        fprintf(fp, "    ancestor %s", d->product);
+	if (d->vernumber[0] == 0)
+	{
+	  if (d->vernumber[1] < INT_MAX)
+            fprintf(fp, ",r<=%s\n", d->version[1]);
+	  else
+	    putc('\n', fp);
+	}
+	else
+	  fprintf(fp, ",r>=%s,r<=%s\n", d->version[0], d->version[1]);
+      }
+    }
+  }
+
+  if (!subpackage)
+  {
+   /*
+    * Write scripts...
+    */
+
+    snprintf(filename, sizeof(filename), "%s/%s.preinst", directory, prodname);
+    if (!access(filename, 0))
+      fprintf(fp, "    preinstall %s\n", filename);
+
+    snprintf(filename, sizeof(filename), "%s/%s.postinst", directory, prodname);
+    if (!access(filename, 0))
+      fprintf(fp, "    postinstall %s\n", filename);
+
+    snprintf(filename, sizeof(filename), "%s/%s.prerm", directory, prodname);
+    if (!access(filename, 0))
+      fprintf(fp, "    preremove %s\n", filename);
+
+    snprintf(filename, sizeof(filename), "%s/%s.postrm", directory, prodname);
+    if (!access(filename, 0))
+      fprintf(fp, "    postremove %s\n", filename);
+  }
+
+  for (i = dist->num_files, file = dist->files, linknum = 0;
+       i > 0;
+       i --, file ++)
+  {
+    if (file->subpackage != subpackage)
+    {
+      if (tolower(file->type) == 'l')
+        linknum ++;
+
+      continue;
+    }
+
+    switch (tolower(file->type))
+    {
+      case 'd' :
+          qprintf(fp, "    file -m %o -o %s -g %s . %s\n", file->mode | S_IFDIR,
+	          file->user, file->group, file->dst);
+          break;
+      case 'c' :
+          qprintf(fp, "    file -m %04o -o %s -g %s -v %s %s\n", file->mode,
+	          file->user, file->group, file->src, file->dst);
+          break;
+      case 'f' :
+      case 'i' :
+          qprintf(fp, "    file -m %04o -o %s -g %s %s %s\n", file->mode,
+	          file->user, file->group, file->src, file->dst);
+          break;
+      case 'l' :
+          snprintf(filename, sizeof(filename), "%s/%s.link%04d", directory,
+	           prodname, linknum);
+          linknum ++;
+          qprintf(fp, "    file -o %s -g %s %s %s\n", file->user, file->group,
+	          filename, file->dst);
+          break;
+    }
+  }
+
+  fputs("  end\n", fp);
+}
+
+
+/*
+ * End of "$Id: swinstall.c,v 1.27 2005/01/11 21:20:17 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.17 2004/09/08 21:04:06 mike Exp $"
+ * "$Id: file.c,v 1.18 2005/01/11 21:20:17 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -35,18 +35,18 @@
  * 'copy_file()' - Copy a file...
  */
 
-int				/* O - 0 on success, -1 on failure */
-copy_file(const char *dst,	/* I - Destination file */
-          const char *src,	/* I - Source file */
-          int        mode,	/* I - Permissions */
-	  int        owner,	/* I - Owner ID */
-	  int        group)	/* I - Group ID */
+int					/* O - 0 on success, -1 on failure */
+copy_file(const char *dst,		/* I - Destination file */
+          const char *src,		/* I - Source file */
+          mode_t     mode,		/* I - Permissions */
+	  uid_t      owner,		/* I - Owner ID */
+	  gid_t      group)		/* I - Group ID */
 {
-  FILE	*dstfile,	/* Destination file */
-	*srcfile;	/* Source file */
-  char	buffer[8192];	/* Copy buffer */
-  char	*slash;		/* Pointer to trailing slash */
-  int	bytes;		/* Number of bytes read/written */
+  FILE		*dstfile,		/* Destination file */
+		*srcfile;		/* Source file */
+  char		buffer[8192];		/* Copy buffer */
+  char		*slash;			/* Pointer to trailing slash */
+  size_t	bytes;			/* Number of bytes read/written */
 
 
  /*
@@ -120,9 +120,9 @@ copy_file(const char *dst,	/* I - Destination file */
 
 int					/* O - 0 = success, -1 = error */
 make_directory(const char *directory,	/* I - Directory */
-               int        mode,		/* I - Permissions */
-	       int        owner,	/* I - Owner ID */
-	       int        group)	/* I - Group ID */
+               mode_t     mode,		/* I - Permissions */
+	       uid_t      owner,	/* I - Owner ID */
+	       gid_t      group)	/* I - Group ID */
 {
   char	buffer[8192],			/* Filename buffer */
 	*bufptr;			/* Pointer into buffer */
@@ -162,12 +162,12 @@ make_directory(const char *directory,	/* I - Directory */
  * 'make_link()' - Make a symbolic link.
  */
 
-int				/* O - 0 = success, -1 = error */
-make_link(const char *dst,	/* I - Destination file */
-          const char *src)	/* I - Link */
+int					/* O - 0 = success, -1 = error */
+make_link(const char *dst,		/* I - Destination file */
+          const char *src)		/* I - Link */
 {
-  char	buffer[8192],		/* Copy buffer */
-	*slash;			/* Pointer to trailing slash */
+  char	buffer[8192],			/* Copy buffer */
+	*slash;				/* Pointer to trailing slash */
 
 
  /*
@@ -194,12 +194,12 @@ make_link(const char *dst,	/* I - Destination file */
  */
 
 void
-strip_execs(dist_t *dist)	/* I - Distribution to strip... */
+strip_execs(dist_t *dist)		/* I - Distribution to strip... */
 {
-  int		i;		/* Looping var */
-  file_t	*file;		/* Software file */
-  FILE		*fp;		/* File pointer */
-  char		header[4];	/* File header... */
+  int		i;			/* Looping var */
+  file_t	*file;			/* Software file */
+  FILE		*fp;			/* File pointer */
+  char		header[4];		/* File header... */
 
 
  /*
@@ -260,5 +260,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.17 2004/09/08 21:04:06 mike Exp $".
+ * End of "$Id: file.c,v 1.18 2005/01/11 21:20:17 mike Exp $".
  */

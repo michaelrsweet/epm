@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.77 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: epm.c,v 1.78 2005/01/11 21:20:17 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -135,8 +135,7 @@ main(int  argc,			/* I - Number of command-line arguments */
               temp = argv[i];
 	    }
 
-	    strncpy(platform.machine, temp, sizeof(platform.machine) - 1);
-	    platform.machine[sizeof(platform.machine) - 1] = '\0';
+	    strlcpy(platform.machine, temp, sizeof(platform.machine));
 	    break;
 
         case 'f' : /* Format */
@@ -269,10 +268,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    {
 	      i ++;
 	      if (i < argc)
-	      {
-		strncpy(directory, argv[i], sizeof(directory) - 1);
-		directory[sizeof(directory) - 1] = '\0';
-	      }
+		strlcpy(directory, argv[i], sizeof(directory));
 	      else
 	      {
 		puts("epm: Expected output directory.");
@@ -391,14 +387,14 @@ main(int  argc,			/* I - Number of command-line arguments */
   for (temp = namefmt; *temp != '\0'; temp ++)
   {
     if (platname[0])
-      strcat(platname, "-");
+      strlcat(platname, "-", sizeof(platname));
 
     if (*temp == 'm')
-      strcat(platname, platform.machine);
+      strlcat(platname, platform.machine, sizeof(platname));
     else if (*temp == 'r')
-      strcat(platname, platform.release);
+      strlcat(platname, platform.release, sizeof(platname));
     else if (*temp == 's')
-      strcat(platname, platform.sysname);
+      strlcat(platname, platform.sysname, sizeof(platname));
     else
     {
       printf("epm: Bad name format character \"%c\" in \"%s\".\n", *temp,
@@ -603,5 +599,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.77 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: epm.c,v 1.78 2005/01/11 21:20:17 mike Exp $".
  */
