@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.47 2001/06/29 16:33:07 mike Exp $"
+ * "$Id: portable.c,v 1.48 2001/07/02 14:26:54 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -47,7 +47,7 @@ static int	write_depends(dist_t *dist, FILE *fp);
 static int	write_dist(const char *title, const char *directory,
 		           const char *prodname, const char *platname,
 			   dist_t *dist, const char **files,
-			   const char *setup);
+			   const char *setup, const char *types);
 static int	write_confcheck(FILE *fp);
 static int	write_install(dist_t *dist, const char *prodname,
 			      int rootsize, int usrsize,
@@ -72,7 +72,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
               const char     *platname,	/* I - Platform name */
               dist_t         *dist,	/* I - Distribution information */
 	      struct utsname *platform,	/* I - Platform information */
-              const char     *setup)	/* I - Setup GUI image */
+              const char     *setup,	/* I - Setup GUI image */
+              const char     *types)	/* I - Setup GUI install types */
 {
   int		i;		/* Looping var */
   int		havepatchfiles;	/* 1 if we have patch files, 0 otherwise */
@@ -537,7 +538,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
   */
 
   if (write_dist("distribution", directory, prodname, platname, dist,
-                 distfiles, setup))
+                 distfiles, setup, types))
     return (1);
 
   if (havepatchfiles)
@@ -546,7 +547,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
     strcpy(dist->version, filename);
 
     if (write_dist("patch", directory, prodname, platname, dist, patchfiles,
-                   setup))
+                   setup, types))
       return (1);
   }
 
@@ -874,7 +875,8 @@ write_dist(const char *title,		/* I - Title to show */
            const char *platname,	/* I - Platform name */
 	   dist_t     *dist,		/* I - Distribution */
 	   const char **files,		/* I - Filenames */
-           const char *setup)		/* I - Setup GUI image file */
+           const char *setup,		/* I - Setup GUI image */
+           const char *types)		/* I - Setup GUI install types */
 {
   int		i;		/* Looping var */
   tarf_t	*tarfile;	/* Distribution tar file */
@@ -1023,6 +1025,38 @@ write_dist(const char *title,		/* I - Title to show */
     if (Verbosity)
     {
       printf(" setup.xpm");
+      fflush(stdout);
+    }
+
+   /*
+    * And the types file...
+    */
+
+    stat(types, &srcstat);
+    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, types) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for setup.types -\n    %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (Verbosity)
+    {
+      printf(" setup.types");
       fflush(stdout);
     }
   }
@@ -1860,5 +1894,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.47 2001/06/29 16:33:07 mike Exp $".
+ * End of "$Id: portable.c,v 1.48 2001/07/02 14:26:54 mike Exp $".
  */

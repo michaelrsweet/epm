@@ -4,9 +4,9 @@
 <H1 ALIGN="RIGHT"><A NAME="REFERENCE">C - List File Reference</A></H1>
 
 <P>This appendix provides a complete reference for the EPM list file
-format.</P>
+and setup types formats.</P>
 
-<H2>Overview of the List File Format</H2>
+<H2>The EPM List File Format</H2>
 
 <P>Each <I>EPM</I> product has an associated list file that
 describes the files to include with the product. Comment lines
@@ -14,7 +14,7 @@ begin with the "#" character and are ignored. All other
 non-blank lines must begin with a letter, dollar sign ("$"), or
 the percent sign ("%").</P>
 
-<H2>List File Directives</H2>
+<H3>List File Directives</H3>
 
 <P>The following list describes all of the list file directives
 supported by <I>EPM</I>:</P>
@@ -229,7 +229,7 @@ supported by <I>EPM</I>:</P>
 
 </DL></UL>
 
-<H2>List Variables</H2>
+<H3>List Variables</H3>
 
 <P><I>EPM</I> maintains a list of variables and their values
 which can be used to substitute values in the list file. These
@@ -251,6 +251,43 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
 or alone ($name); without brackets the name is terminated by the
 first slash (/), dash (-), or whitespace. The dollar sign can be
 inserted using $$.</P>
+
+<H2><A NAME="SETUPTYPES">The setup.types File</A></H2>
+
+<P>The EPM <B>setup</B> program normally presents the user with
+a list of software products to install, which is called a
+"custom" software installation.</P>
+
+<P>If a file called <I>setup.types</I> is present in the package
+directory, the user will instead be presented with a list of
+instal- lation types. Each type has an associated product list
+which determines the products that are installed by default. If
+a type has no products associated with it, then it is treated as
+a custom installation and the user is presented with a list of
+packages to choose from.</P>
+
+<P>The <I>setup.types</I> file is an ASCII text file consisting
+of type and product lines. Comments can be inserted by starting
+a line with the pound sign (#). Each installation type is
+defined by a line starting with the word <CODE>TYPE</CODE>.
+Products are defined by a line starting with the word
+<CODE>INSTALL</CODE>:</P>
+
+<UL><PRE>
+TYPE Typical End-User Configuration
+INSTALL foo
+INSTALL foo-help
+TYPE Typical Developer Configuration
+INSTALL foo
+INSTALL foo-help
+INSTALL foo-devel
+INSTALL foo-examples
+TYPE Custom Configuration
+</PRE></UL>
+
+<P>In the example above, three installation types are defined.
+Since the last type includes no products, the user will be
+presented with the full list of products to choose from.</P>
 
 </BODY>
 </HTML>

@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.5 2001/06/26 19:47:36 mike Exp $"
+.\" "$Id: epm.man,v 1.6 2001/07/02 14:26:55 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -139,9 +139,13 @@ and /usr/local/src/RPMS.
 .SH KNOWN BUGS
 EPM does not currently support generation of IRIX software patches.
 .SH SEE ALSO
-epminstall(1) - add a directory, file, or symlink to a list file.
-mkepmlist(1) - make an epm list file from a directory.
-epm.list(5) - epm list file format.
+epminstall(1) - add a directory, file, or symlink to a list file
+.br
+mkepmlist(1) - make an epm list file from a directory
+.br
+epm.list(5) - epm list file format
+.br
+setup(1) - graphical setup program for the esp package manager
 .SH COPYRIGHT
 Copyright 1999-2001 by Easy Software Products, All Rights Reserved.
 .LP
@@ -155,5 +159,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.5 2001/06/26 19:47:36 mike Exp $".
+.\" End of "$Id: epm.man,v 1.6 2001/07/02 14:26:55 mike Exp $".
 .\"

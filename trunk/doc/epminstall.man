@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epminstall.man,v 1.1 2001/06/20 18:34:57 mike Exp $"
+.\" "$Id: epminstall.man,v 1.2 2001/07/02 14:26:56 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM) install program.
 .\"
@@ -75,9 +75,11 @@ owner is "root".
 .br
 Specify the list file to update.
 .SH SEE ALSO
-epm(1) - create software packages.
-mkepmlist(1) - make an epm list file from a directory.
-epm.list(5) - epm list file format.
+epm(1) - create software packages
+.br
+mkepmlist(1) - make an epm list file from a directory
+.br
+epm.list(5) - epm list file format
 .SH COPYRIGHT
 Copyright 1999-2001 by Easy Software Products, All Rights Reserved.
 .LP
@@ -91,5 +93,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epminstall.man,v 1.1 2001/06/20 18:34:57 mike Exp $".
+.\" End of "$Id: epminstall.man,v 1.2 2001/07/02 14:26:56 mike Exp $".
 .\"

@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.15 2001/06/29 20:56:53 mike Exp $"
+// "$Id: setup2.cxx,v 1.16 2001/07/02 14:26:54 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -702,7 +702,7 @@ load_types(void)
       if (strncasecmp(line, "TYPE", 4) == 0 && isspace(line[4]))
       {
         // New type...
-	if (NumInstTypes >= (sizeof(InstTypes) / sizeof(InstTypes[0])))
+	if (NumInstTypes >= (int)(sizeof(InstTypes) / sizeof(InstTypes[0])))
 	{
 	  fprintf(stderr, "setup: Too many TYPEs (> %d) in setup.types!\n",
 	          sizeof(InstTypes) / sizeof(InstTypes[0]));
@@ -721,7 +721,7 @@ load_types(void)
       else if (strncasecmp(line, "INSTALL", 7) == 0 && dt && isspace(line[7]))
       {
         // Install a product...
-	if (dt->num_products >= (sizeof(dt->products) / sizeof(dt->products[0])))
+	if (dt->num_products >= (int)(sizeof(dt->products) / sizeof(dt->products[0])))
 	{
 	  fprintf(stderr, "setup: Too many INSTALLs (> %d) in setup.types!\n",
 	          sizeof(dt->products) / sizeof(dt->products[0]));
@@ -736,6 +736,9 @@ load_types(void)
           dt->products[dt->num_products] = dist - Dists;
 	  dt->num_products ++;
 	  dt->size += dist->rootsize + dist->usrsize;
+
+          if ((dist = find_dist(lineptr, NumInstalled, Installed)) != NULL)
+	    dt->size -= dist->rootsize + dist->usrsize;
 	}
 	else
 	  fprintf(stderr, "setup: Unable to find product \"%s\" for \"%s\"!\n",
@@ -755,15 +758,16 @@ load_types(void)
   for (i = 0, dt = InstTypes; i < NumInstTypes; i ++, dt ++)
   {
     if (dt->size >= 1024)
-      sprintf(dt->label + strlen(dt->label), " (%.1fm)", dt->size / 1024.0);
+      sprintf(dt->label + strlen(dt->label), " (+%.1fm disk space)",
+              dt->size / 1024.0);
     else if (dt->size)
-      sprintf(dt->label + strlen(dt->label), " (%dk)", dt->size);
+      sprintf(dt->label + strlen(dt->label), " (+%dk disk space)", dt->size);
 
     TypeButton[i]->label(dt->label);
     TypeButton[i]->show();
   }
 
-  for (; i < (sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
+  for (; i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
     TypeButton[i]->hide();
 }
 
@@ -791,11 +795,11 @@ next_cb(Fl_Button *, void *)
   }
   else if (Wizard->value() == SoftwarePane)
   {
-    for (i = 0; i < (sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
+    for (i = 0; i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
       if (TypeButton[i]->value())
         break;
 
-    if (i < (sizeof(TypeButton) / sizeof(TypeButton[0])) &&
+    if (i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])) &&
         InstTypes[i].num_products > 0)
       Wizard->next();
   }
@@ -884,11 +888,11 @@ type_cb(CheckButton *w, void *)	// I - Check button widget
 		*installed;	// Installed software
 
 
-  for (i = 0; i < (sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
+  for (i = 0; i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
     if (w == TypeButton[i])
       break;
 
-  if (i >= (sizeof(TypeButton) / sizeof(TypeButton[0])))
+  if (i >= (int)(sizeof(TypeButton) / sizeof(TypeButton[0])))
     return;
 
   dt = InstTypes + i;
@@ -1008,7 +1012,8 @@ update_sizes(void)
 #endif // __sgi || __sun
     rootfree = 1024;
   else
-    rootfree = (double)rootpart.f_bfree * (double)rootpart.f_bsize / 1024.0 / 1024.0;
+    rootfree = (int)((double)rootpart.f_bfree * (double)rootpart.f_bsize /
+                     1024.0 / 1024.0 + 0.5);
 
 #if defined(__sgi) || defined(__sun)
   if (statfs("/usr", &usrpart, sizeof(usrpart), 0))
@@ -1017,7 +1022,8 @@ update_sizes(void)
 #endif // __sgi || __sun
     usrfree = 1024;
   else
-    usrfree = (double)usrpart.f_bfree * (double)usrpart.f_bsize / 1024.0 / 1024.0;
+    usrfree = (int)((double)usrpart.f_bfree * (double)usrpart.f_bsize /
+                    1024.0 / 1024.0 + 0.5);
 
   // Display the results to the user...
   if (rootfree == usrfree)
@@ -1060,5 +1066,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.15 2001/06/29 20:56:53 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.16 2001/07/02 14:26:54 mike Exp $".
 //
