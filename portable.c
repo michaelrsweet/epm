@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.13 2000/08/04 14:52:50 mike Exp $"
+ * "$Id: portable.c,v 1.14 2000/08/15 17:54:34 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1047,7 +1047,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /sbin /etc/rc.d /etc ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc2.d -o " SYMLINK " $dir/rc2.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1064,8 +1064,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
 #ifdef __sgi
     fputs("		/etc/chkconfig -f $file on\n", scriptfile);
 #endif /* __sgi */
@@ -1333,7 +1333,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /sbin /etc/rc.d /etc ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc2.d -o " SYMLINK " $dir/rc2.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1350,8 +1350,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
 #ifdef __sgi
     fputs("		/etc/chkconfig -f $file on\n", scriptfile);
 #endif /* __sgi */
@@ -1464,7 +1464,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /sbin /etc/rc.d /etc ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc2.d -o " SYMLINK " $dir/rc2.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1479,7 +1479,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
 #ifdef __sgi
     fputs("		/bin/rm -f /etc/config/$file\n", scriptfile);
 #endif /* __sgi */
@@ -1543,5 +1543,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.13 2000/08/04 14:52:50 mike Exp $".
+ * End of "$Id: portable.c,v 1.14 2000/08/15 17:54:34 mike Exp $".
  */
