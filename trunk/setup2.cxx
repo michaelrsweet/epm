@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.39 2004/03/05 05:24:34 mike Exp $"
+// "$Id: setup2.cxx,v 1.40 2004/05/26 19:39:05 mike Exp $"
 //
 //   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -21,7 +21,7 @@
 //   get_dists()    - Get a list of available software products.
 //   install_dist() - Install a distribution...
 //   list_cb()      - Handle selections in the software list.
-//   load_image()   - Load the setup image file (setup.xpm)...
+//   load_image()   - Load the setup image file (setup.gif/xpm)...
 //   load_types()   - Load the installation types from the setup.types file.
 //   log_cb()       - Add one or more lines of text to the installation log.
 //   next_cb()      - Show software selections or install software.
@@ -31,6 +31,7 @@
 
 #define _DEFINE_GLOBALS_
 #include "setup.h"
+#include <FL/Fl_GIF_Image.H>
 #include <FL/Fl_XPM_Image.H>
 #include <FL/x.H>
 #include <FL/filename.H>
@@ -365,6 +366,7 @@ install_dist(const dist_t *dist)// I - Distribution to install
   char		licfile[1024];	// License filename
   struct stat	licinfo;	// License file info
   static int	liclength = 0;	// Size of license file
+  static char	liclabel[1024];	// Label for license pane
 
 
   sprintf(command, "**** %s ****", dist->name);
@@ -378,8 +380,8 @@ install_dist(const dist_t *dist)// I - Distribution to install
     liclength = licinfo.st_size;
 
     // Set the title string...
-    snprintf(command, sizeof(command), "Software License for %s", dist->name);
-    LicenseLabel->label(command);
+    snprintf(liclabel, sizeof(liclabel), "Software License for %s", dist->name);
+    LicensePane->label(liclabel);
 
     // Load the license into the browser...
     LicenseBrowser->clear();
@@ -607,18 +609,24 @@ list_cb(Fl_Check_Browser *, void *)
 
 
 //
-// 'load_image()' - Load the setup image file (setup.xpm)...
+// 'load_image()' - Load the setup image file (setup.gif/xpm)...
 //
 
 void
 load_image(void)
 {
-  Fl_XPM_Image	*xpm;		// New image
+  Fl_Image	*img;			// New image
 
 
-  xpm = new Fl_XPM_Image("setup.xpm");
+  if (!access("setup.xpm", 0))
+    img = new Fl_XPM_Image("setup.xpm");
+  else if (!access("setup.gif", 0))
+    img = new Fl_GIF_Image("setup.gif");
+  else
+    img = NULL;
 
-  WelcomeImage->image(xpm);
+  if (img)
+    WelcomeImage->image(img);
 }
 
 
@@ -1010,5 +1018,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.39 2004/03/05 05:24:34 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.40 2004/05/26 19:39:05 mike Exp $".
 //

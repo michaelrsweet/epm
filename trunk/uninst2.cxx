@@ -1,5 +1,5 @@
 //
-// "$Id: uninst2.cxx,v 1.5 2004/03/05 05:24:34 mike Exp $"
+// "$Id: uninst2.cxx,v 1.6 2004/05/26 19:39:05 mike Exp $"
 //
 //   ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -17,6 +17,14 @@
 //
 // Contents:
 //
+//   main()           - Main entry for software wizard...
+//   list_cb()        - Handle selections in the software list.
+//   load_image()     - Load the setup image file (setup.gif/xpm)...
+//   log_cb()         - Add one or more lines of text to the removal log.
+//   next_cb()        - Show software selections or remove software.
+//   remove_dist()    - Remove a distribution...
+//   show_installed() - Show the installed software products.
+//   update_size()    - Update the total +/- sizes of the installations.
 //
 
 #define _DEFINE_GLOBALS_
@@ -25,6 +33,7 @@
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_XPM_Image.H>
+#include <FL/Fl_GIF_Image.H>
 #include <errno.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -279,23 +288,29 @@ list_cb(Fl_Check_Browser *, void *)
 
 
 //
-// 'load_image()' - Load the setup image file (setup.xpm)...
+// 'load_image()' - Load the setup image file (setup.gif/xpm)...
 //
 
 void
 load_image(void)
 {
-  Fl_XPM_Image	*xpm;		// New image
+  Fl_Image	*img;			// New image
 
 
-  xpm = new Fl_XPM_Image("setup.xpm");
+  if (!access("setup.xpm", 0))
+    img = new Fl_XPM_Image("setup.xpm");
+  else if (!access("setup.gif", 0))
+    img = new Fl_GIF_Image("setup.gif");
+  else
+    img = NULL;
 
-  WelcomeImage->image(xpm);
+  if (img)
+    WelcomeImage->image(img);
 }
 
 
 //
-// 'log_cb()' - Add one or more lines of text to the removeation log.
+// 'log_cb()' - Add one or more lines of text to the removal log.
 //
 
 void
@@ -659,5 +674,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: uninst2.cxx,v 1.5 2004/03/05 05:24:34 mike Exp $".
+// End of "$Id: uninst2.cxx,v 1.6 2004/05/26 19:39:05 mike Exp $".
 //
