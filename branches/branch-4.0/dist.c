@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.3 2002/05/10 00:19:46 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.4 2002/05/12 21:57:12 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -985,6 +985,10 @@ write_dist(const char *listname,	/* I - File to write to */
 		*ptr;			/* Pointer into command string */
   FILE		*listfile;		/* Output file */
   file_t	*file;			/* Current file entry */
+  time_t	curtime;		/* Current time */
+  struct tm	*curdate;		/* Current date */
+  char		curstring[256];		/* Current date/time string */
+  const char	*subpkg;		/* Current subpackage */
   static const char *commands[] =	/* Command strings */
 		{
 		  "%preinstall",
@@ -1025,8 +1029,12 @@ write_dist(const char *listname,	/* I - File to write to */
   * Write the list file...
   */
 
-  fputs("# List file created by epminstall\n", listfile);
-  fputs("# " EPM_VERSION "\n", listfile);
+  curtime = time(NULL);
+  curdate = localtime(&curtime);
+
+  strftime(curstring, sizeof(curstring), "# List file created on %c by "
+           EPM_VERSION "\n", curdate);
+  fputs(curstring, listfile);
 
   if (dist->product[0])
     fprintf(listfile, "%%product %s\n", dist->product);
@@ -1045,16 +1053,31 @@ write_dist(const char *listname,	/* I - File to write to */
   if (dist->readme[0])
     fprintf(listfile, "%%readme %s\n", dist->readme);
 
+  subpkg = NULL;
   for (i = 0; i < dist->num_descriptions; i ++)
+  {
+    if (dist->descriptions[i].subpackage != subpkg)
+    {
+      subpkg = dist->descriptions[i].subpackage;
+      fprintf(listfile, "%%subpackage %s\n", subpkg ? subpkg : "");
+    }
+
     if (strchr(dist->descriptions[i].description, '\n') != NULL)
       fprintf(listfile, "%%description <<EPM-END-INLINE\n%s\nEPM-END-INLINE\n",
               dist->descriptions[i].description);
     else
       fprintf(listfile, "%%description %s\n",
               dist->descriptions[i].description);
+  }
 
   for (i = 0; i < dist->num_depends; i ++)
   {
+    if (dist->depends[i].subpackage != subpkg)
+    {
+      subpkg = dist->depends[i].subpackage;
+      fprintf(listfile, "%%subpackage %s\n", subpkg ? subpkg : "");
+    }
+
     fprintf(listfile, "%s %s", depends[(int)dist->depends[i].type],
             dist->depends[i].product);
 
@@ -1073,6 +1096,12 @@ write_dist(const char *listname,	/* I - File to write to */
 
   for (i = 0; i < dist->num_commands; i ++)
   {
+    if (dist->commands[i].subpackage != subpkg)
+    {
+      subpkg = dist->commands[i].subpackage;
+      fprintf(listfile, "%%subpackage %s\n", subpkg ? subpkg : "");
+    }
+
     fputs(commands[(int)dist->commands[i].type], listfile);
 
     is_inline = strchr(dist->commands[i].command, '\n') != NULL;
@@ -1096,9 +1125,17 @@ write_dist(const char *listname,	/* I - File to write to */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+  {
+    if (file->subpackage != subpkg)
+    {
+      subpkg = file->subpackage;
+      fprintf(listfile, "%%subpackage %s\n", subpkg ? subpkg : "");
+    }
+
     fprintf(listfile, "%c %04o %s %s %s %s\n",
 	    file->type, file->mode, file->user, file->group,
 	    file->dst, file->src);
+  }
 
   return (fclose(listfile));
 }
@@ -1859,5 +1896,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.3 2002/05/10 00:19:46 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.4 2002/05/12 21:57:12 mike Exp $".
  */

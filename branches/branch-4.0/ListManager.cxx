@@ -1,5 +1,5 @@
 //
-// "$Id: ListManager.cxx,v 1.1.2.1 2002/05/10 00:19:46 mike Exp $"
+// "$Id: ListManager.cxx,v 1.1.2.2 2002/05/12 21:57:12 mike Exp $"
 //
 //   List manager widget methods for the ESP Package Manager (EPM).
 //
@@ -127,10 +127,15 @@ ListManager::draw()
   int		lx;			// Current X position
   int		lw;			// Current width
   ListColumn	*c;			// Current column
+  Fl_Color	light, dark;		// Colors...
 
 
   // Draw the box...
   draw_box();
+
+  // Get the separator colors...
+  light = fl_color_average(color(), FL_WHITE, 0.5f);
+  dark  = fl_color_average(color(), FL_BLACK, 0.5f);
 
   // Draw the columns...
   for (i = num_columns_, c = columns_, lx = 0; i > 0; i --, c ++, lx += lw)
@@ -166,7 +171,15 @@ ListManager::draw()
 
     // Draw the separator...
     if (j < i)
-      fl_line(x() + lx + lw, y(), x() + lx + lw, y() + h() - 1);
+    {
+      fl_color(dark);
+      fl_line(x() + lx + lw, y() + 2,
+              x() + lx + lw, y() + h() - 3);
+
+      fl_color(light);
+      fl_line(x() + lx + lw + 1, y() + 3,
+              x() + lx + lw + 1, y() + h() - 2);
+    }
   }
 }
 
@@ -190,12 +203,12 @@ ListManager::handle(int event)		// I - Event to handle
 	drag_ = 0;
         return (1);
 
-    case FL_ENTER :
     case FL_MOVE :
     case FL_PUSH :
         if (Fl::event_button() != FL_LEFT_MOUSE)
 	  return (0);
 
+    case FL_ENTER :
 	drag_ = 0;
 
 	for (i = num_columns_, c = columns_; i > 0; i --, c ++)
@@ -245,5 +258,5 @@ ListManager::handle(int event)		// I - Event to handle
 
 
 //
-// End of "$Id: ListManager.cxx,v 1.1.2.1 2002/05/10 00:19:46 mike Exp $".
+// End of "$Id: ListManager.cxx,v 1.1.2.2 2002/05/12 21:57:12 mike Exp $".
 //

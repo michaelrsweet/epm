@@ -46,12 +46,12 @@ set_title();} {}
     Fl_Window window {
       label {EPM List Editor 4.0}
       callback {close_cb(this);} open
-      private xywh {354 38 605 495} type Double resizable
+      private xywh {354 38 720 495} type Double resizable
       code0 {\#include "epm.h"}
       code1 {\#include <FL/Fl_Preferences.H>} visible
     } {
       Fl_Menu_Bar menubar {open
-        private xywh {0 0 605 25}
+        private xywh {0 0 720 25}
       } {
         submenu {} {
           label {&File}
@@ -231,13 +231,13 @@ set_title();} {}
       }
       Fl_Box margin_manager {
         label ListManager
-        callback {margins_cb(this);} selected
-        private xywh {0 25 605 20} box THIN_UP_BOX
+        callback {margins_cb(this);}
+        private xywh {0 25 720 20} box FLAT_BOX color 52
         code0 {\#include "ListManager.h"}
         class ListManager
       }
       Fl_Menu_Button margin_menu {open
-        private xywh {0 25 605 20} box NO_BOX
+        private xywh {0 25 720 20} box NO_BOX
       } {
         menuitem margin_items {
           label Mode
@@ -271,8 +271,8 @@ set_title();} {}
         }
       }
       Fl_File_Browser list {
-        callback {list_cb(this);}
-        private xywh {0 45 605 450} type Multi resizable
+        callback {list_cb(this);} selected
+        private xywh {0 45 720 450} type Multi resizable
         code0 {list->has_scrollbar(Fl_Browser_::VERTICAL);}
       }
     }

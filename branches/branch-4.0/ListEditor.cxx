@@ -587,21 +587,22 @@ set_title();
 
 ListEditor::ListEditor(const char *listfile) {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = window = new Fl_Double_Window(605, 495, "EPM List Editor 4.0");
+  { Fl_Double_Window* o = window = new Fl_Double_Window(720, 495, "EPM List Editor 4.0");
     w = o;
     o->callback((Fl_Callback*)cb_window, (void*)(this));
-    { Fl_Menu_Bar* o = menubar = new Fl_Menu_Bar(0, 0, 605, 25);
+    { Fl_Menu_Bar* o = menubar = new Fl_Menu_Bar(0, 0, 720, 25);
       o->menu(menu_menubar);
     }
-    { ListManager* o = margin_manager = new ListManager(0, 25, 605, 20, "ListManager");
-      o->box(FL_THIN_UP_BOX);
+    { ListManager* o = margin_manager = new ListManager(0, 25, 720, 20, "ListManager");
+      o->box(FL_FLAT_BOX);
+      o->color(52);
       o->callback((Fl_Callback*)cb_margin_manager);
     }
-    { Fl_Menu_Button* o = margin_menu = new Fl_Menu_Button(0, 25, 605, 20);
+    { Fl_Menu_Button* o = margin_menu = new Fl_Menu_Button(0, 25, 720, 20);
       o->box(FL_NO_BOX);
       o->menu(menu_margin_menu);
     }
-    { Fl_File_Browser* o = list = new Fl_File_Browser(0, 45, 605, 450);
+    { Fl_File_Browser* o = list = new Fl_File_Browser(0, 45, 720, 450);
       o->type(3);
       o->callback((Fl_Callback*)cb_list);
       Fl_Group::current()->resizable(o);
