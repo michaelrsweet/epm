@@ -30,6 +30,8 @@ endif
 echo "Removing CVS directories..."
 
 rm -rf CVS
+rm -f makesrcdist
+rm -f ANNOUCEMENT
 
 echo "Making .tar.gz distribution..."
 

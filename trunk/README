@@ -76,6 +76,12 @@ HOW DO I USE EPM?
     An example EPM software list file is provided with this distribution
     in the file "epm.list".
 
+    There are also several HTML files that should prove useful:
+
+        epm.html       - The EPM man page in HTML format.
+	epm-paper.html - "Software Packaging with the ESP Package Manager".
+	epm-cups.html  - An annotated EPM list file for CUPS.
+
 
 DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
 
