@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.39 2002/10/07 19:29:45 mike Exp $"
+ * "$Id: rpm.c,v 1.40 2002/10/17 16:36:31 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -87,21 +87,21 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  qprintf(fp, "Summary: %s\n", dist->product);
-  qprintf(fp, "Name: %s\n", prodname);
-  qprintf(fp, "Version: %s\n", dist->version);
-  qprintf(fp, "Release: %d\n", dist->relnumber);
-  qprintf(fp, "Copyright: %s\n", dist->copyright);
-  qprintf(fp, "Packager: %s\n", dist->packager);
-  qprintf(fp, "Vendor: %s\n", dist->vendor);
-  qprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
+  fprintf(fp, "Summary: %s\n", dist->product);
+  fprintf(fp, "Name: %s\n", prodname);
+  fprintf(fp, "Version: %s\n", dist->version);
+  fprintf(fp, "Release: %d\n", dist->relnumber);
+  fprintf(fp, "Copyright: %s\n", dist->copyright);
+  fprintf(fp, "Packager: %s\n", dist->packager);
+  fprintf(fp, "Vendor: %s\n", dist->vendor);
+  fprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
   fputs("Group: Applications\n", fp);
 
  /*
   * Tell RPM to put the distributions in the output directory...
   */
 
-  qprintf(fp, "%%define _topdir %s/%s\n", current, directory);
+  fprintf(fp, "%%define _topdir %s/%s\n", current, directory);
 
   snprintf(filename, sizeof(filename), "%s/RPMS", directory);
 
@@ -122,42 +122,42 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
   {
     if (d->type == DEPEND_REQUIRES)
-      qprintf(fp, "Requires: %s", d->product);
+      fprintf(fp, "Requires: %s", d->product);
     else if (d->type == DEPEND_PROVIDES)
-      qprintf(fp, "Provides: %s", d->product);
+      fprintf(fp, "Provides: %s", d->product);
     else
-      qprintf(fp, "Conflicts: %s", d->product);
+      fprintf(fp, "Conflicts: %s", d->product);
 
     if (d->vernumber[0] == 0)
     {
       if (d->vernumber[1] < INT_MAX)
-        qprintf(fp, " <= %s\n", d->version[1]);
+        fprintf(fp, " <= %s\n", d->version[1]);
       else
         putc('\n', fp);
     }
     else if (d->vernumber[0] && d->vernumber[1] < INT_MAX)
     {
       if (d->vernumber[0] < INT_MAX && d->vernumber[1] < INT_MAX)
-        qprintf(fp, " >= %s, %s <= %s\n", d->version[0], d->product,
+        fprintf(fp, " >= %s, %s <= %s\n", d->version[0], d->product,
 	        d->version[1]);
     }
     else
-      qprintf(fp, " = %s\n", d->version[0]);
+      fprintf(fp, " = %s\n", d->version[0]);
   }
 
   fputs("%description\n", fp);
   for (i = 0; i < dist->num_descriptions; i ++)
-    qprintf(fp, "%s\n", dist->descriptions[i]);
+    fprintf(fp, "%s\n", dist->descriptions[i]);
 
   fputs("%pre\n", fp);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_INSTALL)
-      qprintf(fp, "%s\n", c->command);
+      fprintf(fp, "%s\n", c->command);
 
   fputs("%post\n", fp);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_POST_INSTALL)
-      qprintf(fp, "%s\n", c->command);
+      fprintf(fp, "%s\n", c->command);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
@@ -271,12 +271,12 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_REMOVE)
-      qprintf(fp, "%s\n", c->command);
+      fprintf(fp, "%s\n", c->command);
 
   fputs("%postun\n", fp);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_POST_REMOVE)
-      qprintf(fp, "%s\n", c->command);
+      fprintf(fp, "%s\n", c->command);
 
   fputs("%files\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
@@ -422,5 +422,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.39 2002/10/07 19:29:45 mike Exp $".
+ * End of "$Id: rpm.c,v 1.40 2002/10/17 16:36:31 mike Exp $".
  */

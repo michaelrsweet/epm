@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.1 2002/10/17 15:41:41 mike Exp $"
+ * "$Id: osx.c,v 1.2 2002/10/17 16:36:31 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -41,22 +41,15 @@ make_osx(const char     *prodname,	/* I - Product short name */
   int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
   char		name[1024];		/* Full product name */
-  char		specname[1024];		/* Spec filename */
   char		filename[1024];		/* Destination filename */
   file_t	*file;			/* Current distribution file */
   command_t	*c;			/* Current command */
-  depend_t	*d;			/* Current dependency */
   struct passwd	*pwd;			/* Pointer to user record */
   struct group	*grp;			/* Pointer to group record */
-  char		current[1024];		/* Current directory */
-  const char	*runlevels;		/* Run levels */
-  int		number;			/* Start/stop number */
 
 
   if (Verbosity)
     puts("Creating MacOS X distribution...");
-
-  getcwd(current, sizeof(current));
 
   if (dist->relnumber)
   {
@@ -71,84 +64,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
   else
     snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
- /*
-  * Write the spec file for RPM...
-  */
-
-  if (Verbosity)
-    puts("Creating spec file...");
-
-  snprintf(specname, sizeof(specname), "%s/%s.spec", directory, prodname);
-
-  if ((fp = fopen(specname, "w")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create spec file \"%s\" - %s\n", specname,
-            strerror(errno));
-    return (1);
-  }
-
-  qprintf(fp, "Summary: %s\n", dist->product);
-  qprintf(fp, "Name: %s\n", prodname);
-  qprintf(fp, "Version: %s\n", dist->version);
-  qprintf(fp, "Release: %d\n", dist->relnumber);
-  qprintf(fp, "Copyright: %s\n", dist->copyright);
-  qprintf(fp, "Packager: %s\n", dist->packager);
-  qprintf(fp, "Vendor: %s\n", dist->vendor);
-  qprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
-  fputs("Group: Applications\n", fp);
-
- /*
-  * Tell RPM to put the distributions in the output directory...
-  */
-
-  qprintf(fp, "%%define _topdir %s/%s\n", current, directory);
-
-  snprintf(filename, sizeof(filename), "%s/RPMS", directory);
-
-  make_directory(filename, 0777, getuid(), getgid());
-
-  if (strcmp(platform->machine, "intel") == 0)
-    snprintf(filename, sizeof(filename), "%s/RPMS/i386", directory);
-  else
-    snprintf(filename, sizeof(filename), "%s/RPMS/%s", directory,
-             platform->machine);
-
-  make_directory(filename, 0777, getuid(), getgid());
-
- /*
-  * Now list all of the dependencies...
-  */
-
-  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-  {
-    if (d->type == DEPEND_REQUIRES)
-      qprintf(fp, "Requires: %s", d->product);
-    else if (d->type == DEPEND_PROVIDES)
-      qprintf(fp, "Provides: %s", d->product);
-    else
-      qprintf(fp, "Conflicts: %s", d->product);
-
-    if (d->vernumber[0] == 0)
-    {
-      if (d->vernumber[1] < INT_MAX)
-        qprintf(fp, " <= %s\n", d->version[1]);
-      else
-        putc('\n', fp);
-    }
-    else if (d->vernumber[0] && d->vernumber[1] < INT_MAX)
-    {
-      if (d->vernumber[0] < INT_MAX && d->vernumber[1] < INT_MAX)
-        qprintf(fp, " >= %s, %s <= %s\n", d->version[0], d->product,
-	        d->version[1]);
-    }
-    else
-      qprintf(fp, " = %s\n", d->version[0]);
-  }
-
-  fputs("%description\n", fp);
-  for (i = 0; i < dist->num_descriptions; i ++)
-    qprintf(fp, "%s\n", dist->descriptions[i]);
-
+#if 0
   fputs("%pre\n", fp);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_INSTALL)
@@ -302,6 +218,104 @@ make_osx(const char     *prodname,	/* I - Product short name */
     }
 
   fclose(fp);
+#endif /* 0 */
+
+ /*
+  * Copy the resources for the license, readme, and welcome (description)
+  * stuff...
+  */
+
+  if (Verbosity)
+    puts("Copying temporary resource files...");
+
+  snprintf(filename, sizeof(filename), "%s/Resources", directory);
+  make_directory(filename, 0777, 0, 0);
+
+  snprintf(filename, sizeof(filename), "%s/Resources/License.txt", directory);
+  copy_file(dist->license, filename, 0644, 0, 0);
+
+  snprintf(filename, sizeof(filename), "%s/Resources/ReadMe.txt", directory);
+  copy_file(dist->readme, filename, 0644, 0, 0);
+
+  snprintf(filename, sizeof(filename), "%s/Resources/Welcome.txt", directory);
+  if ((fp = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create welcome file \"%s\" - %s\n",
+            filename, strerror(errno));
+    return (1);
+  }
+
+  fprintf(fp, "%s version %s\n", dist->product, dist->version);
+  fprintf(fp, "Copyright %s\n", dist->copyright);
+
+  for (i = 0; i < dist->num_descriptions; i ++)
+    fprintf(fp, "%s\n", dist->descriptions[i]);
+
+  fclose(fp);
+
+ /*
+  * Do pre/post install commands...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_PRE_INSTALL)
+      break;
+
+  if (i)
+  {
+    snprintf(filename, sizeof(filename), "%s/Resources/preflight", directory);
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create preinstall script \"%s\" - %s\n",
+              filename, strerror(errno));
+      return (1);
+    }
+
+    fputs("#!/bin/sh\n", fp);
+
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_PRE_INSTALL)
+	fprintf(fp, "%s\n", c->command);
+
+    fclose(fp);
+    chmod(filename, 0755);
+  }
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_INSTALL)
+      break;
+
+  if (!i)
+  {
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        break;
+  }
+
+  if (i)
+  {
+    snprintf(filename, sizeof(filename), "%s/Resources/postflight", directory);
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create postinstall script \"%s\" - %s\n",
+              filename, strerror(errno));
+      return (1);
+    }
+
+    fputs("#!/bin/sh\n", fp);
+
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_INSTALL)
+	fprintf(fp, "%s\n", c->command);
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        qprintf(fp, "/System/Library/StartupItems/%s/%s start\n",
+	        file->dst, file->dst);
+
+    fclose(fp);
+    chmod(filename, 0755);
+  }
 
  /*
   * Copy the files over...
@@ -330,7 +344,12 @@ make_osx(const char     *prodname,	/* I - Product short name */
     {
       case 'c' :
       case 'f' :
-          snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
+          if (strncmp(file->dst, "/etc/", 5) == 0)
+            snprintf(filename, sizeof(filename), "%s/Package/private%s",
+	             directory, file->dst);
+          else
+            snprintf(filename, sizeof(filename), "%s/Package%s",
+	             directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -340,8 +359,9 @@ make_osx(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'i' :
-          snprintf(filename, sizeof(filename), "%s/buildroot%s/init.d/%s",
-	           directory, SoftwareDir, file->dst);
+          snprintf(filename, sizeof(filename),
+	           "%s/Package/System/Library/StartupItems/%s/%s",
+	           directory, file->dst, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -349,9 +369,58 @@ make_osx(const char     *prodname,	/* I - Product short name */
 	  if (copy_file(filename, file->src, file->mode, pwd ? pwd->pw_uid : 0,
 			grp ? grp->gr_gid : 0))
 	    return (1);
+
+          snprintf(filename, sizeof(filename),
+	           "%s/Package/System/Library/StartupItems/%s/StartupParameters.plist",
+	           directory, file->dst);
+	  if ((fp = fopen(filename, "w")) == NULL)
+	  {
+	    fprintf(stderr, "epm: Unable to create init data file \"%s\" - %s\n",
+        	    filename, strerror(errno));
+	    return (1);
+	  }
+
+          fputs("{\n", fp);
+          fprintf(fp, "  Description = \"%s\";\n", dist->product);
+	  fprintf(fp, "  Provides = \"%s\";\n", file->dst);
+	  fputs("}\n", fp);
+
+	  fclose(fp);
+
+          snprintf(filename, sizeof(filename),
+	           "%s/Package/System/Library/StartupItems/%s/Resources/English.lproj",
+	           directory, file->dst);
+          make_directory(filename, 0777, 0, 0);
+
+          snprintf(filename, sizeof(filename),
+	           "%s/Package/System/Library/StartupItems/%s/Resources/English.lproj/Localizable.strings",
+	           directory, file->dst);
+	  if ((fp = fopen(filename, "w")) == NULL)
+	  {
+	    fprintf(stderr, "epm: Unable to create init strings file \"%s\" - %s\n",
+        	    filename, strerror(errno));
+	    return (1);
+	  }
+
+	  fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", fp);
+	  fputs("<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">\n", fp);
+	  fputs("<plist version=\"0.9\">\n", fp);
+	  fputs("<dict>\n", fp);
+	  fprintf(fp, "        <key>Starting %s</key>\n", dist->product);
+	  fprintf(fp, "        <string>Starting %s</string>\n", dist->product);
+	  fputs("</dict>\n", fp);
+	  fputs("</plist>\n", fp);
+
+	  fclose(fp);
           break;
       case 'd' :
-          snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
+          if (strncmp(file->dst, "/etc/", 5) == 0 ||
+	      strcmp(file->dst, "/etc") == 0)
+            snprintf(filename, sizeof(filename), "%s/Package/private%s",
+	             directory, file->dst);
+          else
+            snprintf(filename, sizeof(filename), "%s/Package%s",
+	             directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", filename);
@@ -360,7 +429,12 @@ make_osx(const char     *prodname,	/* I - Product short name */
 			 grp ? grp->gr_gid : 0);
           break;
       case 'l' :
-          snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
+          if (strncmp(file->dst, "/etc/", 5) == 0)
+            snprintf(filename, sizeof(filename), "%s/Package/private%s",
+	             directory, file->dst);
+          else
+            snprintf(filename, sizeof(filename), "%s/Package%s",
+	             directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -375,32 +449,13 @@ make_osx(const char     *prodname,	/* I - Product short name */
   */
 
   if (Verbosity)
-    puts("Building RPM binary distribution...");
+    puts("Building OSX package...");
 
-  if (strcmp(platform->machine, "intel") == 0)
-  {
-    if (run_command(NULL, "osx %s -bb " EPM_RPMARCH "i386 %s",
-                    Verbosity == 0 ? "--quiet" : "", specname))
-      return (1);
-  }
-  else if (run_command(NULL, "osx %s -bb " EPM_RPMARCH "%s %s",
-                       Verbosity == 0 ? "--quiet" : "", platform->machine,
-		       specname))
+  if (run_command(NULL, "/Developer/Applications/PackageMaker.app/"
+                        "Contents/MacOS/PackageMaker -build "
+			"-p %s/%s.pkg -f %s/Package -r %s/Resources",
+		  directory, prodname, directory, directory))
     return (1);
-
- /*
-  * Move the RPM to the local directory and rename the RPM using the
-  * product name specified by the user...
-  */
-
-  if (strcmp(platform->machine, "intel") == 0)
-    run_command(NULL, "/bin/mv %s/RPMS/i386/%s-%s-%d.i386.osx %s/%s.osx",
-        	directory, prodname, dist->version, dist->relnumber,
-		directory, name);
-  else
-    run_command(NULL, "/bin/mv %s/RPMS/%s/%s-%s-1.%s.osx %s/%s.osx",
-        	directory, platform->machine, prodname, dist->version,
-		platform->machine, directory, name);
 
  /*
   * Remove temporary files...
@@ -411,10 +466,8 @@ make_osx(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    run_command(NULL, "/bin/rm -rf %s/RPMS", directory);
-    run_command(NULL, "/bin/rm -rf %s/buildroot", directory);
-
-    unlink(specname);
+    run_command(NULL, "/bin/rm -rf %s/Resources", directory);
+    run_command(NULL, "/bin/rm -rf %s/Package", directory);
   }
 
   return (0);
@@ -422,5 +475,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.1 2002/10/17 15:41:41 mike Exp $".
+ * End of "$Id: osx.c,v 1.2 2002/10/17 16:36:31 mike Exp $".
  */
