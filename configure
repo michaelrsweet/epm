@@ -2528,12 +2528,12 @@ if test "x$RPM" != "x"; then
 
 	if test "x$build" = "x"; then
 		cat >> confdefs.h <<EOF
-#define EPM_RPMARCH "--target"
+#define EPM_RPMARCH "--target="
 EOF
 
 	else
 		cat >> confdefs.h <<EOF
-#define EPM_RPMARCH "--buildarch"
+#define EPM_RPMARCH "--buildarch "
 EOF
 
 	fi
