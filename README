@@ -112,6 +112,7 @@ WHAT'S NEW IN EPM 2.3?
 	  Makefile.
 	- Added support for defining variables in list files;
 	  the format is "$name=value".
+	- The variable expansion code didn't check for ${name}.
 
 
 WHAT'S NEW IN EPM 2.2?

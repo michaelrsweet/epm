@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.15 2001/01/19 16:16:50 mike Exp $"
+ * "$Id: dist.c,v 1.16 2001/01/19 17:22:32 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -448,8 +448,27 @@ expand_name(char *buffer,	/* O - Output string */
     if (*name == '$')
     {
       name ++;
-      for (varptr = var; strchr("/ \t-", *name) == NULL && *name != '\0';)
-        *varptr++ = *name++;
+      if (*name == '{')
+      {
+       /*
+        * Bracketed variable name...
+	*/
+
+	for (varptr = var, name ++; *name != '}' && *name != '\0';)
+          *varptr++ = *name++;
+
+        if (*name == '}')
+	  name ++;
+      }
+      else
+      {
+       /*
+        * Unbracketed variable name...
+	*/
+
+	for (varptr = var; strchr("/ \t-", *name) == NULL && *name != '\0';)
+          *varptr++ = *name++;
+      }
 
       *varptr = '\0';
 
@@ -736,5 +755,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.15 2001/01/19 16:16:50 mike Exp $".
+ * End of "$Id: dist.c,v 1.16 2001/01/19 17:22:32 mike Exp $".
  */
