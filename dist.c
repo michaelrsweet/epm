@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.10 2000/12/10 16:45:05 mike Exp $"
+ * "$Id: dist.c,v 1.11 2000/12/11 16:56:00 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -288,30 +288,49 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  strcpy(group, "root");
 #endif /* __osf__ */
 
-        for (temp = strrchr(src, '/'); temp && *temp; temp ++)
+        if ((temp = strrchr(src, '/')) == NULL)
+	  temp = src;
+	else
+	  temp ++;
+
+        for (; *temp; temp ++)
 	  if (strchr("*?[", *temp))
 	    break;
 
-        if (temp && *temp)
+        if (*temp)
 	{
 	 /*
 	  * Add using wildcards...
 	  */
 
-          temp  = strrchr(src, '/');
-	  *temp = '\0';
-	  strncpy(pattern, temp + 1, sizeof(pattern) - 1);
+          if ((temp = strrchr(src, '/')) == NULL)
+	    temp = src;
+	  else
+	    *temp++ = '\0';
+
+	  strncpy(pattern, temp, sizeof(pattern) - 1);
 	  pattern[sizeof(pattern) - 1] = '\0';
 
           if (dst[strlen(dst) - 1] != '/')
 	    strncat(dst, "/", sizeof(dst) - 1);
 
-          if ((dir = opendir(src)) == NULL)
+          if (temp == src)
+	    dir = opendir(".");
+	  else
+	    dir = opendir(src);
+
+          if (dir == NULL)
 	    fprintf(stderr, "epm: Unable to open directory \"%s\" - %s\n",
 	            src, strerror(errno));
           else
 	  {
-	    *temp++ = '/';
+	   /*
+	    * Make sure we have a directory separator...
+	    */
+
+	    if (temp > src)
+	      temp[-1] = '/';
+
 	    while ((dent = readdir(dir)) != NULL)
 	    {
 	      strcpy(temp, dent->d_name);
@@ -697,5 +716,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.10 2000/12/10 16:45:05 mike Exp $".
+ * End of "$Id: dist.c,v 1.11 2000/12/11 16:56:00 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.43 2000/12/11 04:00:37 mike Exp $"
+ * "$Id: epm.c,v 1.44 2000/12/11 16:56:00 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -324,7 +324,13 @@ main(int  argc,			/* I - Number of command-line arguments */
         i = make_rpm(prodname, directory, platname, dist, &platform);
 	break;
     case PACKAGE_SWINSTALL :
-        i = make_swinstall(prodname, directory, platname, dist, &platform);
+        if (geteuid())
+	{
+	  fputs("epm: Error - HP-UX packages must be built as root!\n", stderr);
+          i = 1;
+	}
+	else
+          i = make_swinstall(prodname, directory, platname, dist, &platform);
 	break;
   }
 
@@ -487,5 +493,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.43 2000/12/11 04:00:37 mike Exp $".
+ * End of "$Id: epm.c,v 1.44 2000/12/11 16:56:00 mike Exp $".
  */
