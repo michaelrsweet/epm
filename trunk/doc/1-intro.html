@@ -87,8 +87,20 @@ systems. Table 1.1 shows the results of our investigation.</P>
 </TR>
 <TR>
 	<TD>pkg_add</TD>
-	<TD>FreeBSD<BR>
-	NetBSD<BR>
+	<TD>FreeBSD</TD>
+	<TD>Yes</TD>
+	<TD>Yes<SUP>2</SUP></TD>
+	<TD>No</TD>
+	<TD>No</TD>
+	<TD>No</TD>
+	<TD>No</TD>
+	<TD>No</TD>
+	<TD>No</TD>
+	<TD>No</TD>
+</TR>
+<TR>
+	<TD>pkg_add</TD>
+	<TD>NetBSD<BR>
 	OpenBSD</TD>
 	<TD>Yes</TD>
 	<TD>Yes<SUP>2</SUP></TD>
@@ -207,8 +219,8 @@ RPM and Debian formats also support source distributions that
 specifically allow for recompilation and installation. Only the
 commercial UNIX formats support patch distributions - you have
 to completely upgrade a software package with RPM and Debian.
-All but the Solaris pkg format allow you to upgrade a package
-without removing the old version first.</P>
+All but the Solaris <CODE>pkg</CODE> format allow you to upgrade
+a package without removing the old version first.</P>
 
 <P>When building the software packages, RPM and Debian force you
 to create the actual directories, copy the files to those
