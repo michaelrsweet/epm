@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.11 2001/06/26 16:22:21 mike Exp $"
+ * "$Id: deb.c,v 1.12 2001/07/05 15:34:48 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -51,7 +51,8 @@ make_deb(const char     *prodname,	/* I - Product short name */
 			{
 			  "Depends",
 			  "Conflicts",
-			  "Replaces"
+			  "Replaces",
+			  "Provides"
 			};
 
 
@@ -409,5 +410,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.11 2001/06/26 16:22:21 mike Exp $".
+ * End of "$Id: deb.c,v 1.12 2001/07/05 15:34:48 mike Exp $".
  */
