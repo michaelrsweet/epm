@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.3 1999/11/04 20:31:06 mike Exp $"
+# "$Id: Makefile.in,v 1.4 1999/11/04 20:34:26 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -64,9 +64,15 @@ prefix		=	@prefix@
 	echo Compiling $<...
 	$(CXX) $(CXXFLAGS) -c $<
 
+#
+# Targets...
+#
 
 TARGETS	=	epm @SETUP@
-OBJS	=	epm.o string.o setup.o setup2.o Fl_Wizard.o
+EPM_OBJS =	deb.o dist.o epm.o file.o inst.o pkg.o portable.o rpm.o \
+		string.o swinstall.o tar.o
+SETUP_OBJS =	setup.o setup2.o Fl_Check_Browser.o Fl_Wizard.o
+OBJS	=	$(EPM_OBJS) $(SETUP_OBJS)
 
 #
 # Make all targets...
@@ -98,27 +104,27 @@ install: $(TARGETS)
 # epm
 #
 
-epm:	epm.o string.o
+epm:	$(EPM_OBJS)
 	echo Linking epm...
-	$(CC) $(LDFLAGS) -o epm epm.o string.o
+	$(CC) $(LDFLAGS) -o epm $(EPM_OBJS)
 
-epm.o:		string.h
-string.o:	string.h
+$(EPM_OBJS):	epm.h string.h
 
 #
 # setup
 #
 
-setup:	setup.o setup2.o Fl_Wizard.o
+setup:	$(SETUP_OBJS)
 	echo Linking setup...
-	$(CXX) $(LDFLAGS) -o setup setup.o setup2.o Fl_Wizard.o $(LIBS)
+	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) $(LIBS)
 
-setup.o:	setup.h Fl_Wizard.h
-setup2.o:	setup.h Fl_Wizard.h
+setup.o:	setup.h Fl_Check_Browser.h Fl_Wizard.h
+setup2.o:	setup.h Fl_Check_Browser.h Fl_Wizard.h
 Fl_Wizard.o:	Fl_Wizard.h
+Fl_Check_Browser.o:	Fl_Check_Browser.h
 
 $(OBJS):	Makefile config.h
 
 #
-# End of "$Id: Makefile.in,v 1.3 1999/11/04 20:31:06 mike Exp $".
+# End of "$Id: Makefile.in,v 1.4 1999/11/04 20:34:26 mike Exp $".
 #
