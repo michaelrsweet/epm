@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.46 2002/08/29 11:44:47 mike Exp $"
+ * "$Id: dist.c,v 1.47 2002/08/29 20:53:47 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -34,6 +34,7 @@
  *   get_file()        - Read a file into a string...
  *   get_inline()      - Read inline lines into a string...
  *   get_line()        - Get a line from a file, filtering for uname lines...
+ *   get_string()      - Get a delimited string from a line.
  *   get_vernumber()   - Convert a version string to a number...
  *   patmatch()        - Pattern matching...
  */
@@ -69,6 +70,7 @@ static char	*get_inline(const char *term, FILE *fp, char *buffer, int size);
 static char	*get_line(char *buffer, int size, FILE *fp,
 		          struct utsname *platform, const char *format,
 			  int *skip);
+static char	*get_string(char **src, char *dst, int dstsize);
 static int	get_vernumber(const char *version);
 static int	patmatch(const char *, const char *);
 
@@ -734,111 +736,148 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
         src[0]     = '\0';
 	options[0] = '\0';
 
-        if (sscanf(line, "%c%o%15s%15s%254s%254s%254s", &type, &mode,
-                      user, group, dst, src, options) < 5)
-	  fprintf(stderr, "epm: Bad line - %s\n", line);
-	else
+        type = line[0];
+	if (!isspace(line[1]))
 	{
-	  if (tolower(type) == 'd' || type == 'R')
-	  {
-	    strcpy(options, src);
-	    src[0] = '\0';
-	  }
+	  fprintf(stderr, "epm: Expected whitespace after file type - %s\n",
+	          line);
+	  continue;
+	}
+
+        temp = line + 2;
+	mode = strtol(temp, &temp, 8);
+	if (temp == (line + 2))
+	{
+	  fprintf(stderr, "epm: Expected file permissions after file type - %s\n",
+	          line);
+	  continue;
+	}
+
+        if (get_string(&temp, user, sizeof(user)) == NULL)
+	{
+	  fprintf(stderr, "epm: Expected user after file permissions - %s\n",
+	          line);
+	  continue;
+	}
+
+        if (get_string(&temp, group, sizeof(group)) == NULL)
+	{
+	  fprintf(stderr, "epm: Expected group after user - %s\n",
+	          line);
+	  continue;
+	}
+
+        if (get_string(&temp, dst, sizeof(dst)) == NULL)
+	{
+	  fprintf(stderr, "epm: Expected destination after group - %s\n",
+	          line);
+	  continue;
+	}
+
+        get_string(&temp, src, sizeof(src));
+
+	strncpy(options, temp, sizeof(options) - 1);
+	options[sizeof(options) - 1] = '\0';
+
+	if (tolower(type) == 'd' || type == 'R')
+	{
+	  strcpy(options, src);
+	  src[0] = '\0';
+	}
 
 #ifdef __osf__ /* Remap group "sys" to "system" */
-          if (strcmp(group, "sys") == 0)
-	    strcpy(group, "system");
+        if (strcmp(group, "sys") == 0)
+	  strcpy(group, "system");
 #elif defined(__linux) /* Remap group "sys" to "root" */
-          if (strcmp(group, "sys") == 0)
-	    strcpy(group, "root");
+        if (strcmp(group, "sys") == 0)
+	  strcpy(group, "root");
 #endif /* __osf__ */
+
+        if ((temp = strrchr(src, '/')) == NULL)
+	  temp = src;
+	else
+	  temp ++;
+
+        for (; *temp; temp ++)
+	  if (strchr("*?[", *temp))
+	    break;
+
+        if (*temp)
+	{
+	 /*
+	  * Add using wildcards...
+	  */
 
           if ((temp = strrchr(src, '/')) == NULL)
 	    temp = src;
 	  else
-	    temp ++;
+	    *temp++ = '\0';
 
-          for (; *temp; temp ++)
-	    if (strchr("*?[", *temp))
-	      break;
+	  strncpy(pattern, temp, sizeof(pattern) - 1);
+	  pattern[sizeof(pattern) - 1] = '\0';
 
-          if (*temp)
+          if (dst[strlen(dst) - 1] != '/')
+	    strncat(dst, "/", sizeof(dst) - 1);
+
+          if (temp == src)
+	    dir = opendir(".");
+	  else
+	    dir = opendir(src);
+
+          if (dir == NULL)
+	    fprintf(stderr, "epm: Unable to open directory \"%s\" - %s\n",
+	            src, strerror(errno));
+          else
 	  {
 	   /*
-	    * Add using wildcards...
+	    * Make sure we have a directory separator...
 	    */
 
-            if ((temp = strrchr(src, '/')) == NULL)
-	      temp = src;
-	    else
-	      *temp++ = '\0';
+	    if (temp > src)
+	      temp[-1] = '/';
 
-	    strncpy(pattern, temp, sizeof(pattern) - 1);
-	    pattern[sizeof(pattern) - 1] = '\0';
-
-            if (dst[strlen(dst) - 1] != '/')
-	      strncat(dst, "/", sizeof(dst) - 1);
-
-            if (temp == src)
-	      dir = opendir(".");
-	    else
-	      dir = opendir(src);
-
-            if (dir == NULL)
-	      fprintf(stderr, "epm: Unable to open directory \"%s\" - %s\n",
-	              src, strerror(errno));
-            else
+	    while ((dent = readdir(dir)) != NULL)
 	    {
-	     /*
-	      * Make sure we have a directory separator...
-	      */
+	      strcpy(temp, dent->d_name);
+	      if (stat(src, &fileinfo))
+	        continue; /* Skip files we can't read */
 
-	      if (temp > src)
-		temp[-1] = '/';
+              if (S_ISDIR(fileinfo.st_mode))
+	        continue; /* Skip directories */
 
-	      while ((dent = readdir(dir)) != NULL)
-	      {
-		strcpy(temp, dent->d_name);
-		if (stat(src, &fileinfo))
-	          continue; /* Skip files we can't read */
+              if (!patmatch(dent->d_name, pattern))
+	        continue;
 
-        	if (S_ISDIR(fileinfo.st_mode))
-	          continue; /* Skip directories */
+              file = add_file(dist);
 
-        	if (!patmatch(dent->d_name, pattern))
-	          continue;
-
-        	file = add_file(dist);
-
-        	file->type = type;
-		file->mode = mode;
-        	strcpy(file->src, src);
-		strcpy(file->dst, dst);
-		strncat(file->dst, dent->d_name, sizeof(file->dst) - 1);
-		strcpy(file->user, user);
-		strcpy(file->group, group);
-		strcpy(file->options, options);
-	      }
-
-              closedir(dir);
+              file->type = type;
+	      file->mode = mode;
+              strcpy(file->src, src);
+	      strcpy(file->dst, dst);
+	      strncat(file->dst, dent->d_name, sizeof(file->dst) - 1);
+	      strcpy(file->user, user);
+	      strcpy(file->group, group);
+	      strcpy(file->options, options);
 	    }
-	  }
-	  else
-	  {
-           /*
-	    * Add single file...
-	    */
 
-            file = add_file(dist);
-
-            file->type = type;
-	    file->mode = mode;
-            strcpy(file->src, src);
-	    strcpy(file->dst, dst);
-	    strcpy(file->user, user);
-	    strcpy(file->group, group);
-	    strcpy(file->options, options);
+            closedir(dir);
 	  }
+	}
+	else
+	{
+         /*
+	  * Add single file...
+	  */
+
+          file = add_file(dist);
+
+          file->type = type;
+	  file->mode = mode;
+          strcpy(file->src, src);
+	  strcpy(file->dst, dst);
+	  strcpy(file->user, user);
+	  strcpy(file->group, group);
+	  strcpy(file->options, options);
 	}
       }
     }
@@ -1526,6 +1565,135 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 
 
 /*
+ * 'get_string()' - Get a delimited string from a line.
+ */
+
+static char *				/* O  - String or NULL */
+get_string(char **src,			/* IO - Source string */
+           char *dst,			/* O  - Destination string */
+	   int  dstsize)		/* I  - Size of destination string */
+{
+  char	*srcptr,			/* Current source pointer */
+	*dstptr,			/* Current destination pointer */
+	*dstend,			/* End of destination string */
+	quote;				/* Quoting char */
+
+
+ /*
+  * Initialize things...
+  */
+
+  srcptr = *src;
+  dstptr = dst;
+  dstend = dst + dstsize - 1;
+
+  *dstptr = '\0';
+
+ /*
+  * Skip leading whitespace...
+  */
+
+  while (isspace(*srcptr))
+    srcptr ++;
+
+  if (!*srcptr)
+  {
+    *src = srcptr;
+
+    return (NULL);
+  }
+
+ /*
+  * Grab the next string...
+  */
+
+  while (*srcptr && !isspace(*srcptr))
+  {
+    if (*srcptr == '\\')
+    {
+      srcptr ++;
+
+      if (!*srcptr)
+      {
+        fputs("epm: Expected character after backslash!\n", stderr);
+
+        *src = srcptr;
+        *dst = '\0';
+
+	return (NULL);
+      }
+    }
+    else if (*srcptr == '\'' || *srcptr == '\"')
+    {
+     /*
+      * Read a quoted string...
+      */
+
+      quote = *srcptr++;
+
+      while (*srcptr != quote && *srcptr)
+      {
+        if (*srcptr == '\\')
+	{
+	  srcptr ++;
+
+	  if (!*srcptr)
+	  {
+            fputs("epm: Expected character after backslash!\n", stderr);
+
+            *src = srcptr;
+            *dst = '\0';
+
+	    return (NULL);
+	  }
+	}
+
+	if (dstptr < dstend)
+	  *dstptr++ = *srcptr;
+
+	srcptr ++;
+      }
+
+      if (!*srcptr)
+      {
+        fprintf(stderr, "epm: Expected end quote %c!\n", quote);
+
+        *src = srcptr;
+	*dst = '\0';
+
+	return (NULL);
+      }
+
+      srcptr ++;
+      continue;
+    }
+
+    if (dstptr < dstend)
+      *dstptr++ = *srcptr;
+
+    srcptr ++;
+  }
+
+  *dstptr = '\0';
+
+ /*
+  * Skip leading whitespace...
+  */
+
+  while (isspace(*srcptr))
+    srcptr ++;
+
+ /*
+  * Return the string and string pointer...
+  */
+
+  *src = srcptr;
+
+  return (dst);
+}
+
+
+/*
  * 'get_vernumber()' - Convert a version string to a number...
  */
 
@@ -1719,5 +1887,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.46 2002/08/29 11:44:47 mike Exp $".
+ * End of "$Id: dist.c,v 1.47 2002/08/29 20:53:47 mike Exp $".
  */
