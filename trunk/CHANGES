@@ -1,15 +1,18 @@
-CHANGES - ESP Package Manager (EPM) 3.4.1
------------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.5
+---------------------------------------
 
-WHAT'S NEW IN EPM 3.4.1?
+WHAT'S NEW IN EPM 3.5?
 
-    EPM 3.4.1 adds the following features, fixes, and changes to
+    EPM 3.5 adds the following features, fixes, and changes to
     EPM 3.4:
 
 	- The portable removal scripts didn't correctly write
 	  the list of init scripts to remove.
 	- Added a new --output-dir option contributed by
 	  Geoffrey Wossum.
+	- QNX returns " 0" instead of "0" for the UID from the
+	  "id -u" command, which caused problems with portable
+	  installation script.
 
 
 WHAT'S NEW IN EPM 3.4?

@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.56 2002/06/07 21:15:05 mike Exp $"
+dnl "$Id: configure.in,v 1.57 2002/07/08 16:56:10 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=3.4.1
-VERNUMBER=341
+VERSION=3.5.0
+VERNUMBER=350
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -359,5 +359,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.56 2002/06/07 21:15:05 mike Exp $".
+dnl End of "$Id: configure.in,v 1.57 2002/07/08 16:56:10 mike Exp $".
 dnl
