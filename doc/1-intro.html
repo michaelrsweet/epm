@@ -33,12 +33,12 @@ manually. Needless to say, this process was far from perfect and
 we had more than one distribution that was not identical on all
 operating systems.</P>
 
-<P>As we began developing the
-<A HREF="http://www.cups.org">Common UNIX Printing System
-("CUPS")</A> in 1998, our goal was to add support for two
-additional operating systems: Linux and Compaq Tru64 UNIX. If we
-wanted to avoid the mistakes of the past, we clearly had to
-change how we produced software distributions.</P>
+<P>As we began developing the Common UNIX Printing System
+(<A HREF="http://www.cups.org/">http://www.cups.org/</A>) in
+1998, our initial goal was to add support for two additional
+operating systems: Linux and Compaq Tru64 UNIX. If we wanted to
+avoid the mistakes of the past, we clearly had to change how we
+produced software distributions.</P>
 
 <P>The first version of EPM was released in 1999 and supported
 so-called "portable" software distributions that were not tied
@@ -207,103 +207,18 @@ operating systems.</P>
 
 <H2>Design Goals of EPM</H2>
 
-<P>Our goals for the first release of EPM were fairly simple:</P>
+<P>EPM was designed from the beginning to build binary software
+distributions using a common software specification format. The
+same distribution files work for all operating systems and all
+distribution formats. Supporting source code distributions was
+not a goal since most RPM and Debian source distributions are
+little more than wrapping around a compressed tar file
+containing the source files and a configure script.</P>
 
-<OL>
-
-	<LI>Build binary software distributions using a common
-	software specification format. The same distribution
-	files must work for all operating systems.</LI>
-
-	<LI>Optionally strip executable files before packaging.</LI>
-
-	<LI>Map source files and directories to the installation
-	locations and permissions.</LI>
-
-	<LI>Support configuration files and boot-time
-	initialization scripts.</LI>
-
-	<LI>Automatically backup existing files when a product
-	replaces an existing file.</LI>
-
-	<LI>Provide installation and removal scripts that will
-	work on all systems without additional software.</LI>
-
-	<LI>Support automatic upgrades to newer versions of a
-	product using full or (smaller) patch distributions.</LI>
-
-	<LI>Support software package conflicts, requirements,
-	and replacements.</LI>
-
-	<LI>Support network installations where
-	<CODE>/usr</CODE> is shared amongst client machines.</LI>
-
-	<LI>Make it all open-source under the GNU GPL.</LI>
-
-</OL>
-
-<P>As we approached EPM 2.x we added the following goals:</P>
-
-<OL>
-
-	<LI>Support portable and vendor package formats from the
-	same specification files. Make the interface easily
-	extended to support new formats as they are implemented.</LI>
-
-	<LI>Provide a simple GUI installer that can be included
-	with portable distributions, like the popular
-	InstallShield software in the Microsoft Windows world.</LI>
-
-	<LI>Support variable substitution in filenames to allow
-	for easier relocation and/or naming of files in the
-	distribution.</LI>
-
-	<LI>Support wildcards in source filenames.</LI>
-
-</OL>
-
-<P>The EPM 3.x versions add still more goals:
-
-<OL>
-
-	<LI>Provide better documentation, like this manual.</LI>
-
-	<LI>Add support for executables and libraries created with
-	libtool.</LI>
-
-	<LI>Add an <CODE>install(8)</CODE> replacement command that
-	can be used to create list files.</LI>
-
-	<LI>Add a small script that can be installed with every
-	portable software package to list and remove installed
-	packages.</LI>
-
-	<LI>Add support for more vendor-specific formats; specifically
-	AIX and BSD packaging formats.</LI>
-
-	<LI>Add support for relocatable packages.</LI>
-
-	<LI>Add support for Tru64-style "linked" packages, where
-	symlinks are created that point to the corresponding files
-	and directories in the relocated path.</LI>
-
-	<LI>Add better manpage installation support - specifically,
-	add code to automatically locate the correct man directory
-	for each file depending on the architecture.</LI>
-
-	<LI>Add support for dependency checking against vendor
-	packages; that is, a portable package could check its
-	dependencies against portable, RPM, Debian, etc.
-	packages, rather than just packages of the same format.</LI>
-	
-</OL>
-
-<P>As you can see, the focus has been on making the binary
-software distribution process as easy as possible. Supporting
-source code distributions was not a goal since most RPM and
-Debian source distributions are little more than wrapping around
-a compressed tar file containing the source files and a
-configure script.</P>
+<P>Over the years, additional features have made their way into
+EPM to support more advanced software packages. Whenever
+possible, EPM emulates a feature if the vendor packager does
+not support it natively.</P>
 
 <H2>Resources</H2>
 
@@ -314,7 +229,7 @@ documentation for EPM:</P>
 <A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
 </PRE></UL>
 
-<P>The EPM source code can be downloaded in compress tar files or
+<P>The EPM source code can be downloaded in compressed tar files or
 via the popular CVS software. Please see the EPM web site for
 complete instructions.</P>
 

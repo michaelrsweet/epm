@@ -1,5 +1,5 @@
 #
-# "$Id: epm.list.in,v 1.6 2001/06/20 18:34:56 mike Exp $"
+# "$Id: epm.list.in,v 1.7 2001/06/21 16:05:57 mike Exp $"
 #
 #   Sample software list file for the ESP Package Manager (EPM).
 #
@@ -61,16 +61,16 @@ f 0444 root sys ${docdir}/epm-manual.html $srcdir/doc/epm-manual.html
 f 0444 root sys ${docdir}/epm-manual.pdf $srcdir/doc/epm-manual.pdf
 
 # Man pages
-f 0444 root sys ${mandir}/cat1/epm.$CAT1EXT $srcdir/epm.1
-f 0444 root sys ${mandir}/cat1/epminstall.$CAT1EXT $srcdir/epminstall.1
-f 0444 root sys ${mandir}/cat1/mkepmlist.$CAT1EXT $srcdir/mkepmlist.1
-f 0444 root sys ${mandir}/cat1/epm.list.$CAT5EXT $srcdir/epm.list.5
+f 0444 root sys ${mandir}/cat1/epm.$CAT1EXT $srcdir/doc/epm.1
+f 0444 root sys ${mandir}/cat1/epminstall.$CAT1EXT $srcdir/doc/epminstall.1
+f 0444 root sys ${mandir}/cat1/mkepmlist.$CAT1EXT $srcdir/doc/mkepmlist.1
+f 0444 root sys ${mandir}/cat1/epm.list.$CAT5EXT $srcdir/doc/epm.list.5
 
-f 0444 root sys ${mandir}/man1/epm.$MAN1EXT $srcdir/epm.man
-f 0444 root sys ${mandir}/man1/epminstall.$MAN1EXT $srcdir/epminstall.man
-f 0444 root sys ${mandir}/man1/mkepmlist.$MAN1EXT $srcdir/mkepmlist.man
-f 0444 root sys ${mandir}/man1/epm.list.$MAN5EXT $srcdir/epm.list.man
+f 0444 root sys ${mandir}/man1/epm.$MAN1EXT $srcdir/doc/epm.man
+f 0444 root sys ${mandir}/man1/epminstall.$MAN1EXT $srcdir/doc/epminstall.man
+f 0444 root sys ${mandir}/man1/mkepmlist.$MAN1EXT $srcdir/doc/mkepmlist.man
+f 0444 root sys ${mandir}/man1/epm.list.$MAN5EXT $srcdir/doc/epm.list.man
 
 #
-# End of "$Id: epm.list.in,v 1.6 2001/06/20 18:34:56 mike Exp $".
+# End of "$Id: epm.list.in,v 1.7 2001/06/21 16:05:57 mike Exp $".
 #

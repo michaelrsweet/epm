@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.19 2001/06/20 18:34:56 mike Exp $"
+# "$Id: Makefile.in,v 1.20 2001/06/21 16:05:57 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -90,11 +90,11 @@ VPATH		=	$(srcdir)
 # Targets...
 #
 
-TARGETS	=	epm @SETUP@
+TARGETS	=	epm epminstall @SETUP@
 EPM_OBJS =	deb.o dist.o epm.o file.o inst.o pkg.o portable.o rpm.o \
 		setld.o string.o swinstall.o tar.o
 SETUP_OBJS =	setup.o setup2.o Fl_Check_Browser.o Fl_Wizard.o
-OBJS	=	$(EPM_OBJS) $(SETUP_OBJS)
+OBJS	=	$(EPM_OBJS) epminstall.o $(SETUP_OBJS)
 
 
 #
@@ -169,6 +169,23 @@ install-setup:	setup
 
 
 #
+# Test EPM...
+#
+
+test:	$(TARGETS)
+	if ./epm epm; then \
+		echo Portable distribution build test PASSED.; \
+	else \
+		echo Portable distribution build test FAILED.; \
+	fi
+	if ./epm -f native epm; then \
+		echo Native distribution build test PASSED.; \
+	else \
+		echo Native distribution build test FAILED.; \
+	fi
+
+
+#
 # Make distributions using EPM...
 #
 
@@ -206,6 +223,17 @@ $(EPM_OBJS):	epm.h epmstring.h
 
 
 #
+# epm
+#
+
+epminstall:	epminstall.o
+	echo Linking epminstall...
+	$(CC) $(LDFLAGS) -o epminstall epminstall.o
+
+epminstall.o:	epmstring.h
+
+
+#
 # setup
 #
 
@@ -221,5 +249,5 @@ Fl_Check_Browser.o:	Fl_Check_Browser.h
 $(OBJS):	Makefile config.h
 
 #
-# End of "$Id: Makefile.in,v 1.19 2001/06/20 18:34:56 mike Exp $".
+# End of "$Id: Makefile.in,v 1.20 2001/06/21 16:05:57 mike Exp $".
 #
