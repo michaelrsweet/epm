@@ -8,6 +8,8 @@ WHAT'S NEW IN EPM 3.5.2?
 
 	- EPM would quote the ":" character in filenames but
 	  didn't need to.
+	- EPM tried to move the wrong RPM file on non-intel
+	  systems.
 
 
 WHAT'S NEW IN EPM 3.5.1?
