@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.6 1999/06/30 21:08:55 mike Exp $"
+ * "$Id: epm.c,v 1.7 1999/07/07 18:21:30 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -379,31 +379,18 @@ main(int  argc,			/* I - Number of command-line arguments */
   }
 
  /*
-  * Remove any old files that we have...
-  */
-
-  puts("Removing old product files...");
-
-  sprintf(directory, "%s-%s-%s", prodname, version, platname);
-
-  sprintf(command, "rm -rf %s", directory);
-  system(command);
-  sprintf(command, "%s.tar.gz", directory);
-  unlink(command);
-  sprintf(command, "%s-patch-%s-%s.tar.gz", prodname, version, platname);
-  unlink(command);
-
- /*
   * Create the output files...
   */
 
   puts("Creating product files...");
 
+  strcpy(directory, platname);
   mkdir(directory, 0777);
 
   sprintf(swname, "%s.sw", prodname);
   sprintf(line, "%s/%s", directory, swname);
 
+  unlink(line);
   if ((swfile = fopen(line, "wb")) == NULL)
   {
     fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
@@ -416,6 +403,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   sprintf(pswname, "%s.psw", prodname);
   sprintf(line, "%s/%s", directory, pswname);
 
+  unlink(line);
   if ((pswfile = fopen(line, "wb")) == NULL)
   {
     fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
@@ -427,6 +415,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   sprintf(line, "%s/%s.install", directory, prodname);
 
+  unlink(line);
   if ((installfile = fopen(line, "w")) == NULL)
   {
     fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
@@ -438,6 +427,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   sprintf(line, "%s/%s.remove", directory, prodname);
 
+  unlink(line);
   if ((removefile = fopen(line, "w")) == NULL)
   {
     fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
@@ -449,6 +439,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   sprintf(line, "%s/%s.patch", directory, prodname);
 
+  unlink(line);
   if ((patchfile = fopen(line, "w")) == NULL)
   {
     fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
@@ -546,6 +537,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(installfile, "	" EPM_SOFTWARE "/%s.remove now\n", prodname);
   fputs("fi\n", installfile);
 
+  skip = 0;
   while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
     if (strncmp(line, "%requires ", 10) == 0)
     {
@@ -565,6 +557,8 @@ main(int  argc,			/* I - Number of command-line arguments */
       fprintf(installfile, "#%s\n", line);
       fprintf(installfile, "if test -f " EPM_SOFTWARE "/%s.remove; then\n", src);
       fprintf(installfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	      src);
+      fprintf(installfile, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
 	      src);
       fputs("	exit 1\n", installfile);
       fputs("fi\n", installfile);
@@ -691,6 +685,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      line + 10);
       fprintf(patchfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
 	      line + 10);
+      fprintf(patchfile, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
+	      src);
       fputs("	exit 1\n", patchfile);
       fputs("fi\n", patchfile);
     }
@@ -1027,13 +1023,14 @@ main(int  argc,			/* I - Number of command-line arguments */
   printf("Creating distribution archive...");
   fflush(stdout);
 
-  sprintf(command, "cd %s; /bin/tar cf ../%s-%s-%s.tar %s.install %s.license "
-		   "%s.readme %s.remove %s.sw", directory, prodname,
-		   version, platname, prodname, prodname, prodname,
-		   prodname, prodname);
+  chdir(directory);
+
+  sprintf(command, "/bin/tar cf %s-%s.tar %s.install %s.license "
+		   "%s.readme %s.remove %s.sw", prodname, version,
+		   prodname, prodname, prodname, prodname, prodname);
   system(command);
 
-  sprintf(line, "%s-%s-%s.tar", prodname, version, platname);
+  sprintf(line, "%s-%s.tar", prodname, version);
   stat(line, &srcstat);
   if (srcstat.st_size > (1024 * 1024))
     printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
@@ -1042,10 +1039,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   printf("Gzipping distribution archive...");
   fflush(stdout);
-  sprintf(command, "gzip -9 %s.tar", directory);
+  sprintf(command, "gzip -f9 %s", line);
   system(command);
 
-  sprintf(line, "%s-%s-%s.tar.gz", prodname, version, platname);
+  strcat(line, ".gz");
   stat(line, &srcstat);
   if (srcstat.st_size > (1024 * 1024))
     printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
@@ -1060,13 +1057,13 @@ main(int  argc,			/* I - Number of command-line arguments */
   {
     printf("Creating patch archive...");
     fflush(stdout);
-    sprintf(command, "cd %s; tar cf ../%s-patch-%s-%s.tar %s.patch "
-		     "%s.license %s.readme %s.remove %s.psw", directory,
-		     prodname, version, platname, prodname, prodname, prodname,
-		     prodname, prodname);
+    sprintf(command, "tar cf %s-patch-%s.tar %s.patch "
+		     "%s.license %s.readme %s.remove %s.psw", prodname,
+		     version, prodname, prodname, prodname, prodname,
+		     prodname);
     system(command);
 
-    sprintf(line, "%s-patch-%s-%s.tar", prodname, version, platname);
+    sprintf(line, "%s-patch-%s.tar", prodname, version);
     stat(line, &srcstat);
     if (srcstat.st_size > (1024 * 1024))
       printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
@@ -1075,10 +1072,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 
     printf("Gzipping patch archive...");
     fflush(stdout);
-    sprintf(command, "gzip -9 %s-patch-%s-%s.tar", prodname, version, platname);
+    sprintf(command, "gzip -f9 %s", line);
     system(command);
 
-    sprintf(line, "%s-patch-%s-%s.tar.gz", prodname, version, platname);
+    strcat(line, ".gz");
     stat(line, &srcstat);
     if (srcstat.st_size > (1024 * 1024))
       printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
@@ -1089,9 +1086,9 @@ main(int  argc,			/* I - Number of command-line arguments */
   {
     puts("No patch files to bundle - removing patch stuff.");
 
-    sprintf(line, "%s/%s.patch", directory, prodname);
+    sprintf(line, "%s.patch", prodname);
     unlink(line);
-    sprintf(line, "%s/%s.psw", directory, prodname);
+    sprintf(line, "%s.psw", prodname);
     unlink(line);
   }
 
@@ -1426,5 +1423,5 @@ write_header(FILE   *fp,	/* I - Tar file to write to */
 
 
 /*
- * End of "$Id: epm.c,v 1.6 1999/06/30 21:08:55 mike Exp $".
+ * End of "$Id: epm.c,v 1.7 1999/07/07 18:21:30 mike Exp $".
  */
