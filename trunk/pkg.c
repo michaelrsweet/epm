@@ -142,7 +142,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   }
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (strcmp(d->product, "_self"))
+    if (!strcmp(d->product, "_self"))
       continue;
     else if (d->type == DEPEND_REQUIRES)
       fprintf(fp, "P %s\n", d->product);
