@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.1 1999/11/04 20:31:07 mike Exp $"
+ * "$Id: dist.c,v 1.2 1999/11/05 16:52:52 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -41,6 +41,29 @@ static void	free_strings(int num_strings, char **strings);
 static char	*get_line(char *buffer, int size, FILE *fp,
 		          struct utsname *platform, int *skip);
 static void	expand_name(char *buffer, char *name);
+
+
+/*
+ * 'add_file()' - Add a file to the distribution.
+ */
+
+file_t *		/* O - New file */
+add_file(dist_t *dist)	/* I - Distribution */
+{
+  file_t	*file;	/* New file */
+
+
+  if (dist->num_files == 0)
+    dist->files = (file_t *)malloc(sizeof(file_t));
+  else
+    dist->files = (file_t *)realloc(dist->files, sizeof(file_t) *
+					         (dist->num_files + 1));
+
+  file = dist->files + dist->num_files;
+  dist->num_files ++;
+
+  return (file);
+}
 
 
 /*
@@ -232,14 +255,7 @@ read_dist(char           *filename,	/* I - Main distribution list file */
 	else
 	  src[0] = '\0';
 
-        if (dist->num_files == 0)
-	  dist->files = (file_t *)malloc(sizeof(file_t));
-	else
-	  dist->files = (file_t *)realloc(dist->files, sizeof(file_t) *
-					               (dist->num_files + 1));
-
-        file = dist->files + dist->num_files;
-	dist->num_files ++;
+        file = add_file(dist);
 
         file->type = type;
 	file->mode = mode;
@@ -444,5 +460,5 @@ expand_name(char *buffer,	/* O - Output string */
 
 
 /*
- * End of "$Id: dist.c,v 1.1 1999/11/04 20:31:07 mike Exp $".
+ * End of "$Id: dist.c,v 1.2 1999/11/05 16:52:52 mike Exp $".
  */

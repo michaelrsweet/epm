@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.1 1999/11/04 20:31:07 mike Exp $"
+ * "$Id: epm.h,v 1.2 1999/11/05 16:52:52 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -160,6 +160,7 @@ extern int	Verbosity;		/* Be verbose? */
  * Prototypes...
  */
 
+extern file_t	*add_file(dist_t *dist);
 extern int	copy_file(const char *dst, const char *src,
 		          int mode, int owner, int group);
 extern void	free_dist(dist_t *dist);
@@ -194,5 +195,5 @@ extern int	tar_header(tarf_t *tar, char type, int mode, int size,
 extern tarf_t	*tar_open(const char *filename, int compress);
 
 /*
- * End of "$Id: epm.h,v 1.1 1999/11/04 20:31:07 mike Exp $".
+ * End of "$Id: epm.h,v 1.2 1999/11/05 16:52:52 mike Exp $".
  */

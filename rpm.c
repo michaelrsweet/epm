@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.4 1999/11/05 14:44:40 mike Exp $"
+ * "$Id: rpm.c,v 1.5 1999/11/05 16:52:52 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -210,7 +210,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
           sprintf(filename, "%s/buildroot%s", directory, file->dst);
 
 	  if (Verbosity > 1)
-	    printf("Directory %s...\n", file->src, filename);
+	    printf("Directory %s...\n", filename);
 
           make_directory(filename, file->mode, pwd ? pwd->pw_uid : 0,
 			 grp ? grp->gr_gid : 0);
@@ -272,5 +272,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.4 1999/11/05 14:44:40 mike Exp $".
+ * End of "$Id: rpm.c,v 1.5 1999/11/05 16:52:52 mike Exp $".
  */
