@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.10 2002/08/14 20:55:52 mike Exp $"
+ * "$Id: file.c,v 1.11 2002/10/16 22:37:32 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -240,8 +240,9 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
         * File could not be opened; error out...
 	*/
 
-        fprintf(stderr, "epm: Unable to open file \"%s\" -\n     %s\n",
-	        file->src, strerror(errno));
+        fprintf(stderr, "epm: Unable to open file \"%s\" for destination "
+	                "\"%s\" -\n     %s\n",
+	        file->src, file->dst, strerror(errno));
 
         exit(1);
       }
@@ -256,5 +257,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.10 2002/08/14 20:55:52 mike Exp $".
+ * End of "$Id: file.c,v 1.11 2002/10/16 22:37:32 mike Exp $".
  */
