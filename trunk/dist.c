@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.35 2001/07/02 20:25:23 mike Exp $"
+ * "$Id: dist.c,v 1.36 2001/07/02 20:55:15 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -593,6 +593,15 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	{
 	 /*
 	  * Remove {} from name...
+	  */
+
+	  strcpy(temp, temp + 1);
+          strcpy(line + 1, line + 2);
+        }
+	else if (line[1] == '(' && (temp = strchr(line + 2, ')')) != NULL)
+	{
+	 /*
+	  * Remove () from name...
 	  */
 
 	  strcpy(temp, temp + 1);
@@ -1226,5 +1235,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.35 2001/07/02 20:25:23 mike Exp $".
+ * End of "$Id: dist.c,v 1.36 2001/07/02 20:55:15 mike Exp $".
  */
