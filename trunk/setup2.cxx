@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.17 2001/07/02 21:44:10 mike Exp $"
+// "$Id: setup2.cxx,v 1.18 2001/07/03 16:33:53 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -93,6 +93,7 @@ main(int  argc,		// I - Number of command-line arguments
   w = make_window();
 
   WelcomePane->show();
+  PrevButton->deactivate();
 
   get_installed();
 
@@ -788,6 +789,8 @@ next_cb(Fl_Button *, void *)
 
   Wizard->next();
 
+  PrevButton->deactivate();
+
   if (Wizard->value() == TypePane)
   {
     if (NumInstTypes == 0)
@@ -795,6 +798,9 @@ next_cb(Fl_Button *, void *)
   }
   else if (Wizard->value() == SoftwarePane)
   {
+    if (NumInstTypes)
+      PrevButton->activate();
+
     for (i = 0; i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
       if (TypeButton[i]->value())
         break;
@@ -807,16 +813,14 @@ next_cb(Fl_Button *, void *)
   if (Wizard->value() == ConfirmPane)
   {
     ConfirmList->clear();
+    PrevButton->activate();
 
     for (i = 0; i < NumDists; i ++)
       if (SoftwareList->checked(i + 1))
         ConfirmList->add(SoftwareList->text(i + 1));
   }
   else if (Wizard->value() == LicensePane)
-  {
-    PrevButton->deactivate();
     Wizard->next();
-  }
 
   if (Wizard->value() == InstallPane && !installing)
   {
@@ -1066,5 +1070,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.17 2001/07/02 21:44:10 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.18 2001/07/03 16:33:53 mike Exp $".
 //
