@@ -1,11 +1,12 @@
 *.bck
-epm
-epm.list
-setup
-epminstall
-mkepmlist
 Makefile
 config.cache
 config.h
 config.log
 config.status
+epm
+epm.list
+epminstall
+mkepmlist
+setup
+uninst
