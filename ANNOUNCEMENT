@@ -1,16 +1,14 @@
 ----HTML-PRESS-RELEASE---------------------------------------------------
 
-<H1>ESP Package Manager 3.2 Released</H1>
+<H1>ESP Package Manager 3.2.1 Released</H1>
 
-<P><B>Hollywood, MD (November 1, 2001)</B> -- Easy Software
-Products today announced the 3.2 release of the ESP Package
+<P><B>Hollywood, MD (November 2, 2001)</B> -- Easy Software
+Products today announced the 3.2.1 release of the ESP Package
 Manager ("EPM"), a cross-platform software distribution
 program for UNIX.
 
-<P>EPM v3.2 adds support for SCO UNIX and Darwin/MacOS X. It
-also fixes bugs in the AIX, IRIX, and Debian packaging code and
-a number of small bugs in the epm and epminstall programs. The
-new release is available on-line at:
+<P>EPM v3.2.1 fixes a bug in the generation of portable install
+scripts. The new release is available on-line at:
 
 <UL><PRE>
 <A HREF="http://www.easysw.com/epm">http://www.easysw.com/epm</A>
@@ -53,16 +51,14 @@ commercial support.
 
 ----TEXT-PRESS-RELEASE---------------------------------------------------
 
-ESP Package Manager 3.2 Released
+ESP Package Manager 3.2.1 Released
 
-Hollywood, MD (November 1, 2001) -- Easy Software Products today
-announced the 3.2 release of the ESP Package Manager ("EPM"), a
+Hollywood, MD (November 2, 2001) -- Easy Software Products today
+announced the 3.2.1 release of the ESP Package Manager ("EPM"), a
 cross-platform software distribution program for UNIX.
 
-EPM v3.2 adds support for SCO UNIX and Darwin/MacOS X. It also
-fixes bugs in the AIX, IRIX, and Debian packaging code and a
-number of small bugs in the epm and epminstall programs. The new
-release is available on-line at:
+EPM v3.2.1 fixes a bug in the generation of portable install
+scripts. The new release is available on-line at:
 
     http://www.easysw.com/epm
 
