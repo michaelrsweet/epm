@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.15 2000/08/04 13:33:03 mike Exp $"
+ * "$Id: rpm.c,v 1.16 2000/08/04 14:10:21 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -137,16 +137,11 @@ make_rpm(const char     *prodname,	/* I - Product short name */
           break;
       case 'i' :
           fprintf(fp, "%%attr(0555,root,root) /etc/rc.d/init.d/%s\n", file->dst);
+          fprintf(fp, "%%attr(0555,root,root) /etc/rc.d/rc0.d/K00%s\n", file->dst);
+          fprintf(fp, "%%attr(0555,root,root) /etc/rc.d/rc2.d/S99%s\n", file->dst);
           fprintf(fp, "%%attr(0555,root,root) /etc/init.d/%s\n", file->dst);
           fprintf(fp, "%%attr(0555,root,root) /etc/rc0.d/K00%s\n", file->dst);
           fprintf(fp, "%%attr(0555,root,root) /etc/rc2.d/S99%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /etc/rc3.d/S99%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /etc/rc5.d/S99%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /sbin/init.d/%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /sbin/rc0.d/K00%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /sbin/rc2.d/S99%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /sbin/rc3.d/S99%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /sbin/rc5.d/S99%s\n", file->dst);
           break;
     }
 
@@ -199,7 +194,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 			grp ? grp->gr_gid : 0))
 	    return (1);
 
-          sprintf(linkname, "../rc.d/init.d/%s", file->dst);
+          sprintf(linkname, "/etc/rc.d/init.d/%s", file->dst);
 
           sprintf(filename, "%s/buildroot/etc/init.d/%s", directory, file->dst);
           make_link(filename, linkname);
@@ -210,25 +205,10 @@ make_rpm(const char     *prodname,	/* I - Product short name */
           sprintf(filename, "%s/buildroot/etc/rc2.d/%s", directory, file->dst);
           make_link(filename, linkname);
 
-          sprintf(filename, "%s/buildroot/etc/rc3.d/%s", directory, file->dst);
+          sprintf(filename, "%s/buildroot/etc/rc.d/rc0.d/%s", directory, file->dst);
           make_link(filename, linkname);
 
-          sprintf(filename, "%s/buildroot/etc/rc5.d/%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/sbin/init.d/%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/sbin/rc0.d/%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/sbin/rc2.d/%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/sbin/rc3.d/%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/sbin/rc5.d/%s", directory, file->dst);
+          sprintf(filename, "%s/buildroot/etc/rc.d/rc2.d/%s", directory, file->dst);
           make_link(filename, linkname);
           break;
       case 'd' :
@@ -314,5 +294,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.15 2000/08/04 13:33:03 mike Exp $".
+ * End of "$Id: rpm.c,v 1.16 2000/08/04 14:10:21 mike Exp $".
  */
