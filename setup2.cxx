@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.9 2001/03/27 20:54:15 mike Exp $"
+// "$Id: setup2.cxx,v 1.10 2001/04/14 12:35:25 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -44,11 +44,22 @@
 
 
 //
+// Define a C API function type for comparisons...
+//
+
+extern "C" {
+typedef int (*compare_func_t)(const void *, const void *);
+}
+
+
+//
 // Local functions...
 //
 
 static int	add_string(int num_strings, char ***strings, char *string);
 static void	log_cb(int fd, int *fdptr);
+
+int		sort_dists(const dist_t *d0, const dist_t *d1);
 
 
 //
@@ -200,8 +211,7 @@ get_dists(const char *d)	// I - Directory to look in
   }
 
   if (NumDists > 1)
-    qsort(Dists, NumDists, sizeof(dist_t),
-          (int (*)(const void *, const void *))sort_dists);
+    qsort(Dists, NumDists, sizeof(dist_t), (compare_func_t)sort_dists);
 
   for (i = 0, temp = Dists; i < NumDists; i ++, temp ++)
   {
@@ -612,5 +622,5 @@ log_cb(int fd,			// I - Pipe to read from
 
 
 //
-// End of "$Id: setup2.cxx,v 1.9 2001/03/27 20:54:15 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.10 2001/04/14 12:35:25 mike Exp $".
 //
