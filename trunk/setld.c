@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.9 2001/06/07 13:14:14 mike Exp $"
+ * "$Id: setld.c,v 1.10 2001/06/26 16:22:22 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -48,7 +48,6 @@ make_setld(const char     *prodname,	/* I - Product short name */
   char		keyname[1024];		/* XXXVVV.key filename */
   char		filename[1024];		/* Destination filename */
   char		subset[1024];		/* Subset name */
-  char		command[1024];		/* RPM command to run */
   file_t	*file;			/* Current distribution file */
   command_t	*c;			/* Current command */
   char		current[1024];		/* Current directory */
@@ -95,19 +94,20 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (dist->relnumber)
   {
     if (platname[0])
-      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
-              platname);
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version,
+               dist->relnumber, platname);
     else
-      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version,
+               dist->relnumber);
   }
   else if (platname[0])
-    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+    snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
   else
-    sprintf(name, "%s-%s", prodname, dist->version);
+    snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
   getcwd(current, sizeof(current));
 
-  sprintf(subset, "%sALL%03d", prodname, dist->vernumber);
+  snprintf(subset, sizeof(subset), "%sALL%03d", prodname, dist->vernumber);
 
  /*
   * Add symlinks for init scripts...
@@ -121,28 +121,28 @@ make_setld(const char     *prodname,	/* I - Product short name */
       file->mode = 0;
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
-      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/sbin/rc0.d/K00%s", dist->files[i].dst);
+      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
+      snprintf(file->dst, sizeof(file->dst), "/sbin/rc0.d/K00%s", dist->files[i].dst);
 
       file = add_file(dist);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
-      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/etc/rc2.d/S99%s", dist->files[i].dst);
+      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
+      snprintf(file->dst, sizeof(file->dst), "/etc/rc2.d/S99%s", dist->files[i].dst);
 
       file = add_file(dist);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
-      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/etc/rc3.d/S99%s", dist->files[i].dst);
+      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
+      snprintf(file->dst, sizeof(file->dst), "/etc/rc3.d/S99%s", dist->files[i].dst);
 
       file = dist->files + i;
 
-      sprintf(filename, "/sbin/init.d/%s", file->dst);
+      snprintf(filename, sizeof(filename), "/sbin/init.d/%s", file->dst);
       strcpy(file->dst, filename);
     }
 
@@ -160,19 +160,17 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating Tru64 (setld) distribution...");
 
-  sprintf(command, "/bin/rm -rf %s/output", directory);
-  system(command);
+  run_command(NULL, "/bin/rm -rf %s/output", directory);
 
-  sprintf(command, "/bin/rm -rf %s/src", directory);
-  system(command);
+  run_command(NULL, "/bin/rm -rf %s/src", directory);
 
-  sprintf(filename, "%s/output", directory);
+  snprintf(filename, sizeof(filename), "%s/output", directory);
   mkdir(filename, 0777);
 
-  sprintf(filename, "%s/src", directory);
+  snprintf(filename, sizeof(filename), "%s/src", directory);
   mkdir(filename, 0777);
 
-  sprintf(filename, "%s/src/scps", directory);
+  snprintf(filename, sizeof(filename), "%s/src/scps", directory);
   mkdir(filename, 0777);
 
  /*
@@ -182,7 +180,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating subset control program...");
 
-  sprintf(scpname, "%s/src/scps/%s.scp", directory, subset);
+  snprintf(scpname, sizeof(scpname), "%s/src/scps/%s.scp", directory, subset);
 
   if ((fp = fopen(scpname, "w")) == NULL)
   {
@@ -259,7 +257,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating master inventory file...");
 
-  sprintf(miname, "%s/src/%s%03d.mi", directory, prodname, dist->vernumber);
+  snprintf(miname, sizeof(miname), "%s/src/%s%03d.mi", directory, prodname, dist->vernumber);
 
   if ((fp = fopen(miname, "w")) == NULL)
   {
@@ -291,7 +289,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating key file...");
 
-  sprintf(keyname, "%s/src/%s%03d.k", directory, prodname, dist->vernumber);
+  snprintf(keyname, sizeof(keyname), "%s/src/%s%03d.k", directory, prodname, dist->vernumber);
 
   if ((fp = fopen(keyname, "w")) == NULL)
   {
@@ -337,7 +335,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
       case 'c' :
       case 'f' :
       case 'i' :
-          sprintf(filename, "%s/src%s", directory, file->dst);
+          snprintf(filename, sizeof(filename), "%s/src%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -348,7 +346,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
           break;
 
       case 'd' :
-          sprintf(filename, "%s/src%s", directory, file->dst);
+          snprintf(filename, sizeof(filename), "%s/src%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", filename);
@@ -358,7 +356,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
           break;
 
       case 'l' :
-          sprintf(filename, "%s/src%s", directory, file->dst);
+          snprintf(filename, sizeof(filename), "%s/src%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -375,15 +373,10 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building Tru64 (setld) distribution...");
 
-  sprintf(filename, "%s/src", directory);
+  snprintf(filename, sizeof(filename), "%s/src", directory);
   chdir(filename);
 
-  sprintf(command, "kits %s%03d.k . ../output", prodname, dist->vernumber);
-
-  if (Verbosity)
-    puts(command);
-
-  if (system(command))
+  if (run_command(NULL, "kits %s%03d.k . ../output", prodname, dist->vernumber))
     return (1);
 
   chdir(current);
@@ -395,12 +388,12 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating tar.gz file for distribution...");
 
-  sprintf(filename, "%s/%s.tar.gz", directory, name);
+  snprintf(filename, sizeof(filename), "%s/%s.tar.gz", directory, name);
 
   if ((tarfile = tar_open(filename, 1)) == NULL)
     return (1);
 
-  sprintf(filename, "%s/output", directory);
+  snprintf(filename, sizeof(filename), "%s/output", directory);
 
   if (tar_directory(tarfile, filename, prodname))
   {
@@ -419,11 +412,9 @@ make_setld(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    sprintf(command, "/bin/rm -rf %s/output", directory);
-    system(command);
+    run_command(NULL, "/bin/rm -rf %s/output", directory);
 
-    sprintf(command, "/bin/rm -rf %s/src", directory);
-    system(command);
+    run_command(NULL, "/bin/rm -rf %s/src", directory);
   }
 
   return (0);
@@ -431,5 +422,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.9 2001/06/07 13:14:14 mike Exp $".
+ * End of "$Id: setld.c,v 1.10 2001/06/26 16:22:22 mike Exp $".
  */

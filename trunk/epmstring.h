@@ -1,5 +1,5 @@
 /*
- * "$Id: epmstring.h,v 1.2 2001/05/31 19:03:04 mike Exp $"
+ * "$Id: epmstring.h,v 1.3 2001/06/26 16:22:22 mike Exp $"
  *
  *   String definitions for the ESP Package Manager (EPM).
  *
@@ -51,6 +51,14 @@ extern int	strcasecmp(const char *, const char *);
 extern int	strncasecmp(const char *, const char *, size_t n);
 #  endif /* !HAVE_STRNCASECMP */
 
+#  ifndef HAVE_SNPRINTF
+extern int	snprintf(char *, size_t, const char *, ...);
+#  endif /* !HAVE_SNPRINTF */
+
+#  ifndef HAVE_VSNPRINTF
+extern int	vsnprintf(char *, size_t, const char *, va_list);
+#  endif /* !HAVE_VSNPRINTF */
+
 #  ifdef __cplusplus
 }
 #  endif /* __cplusplus */
@@ -58,5 +66,5 @@ extern int	strncasecmp(const char *, const char *, size_t n);
 #endif /* !_EPM_STRING_H_ */
 
 /*
- * End of "$Id: epmstring.h,v 1.2 2001/05/31 19:03:04 mike Exp $".
+ * End of "$Id: epmstring.h,v 1.3 2001/06/26 16:22:22 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.21 2001/06/26 15:01:00 mike Exp $"
+ * "$Id: epm.h,v 1.22 2001/06/26 16:22:22 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -51,6 +51,13 @@ typedef struct dirent DIRENT;
 typedef struct direct DIRENT;
 #    define NAMLEN(dirent) (dirent)->d_namlen
 #  endif
+
+
+/*
+ * Macro to eliminate "variable was never referenced" errors...
+ */
+
+#define REF(x)	(void)(x);
 
 
 /*
@@ -246,6 +253,7 @@ extern int	make_swinstall(const char *prodname, const char *directory,
 			       struct utsname *platform);
 extern dist_t	*read_dist(const char *filename, struct utsname *platform,
 		           const char *format);
+extern int	run_command(const char *directory, const char *command, ...);
 extern void	sort_dist_files(dist_t *dist);
 extern void	strip_execs(dist_t *dist);
 extern int	tar_close(tarf_t *tar);
@@ -259,5 +267,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.21 2001/06/26 15:01:00 mike Exp $".
+ * End of "$Id: epm.h,v 1.22 2001/06/26 16:22:22 mike Exp $".
  */

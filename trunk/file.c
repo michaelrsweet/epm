@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.6 2001/01/03 20:41:33 mike Exp $"
+ * "$Id: file.c,v 1.7 2001/06/26 16:22:22 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -197,7 +197,6 @@ void
 strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 {
   int		i;		/* Looping var */
-  char		command[1024];	/* Command to run */
   file_t	*file;		/* Software file */
 
 
@@ -213,12 +212,11 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
       * Strip executables...
       */
 
-      sprintf(command, EPM_STRIP " %s >/dev/null 2>&1", file->src);
-      system(command);
+      run_command(NULL, EPM_STRIP " %s", file->src);
     }
 }
 
 
 /*
- * End of "$Id: file.c,v 1.6 2001/01/03 20:41:33 mike Exp $".
+ * End of "$Id: file.c,v 1.7 2001/06/26 16:22:22 mike Exp $".
  */

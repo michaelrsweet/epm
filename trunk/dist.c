@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.32 2001/06/26 15:00:59 mike Exp $"
+ * "$Id: dist.c,v 1.33 2001/06/26 16:22:21 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -732,9 +732,10 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
     setpwent();
     if ((pwd = getpwuid(getuid())) != NULL)
-      sprintf(dist->packager, "%s@%s", pwd->pw_name, buf);
+      snprintf(dist->packager, sizeof(dist->packager), "%s@%s", pwd->pw_name,
+               buf);
     else
-      sprintf(dist->packager, "unknown@%s", buf);
+      snprintf(dist->packager, sizeof(dist->packager), "unknown@%s", buf);
   }
 
   return (dist);
@@ -915,7 +916,8 @@ get_line(char           *buffer,	/* I - Buffer to read into */
       {
 	namelen = strlen(platform->sysname);
         bufptr  = buffer + 8;
-	sprintf(namever, "%s-%s", platform->sysname, platform->release);
+	snprintf(namever, sizeof(namever), "%s-%s", platform->sysname,
+	         platform->release);
 
         *skip |= *bufptr != '!';
 
@@ -1200,5 +1202,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.32 2001/06/26 15:00:59 mike Exp $".
+ * End of "$Id: dist.c,v 1.33 2001/06/26 16:22:21 mike Exp $".
  */

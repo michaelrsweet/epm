@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.55 2001/06/26 15:00:59 mike Exp $"
+ * "$Id: epm.c,v 1.56 2001/06/26 16:22:21 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -267,14 +267,14 @@ main(int  argc,			/* I - Number of command-line arguments */
     usage();
 
   if (!listname[0])
-    sprintf(listname, "%s.list", prodname);
+    snprintf(listname, sizeof(listname), "%s.list", prodname);
 
  /*
   * Format the build directory and platform name strings...
   */
 
-  sprintf(directory, "%s-%s-%s", platform.sysname, platform.release,
-          platform.machine);
+  snprintf(directory, sizeof(directory), "%s-%s-%s", platform.sysname,
+           platform.release, platform.machine);
 
   platname[0] = '\0';
 
@@ -469,5 +469,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.55 2001/06/26 15:00:59 mike Exp $".
+ * End of "$Id: epm.c,v 1.56 2001/06/26 16:22:21 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: epminstall.c,v 1.2 2001/06/26 15:01:00 mike Exp $"
+ * "$Id: epminstall.c,v 1.3 2001/06/26 16:22:22 mike Exp $"
  *
  *   Install program replacement for the ESP Package Manager (EPM).
  *
@@ -274,7 +274,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	else
 	  src = files[i];
 
-        sprintf(dst, "%s/%s", files[num_files], src);
+        snprintf(dst, sizeof(dst), "%s/%s", files[num_files], src);
 
 	if ((file = find_file(dist, dst)) == NULL)
           file = add_file(dist);
@@ -440,7 +440,7 @@ write_dist(const char *listname,	/* I - File to write to */
   * Make a backup of the list file...
   */
 
-  sprintf(listbck, "%s.O", listname);
+  snprintf(listbck, sizeof(listbck), "%s.O", listname);
 
   rename(listname, listbck);
 
@@ -523,5 +523,5 @@ write_dist(const char *listname,	/* I - File to write to */
 
 
 /*
- * End of "$Id: epminstall.c,v 1.2 2001/06/26 15:01:00 mike Exp $".
+ * End of "$Id: epminstall.c,v 1.3 2001/06/26 16:22:22 mike Exp $".
  */
