@@ -20,6 +20,13 @@ WHAT'S NEW IN EPM 3.1?
 	- Fixed the dependency strings created for HP-UX
 	  swinstall (fix contributed by R. Begg.)
 	- Wasn't installing the man pages in section 5.
+	- When generating Debian packages, the DEBIAN directory
+	  might not have the correct permissions due to a
+	  restrictive umask.  EPM now forces the correct
+	  permissions for the package archive.
+	- HP-UX swinstall packages now use the prerequisites
+	  rule instead of corequisites to ensure that the
+	  %requires dependency is enforced.
 
 
 WHAT'S NEW IN EPM 3.0?
