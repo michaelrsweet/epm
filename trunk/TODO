@@ -1,5 +1,7 @@
 TODO for EPM:
 
+	- Do portable config file stuff for formats that don't
+	  support config files (HP-UX + others)
 	- Add /opt relocation hack and allow for relocatable and
 	  non-root packages in general.
 	- Add support for executables and libraries created with
