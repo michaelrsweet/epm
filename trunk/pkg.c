@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.14 2001/03/06 13:50:06 mike Exp $"
+ * "$Id: pkg.c,v 1.15 2001/03/26 16:18:47 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -457,28 +457,31 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   * Remove temporary files...
   */
 
-  if (Verbosity)
-    puts("Removing temporary distribution files...");
+  if (!KeepFiles)
+  {
+    if (Verbosity)
+      puts("Removing temporary distribution files...");
 
-  sprintf(filename, "%s/%s.pkginfo", directory, prodname);
-  unlink(filename);
-  sprintf(filename, "%s/%s.depend", directory, prodname);
-  unlink(filename);
-  sprintf(filename, "%s/%s.prototype", directory, prodname);
-  unlink(filename);
-  if (preinstall[0])
-    unlink(preinstall);
-  if (postinstall[0])
-    unlink(postinstall);
-  if (preremove[0])
-    unlink(preremove);
-  if (postremove[0])
-    unlink(postremove);
+    sprintf(filename, "%s/%s.pkginfo", directory, prodname);
+    unlink(filename);
+    sprintf(filename, "%s/%s.depend", directory, prodname);
+    unlink(filename);
+    sprintf(filename, "%s/%s.prototype", directory, prodname);
+    unlink(filename);
+    if (preinstall[0])
+      unlink(preinstall);
+    if (postinstall[0])
+      unlink(postinstall);
+    if (preremove[0])
+      unlink(preremove);
+    if (postremove[0])
+      unlink(postremove);
+  }
 
   return (0);
 }
 
 
 /*
- * End of "$Id: pkg.c,v 1.14 2001/03/06 13:50:06 mike Exp $".
+ * End of "$Id: pkg.c,v 1.15 2001/03/26 16:18:47 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.11 2001/03/20 15:23:21 mike Exp $"
+ * "$Id: swinstall.c,v 1.12 2001/03/26 16:18:47 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -461,25 +461,28 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   * Remove temporary files...
   */
 
-  if (Verbosity)
-    puts("Removing temporary distribution files...");
-
-  unlink(infoname);
-
-  if (preinstall[0])
-    unlink(preinstall);
-  if (postinstall[0])
-    unlink(postinstall);
-  if (preremove[0])
-    unlink(preremove);
-  if (postremove[0])
-    unlink(postremove);
-
-  while (linknum > 0)
+  if (!KeepFiles)
   {
-    linknum --;
-    sprintf(filename, "%s/%s.link%04d", directory, prodname, linknum);
-    unlink(filename);
+    if (Verbosity)
+      puts("Removing temporary distribution files...");
+
+    unlink(infoname);
+
+    if (preinstall[0])
+      unlink(preinstall);
+    if (postinstall[0])
+      unlink(postinstall);
+    if (preremove[0])
+      unlink(preremove);
+    if (postremove[0])
+      unlink(postremove);
+
+    while (linknum > 0)
+    {
+      linknum --;
+      sprintf(filename, "%s/%s.link%04d", directory, prodname, linknum);
+      unlink(filename);
+    }
   }
 
   return (0);
@@ -487,5 +490,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.11 2001/03/20 15:23:21 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.12 2001/03/26 16:18:47 mike Exp $".
  */

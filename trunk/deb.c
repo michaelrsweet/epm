@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.7 2001/03/20 15:23:21 mike Exp $"
+ * "$Id: deb.c,v 1.8 2001/03/26 16:18:46 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -391,16 +391,19 @@ make_deb(const char     *prodname,	/* I - Product short name */
   * Remove temporary files...
   */
 
-  if (Verbosity)
-    puts("Removing temporary distribution files...");
+  if (!KeepFiles)
+  {
+    if (Verbosity)
+      puts("Removing temporary distribution files...");
 
-  sprintf(command, "/bin/rm -rf %s/%s", directory, name);
-  system(command);
+    sprintf(command, "/bin/rm -rf %s/%s", directory, name);
+    system(command);
+  }
 
   return (0);
 }
 
 
 /*
- * End of "$Id: deb.c,v 1.7 2001/03/20 15:23:21 mike Exp $".
+ * End of "$Id: deb.c,v 1.8 2001/03/26 16:18:46 mike Exp $".
  */

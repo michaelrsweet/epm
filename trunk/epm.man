@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.22 2001/03/02 12:46:14 mike Exp $"
+.\" "$Id: epm.man,v 1.23 2001/03/26 16:18:47 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,14 +15,14 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "2 March 2001" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "26 March 2001" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
 .B epm
 [ \-f
 .I format
-] [ \-g ] [ \-n[mrs] ] [ \-s
+] [ \-g ] [ \-k ] [ \-n[mrs] ] [ \-s
 .I setup.xpm
 ] [ \--setup-image
 .I setup.xpm
@@ -80,6 +80,10 @@ Generate a HP-UX software distribution.
 Executable files in the distribution are normally stripped of debugging
 information when packaged. To disable this functionality use the
 \fI\-g\fR option.
+.LP
+Intermediate (spec, etc.) files used to create the distribution are normally
+removed after the distribution is created. The \fI\-k\fR option keeps these
+files in the distribution directory.
 .LP
 The \fI-s\fR and \fI--setup-image\fR options ("setup") include
 the ESP Software Wizard with the specified XPM image file with
@@ -289,6 +293,8 @@ for RPM distributions you generate. The default locations are
 and /usr/local/src/RPMS.
 .SH KNOWN BUGS
 EPM does not currently support generation of IRIX software patches.
+.SH SEE ALSO
+mkepmlist(1) - make an EPM list file from a directory.
 .SH COPYRIGHT
 Copyright 1999-2001 by Easy Software Products, All Rights Reserved.
 .LP
@@ -302,5 +308,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.22 2001/03/02 12:46:14 mike Exp $".
+.\" End of "$Id: epm.man,v 1.23 2001/03/26 16:18:47 mike Exp $".
 .\"

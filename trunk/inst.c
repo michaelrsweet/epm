@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.13 2001/03/20 15:23:21 mike Exp $"
+ * "$Id: inst.c,v 1.14 2001/03/26 16:18:47 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -564,20 +564,23 @@ make_inst(const char     *prodname,	/* I - Product short name */
   * Remove temporary files...
   */
 
-  if (Verbosity)
-    puts("Removing temporary distribution files...");
+  if (!KeepFiles)
+  {
+    if (Verbosity)
+      puts("Removing temporary distribution files...");
 
-  if (preinstall[0])
-    unlink(preinstall);
-  if (postinstall[0])
-    unlink(postinstall);
-  if (preremove[0])
-    unlink(preremove);
-  if (postremove[0])
-    unlink(postremove);
+    if (preinstall[0])
+      unlink(preinstall);
+    if (postinstall[0])
+      unlink(postinstall);
+    if (preremove[0])
+      unlink(preremove);
+    if (postremove[0])
+      unlink(postremove);
 
-  unlink(idbname);
-  unlink(specname);
+    unlink(idbname);
+    unlink(specname);
+  }
 
   return (0);
 }
@@ -596,5 +599,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.13 2001/03/20 15:23:21 mike Exp $".
+ * End of "$Id: inst.c,v 1.14 2001/03/26 16:18:47 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.45 2001/01/03 20:41:33 mike Exp $"
+ * "$Id: epm.c,v 1.46 2001/03/26 16:18:46 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -35,6 +35,7 @@
  */
 
 int		Verbosity = 0;
+int		KeepFiles = 0;
 const char	*SetupProgram = EPM_LIBDIR "/setup";
 
 
@@ -155,6 +156,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      usage();
 	    break;
 
+        case 'k' : /* Keep intermediate files */
+	    KeepFiles = 1;
+	    break;
+
         case 'n' : /* Name with sysname, machine, and/or release */
             platname[0] = '\0';
 
@@ -197,7 +202,9 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    break;
 
         case '-' : /* --option */
-	    if (strcmp(argv[i], "--setup-image") == 0)
+	    if (strcmp(argv[i], "--keep-files") == 0)
+	      KeepFiles = 1;
+	    else if (strcmp(argv[i], "--setup-image") == 0)
 	    {
 	      i ++;
 	      if (i < argc)
@@ -477,6 +484,8 @@ usage(void)
   puts("    Don't strip executables in distributions.");
   puts("-f {deb,depot,inst,native,pkg,portable,rpm,swinstall,tardist}");
   puts("    Set distribution format.");
+  puts("-k");
+  puts("    Keep intermediate files (spec files, etc.)");
   puts("-n[mrs]");
   puts("    Set distribution filename to include machine (m), OS release (r),");
   puts("    and/or OS name (s).");
@@ -493,5 +502,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.45 2001/01/03 20:41:33 mike Exp $".
+ * End of "$Id: epm.c,v 1.46 2001/03/26 16:18:46 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.28 2001/03/22 16:29:33 mike Exp $"
+ * "$Id: portable.c,v 1.29 2001/03/26 16:18:47 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -54,8 +54,8 @@ static int	write_patch(dist_t *dist, const char *prodname,
 		            const char *directory);
 static int	write_remove(dist_t *dist, const char *prodname,
 		             const char *directory);
-static int	write_space_checks(dist_t *dist, FILE *fp, const char *sw,
-		                   const char *ss);
+static int	write_space_checks(const char *prodname, FILE *fp,
+		                   const char *sw, const char *ss);
 
 
 /*
@@ -1094,7 +1094,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "	" EPM_SOFTWARE "/%s.remove now\n", prodname);
   fputs("fi\n", scriptfile);
 
-  write_space_checks(dist, scriptfile, "sw", "ss");
+  write_space_checks(prodname, scriptfile, "sw", "ss");
   write_depends(dist, scriptfile);
   write_commands(dist, scriptfile, COMMAND_PRE_INSTALL);
 
@@ -1346,7 +1346,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("	done\n", scriptfile);
   fputs("fi\n", scriptfile);
 
-  write_space_checks(dist, scriptfile, "psw", "pss");
+  write_space_checks(prodname, scriptfile, "psw", "pss");
   write_depends(dist, scriptfile);
 
   fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
@@ -1717,7 +1717,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
  */
 
 static int				/* O - 0 on success, -1 on error */
-write_space_checks(dist_t     *dist,	/* I - Distribution */
+write_space_checks(const char *prodname,/* I - Distribution name */
                    FILE       *fp,	/* I - File to write to */
                    const char *sw,	/* I - / archive */
 		   const char *ss)	/* I - /usr archive */
@@ -1734,10 +1734,10 @@ write_space_checks(dist_t     *dist,	/* I - Distribution */
   fputs("	spusr=`df -k /usr | grep -v '^Filesystem' | awk '{print $4}'`\n", fp);
   fputs("fi\n", fp);
   fputs("\n", fp);
-  fprintf(fp, "temp=`ls -l %s.%s | awk '{print $5}'`\n", dist->product, sw);
+  fprintf(fp, "temp=`ls -l %s.%s | awk '{print $5}'`\n", prodname, sw);
   fputs("spsw=`expr $temp / 1024`\n", fp);
   fputs("\n", fp);
-  fprintf(fp, "temp=`ls -l %s.%s | awk '{print $5}'`\n", dist->product, ss);
+  fprintf(fp, "temp=`ls -l %s.%s | awk '{print $5}'`\n", prodname, ss);
   fputs("spss=`expr $temp / 1024`\n", fp);
   fputs("\n", fp);
   fputs("spall=`expr $spsw + $spss`\n", fp);
@@ -1767,5 +1767,5 @@ write_space_checks(dist_t     *dist,	/* I - Distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.28 2001/03/22 16:29:33 mike Exp $".
+ * End of "$Id: portable.c,v 1.29 2001/03/26 16:18:47 mike Exp $".
  */
