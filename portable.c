@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.32 2001/03/27 19:17:15 mike Exp $"
+ * "$Id: portable.c,v 1.33 2001/03/30 02:26:03 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1731,17 +1731,30 @@ write_space_checks(const char *prodname,/* I - Distribution name */
                    const char *sw,	/* I - / archive */
 		   const char *ss)	/* I - /usr archive */
 {
-  fputs("if test `uname` = HP-UX; then\n", fp);
+  fputs("case `uname` in\n", fp);
+  fputs("	HP-UX)\n", fp);
   fputs("	fsroot=`df -k / | head -1 | awk '{print $1}'`\n", fp);
   fputs("	sproot=`df -k / | grep free | awk '{print $1}'`\n", fp);
   fputs("	fsusr=`df -k /usr | head -1 | awk '{print $1}'`\n", fp);
   fputs("	spusr=`df -k /usr | grep free | awk '{print $1}'`\n", fp);
-  fputs("else\n", fp);
-  fputs("	fsroot=`df -k / | grep -v '^Filesystem' | awk '{print $6}'`\n", fp);
-  fputs("	sproot=`df -k / | grep -v '^Filesystem' | awk '{print $4}'`\n", fp);
-  fputs("	fsusr=`df -k /usr | grep -v '^Filesystem' | awk '{print $6}'`\n", fp);
-  fputs("	spusr=`df -k /usr | grep -v '^Filesystem' | awk '{print $4}'`\n", fp);
-  fputs("fi\n", fp);
+  fputs("	;;\n\n", fp);
+  fputs("	IRIX*)\n", fp);
+  fputs("	fsroot=`df -k / | tail -1 | awk '{print $7}'`\n", fp);
+  fputs("	sproot=`df -k / | tail -1 | awk '{print $5}'`\n", fp);
+  fputs("	fsusr=`df -k /usr | tail -1 | awk '{print $7}'`\n", fp);
+  fputs("	spusr=`df -k /usr | tail -1 | awk '{print $5}'`\n", fp);
+  fputs("	;;\n\n", fp);
+  fputs("	*)\n", fp);
+  fputs("	fsroot=`df -k / | tail -1 | "
+        "awk '{if ($NF == 6) print $6; else print $5}'`\n", fp);
+  fputs("	sproot=`df -k / | tail -1 | "
+        "awk '{if ($NF == 6) print $4; else print $3}'`\n", fp);
+  fputs("	fsusr=`df -k /usr | tail -1 | "
+        "awk '{if ($NF == 6) print $6; else print $5}'`\n", fp);
+  fputs("	spusr=`df -k /usr | tail -1 | "
+        "awk '{if ($NF == 6) print $4; else print $3}'`\n", fp);
+  fputs("	;;\n", fp);
+  fputs("esac\n", fp);
   fputs("\n", fp);
   fprintf(fp, "temp=`ls -l %s.%s | awk '{print $5}'`\n", prodname, sw);
   fputs("spsw=`expr $temp / 1024`\n", fp);
@@ -1776,5 +1789,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.32 2001/03/27 19:17:15 mike Exp $".
+ * End of "$Id: portable.c,v 1.33 2001/03/30 02:26:03 mike Exp $".
  */
