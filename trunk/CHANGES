@@ -6,6 +6,8 @@ WHAT'S NEW IN EPM 3.7?
     EPM 3.7 adds the following features, fixes, and changes to
     EPM 3.6:
 
+	- AIX output now correctly generates the inventory file
+	  for files in /usr and /opt.
 	- The Slackware packaging code swapped the output
 	  directory and product name when generating the
 	  post-install script.
