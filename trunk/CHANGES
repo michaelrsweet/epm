@@ -12,6 +12,8 @@ WHAT'S NEW IN EPM 2.8?
 	- The setup GUI did not allow the user to toggle a
 	  software product for distribution if the product was
 	  selected (nav box around it).
+	- The mkepmlist program didn't get the permissions of
+	  each file (just the parent directory.)
 
 
 WHAT'S NEW IN EPM 2.7?

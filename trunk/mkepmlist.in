@@ -1,6 +1,6 @@
 #!@PERL@
 #
-# "$Id: mkepmlist.in,v 1.1 2001/03/26 20:11:09 mike Exp $"
+# "$Id: mkepmlist.in,v 1.2 2001/05/25 00:19:57 mike Exp $"
 #
 #   List file generation utility for the ESP Package Manager (EPM).
 #
@@ -58,6 +58,7 @@ ProcessDir
 	{
 		my($fullpath) = $absdir . '/' . $entry;
 		my($instpath) = $dir . '/' . $entry;
+                my @st = stat($instpath);
 
 		if (-d $instpath)
 		{
@@ -213,5 +214,5 @@ if ($basedir eq "")
 }
 
 #
-# End of "$Id: mkepmlist.in,v 1.1 2001/03/26 20:11:09 mike Exp $".
+# End of "$Id: mkepmlist.in,v 1.2 2001/05/25 00:19:57 mike Exp $".
 #
