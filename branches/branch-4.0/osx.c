@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.1.2.13 2004/12/06 13:57:07 mike Exp $"
+ * "$Id: osx.c,v 1.1.2.14 2004/12/07 16:33:18 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -28,6 +28,18 @@
 
 
 /*
+ * Local globals...
+ */
+ 
+static const char * const pm_paths[] =	/* Paths to PackageMaker program */
+		{
+		  "/Developer/Applications/PackageMaker.app",
+		  "/Developer/Applications/Utilities/PackageMaker.app",
+		  NULL
+		};
+
+
+/*
  * 'make_osx()' - Make a Red Hat software distribution package.
  */
 
@@ -48,12 +60,6 @@ make_osx(const char     *prodname,	/* I - Product short name */
   struct group	*grp;			/* Pointer to group record */
   char		current[1024];		/* Current directory */
   const char	*option;		/* Init script option */
-  static const char * const paths[] =	/* Paths to PackageMaker program */
-		{
-		  "/Developer/Applications/PackageMaker.app",
-		  "/Developer/Applications/Utilities/PackageMaker.app",
-		  NULL
-		};
 
 
   if (Verbosity)
@@ -421,5 +427,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.1.2.13 2004/12/06 13:57:07 mike Exp $".
+ * End of "$Id: osx.c,v 1.1.2.14 2004/12/07 16:33:18 mike Exp $".
  */
