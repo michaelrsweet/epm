@@ -9,6 +9,8 @@ WHAT'S NEW IN EPM 2.9?
 	- The mkepmlist utility had a bad regular expression
 	  that thought that any argument (directory names, etc.)
 	  with a dash ("-") in it was an unsupported option.
+	- Fixed a bug in the removal script - config files were
+	  removed by the remove script...
 
 
 WHAT'S NEW IN EPM 2.8?

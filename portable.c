@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.41 2001/05/25 00:57:38 mike Exp $"
+ * "$Id: portable.c,v 1.42 2001/06/07 13:00:34 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1647,14 +1647,21 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   {
     col = fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l' ||
-           tolower(file->type) == 'c') &&
+      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
           strncmp(file->dst, "/usr", 4) != 0)
       {
         if (col > 80)
 	  col = fprintf(scriptfile, " \\\n%s", file->dst) - 2;
 	else
           col += fprintf(scriptfile, " %s", file->dst);
+      }
+      else if (tolower(file->type) == 'c' &&
+               strncmp(file->dst, "/usr", 4) != 0)
+      {
+        if (col > 80)
+	  col = fprintf(scriptfile, " \\\n%s.N", file->dst) - 2;
+	else
+          col += fprintf(scriptfile, " %s.N", file->dst);
       }
 
     fputs("; do\n", scriptfile);
@@ -1676,14 +1683,21 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("if test -w /usr ; then\n", scriptfile);
     col = fputs("	for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l' ||
-           tolower(file->type) == 'c') &&
+      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
           strncmp(file->dst, "/usr", 4) == 0)
       {
         if (col > 80)
 	  col = fprintf(scriptfile, " \\\n%s", file->dst) - 2;
 	else
           col += fprintf(scriptfile, " %s", file->dst);
+      }
+      else if (tolower(file->type) == 'c' &&
+               strncmp(file->dst, "/usr", 4) == 0)
+      {
+        if (col > 80)
+	  col = fprintf(scriptfile, " \\\n%s.N", file->dst) - 2;
+	else
+          col += fprintf(scriptfile, " %s.N", file->dst);
       }
 
     fputs("; do\n", scriptfile);
@@ -1783,5 +1797,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.41 2001/05/25 00:57:38 mike Exp $".
+ * End of "$Id: portable.c,v 1.42 2001/06/07 13:00:34 mike Exp $".
  */
