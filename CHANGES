@@ -6,6 +6,8 @@ WHAT'S NEW IN EPM 2.5?
     EPM 2.5 adds the following features, fixes, and changes to
     EPM 2.4:
 
+	- Added support for pre-install, post-install, pre-patch,
+	  post-patch, pre-remove, and post-remove commands.
 	- There was no way to use a literal $ in scripts or in
 	  filenames.  Use $$ to include a single $.
 	- The config file support for AT&T software packages
@@ -13,6 +15,10 @@ WHAT'S NEW IN EPM 2.5?
 	  absolute path.
 	- The RPM --target option was not being called with an
 	  equal sign, which caused problems with RPM 4.0.
+	- Updated the Debian packager to use the prerm and postrm
+	  script names to match reality.
+	- Updated the Debian packager to support the Replaces
+	  dependency.
 
 
 WHAT'S NEW IN EPM 2.4?

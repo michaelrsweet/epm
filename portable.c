@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.19 2001/01/19 16:24:00 mike Exp $"
+ * "$Id: portable.c,v 1.20 2001/03/03 21:29:48 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -17,11 +17,13 @@
  *
  * Contents:
  *
- *   make_portable() - Make a portable software distribution package.
- *   write_dist()    - Write a software distribution...
- *   write_install() - Write the installation script.
- *   write_patch()   - Write the patch script.
- *   write_remove()  - Write the removal script.
+ *   make_portable()  - Make a portable software distribution package.
+ *   write_commands() - Write commands.
+ *   write_common()   - Write the common shell script header.
+ *   write_dist()     - Write a software distribution...
+ *   write_install()  - Write the installation script.
+ *   write_patch()    - Write the patch script.
+ *   write_remove()   - Write the removal script.
  */
 
 /*
@@ -35,8 +37,10 @@
  * Local functions...
  */
 
+static int	write_commands(dist_t *dist, FILE *fp, char type);
 static FILE	*write_common(dist_t *dist, const char *title,
 		              const char *filename);
+static int	write_depends(dist_t *dist, FILE *fp);
 static int	write_dist(const char *title, const char *directory,
 		           const char *prodname, const char *platname,
 			   dist_t *dist, const char **files,
@@ -509,6 +513,49 @@ make_portable(const char     *prodname,	/* I - Product short name */
 
 
 /*
+ * 'write_commands()' - Write commands.
+ */
+
+static int				/* O - 0 on success, -1 on failure */
+write_commands(dist_t *dist,		/* I - Distribution */
+               FILE   *fp,		/* I - File pointer */
+               char   type)		/* I - Type of commands to write */
+{
+  int			i;		/* Looping var */
+  command_t		*c;		/* Current command */
+  static const char	*commands[] =	/* Command strings */
+			{
+			  "pre-install",
+			  "post-install",
+			  "pre-patch",
+			  "post-patch",
+			  "pre-remove",
+			  "post-remove"
+			};
+
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == type)
+      break;
+
+  if (i)
+  {
+    fprintf(fp, "echo Running %s commands...\n", commands[type]);
+
+    for (; i > 0; i --, c ++)
+      if (c->type == type)
+        if (fprintf(fp, "%s\n", dist->commands[i].command) < 1)
+        {
+          perror("epm: Error writing command");
+          return (-1);
+        }
+  }
+
+  return (0);
+}
+
+
+/*
  * 'write_common()' - Write the common shell script header.
  */
 
@@ -570,6 +617,113 @@ write_common(dist_t     *dist,		/* I - Distribution */
   */
 
   return(fp);
+}
+
+
+/*
+ * 'write_depends()' - Write dependencies.
+ */
+
+static int				/* O - 0 on success, - 1 on failure */
+write_depends(dist_t *dist,		/* I - Distribution */
+              FILE   *fp)		/* I - File pointer */
+{
+  int			i;		/* Looping var */
+  depend_t		*d;		/* Current dependency */
+  static const char	*depends[] =	/* Dependency strings */
+			{
+			  "requires",
+			  "incompat",
+			  "replaces"
+			};
+
+
+  for (i = 0, d= dist->depends; i < dist->num_depends; i ++, d ++)
+  {
+    fprintf(fp, "#%%%s %s\n", depends[d->type], d->product);
+
+    switch (d->type)
+    {
+      case DEPEND_REQUIRES :
+          if (d->product[0] == '/')
+          {
+           /*
+            * Require a file...
+            */
+
+            fprintf(fp, "if test ! -r %s -a ! -h %s; then\n",
+                    d->product, d->product);
+            fprintf(fp, "	echo Sorry, you must first install \\'%s\\'!\n",
+	            d->product);
+            fputs("	exit 1\n", fp);
+            fputs("fi\n", fp);
+          }
+          else
+          {
+           /*
+            * Require a product...
+            */
+
+            fprintf(fp, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
+                    d->product);
+            fprintf(fp, "	if test -x %s.install; then\n",
+                    d->product);
+            fprintf(fp, "		echo Installing required %s software...\n",
+                    d->product);
+            fprintf(fp, "		./%s.install now\n", d->product);
+            fputs("	else\n", fp);
+            fprintf(fp, "		echo Sorry, you must first install \\'%s\\'!\n",
+	            d->product);
+            fputs("		exit 1\n", fp);
+            fputs("	fi\n", fp);
+            fputs("fi\n", fp);
+          }
+	  break;
+
+      case DEPEND_INCOMPAT :
+          if (d->product[0] == '/')
+          {
+           /*
+            * Incompatible with a file...
+            */
+
+            fprintf(fp, "if test -r %s -o -h %s; then\n",
+                    d->product, d->product);
+            fprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	            d->product);
+            fputs("	echo Please remove it first.\n", fp);
+            fputs("	exit 1\n", fp);
+            fputs("fi\n", fp);
+          }
+          else
+          {
+           /*
+            * Incompatible with a product...
+            */
+
+            fprintf(fp, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
+                    d->product);
+            fprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	            d->product);
+            fprintf(fp, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
+	            d->product);
+            fputs("	exit 1\n", fp);
+            fputs("fi\n", fp);
+          }
+	  break;
+
+      case DEPEND_REPLACES :
+          fprintf(fp, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
+                  d->product);
+          fprintf(fp, "	echo Automatically replacing \\'%s\\'...\n",
+	          d->product);
+          fprintf(fp, "	" EPM_SOFTWARE "/%s.remove now\n",
+	          d->product);
+          fputs("fi\n", fp);
+    }
+  }
+
+  return (0);
 }
 
 
@@ -831,96 +985,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "	" EPM_SOFTWARE "/%s.remove now\n", prodname);
   fputs("fi\n", scriptfile);
 
-  for (i = 0; i < dist->num_requires; i ++)
-  {
-    fprintf(scriptfile, "#%%requires %s\n", dist->requires[i]);
-
-    if (dist->requires[i][0] == '/')
-    {
-     /*
-      * Require a file...
-      */
-
-      fprintf(scriptfile, "if test ! -r %s -a ! -h %s; then\n",
-              dist->requires[i], dist->requires[i]);
-      fprintf(scriptfile, "	echo Sorry, you must first install \\'%s\\'!\n",
-	      dist->requires[i]);
-      fputs("	exit 1\n", scriptfile);
-      fputs("fi\n", scriptfile);
-    }
-    else
-    {
-     /*
-      * Require a product...
-      */
-
-      fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
-              dist->requires[i]);
-      fprintf(scriptfile, "	if test -x %s.install; then\n",
-              dist->requires[i]);
-      fprintf(scriptfile, "		echo Installing required %s software...\n",
-              dist->requires[i]);
-      fprintf(scriptfile, "		./%s.install now\n", dist->requires[i]);
-      fputs("	else\n", scriptfile);
-      fprintf(scriptfile, "		echo Sorry, you must first install \\'%s\\'!\n",
-	      dist->requires[i]);
-      fputs("		exit 1\n", scriptfile);
-      fputs("	fi\n", scriptfile);
-      fputs("fi\n", scriptfile);
-    }
-  }
-
-  for (i = 0; i < dist->num_incompats; i ++)
-  {
-    fprintf(scriptfile, "#%%incompat %s\n", dist->incompats[i]);
-
-    if (dist->incompats[i][0] == '/')
-    {
-     /*
-      * Incompatible with a file...
-      */
-
-      fprintf(scriptfile, "if test -r %s -o -h %s; then\n",
-              dist->incompats[i], dist->incompats[i]);
-      fprintf(scriptfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	      dist->incompats[i]);
-      fputs("	echo Please remove it first.\n", scriptfile);
-      fputs("	exit 1\n", scriptfile);
-      fputs("fi\n", scriptfile);
-    }
-    else
-    {
-     /*
-      * Incompatible with a product...
-      */
-
-      fprintf(scriptfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
-              dist->incompats[i]);
-      fprintf(scriptfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	      dist->incompats[i]);
-      fprintf(scriptfile, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
-	      dist->incompats[i]);
-      fputs("	exit 1\n", scriptfile);
-      fputs("fi\n", scriptfile);
-    }
-  }
-
-  for (i = 0; i < dist->num_replaces; i ++)
-  {
-   /*
-    * Replaces a product...
-    */
-
-    fprintf(scriptfile, "#%%replaces %s\n", dist->replaces[i]);
-
-    fprintf(scriptfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
-            dist->replaces[i]);
-    fprintf(scriptfile, "	echo Automatically replacing \\'%s\\'...\n",
-	    dist->replaces[i]);
-    fprintf(scriptfile, "	" EPM_SOFTWARE "/%s.remove now\n",
-	    dist->replaces[i]);
-    fputs("fi\n", scriptfile);
-  }
+  write_depends(dist, scriptfile);
+  write_commands(dist, scriptfile, COMMAND_PRE_INSTALL);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
@@ -1075,13 +1141,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("fi\n", scriptfile);
   }
 
-  if (dist->num_installs)
-  {
-    fputs("echo Running post-installation commands...\n", scriptfile);
-
-    for (i = 0; i < dist->num_installs; i ++)
-      fprintf(scriptfile, "%s\n", dist->installs[i]);
-  }
+  write_commands(dist, scriptfile, COMMAND_POST_INSTALL);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
@@ -1177,6 +1237,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("	done\n", scriptfile);
   fputs("fi\n", scriptfile);
 
+  write_depends(dist, scriptfile);
+
   fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
           prodname);
   fputs("	echo You do not appear to have the base software installed!\n",
@@ -1189,13 +1251,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     if (tolower(file->type) == 'i')
       fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
 
-  if (dist->num_removes)
-  {
-    fputs("echo Running pre-patch commands...\n", scriptfile);
-
-    for (i = 0; i < dist->num_removes; i ++)
-      fprintf(scriptfile, "%s\n", dist->removes[i]);
-  }
+  write_commands(dist, scriptfile, COMMAND_PRE_PATCH);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if ((file->type == 'F' || file->type == 'L') &&
@@ -1367,13 +1423,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("fi\n", scriptfile);
   }
 
-  if (dist->num_patches)
-  {
-    fputs("echo Running post-installation commands...\n", scriptfile);
-
-    for (i = 0; i < dist->num_patches; i ++)
-      fprintf(scriptfile, "%s\n", dist->patches[i]);
-  }
+  write_commands(dist, scriptfile, COMMAND_POST_PATCH);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
@@ -1450,13 +1500,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     if (tolower(file->type) == 'i')
       fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
 
-  if (dist->num_removes)
-  {
-    fputs("echo Running pre-removal commands...\n", scriptfile);
-
-    for (i = 0; i < dist->num_removes; i ++)
-      fprintf(scriptfile, "%s\n", dist->removes[i]);
-  }
+  write_commands(dist, scriptfile, COMMAND_PRE_REMOVE);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
@@ -1541,8 +1585,11 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
     fputs("fi\n", scriptfile);
-    fprintf(scriptfile, "rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
   }
+
+  write_commands(dist, scriptfile, COMMAND_POST_REMOVE);
+
+  fprintf(scriptfile, "rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
 
   fputs("echo Removal is complete.\n", scriptfile);
 
@@ -1553,5 +1600,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.19 2001/01/19 16:24:00 mike Exp $".
+ * End of "$Id: portable.c,v 1.20 2001/03/03 21:29:48 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.23 2001/01/03 20:41:34 mike Exp $"
+ * "$Id: rpm.c,v 1.24 2001/03/03 21:29:49 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -46,6 +46,8 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   char		command[1024];		/* RPM command to run */
   const char	*rpmdir;		/* RPM directory */
   file_t	*file;			/* Current distribution file */
+  command_t	*c;			/* Current command */
+  depend_t	*d;			/* Current dependency */
   struct passwd	*pwd;			/* Pointer to user record */
   struct group	*grp;			/* Pointer to group record */
   char		current[1024];		/* Current directory */
@@ -86,22 +88,26 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "Vendor: %s\n", dist->vendor);
   fprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
   fputs("Group: Applications\n", fp);
-  for (i = 0; i < dist->num_requires; i ++)
-    if (dist->requires[i][0] != '/')
-      fprintf(fp, "Requires: %s\n", dist->requires[i]);
-  for (i = 0; i < dist->num_replaces; i ++)
-    if (dist->replaces[i][0] != '/')
-      fprintf(fp, "Conflicts: %s\n", dist->replaces[i]);
-  for (i = 0; i < dist->num_incompats; i ++)
-    if (dist->incompats[i][0] != '/')
-      fprintf(fp, "Conflicts: %s\n", dist->incompats[i]);
+
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REQUIRES)
+      fprintf(fp, "Requires: %s\n", d->product);
+    else
+      fprintf(fp, "Conflicts: %s\n", d->product);
+
   fputs("%description\n", fp);
   for (i = 0; i < dist->num_descriptions; i ++)
     fprintf(fp, "%s\n", dist->descriptions[i]);
-  fputs("%post\n", fp);
 
-  for (i = 0; i < dist->num_installs; i ++)
-    fprintf(fp, "%s\n", dist->installs[i]);
+  fputs("%pre\n", fp);
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_PRE_INSTALL)
+      fprintf(fp, "%s\n", c->command);
+
+  fputs("%post\n", fp);
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_INSTALL)
+      fprintf(fp, "%s\n", c->command);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
@@ -148,7 +154,6 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   }
 
   fputs("%preun\n", fp);
-
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
       break;
@@ -188,8 +193,15 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     fputs("fi\n", fp);
   }
 
-  for (i = 0; i < dist->num_removes; i ++)
-    fprintf(fp, "%s\n", dist->removes[i]);
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_PRE_REMOVE)
+      fprintf(fp, "%s\n", c->command);
+
+  fputs("%postun\n", fp);
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_REMOVE)
+      fprintf(fp, "%s\n", c->command);
+
   fputs("%files\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     switch (tolower(file->type))
@@ -289,7 +301,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     puts("Building RPM binary distribution...");
 
   if (strcmp(platform->machine, "intel") == 0)
-    sprintf(command, "rpm -bb " EPM_RPMARCH " i386 %s %s",
+    sprintf(command, "rpm -bb " EPM_RPMARCH "i386 %s %s",
             Verbosity == 0 ? "--quiet" : "", specname);
   else
     sprintf(command, "rpm -bb %s %s",
@@ -304,14 +316,14 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   if ((rpmdir = getenv("RPMDIR")) == NULL)
   {
-    if (!access("/usr/src/redhat/RPMS", 0))
+    if (!access("/usr/src/redhat/RPMS", 0))		/* Red Hat */
       rpmdir = "/usr/src/redhat";
-    else if (!access("/usr/src/RPM/RPMS", 0))
+    else if (!access("/usr/src/RPM/RPMS", 0))		/* Mandrake */
       rpmdir = "/usr/src/RPM";
-    else if (!access("/usr/src/packages/RPMS", 0)) /* SuSE */
+    else if (!access("/usr/src/packages/RPMS", 0))	/* SuSE */
       rpmdir = "/usr/src/packages";
     else
-      rpmdir = "/usr/local/src/RPM";
+      rpmdir = "/usr/local/src/RPM";			/* Others? */
   }
 
  /*
@@ -346,5 +358,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.23 2001/01/03 20:41:34 mike Exp $".
+ * End of "$Id: rpm.c,v 1.24 2001/03/03 21:29:49 mike Exp $".
  */
