@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.5 1999/12/03 22:36:54 mike Exp $"
+dnl "$Id: configure.in,v 1.6 1999/12/06 16:56:09 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -19,6 +19,13 @@ dnl
 AC_INIT(epm.c)
 AC_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT(/usr)
+
+dnl Get the operating system...
+
+uname=`uname`
+if test "$uname" = "IRIX64"; then
+    uname="IRIX"
+fi
 
 dnl Clear default debugging options and set normal optimization by
 dnl default unless the user asks for debugging specifically.
@@ -51,11 +58,6 @@ AC_PATH_PROG(WHOAMI,whoami)
 dnl Architecture checks...
 AC_C_CONST
 AC_C_CHAR_UNSIGNED
-
-uname=`uname`
-if test "$uname" = "IRIX64"; then
-	uname=IRIX
-fi
 
 if test "$uname" = "IRIX"; then
 	if test `uname -r` = 6.5; then
@@ -102,6 +104,19 @@ else
 	AC_MSG_WARN(C++ compiler or FLTK not available so setup GUI will not be built.)
 fi
 
+AC_CHECK_LIB(socket,socket,
+if test "$uname" != "IRIX"; then
+	LIBS="$LIBS -lsocket"
+else
+	echo "Not using -lsocket since you are running IRIX."
+fi)
+AC_CHECK_LIB(nsl,gethostbyaddr,
+if test "$uname" != "IRIX"; then
+	LIBS="$LIBS -lnsl"
+else
+	echo "Not using -lnsl since you are running IRIX."
+fi)
+
 AC_SUBST(SETUP)
 
 dnl See if the echo command supports the \c escape; if not, then it's broken!
@@ -139,5 +154,5 @@ AC_SUBST(EPM_WHOAMI)
 AC_OUTPUT(Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.5 1999/12/03 22:36:54 mike Exp $".
+dnl End of "$Id: configure.in,v 1.6 1999/12/06 16:56:09 mike Exp $".
 dnl
