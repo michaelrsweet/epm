@@ -5304,6 +5304,10 @@ if test "$prefix" = "NONE"; then
 	prefix="/usr"
 fi
 
+if test "$exec_prefix" = "NONE"; then
+	exec_prefix="$prefix"
+fi
+
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
         	*BSD* | Darwin* | Linux*)
