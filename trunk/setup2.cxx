@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.18 2001/07/03 16:33:53 mike Exp $"
+// "$Id: setup2.cxx,v 1.19 2001/07/05 16:22:06 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -54,6 +54,13 @@
 #ifdef HAVE_SYS_VFS_H
 #  include <sys/vfs.h>
 #endif // HAVE_SYS_VFS_H
+
+#ifdef __osf__
+// No prototype for statfs under Tru64...
+extern "C" {
+extern int statfs(const char *, struct statfs *);
+}
+#endif // __osf__
 
 
 //
@@ -706,7 +713,7 @@ load_types(void)
 	if (NumInstTypes >= (int)(sizeof(InstTypes) / sizeof(InstTypes[0])))
 	{
 	  fprintf(stderr, "setup: Too many TYPEs (> %d) in setup.types!\n",
-	          sizeof(InstTypes) / sizeof(InstTypes[0]));
+	          (int)(sizeof(InstTypes) / sizeof(InstTypes[0])));
 	  fclose(fp);
 	  exit(1);
 	}
@@ -725,7 +732,7 @@ load_types(void)
 	if (dt->num_products >= (int)(sizeof(dt->products) / sizeof(dt->products[0])))
 	{
 	  fprintf(stderr, "setup: Too many INSTALLs (> %d) in setup.types!\n",
-	          sizeof(dt->products) / sizeof(dt->products[0]));
+	          (int)(sizeof(dt->products) / sizeof(dt->products[0])));
 	  fclose(fp);
 	  exit(1);
 	}
@@ -1070,5 +1077,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.18 2001/07/03 16:33:53 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.19 2001/07/05 16:22:06 mike Exp $".
 //
