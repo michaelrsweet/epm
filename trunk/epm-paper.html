@@ -3,7 +3,7 @@
 	<TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 	<META NAME="Author" CONTENT="Michael Sweet">
 	<META NAME="Copyright" CONTENT="Copyright 1999-2001 by Easy Software Products">
-	<META NAME="DocNumber" CONTENT="ESP-004-20010119">
+	<META NAME="DocNumber" CONTENT="ESP-004-20010302">
 </HEAD>
 <BODY>
 
@@ -11,11 +11,11 @@
 Using the<BR>
 ESP Package Manager</H1>
 
-<P ALIGN="CENTER">19 January 2001</P>
+<P ALIGN="CENTER">2 March 2001</P>
 
 <P ALIGN="CENTER">Michael Sweet, Easy Software Products</P>
 
-<P ALIGN="CENTER">ESP-004-20010119</P>
+<P ALIGN="CENTER">ESP-004-20010302</P>
 
 <H2>Contents</H2>
 
@@ -335,6 +335,15 @@ names.
 sign (<CODE>$</CODE>). As with most shells, variable names can
 be surrounded by curly braces (<CODE>${variable}</CODE>) to
 explicitly delimit the name.
+
+<P>If you need to insert a <CODE>$</CODE> in a filename or a
+script, use <CODE>$$</CODE>:
+
+<UL><PRE>
+%install echo Enter your name:
+%install read $$name
+%install echo Your name is $$name.
+</PRE></UL>
 
 <H3>Files</H3>
 
