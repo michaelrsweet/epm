@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.7 1999/12/06 16:35:11 mike Exp $"
+.\" "$Id: epm.man,v 1.8 1999/12/06 16:36:15 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -63,7 +63,7 @@ The \fI-s\fR option ("setup") includes the ESP Software Wizard with the
 specified XPM image file with the distribution. This option is currently
 only available for portable distributions.
 .LP
-The \fI-v\fI option ("verbose") increases the amount of information that is
+The \fI-v\fR option ("verbose") increases the amount of information that is
 reported. Use multiple v's for more verbose output.
 .LP
 Distributions normally are named
@@ -221,5 +221,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.7 1999/12/06 16:35:11 mike Exp $".
+.\" End of "$Id: epm.man,v 1.8 1999/12/06 16:36:15 mike Exp $".
 .\"
