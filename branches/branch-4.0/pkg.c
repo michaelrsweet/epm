@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.20 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: pkg.c,v 1.20.2.1 2002/04/27 13:41:15 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -101,7 +101,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 	  curdate->tm_hour, curdate->tm_min, curdate->tm_sec);
 
   if (dist->num_descriptions > 0)
-    fprintf(fp, "DESC=%s\n", dist->descriptions[0]);
+    fprintf(fp, "DESC=%s\n", dist->descriptions[0].description);
 
   fputs("CATEGORY=application\n", fp);
   fputs("CLASSES=none\n", fp);
@@ -325,7 +325,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      file = add_file(dist);
+      file = add_file(dist, dist->files[i].subpackage);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
@@ -333,7 +333,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
       snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
       snprintf(file->dst, sizeof(file->dst), "/etc/rc0.d/K00%s", dist->files[i].dst);
 
-      file = add_file(dist);
+      file = add_file(dist, dist->files[i].subpackage);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
@@ -489,5 +489,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.20 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: pkg.c,v 1.20.2.1 2002/04/27 13:41:15 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.21 2002/03/14 20:37:39 mike Exp $"
+ * "$Id: inst.c,v 1.21.2.1 2002/04/27 13:41:14 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -177,7 +177,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      file = add_file(dist);
+      file = add_file(dist, dist->files[i].subpackage);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
@@ -185,7 +185,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
       snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
       snprintf(file->dst, sizeof(file->dst), "/etc/rc0.d/K00%s", dist->files[i].dst);
 
-      file = add_file(dist);
+      file = add_file(dist, dist->files[i].subpackage);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
@@ -213,7 +213,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     * Add the preinstall script file to the list...
     */
 
-    file = add_file(dist);
+    file = add_file(dist, NULL);
     file->type = '1';
     file->mode = 0555;
     strcpy(file->user, "root");
@@ -267,7 +267,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     * Add the postinstall script file to the list...
     */
 
-    file = add_file(dist);
+    file = add_file(dist, NULL);
     file->type = '2';
     file->mode = 0555;
     strcpy(file->user, "root");
@@ -321,7 +321,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     * Add the preremove script file to the list...
     */
 
-    file = add_file(dist);
+    file = add_file(dist, NULL);
     file->type = '3';
     file->mode = 0555;
     strcpy(file->user, "root");
@@ -377,7 +377,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     * Add the postremove script file to the list...
     */
 
-    file = add_file(dist);
+    file = add_file(dist, NULL);
     file->type = '4';
     file->mode = 0555;
     strcpy(file->user, "root");
@@ -446,9 +446,11 @@ make_inst(const char     *prodname,	/* I - Product short name */
   {
     if (strstr(file->dst, "/man/") != NULL ||
         strstr(file->dst, "/catman/") != NULL)
-      snprintf(subsys, sizeof(subsys), "%s.man.eoe", prodname);
+      snprintf(subsys, sizeof(subsys), "%s.man.%s", prodname,
+               file->subpackage ? file->subpackage : "eoe");
     else
-      snprintf(subsys, sizeof(subsys), "%s.sw.eoe", prodname);
+      snprintf(subsys, sizeof(subsys), "%s.sw.%s", prodname,
+               file->subpackage ? file->subpackage : "eoe");
 
     switch (tolower(file->type))
     {
@@ -598,5 +600,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.21 2002/03/14 20:37:39 mike Exp $".
+ * End of "$Id: inst.c,v 1.21.2.1 2002/04/27 13:41:14 mike Exp $".
  */

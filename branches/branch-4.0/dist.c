@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.1 2002/04/26 13:03:00 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.2 2002/04/27 13:41:14 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -24,9 +24,7 @@
  *   get_platform()    - Get the operating system information...
  *   read_dist()       - Read a software distribution.
  *   sort_dist_files() - Sort the files in the distribution.
- *   add_string()      - Add a command to an array of commands...
  *   compare_files()   - Compare the destination filenames.
- *   free_strings()    - Free memory used by the array of strings.
  *   expand_name()     - Expand a filename with environment variables.
  *   get_file()        - Read a file into a string...
  *   get_inline()      - Read inline lines into a string...
@@ -56,11 +54,8 @@ extern int	gethostname(char *, int);
  * Local functions...
  */
 
-static int	add_string(int num_strings, char ***strings, FILE *fp,
-		           char *string);
 static int	compare_files(const file_t *f0, const file_t *f1);
 static void	expand_name(char *buffer, char *name);
-static void	free_strings(int num_strings, char **strings);
 static char	*get_file(const char *filename, char *buffer, int size);
 static char	*get_inline(const char *term, FILE *fp, char *buffer, int size);
 static char	*get_line(char *buffer, int size, FILE *fp,
@@ -68,6 +63,7 @@ static char	*get_line(char *buffer, int size, FILE *fp,
 			  int *skip);
 static int	get_vernumber(const char *version);
 static int	patmatch(const char *, const char *);
+static int	sort_subpackages(char **a, char **b);
 
 
 /*
@@ -90,7 +86,8 @@ void
 add_command(dist_t     *dist,		/* I - Distribution */
             FILE       *fp,		/* I - Distribution file */
             char       type,		/* I - Command type */
-	    const char *command)	/* I - Command string */
+	    const char *command,	/* I - Command string */
+	    const char *subpkg)		/* I - Subpackage */
 {
   command_t	*temp;			/* New command */
   char		buf[16384];		/* File import buffer */
@@ -123,10 +120,11 @@ add_command(dist_t     *dist,		/* I - Distribution */
     return;
   }
 
-  dist->commands = temp;
-  temp           += dist->num_commands;
-  temp->type     = type;
-  temp->command  = strdup(command);
+  dist->commands   = temp;
+  temp             += dist->num_commands;
+  temp->type       = type;
+  temp->command    = strdup(command);
+  temp->subpackage = subpkg;
 
   if (temp->command == NULL)
   {
@@ -145,7 +143,8 @@ add_command(dist_t     *dist,		/* I - Distribution */
 void
 add_depend(dist_t     *dist,		/* I - Distribution */
            char       type,		/* I - Type of dependency */
-	   const char *line)		/* I - Line from file */
+	   const char *line,		/* I - Line from file */
+	   const char *subpkg)		/* I - Subpackage */
 {
   int		i;			/* Looping var */
   depend_t	*temp;			/* New dependency */
@@ -178,7 +177,8 @@ add_depend(dist_t     *dist,		/* I - Distribution */
 
   memset(temp, 0, sizeof(depend_t));
 
-  temp->type = type;
+  temp->type       = type;
+  temp->subpackage = subpkg;
 
  /*
   * Get the product name string...
@@ -276,10 +276,51 @@ add_depend(dist_t     *dist,		/* I - Distribution */
  */
 
 void
-add_description(dist_t     *dist,
-                const char *description,
-                const char *subpkg)
+add_description(dist_t     *dist,	/* I - Distribution */
+                FILE       *fp,		/* I - Source file */
+                const char *description,/* I - Description string */
+                const char *subpkg)	/* I - Subpackage name */
 {
+  description_t	*temp;			/* Temporary description array */
+  char		buf[16384];		/* File import buffer */
+
+
+  if (strncmp(description, "<<", 2) == 0)
+  {
+    for (description += 2; isspace(*description); description ++);
+
+    description = get_inline(description, fp, buf, sizeof(buf));
+  }
+  else if (description[0] == '<' && description[1])
+  {
+    for (description ++; isspace(*description); description ++);
+
+    description = get_file(description, buf, sizeof(buf));
+  }
+
+  if (description == NULL)
+    return;
+
+  if (dist->num_descriptions == 0)
+    temp = malloc(sizeof(description_t));
+  else
+    temp = realloc(dist->descriptions,
+                   (dist->num_descriptions + 1) * sizeof(description_t));
+
+  if (temp == NULL)
+  {
+    perror("epm: Out of memory adding description");
+    return;
+  }
+
+  dist->descriptions = temp;
+  temp               += dist->num_descriptions;
+  dist->num_descriptions ++;
+
+  temp->subpackage = subpkg;
+
+  if ((temp->description = strdup(description)) == NULL)
+    perror("epm: Out of memory duplicating description");
 }
 
 
@@ -287,10 +328,11 @@ add_description(dist_t     *dist,
  * 'add_file()' - Add a file to the distribution.
  */
 
-file_t *		/* O - New file */
-add_file(dist_t *dist)	/* I - Distribution */
+file_t *				/* O - New file */
+add_file(dist_t     *dist,		/* I - Distribution */
+         const char *subpkg)		/* I - Subpackage name */
 {
-  file_t	*file;	/* New file */
+  file_t	*file;			/* New file */
 
 
   if (dist->num_files == 0)
@@ -302,6 +344,8 @@ add_file(dist_t *dist)	/* I - Distribution */
   file = dist->files + dist->num_files;
   dist->num_files ++;
 
+  file->subpackage = subpkg;
+
   return (file);
 }
 
@@ -310,10 +354,34 @@ add_file(dist_t *dist)	/* I - Distribution */
  * 'add_subpackage()' - Add a subpackage to the distribution.
  */
 
-char *
-add_subpackage(dist_t     *dist,
-               const char *subpkg)
+char *					/* O - Subpackage pointer */
+add_subpackage(dist_t     *dist,	/* I - Distribution */
+               const char *subpkg)	/* I - Subpackage name */
 {
+  char	**temp,				/* Temporary array pointer */
+	*s;				/* Subpackage pointer */
+
+
+  if (dist->num_subpackages == 0)
+    temp = malloc(sizeof(char *));
+  else
+    temp = realloc(dist->subpackages,
+                   (dist->num_subpackages + 1) * sizeof(char *));
+
+  if (temp == NULL)
+    return (NULL);
+
+  dist->subpackages = temp;
+  temp              += dist->num_subpackages;
+  dist->num_subpackages ++;
+
+  *temp = s = strdup(subpkg);
+
+  if (dist->num_subpackages > 1)
+    qsort(dist->subpackages, dist->num_subpackages, sizeof(char *),
+          (int (*)(const void *, const void *))sort_subpackages);
+
+  return (s);
 }
 
 
@@ -321,10 +389,26 @@ add_subpackage(dist_t     *dist,
  * 'find_subpackage()' - Find a subpackage in the distribution.
  */
 
-char *
-find_subpackage(dist_t     *dist,
-                const char *subpkg)
+char *					/* O - Subpackage pointer */
+find_subpackage(dist_t     *dist,	/* I - Distribution */
+                const char *subpkg)	/* I - Subpackage name */
 {
+  char	**match;			/* Matching subpackage */
+
+
+  if (!subpkg || !*subpkg)
+    return (NULL);
+
+  if (dist->num_subpackages > 0)
+    match = bsearch(&subpkg, dist->subpackages, dist->num_subpackages, sizeof(char *),
+                    (int (*)(const void *, const void *))sort_subpackages);
+  else
+    match = NULL;
+
+  if (match != NULL)
+    return (*match);
+  else
+    return (add_subpackage(dist, subpkg));
 }
 
 
@@ -341,7 +425,17 @@ free_dist(dist_t *dist)		/* I - Distribution to free */
   if (dist->num_files > 0)
     free(dist->files);
 
-  free_strings(dist->num_descriptions, dist->descriptions);
+  for (i = 0; i < dist->num_descriptions; i ++)
+    free(dist->descriptions[i].description);
+
+  if (dist->num_descriptions)
+    free(dist->descriptions);
+
+  for (i = 0; i < dist->num_subpackages; i ++)
+    free(dist->subpackages[i]);
+
+  if (dist->num_subpackages)
+    free(dist->subpackages);
 
   for (i = 0; i < dist->num_commands; i ++)
     free(dist->commands[i].command);
@@ -473,25 +567,26 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
           struct utsname *platform,	/* I - Platform information */
           const char     *format)	/* I - Format of distribution */
 {
-  FILE		*listfiles[10];	/* File lists */
-  int		listlevel;	/* Level in file list */
-  char		line[2048],	/* Expanded line from list file */
-		buf[1024],	/* Original line from list file */
-		type,		/* File type */
-		dst[256],	/* Destination path */
-		src[256],	/* Source path */
-		pattern[256],	/* Pattern for source files */
-		user[32],	/* User */
-		group[32],	/* Group */
-		*temp;		/* Temporary pointer */
-  int		mode,		/* File permissions */
-		skip;		/* 1 = skip files, 0 = archive files */
-  dist_t	*dist;		/* Distribution data */
-  file_t	*file;		/* Distribution file */
-  struct stat	fileinfo;	/* File information */
-  DIR		*dir;		/* Directory */
-  DIRENT	*dent;		/* Directory entry */
-  struct passwd	*pwd;		/* Password entry */
+  FILE		*listfiles[10];		/* File lists */
+  int		listlevel;		/* Level in file list */
+  char		line[2048],		/* Expanded line from list file */
+		buf[1024],		/* Original line from list file */
+		type,			/* File type */
+		dst[256],		/* Destination path */
+		src[256],		/* Source path */
+		pattern[256],		/* Pattern for source files */
+		user[32],		/* User */
+		group[32],		/* Group */
+		*temp;			/* Temporary pointer */
+  int		mode,			/* File permissions */
+		skip;			/* 1 = skip files, 0 = archive files */
+  dist_t	*dist;			/* Distribution data */
+  file_t	*file;			/* Distribution file */
+  struct stat	fileinfo;		/* File information */
+  DIR		*dir;			/* Directory */
+  DIRENT	*dent;			/* Directory entry */
+  struct passwd	*pwd;			/* Password entry */
+  const char	*subpkg;		/* Subpackage */
 
 
  /*
@@ -520,6 +615,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
   skip      = 0;
   listlevel = 0;
+  subpkg    = NULL;
 
   do
   {
@@ -562,24 +658,28 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  }
 	}
 	else if (strcmp(line, "%description") == 0)
-	  dist->num_descriptions =
-	      add_string(dist->num_descriptions, &(dist->descriptions), 
-	                 listfiles[listlevel], temp);
+	  add_description(dist, listfiles[listlevel], temp, subpkg);
 	else if (strcmp(line, "%preinstall") == 0)
-          add_command(dist, listfiles[listlevel], COMMAND_PRE_INSTALL, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_PRE_INSTALL, temp,
+	              subpkg);
 	else if (strcmp(line, "%install") == 0 ||
 	         strcmp(line, "%postinstall") == 0)
-          add_command(dist, listfiles[listlevel], COMMAND_POST_INSTALL, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_POST_INSTALL, temp,
+	              subpkg);
 	else if (strcmp(line, "%remove") == 0 ||
 	         strcmp(line, "%preremove") == 0)
-          add_command(dist, listfiles[listlevel], COMMAND_PRE_REMOVE, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_PRE_REMOVE, temp,
+	              subpkg);
 	else if (strcmp(line, "%postremove") == 0)
-          add_command(dist, listfiles[listlevel], COMMAND_POST_REMOVE, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_POST_REMOVE, temp,
+	              subpkg);
 	else if (strcmp(line, "%prepatch") == 0)
-          add_command(dist, listfiles[listlevel], COMMAND_PRE_PATCH, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_PRE_PATCH, temp,
+	              subpkg);
 	else if (strcmp(line, "%patch") == 0 ||
 	         strcmp(line, "%postpatch") == 0)
-          add_command(dist, listfiles[listlevel], COMMAND_POST_PATCH, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_POST_PATCH, temp,
+	              subpkg);
         else if (strcmp(line, "%product") == 0)
 	{
           if (!dist->product[0])
@@ -622,6 +722,10 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  else
 	    fputs("epm: Ignoring %readme line in list file.\n", stderr);
 	}
+	else if (strcmp(line, "%subpackage") == 0)
+	{
+	  subpkg = find_subpackage(dist, temp);
+	}
 	else if (strcmp(line, "%version") == 0)
 	{
           if (!dist->version[0])
@@ -648,13 +752,13 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  dist->vernumber += dist->relnumber;
 	}
 	else if (strcmp(line, "%incompat") == 0)
-	  add_depend(dist, DEPEND_INCOMPAT, temp);
+	  add_depend(dist, DEPEND_INCOMPAT, temp, subpkg);
 	else if (strcmp(line, "%provides") == 0)
-	  add_depend(dist, DEPEND_PROVIDES, temp);
+	  add_depend(dist, DEPEND_PROVIDES, temp, subpkg);
 	else if (strcmp(line, "%replaces") == 0)
-	  add_depend(dist, DEPEND_REPLACES, temp);
+	  add_depend(dist, DEPEND_REPLACES, temp, subpkg);
 	else if (strcmp(line, "%requires") == 0)
-	  add_depend(dist, DEPEND_REQUIRES, temp);
+	  add_depend(dist, DEPEND_REQUIRES, temp, subpkg);
 	else
 	{
 	  fprintf(stderr, "epm: Unknown directive \"%s\" ignored!\n", line);
@@ -774,7 +878,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
               if (!patmatch(dent->d_name, pattern))
 	        continue;
 
-              file = add_file(dist);
+              file = add_file(dist, subpkg);
 
               file->type = type;
 	      file->mode = mode;
@@ -794,7 +898,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  * Add single file...
 	  */
 
-          file = add_file(dist);
+          file = add_file(dist, subpkg);
 
           file->type = type;
 	  file->mode = mode;
@@ -863,60 +967,6 @@ sort_dist_files(dist_t *dist)	/* I - Distribution to sort */
       dist->num_files --;
       file --;
     }
-}
-
-
-/*
- * 'add_string()' - Add a command to an array of commands...
- */
-
-static int			/* O - Number of strings */
-add_string(int  num_strings,	/* I - Number of strings */
-           char ***strings,	/* O - Pointer to string pointer array */
-           FILE *fp,		/* I - File to read from for inline text */
-           char *string)	/* I - String to add */
-{
-  char		**temp,		/* Temporary pointer to string array */
-		buf[16384];	/* File import buffer */
-
-
-  if (strncmp(string, "<<", 2) == 0)
-  {
-    for (string += 2; isspace(*string); string ++);
-
-    string = get_inline(string, fp, buf, sizeof(buf));
-  }
-  else if (string[0] == '<' && string[1])
-  {
-    for (string ++; isspace(*string); string ++);
-
-    string = get_file(string, buf, sizeof(buf));
-  }
-
-  if (string == NULL)
-    return (num_strings);
-
-  if (num_strings == 0)
-    temp = (char **)malloc(sizeof(char *));
-  else
-    temp = (char **)realloc(*strings, (num_strings + 1) * sizeof(char *));
-
-  if (temp == NULL)
-  {
-    perror("epm: Out of memory adding string");
-    return (num_strings);
-  }
-
-  *strings = temp;
-  temp     += num_strings;
-
-  if ((*temp = strdup(string)) == NULL)
-  {
-    perror("epm: Out of memory duplicating string");
-    return (num_strings);
-  }
-
-  return (num_strings + 1);
 }
 
 
@@ -993,25 +1043,6 @@ expand_name(char *buffer,	/* O - Output string */
   }
 
   *buffer = '\0';
-}
-
-
-/*
- * 'free_strings()' - Free memory used by the array of strings.
- */
-
-static void
-free_strings(int  num_strings,	/* I - Number of strings */
-             char **strings)	/* I - Pointer to string pointers */
-{
-  int	i;			/* Looping var */
-
-
-  for (i = 0; i < num_strings; i ++)
-    free(strings[i]);
-
-  if (num_strings)
-    free(strings);
 }
 
 
@@ -1682,5 +1713,17 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.1 2002/04/26 13:03:00 mike Exp $".
+ * 'sort_subpackages()' - Compare two subpackage names.
+ */
+
+static int				/* O - Result of comparison */
+sort_subpackages(char **a,		/* I - First subpackage */
+                 char **b)		/* I - Second subpackage */
+{
+  return (strcmp(*a, *b));
+}
+
+
+/*
+ * End of "$Id: dist.c,v 1.44.2.2 2002/04/27 13:41:14 mike Exp $".
  */

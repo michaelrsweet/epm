@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.16 2002/01/02 20:39:39 mike Exp $"
+ * "$Id: deb.c,v 1.16.2.1 2002/04/27 13:41:13 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -115,7 +115,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "Description: %s\n", dist->product);
   fprintf(fp, " Copyright: %s\n", dist->copyright);
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(fp, " %s\n", dist->descriptions[i]);
+    fprintf(fp, " %s\n", dist->descriptions[i].description);
 
   for (j = DEPEND_REQUIRES; j <= DEPEND_PROVIDES; j ++)
   {
@@ -426,5 +426,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.16 2002/01/02 20:39:39 mike Exp $".
+ * End of "$Id: deb.c,v 1.16.2.1 2002/04/27 13:41:13 mike Exp $".
  */

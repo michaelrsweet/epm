@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.18 2002/03/14 20:37:39 mike Exp $"
+ * "$Id: swinstall.c,v 1.18.2.1 2002/04/27 13:41:16 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -261,7 +261,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      file = add_file(dist);
+      file = add_file(dist, dist->files[i].subpackage);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
@@ -271,7 +271,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
       snprintf(file->dst, sizeof(file->dst), "/sbin/rc0.d/K000%s",
                dist->files[i].dst);
 
-      file = add_file(dist);
+      file = add_file(dist, dist->files[i].subpackage);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
@@ -326,7 +326,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "  revision %s\n", dist->version);
   fprintf(fp, "  title %s, %s\n", dist->product, dist->version);
   if (dist->num_descriptions)
-    fprintf(fp, "  description %s\n", dist->descriptions[0]);
+    fprintf(fp, "  description %s\n", dist->descriptions[0].description);
   fprintf(fp, "  copyright Copyright %s\n", dist->copyright);
   fprintf(fp, "  readme < %s\n", dist->license);
   fputs("  is_locatable false\n", fp);
@@ -498,5 +498,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.18 2002/03/14 20:37:39 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.18.2.1 2002/04/27 13:41:16 mike Exp $".
  */

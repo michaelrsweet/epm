@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.27.2.1 2002/04/26 13:03:00 mike Exp $"
+ * "$Id: epm.h,v 1.27.2.2 2002/04/27 13:41:14 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -129,64 +129,64 @@ enum
 
 typedef union				/**** TAR record format ****/
 {
-  unsigned char	all[TAR_BLOCK];
+  unsigned char	all[TAR_BLOCK];		/* Raw data block */
   struct
   {
-    char	pathname[100],
-		mode[8],
-		uid[8],
-		gid[8],
-		size[12],
-		mtime[12],
-		chksum[8],
-		linkflag,
-		linkname[100],
-		magic[8],
-		uname[32],
-		gname[32],
-		devmajor[8],
-		devminor[8];
+    char	pathname[100],		/* Destination path */
+		mode[8],		/* Octal file permissions */
+		uid[8],			/* Octal user ID */
+		gid[8],			/* Octal group ID */
+		size[12],		/* Octal size in bytes */
+		mtime[12],		/* Octal modification time */
+		chksum[8],		/* Octal checksum value */
+		linkflag,		/* File type */
+		linkname[100],		/* Source path for link */
+		magic[8],		/* Magic string */
+		uname[32],		/* User name */
+		gname[32],		/* Group name */
+		devmajor[8],		/* Octal device major number */
+		devminor[8];		/* Octal device minor number */
   }	header;
 } tar_t;
 
 typedef struct				/**** TAR file ****/
 {
-  FILE	*file;				/* File to write to */
-  int	blocks;				/* Number of blocks written */
-  int	compressed;			/* Compressed output? */
+  FILE		*file;			/* File to write to */
+  int		blocks,			/* Number of blocks written */
+		compressed;		/* Compressed output? */
 } tarf_t;
 
 typedef struct				/**** File to install ****/
 {
-  char	type;				/* Type of file */
-  int	mode;				/* Permissions of file */
-  char	user[32],			/* Owner of file */
-	group[32],			/* Group of file */
-	src[512],			/* Source path */
-	dst[512],			/* Destination path */
-	*subpackage;			/* Sub-package name */
+  char		type;			/* Type of file */
+  int		mode;			/* Permissions of file */
+  char		user[32],		/* Owner of file */
+		group[32],		/* Group of file */
+		src[512],		/* Source path */
+		dst[512];		/* Destination path */
+  const char	*subpackage;		/* Sub-package name */
 } file_t;
 
 typedef struct				/**** Install/Patch/Remove Commands ****/
 {
-  char	type,				/* Command type */
-	*command,			/* Command string */
-	*subpackage;			/* Sub-package name */
+  char		type,			/* Command type */
+		*command;		/* Command string */
+  const char	*subpackage;		/* Sub-package name */
 } command_t;
 
 typedef struct				/**** Dependencies ****/
 {
-  char	type;				/* Dependency type */
-  char	product[256];			/* Product name */
-  char	version[2][256];		/* Product version string */
-  int	vernumber[2];			/* Product version number */
-  char	*subpackage;			/* Sub-package name */
+  char		type;			/* Dependency type */
+  char		product[256];		/* Product name */
+  char		version[2][256];	/* Product version string */
+  int		vernumber[2];		/* Product version number */
+  const char	*subpackage;		/* Sub-package name */
 } depend_t;
 
 typedef struct				/**** Description Structure ****/
 {
-  char	*description;			/* Description */
-  char	*subpackage;			/* Sub-package name */
+  char		*description;		/* Description */
+  const char	*subpackage;		/* Sub-package name */
 } description_t;
 
 typedef struct				/**** Distribution Structure ****/
@@ -231,7 +231,7 @@ extern void	add_command(dist_t *dist, FILE *fp, char type,
 		            const char *command, const char *subpkg);
 extern void	add_depend(dist_t *dist, char type, const char *line,
 		           const char *subpkg);
-extern void	add_description(dist_t *dist, const char *description,
+extern void	add_description(dist_t *dist, FILE *fp, const char *description,
 		                const char *subpkg);
 extern file_t	*add_file(dist_t *dist, const char *subpkg);
 extern char	*add_subpackage(dist_t *dist, const char *subpkg);
@@ -287,5 +287,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.27.2.1 2002/04/26 13:03:00 mike Exp $".
+ * End of "$Id: epm.h,v 1.27.2.2 2002/04/27 13:41:14 mike Exp $".
  */

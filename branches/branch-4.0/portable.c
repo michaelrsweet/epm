@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63 2002/03/14 20:37:39 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.1 2002/04/27 13:41:15 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -654,7 +654,7 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fprintf(fp, "#%%copyright %s\n", dist->copyright);
   fprintf(fp, "#%%version %s %d\n", dist->version, dist->vernumber);
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(fp, "#%%description %s\n", dist->descriptions[i]);
+    fprintf(fp, "#%%description %s\n", dist->descriptions[i].description);
   fprintf(fp, "#%%rootsize %d\n", rootsize);
   fprintf(fp, "#%%usrsize %d\n", usrsize);
   fputs("#\n", fp);
@@ -1957,5 +1957,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63 2002/03/14 20:37:39 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.1 2002/04/27 13:41:15 mike Exp $".
  */

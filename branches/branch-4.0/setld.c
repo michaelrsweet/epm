@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.11 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: setld.c,v 1.11.2.1 2002/04/27 13:41:16 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -116,7 +116,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      file = add_file(dist);
+      file = add_file(dist, dist->files[i].subpackage);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
@@ -124,7 +124,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
       snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
       snprintf(file->dst, sizeof(file->dst), "/sbin/rc0.d/K00%s", dist->files[i].dst);
 
-      file = add_file(dist);
+      file = add_file(dist, dist->files[i].subpackage);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
@@ -132,7 +132,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
       snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
       snprintf(file->dst, sizeof(file->dst), "/etc/rc2.d/S99%s", dist->files[i].dst);
 
-      file = add_file(dist);
+      file = add_file(dist, dist->files[i].subpackage);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
@@ -422,5 +422,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.11 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: setld.c,v 1.11.2.1 2002/04/27 13:41:16 mike Exp $".
  */

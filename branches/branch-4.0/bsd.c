@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.4 2002/01/02 20:39:39 mike Exp $"
+ * "$Id: bsd.c,v 1.4.2.1 2002/04/27 13:41:13 mike Exp $"
  *
  *   FreeBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -124,7 +124,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
   fputs("Description:\n\n", fp);
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(fp, "%s\n", dist->descriptions[i]);
+    fprintf(fp, "%s\n", dist->descriptions[i].description);
 
   fclose(fp);
 
@@ -319,5 +319,5 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: bsd.c,v 1.4 2002/01/02 20:39:39 mike Exp $".
+ * End of "$Id: bsd.c,v 1.4.2.1 2002/04/27 13:41:13 mike Exp $".
  */
