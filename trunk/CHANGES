@@ -1,5 +1,15 @@
-CHANGES - ESP Package Manager (EPM) 2.8
+CHANGES - ESP Package Manager (EPM) 2.9
 ---------------------------------------
+
+WHAT'S NEW IN EPM 2.9?
+
+    EPM 2.9 adds the following features, fixes, and changes to
+    EPM 2.8:
+
+	- The mkepmlist utility had a bad regular expression
+	  that thought that any argument (directory names, etc.)
+	  with a dash ("-") in it was an unsupported option.
+
 
 WHAT'S NEW IN EPM 2.8?
 
