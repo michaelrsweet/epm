@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 3.6
+README - ESP Package Manager (EPM) 3.7
 --------------------------------------
 
 WHAT IS EPM?
@@ -18,6 +18,7 @@ WHAT IS EPM?
 	- MacOS X software packages ("name.pkg")
 	- Portable (installation and removal scripts with tar files)
         - Red Hat Package Manager ("rpm")
+	- Slackware software packages ("name.pkg")
 
     EPM also includes graphical "setup" and "uninstall" programs
     that can be provided with your distributions to make
