@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.23 2001/06/25 21:40:19 mike Exp $"
+# "$Id: Makefile.in,v 1.24 2001/06/26 15:00:59 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -233,11 +233,11 @@ $(EPM_OBJS):	epm.h epmstring.h
 # epm
 #
 
-epminstall:	epminstall.o
+epminstall:	epminstall.o dist.o
 	echo Linking epminstall...
-	$(CC) $(LDFLAGS) -o epminstall epminstall.o
+	$(CC) $(LDFLAGS) -o epminstall epminstall.o dist.o
 
-epminstall.o:	epmstring.h
+epminstall.o:	epm.h epmstring.h
 
 
 #
@@ -257,5 +257,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.23 2001/06/25 21:40:19 mike Exp $".
+# End of "$Id: Makefile.in,v 1.24 2001/06/26 15:00:59 mike Exp $".
 #

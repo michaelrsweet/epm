@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.31 2001/05/11 20:07:19 mike Exp $"
+ * "$Id: dist.c,v 1.32 2001/06/26 15:00:59 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -21,6 +21,7 @@
  *   add_depend()      - Add a dependency to the distribution...
  *   add_file()        - Add a file to the distribution.
  *   free_dist()       - Free memory used by a distribution.
+ *   get_platform()    - Get the operating system information...
  *   read_dist()       - Read a software distribution.
  *   sort_dist_files() - Sort the files in the distribution.
  *   add_string()      - Add a command to an array of commands...
@@ -275,6 +276,114 @@ free_dist(dist_t *dist)		/* I - Distribution to free */
     free(dist->depends);
 
   free(dist);
+}
+
+
+/*
+ * 'get_platform()' - Get the operating system information...
+ */
+
+void
+get_platform(struct utsname *platform)	/* O - Platform info */
+{
+  char	*temp;				/* Temporary pointer */
+
+
+ /*
+  * Get the system identification information...
+  */
+
+  uname(platform);
+
+ /*
+  * Adjust the CPU type accordingly...
+  */
+
+#ifdef __sgi
+  strcpy(platform->machine, "mips");
+#elif defined(__hpux)
+  strcpy(platform->machine, "hppa");
+#elif defined(_AIX)
+  strcpy(platform->machine, "powerpc");
+#else
+  for (temp = platform->machine; *temp != '\0'; temp ++)
+    if (*temp == '-' || *temp == '_')
+    {
+      strcpy(temp, temp + 1);
+      temp --;
+    }
+    else
+      *temp = tolower(*temp);
+
+  if (strstr(platform->machine, "86") != NULL)
+    strcpy(platform->machine, "intel");
+  else if (strncmp(platform->machine, "sun", 3) == 0)
+    strcpy(platform->machine, "sparc");
+#endif /* __sgi */
+
+#ifdef _AIX
+ /*
+  * AIX stores the major and minor version numbers separately;
+  * combine them...
+  */
+
+  sprintf(platform->release, "%d.%d", atoi(platform->version),
+          atoi(platform->release));
+#else
+ /*
+  * Remove any extra junk from the release number - we just want the
+  * major and minor numbers...
+  */
+
+  while (!isdigit((int)platform->release[0]) && platform->release[0])
+    strcpy(platform->release, platform->release + 1);
+
+  if (platform->release[0] == '.')
+    strcpy(platform->release, platform->release + 1);
+
+  for (temp = platform->release; *temp && isdigit((int)*temp); temp ++);
+
+  if (*temp == '.')
+    for (temp ++; *temp && isdigit((int)*temp); temp ++);
+
+  *temp = '\0';
+#endif /* _AIX */
+
+ /*
+  * Convert the operating system name to lowercase, and strip out
+  * hyphens and underscores...
+  */
+
+  for (temp = platform->sysname; *temp != '\0'; temp ++)
+    if (*temp == '-' || *temp == '_')
+    {
+      strcpy(temp, temp + 1);
+      temp --;
+    }
+    else
+      *temp = tolower(*temp);
+
+ /*
+  * SunOS 5.x is really Solaris 2.x, and OSF1 is really Digital UNIX a.k.a.
+  * Compaq Tru64 UNIX...
+  */
+
+  if (strcmp(platform->sysname, "sunos") == 0 &&
+      platform->release[0] >= '5')
+  {
+    strcpy(platform->sysname, "solaris");
+    platform->release[0] -= 3;
+  }
+  else if (strcmp(platform->sysname, "osf1") == 0)
+    strcpy(platform->sysname, "tru64"); /* AKA Digital UNIX */
+  else if (strcmp(platform->sysname, "irix64") == 0)
+    strcpy(platform->sysname, "irix"); /* IRIX */
+
+#ifdef DEBUG
+  printf("sysname = %s\n", platform->sysname);
+  printf("release = %s\n", platform->release);
+  printf("machine = %s\n", platform->machine);
+#endif /* DEBUG */
 }
 
 
@@ -1091,5 +1200,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.31 2001/05/11 20:07:19 mike Exp $".
+ * End of "$Id: dist.c,v 1.32 2001/06/26 15:00:59 mike Exp $".
  */
