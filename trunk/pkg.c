@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.8 2000/06/28 20:25:21 mike Exp $"
+ * "$Id: pkg.c,v 1.9 2000/08/15 17:46:17 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -221,7 +221,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
       sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/etc/rc2.d/S99%s", dist->files[i].dst);
+      sprintf(file->dst, "/etc/rc3.d/S99%s", dist->files[i].dst);
 
       file = dist->files + i;
 
@@ -321,6 +321,19 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   tar_close(tarfile);
 
  /*
+  * Make a package stream file...
+  */
+
+  if (Verbosity)
+    puts("Copying into package stream file...");
+
+  sprintf(command, "cd %s; pkgtrans -s . %s.pkg %s",
+          directory, name, prodname);
+
+  if (system(command))
+    return (1);
+
+ /*
   * Remove temporary files...
   */
 
@@ -343,5 +356,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.8 2000/06/28 20:25:21 mike Exp $".
+ * End of "$Id: pkg.c,v 1.9 2000/08/15 17:46:17 mike Exp $".
  */
