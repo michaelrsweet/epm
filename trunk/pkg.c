@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.16 2001/03/26 20:11:09 mike Exp $"
+ * "$Id: pkg.c,v 1.17 2001/03/30 02:26:03 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -374,13 +374,13 @@ make_pkg(const char     *prodname,	/* I - Product short name */
       break;
 
   if (preinstall[0])
-    fprintf(fp, "i preinstall=%s\n", preinstall);
+    fprintf(fp, "i preinstall=%s/%s\n", current, preinstall);
   if (postinstall[0])
-    fprintf(fp, "i postinstall=%s\n", postinstall);
+    fprintf(fp, "i postinstall=%s/%s\n", current, postinstall);
   if (preremove[0])
-    fprintf(fp, "i preremove=%s\n", preremove);
+    fprintf(fp, "i preremove=%s/%s\n", current, preremove);
   if (postremove[0])
-    fprintf(fp, "i postremove=%s\n", postremove);
+    fprintf(fp, "i postremove=%s/%s\n", current, postremove);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     switch (tolower(file->type))
@@ -491,5 +491,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.16 2001/03/26 20:11:09 mike Exp $".
+ * End of "$Id: pkg.c,v 1.17 2001/03/30 02:26:03 mike Exp $".
  */
