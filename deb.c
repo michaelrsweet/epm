@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.21 2002/12/17 18:57:54 swdev Exp $"
+ * "$Id: deb.c,v 1.22 2003/01/15 14:29:24 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -224,18 +224,20 @@ make_deb(const char     *prodname,	/* I - Product short name */
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
       {
-        for (runlevels = get_runlevels(file, "02345");
-	     isdigit(*runlevels);
-	     runlevels ++)
-	{
-	  if (*runlevels == '0')
-            fprintf(fp, "update-rc.d %s stop %02d 0 >/dev/null\n", file->dst,
-	            get_stop(file, 0));
-          else
-            fprintf(fp, "update-rc.d %s start %02d %c >/dev/null\n", file->dst,
-	            get_start(file, 99), *runlevels);
-        }
+        runlevels = get_runlevels(file, "02345");
 
+	if (strchr(runlevels, '0') != NULL)
+          fprintf(fp, "update-rc.d %s stop %02d 0 . >/dev/null\n", file->dst,
+	          get_stop(file, 0));
+
+        fprintf(fp, "update-rc.d %s start %02d", file->dst,
+	        get_start(file, 99));
+
+        for (; isdigit(*runlevels); runlevels ++)
+	  if (*runlevels != '0')
+	    fprintf(fp, " %c", *runlevels);
+
+        fputs(" . >/dev/null\n", fp);
         fprintf(fp, "/etc/init.d/%s start\n", file->dst);
       }
 
@@ -442,5 +444,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.21 2002/12/17 18:57:54 swdev Exp $".
+ * End of "$Id: deb.c,v 1.22 2003/01/15 14:29:24 mike Exp $".
  */
