@@ -1,5 +1,7 @@
 TODO for EPM:
 
+	- Add noauto() option to init script files to disable
+	  auto start/stop of software.
 	- Do portable config file stuff for formats that don't
 	  support config files (HP-UX + others)
 	- Add /opt relocation hack and allow for relocatable and
