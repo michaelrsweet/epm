@@ -61,7 +61,7 @@ DDEESSCCRRIIPPTTIIOONN
 
 
 
-19 January 2001        ESP Package Manager                      1
+2 March 2001           ESP Package Manager                      1
 
 
 
@@ -127,7 +127,7 @@ LLIISSTT FFIILLEESS
 
 
 
-19 January 2001        ESP Package Manager                      2
+2 March 2001           ESP Package Manager                      2
 
 
 
@@ -193,7 +193,7 @@ epm(1)                Easy Software Products               epm(1)
 
 
 
-19 January 2001        ESP Package Manager                      3
+2 March 2001           ESP Package Manager                      3
 
 
 
@@ -259,7 +259,7 @@ epm(1)                Easy Software Products               epm(1)
 
 
 
-19 January 2001        ESP Package Manager                      4
+2 March 2001           ESP Package Manager                      4
 
 
 
@@ -278,6 +278,26 @@ epm(1)                Easy Software Products               epm(1)
             ing.   The  _u_s_e_r  and  _g_r_o_u_p fields are ignored.  The
             _m_o_d_e field is only  used  to  determine  if  a  check
             should be made for a previous version of the file.
+
+LLIISSTT VVAARRIIAABBLLEESS
+       _E_P_M  maintains  a list of variables and their values which
+       can be used to substitute values in the list  file.  These
+       variables  are  imported  from the current environment and
+       taken from the command-line and  list  file  as  provided.
+       Substitutions  occur  when the variable name is referenced
+       with the dollar sign ($):
+
+           %install echo What is your name:
+           %install read $$name
+           %install echo Your name is $$name
+
+           f 0555 root sys ${bindir}/foo foo
+           f 0555 root sys $datadir/foo/foo.dat foo.dat
+
+       Variable  names  can  be  surrounded  by  curley  brackets
+       (${name})  or  alone ($name); without brackets the name is
+       terminated by the first slash (/), dash  (-),  or  whites-
+       pace. The dollar sign can be inserted using $$.
 
 EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
        The  _R_P_M_D_I_R  environment  variable will override where EPM
@@ -302,6 +322,18 @@ CCOOPPYYRRIIGGHHTT
        useful, but WITHOUT ANY WARRANTY; without even the implied
        warranty  of  MERCHANTABILITY  or FITNESS FOR A PARTICULAR
        PURPOSE.  See the GNU  General  Public  License  for  more
+
+
+
+2 March 2001           ESP Package Manager                      5
+
+
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
+
        details.
 
 
@@ -325,6 +357,40 @@ CCOOPPYYRRIIGGHHTT
 
 
 
-19 January 2001        ESP Package Manager                      5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2 March 2001           ESP Package Manager                      6
 
 

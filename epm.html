@@ -1,309 +1,332 @@
 <HTML>
-<HEAD>
-	<TITLE>Manpage of epm</TITLE>
-</HEAD>
 <BODY>
+<PRE>
+       epm - create software packages
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+       <STRONG>epm</STRONG>  [  -f  <EM>format</EM> ] [ -g ] [ -n[mrs] ] [ -s <EM>setup.xpm</EM> ] [
+       --setup-image <EM>setup.xpm</EM> ] [ --setup-program <EM>/foo/bar/setup</EM>
+       ] [ -v ] [ <EM>name=value</EM> <EM>name=value</EM> ] product [ <EM>listfile</EM> ]
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+       <STRONG>epm</STRONG>  generates  software  packages complete with installa-
+       tion, removal, and (if necessary)  patch  scripts.  Unless
+       otherwise  specified,  the  files required for <EM>product</EM> are
+       read from a file named "<EM>product</EM>.list".
+
+       The <EM>-f</EM> option ("format") specifies the  distribution  for-
+       mat:
+
+       deb
+            Generate a Debian distribution suitable for installa-
+            tion on a Debian Linux system.
+
+       inst, tardist
+            Generate an IRIX distribution suitable for  installa-
+            tion on an system running IRIX.
+
+       native
+            Generate  an  native  distribution. This uses <EM>rpm</EM> for
+            Linux, <EM>inst</EM> for IRIX, <EM>pkg</EM> for Solaris, and  <EM>swinstall</EM>
+            for HP-UX. All other operating systems default to the
+            <EM>portable</EM> format.
+
+       pkg
+            Generate an AT&amp;T software  package.  These  are  used
+            primarily under Solaris.
+
+       portable
+            Generate  a  portable  distribution  based  on  shell
+            scripts and tar files.  The resulting distribution is
+            installed  and  removed the same way on all operating
+            systems. [default]
+
+       rpm
+            Generate a Red Hat Package Manager ("RPM")  distribu-
+            tion  suitable  for  installation  on a Red Hat Linux
+            system.
+
+       swinstall, depot
+            Generate a HP-UX software distribution.
 
-<H1>epm(1)</H1>
+       Executable files in the distribution are normally stripped
+       of  debugging  information  when packaged. To disable this
+       functionality use the <EM>-g</EM> option.
 
-<H2>NAME</H2>
+       distribution. This option is currently only  supported  by
+       portable distributions.
 
-<P>epm - create software packages
+       The  <EM>--setup-program</EM> option specifies the setup executable
+       to use with the distribution.  This  option  is  currently
+       only supported by portable distributions.
 
-<H2>SYNOPSIS</H2>
+       The <EM>-v</EM> option ("verbose") increases the amount of informa-
+       tion that is reported. Use multiple v's for  more  verbose
+       output.
 
-<P><B>epm</B>
+       Distributions  normally are named "product-version-system-
+       release-machine.ext" and  "product-version-system-release-
+       machine-patch.ext" (for patch distributions.) The "system-
+       release-machine" information can be customized  or  elimi-
+       nated  using  the  <EM>-n</EM> option with the appropriate trailing
+       letters. Using <EM>-n</EM>  by  itself  will  remove  the  "system-
+       release-machine" string from the filename entirely.
 
-[ -f
-<I>format</I>
+       Debian,  IRIX, portable, and Red Hat distributions use the
+       extensions  ".deb",  ".tardist",  "tar.gz",   and   ".rpm"
+       respectively.
 
-] [ -g ] [ -n[mrs] ] [ -s
-<I>setup.xpm</I>
 
-] [ --setup-image
-<I>setup.xpm</I>
+</PRE>
+<H2>LIST FILES</H2><PRE>
+       Each  product  has  an associated list file that describes
+       the files to include with the product. Comment lines begin
+       with  the  "#"  character and are ignored.  All other non-
+       blank lines must begin with a letter, dollar  sign  ("$"),
+       or the percent sign ("%") as follows:
 
-] [ --setup-program
-<I>/foo/bar/setup</I>
+       $name=value
+            Sets the named variable to <EM>value</EM>. <STRONG>Note:</STRONG> Variables set
+            in the list file are overridden by  variables  speci-
+            fied  on  the command-line or in the current environ-
+            ment.
 
-] [ -v ] [
-<I>name=value</I>
+       %copyright <EM>copyright</EM> <EM>notice</EM>
+            Sets the copyright notice for the file.
 
+       %description <EM>description</EM> <EM>text</EM>
+            Adds a line of descriptive text to the  distribution.
+            Multiple lines are supported.
 
-<I>name=value</I>
+       %format <EM>format</EM> <EM>[...</EM> <EM>format]</EM>
+            Uses  following files and directives only if the dis-
+            tribution format is the same as <EM>format</EM>.
 
-] product [
-<I>listfile</I>
+       %format !<EM>format</EM> <EM>[...</EM> <EM>format]</EM>
+            Uses following files and directives only if the  dis-
+            tribution format is not the same as <EM>format</EM>.
 
-]
+       %include <EM>filename</EM>
 
-<H2>DESCRIPTION</H2>
+       %incompat <EM>filename</EM>
+            Indicates  that this product is incompatible with the
+            named product or file.
 
-<P><B>epm</B> generates software packages complete with
-installation, removal, and (if necessary) patch scripts. Unless
-otherwise specified, the files required for <I>product</I> are
-read from a file named &quot;<I>product</I>.list&quot;.
+       %install <EM>script</EM> <EM>or</EM> <EM>program</EM>
+            Specifies a script or program to  be  run  after  all
+            files are installed.
 
-<P>The <I>-f</I> option (&quot;format&quot;) specifies the distribution format:
+       %license <EM>license</EM> <EM>file</EM>
+            Specifies   the  file  to  display  as  the  software
+            license.
 
-<DL>
+       %packager <EM>name</EM> <EM>of</EM> <EM>packager</EM>
+            Specifies the name of the packager.
 
-	<DT>deb
-	<DD>Generate a Debian distribution suitable for
-	installation on a Debian Linux system.
-	<BR>&nbsp;
+       %patch <EM>script</EM> <EM>or</EM> <EM>program</EM>
+            Specifies a script or program to  be  run  after  all
+            files are patched.
 
-	<DT>inst, tardist
-	<DD>Generate an IRIX distribution suitable for
-	installation on an system running IRIX.
-	<BR>&nbsp;
+       %product <EM>product</EM> <EM>name</EM>
+            Specifies the product name.
+
+       %readme <EM>readme</EM> <EM>file</EM>
+            Specifies a README file to be included in the distri-
+            bution.
+
+       %remove <EM>script</EM> <EM>or</EM> <EM>program</EM>
+            Specifies a script or program to be run before remov-
+            ing or patching files.
+
+       %replaces <EM>product</EM>
+            Indicates  that this product replaces the named prod-
+            uct.
+
+       %requires <EM>product</EM>
 
-	<DT>native
-	<DD>Generate an native distribution. This uses
-	<I>rpm</I> for Linux, <I>inst</I> for IRIX, <I>pkg</I>
-	for Solaris, and <I>swinstall</I> for HP-UX. All other
-	operating systems default to the <I>portable</I> format.
-	<BR>&nbsp;
+       %requires <EM>filename</EM>
+            Indicates that this product requires the named  prod-
+            uct or file.
 
-	<DT>pkg
-	<DD>Generate an AT&amp;T software package. These are
-	used primarily under Solaris.
-	<BR>&nbsp;
+       %vendor <EM>vendor</EM> <EM>or</EM> <EM>author</EM> <EM>name</EM>
+            Specifies the vendor or author of the product.
+
+       %version <EM>version</EM> <EM>number</EM>
+            Specifies the version number of the product.
 
-	<DT>portable
-	<DD>Generate a portable distribution based on shell
-	scripts and tar files.  The resulting distribution is
-	installed and removed the same way on all operating
-	systems. [default]
-	<BR>&nbsp;
+       %system <EM>system[-release]</EM> <EM>[...</EM> <EM>system[-release]]</EM>
+            Specifies  that  the  following  files should only be
+            used  for  the  specified   operating   systems   and
+            releases.
 
-	<DT>rpm
-	<DD>Generate a Red Hat Package Manager (&quot;RPM&quot;)
-	distribution suitable for installation on a Red Hat
-	Linux system.
-	<BR>&nbsp;
+            Specifies that the following files should not be used
+            for the specified operating systems and releases.
 
-	<DT>swinstall, depot
-	<DD>Generate a HP-UX software distribution.
+       %system all
+            Specifies that the following files are applicable  to
+            all operating systems.
 
-</DL>
+       c <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM> <EM>source</EM>
 
-<P>Executable files in the distribution are normally stripped of
-debugging information when packaged. To disable this
-functionality use the <I>-g</I> option.
+       C <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM> <EM>source</EM>
+            Specifies  a configuration file for installation. The
+            second form specifies that the file has changed or is
+            new  and  should be included as part of a patch. Con-
+            figuration files are installed as "destination.N"  if
+            the destination already exists.
 
-<P>The <I>-s</I> and <I>--setup-image</I> options
-(&quot;setup&quot;) include the ESP Software Wizard with the
-specified XPM image file with the distribution. This option is
-currently only supported by portable distributions.
+       d <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM> <EM>-</EM>
 
-<P>The <I>--setup-program</I> option specifies the setup executable
-to use with the distribution. This option is currently only
-supported by portable distributions.
+       D <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM> <EM>-</EM>
+            Specifies   a   directory   should  be  created  when
+            installing the software. The  second  form  specifies
+            that  the  directory is new and should be included as
+            part of a patch.
 
-<P>The <I>-v</I> option (&quot;verbose&quot;) increases the
-amount of information that is reported. Use multiple v's for
-more verbose output.
-
-<P>Distributions normally are named
-&quot;product-version-system-release-machine.ext&quot; and
-&quot;product-version-system-release-machine-patch.ext&quot;
-(for patch distributions.) The
-&quot;system-release-machine&quot; information can be customized
-or eliminated using the <I>-n</I> option with the appropriate
-trailing letters. Using <I>-n</I> by itself will remove the
-&quot;system-release-machine&quot; string from the filename
-entirely.
-
-<P>Debian, IRIX, portable, and Red Hat distributions use the
-extensions &quot;.deb&quot;, &quot;.tardist&quot;,
-&quot;tar.gz&quot;, and &quot;.rpm&quot; respectively.
-
-<H2>LIST FILES</H2>
-
-<P>Each product has an associated list file that describes the files to include
-with the product. Comment lines begin with the &quot;#&quot; character and are ignored.
-All other non-blank lines must begin with a letter or the percent sign (&quot;%&quot;)
-as follows:
-
-<DL>
-
-	<DT>%copyright <I>copyright notice</I>
-	<DD>Sets the copyright notice for the file.
-	<BR>&nbsp;
-
-	<DT>%description <I>description text</I>
-	<DD>Adds a line of descriptive text to the distribution.
-	Multiple lines are supported.
-	<BR>&nbsp;
-
-	<DT>%format <I>format [... format]</I>
-	<DD>Uses following files and directives only if the
-	distribution format is the same as <I>format</I>.
-	<BR>&nbsp;
-
-	<DT>%format !<I>format [... format]</I>
-	<DD>Uses following files and directives only if the
-	distribution format is not the same as <I>format</I>.
-	<BR>&nbsp;
-
-	<DT>%include <I>filename</I>
-	<DD>Includes files listed in <I>filename</I>.
-	<BR>&nbsp;
-
-	<DT>%incompat <I>product</I>
-	<DT>%incompat <I>filename</I>
-	<DD>Indicates that this product is incompatible with the
-	named product or file.
-	<BR>&nbsp;
-
-	<DT>%install <I>script or program</I>
-	<DD>Specifies a script or program to be run after all
-	files are installed.
-	<BR>&nbsp;
-
-	<DT>%license <I>license file</I>
-	<DD>Specifies the file to display as the software license.
-	<BR>&nbsp;
-
-	<DT>%packager <I>name of packager</I>
-	<DD>Specifies the name of the packager.
-	<BR>&nbsp;
-
-	<DT>%patch <I>script or program</I>
-	<DD>Specifies a script or program to be run after all
-	files are patched.
-	<BR>&nbsp;
-
-	<DT>%product <I>product name</I>
-	<DD>Specifies the product name.
-	<BR>&nbsp;
-
-	<DT>%readme <I>readme file</I>
-	<DD>Specifies a README file to be included in the distribution.
-	<BR>&nbsp;
-
-	<DT>%remove <I>script or program</I>
-	<DD>Specifies a script or program to be run before
-	removing or patching files.
-	<BR>&nbsp;
-
-	<DT>%replaces <I>product</I>
-	<DD>Indicates that this product replaces the named product.
-	<BR>&nbsp;
-
-	<DT>%requires <I>product</I>
-	<DT>%requires <I>filename</I>
-	<DD>Indicates that this product requires the named product or file.
-	<BR>&nbsp;
-
-	<DT>%vendor <I>vendor or author name</I>
-	<DD>Specifies the vendor or author of the product.
-	<BR>&nbsp;
-
-	<DT>%version <I>version number</I>
-	<DD>Specifies the version number of the product.
-	<BR>&nbsp;
-
-	<DT>%system <I>system[-release] [... system[-release]]</I>
-	<DD>Specifies that the following files should only be
-	used for the specified operating systems and releases.
-	<BR>&nbsp;
-
-	<DT>%system !<I>system[-release] [... system[-release]]</I>
-	<DD>Specifies that the following files should not be
-	used for the specified operating systems and releases.
-	<BR>&nbsp;
-
-	<DT>%system all
-	<DD>Specifies that the following files are applicable to
-	all operating systems.
-	<BR>&nbsp;
-
-	<DT>c <I>mode user group destination source</I>
-	<DT>C <I>mode user group destination source</I>
-	<DD>Specifies a configuration file for installation. The
-	second form specifies that the file has changed or is
-	new and should be included as part of a patch.
-	Configuration files are installed as
-	&quot;destination.N&quot; if the destination already
-	exists.
-	<BR>&nbsp;
-
-	<DT>d <I>mode user group destination -</I>
-	<DT>D <I>mode user group destination -</I>
-	<DD>Specifies a directory should be created when
-	installing the software. The second form specifies that
-	the directory is new and should be included as part of a
-	patch.
-	<BR>&nbsp;
-
-	<DT>f <I>mode user group destination source</I>
-	<DT>F <I>mode user group destination source</I>
-	<DD>Specifies a file for installation. The second form
-	specifies that the file has changed or is new and should
-	be included as part of a patch.
-	<BR>&nbsp;
-
-	<DT>f <I>mode user group destination source/pattern</I>
-	<DT>F <I>mode user group destination source/pattern</I>
-	<DD>Specifies one or more files for installation using shell
-	wildcard patterns. The second form specifies that the files have
-	changed or are new and should be included as part of a patch.
-	<BR>&nbsp;
-
-	<DT>i <I>mode user group service-name source</I>
-	<DT>I <I>mode user group service-name source</I>
-	<DD>Specifies an initialization script for installation.
-	The second form specifies that the file has changed or
-	is new and should be included as part of a patch.
-	Initialization scripts are stored in
-	/etc/software/init.d and are linked to the appropriate
-	system-specific directories for run levels 0, 2, 3, and
-	5. Initialization scripts <B>must</B> accepts at least
-	the <I>start</I> and <I>stop</I> commands.
-	<BR>&nbsp;
-
-	<DT>l <I>mode user group destination source</I>
-	<DT>L <I>mode user group destination source</I>
-	<DD>Specifies a symbolic link in the installation. The
-	second form specifies that the link has changed or is
-	new and should be included as part of a patch.
-	<BR>&nbsp;
-
-	<DT>R <I>mode user group destination</I>
-	<DD>Specifies that the file is to be removed upon
-	patching.  The <I>user</I> and <I>group</I> fields are
-	ignored.  The <I>mode</I> field is only used to
-	determine if a check should be made for a previous
-	version of the file.
-
-</DL>
-
-<H2>ENVIRONMENT VARIABLES</H2>
-
-<P>The <I>RPMDIR</I> environment variable will override where EPM looks
-for RPM distributions you generate. The default locations are
-/usr/src/redhat/RPMS, /usr/src/RPM/RPMS, /usr/src/packages/RPMS,
-and /usr/local/src/RPMS.
-
-<H2>KNOWN BUGS</H2>
-
-<P>EPM does not currently support generation of IRIX software patches.
-
-<H2>COPYRIGHT</H2>
-
-<P>Copyright 1999-2001 by Easy Software Products, All Rights Reserved.
-
-<P>This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-<P>This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+       f <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM> <EM>source</EM>
 
+       F <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM> <EM>source</EM>
+            Specifies a file for installation.  The  second  form
+            specifies  that  the  file  has changed or is new and
+            should be included as part of a patch.
+
+       f <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM> <EM>source/pattern</EM>
+
+       F <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM> <EM>source/pattern</EM>
+            Specifies one or more files  for  installation  using
+            shell  wildcard  patterns.  The second form specifies
+            that the files have changed or are new and should  be
+            included as part of a patch.
+
+       i <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>service-name</EM> <EM>source</EM>
+
+       I <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>service-name</EM> <EM>source</EM>
+            Specifies  an initialization script for installation.
+            The second form specifies that the file  has  changed
+            or  is new and should be included as part of a patch.
+            Initialization     scripts     are     stored      in
+            /etc/software/init.d  and are linked to the appropri-
+            ate system-specific directories for run levels 0,  2,
+            3,  and  5.  Initialization  scripts  <STRONG>must</STRONG> accepts at
+            least the <EM>start</EM> and <EM>stop</EM> commands.
+
+       l <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM> <EM>source</EM>
+            Specifies a symbolic link in  the  installation.  The
+            second form specifies that the link has changed or is
+            new and should be included as part of a patch.
+
+       R <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>destination</EM>
+            Specifies that the file is to be removed upon  patch-
+            ing.   The  <EM>user</EM>  and  <EM>group</EM> fields are ignored.  The
+            <EM>mode</EM> field is only  used  to  determine  if  a  check
+            should be made for a previous version of the file.
+
+
+</PRE>
+<H2>LIST VARIABLES</H2><PRE>
+       <EM>EPM</EM>  maintains  a list of variables and their values which
+       can be used to substitute values in the list  file.  These
+       variables  are  imported  from the current environment and
+       taken from the command-line and  list  file  as  provided.
+       Substitutions  occur  when the variable name is referenced
+       with the dollar sign ($):
+
+           %install echo What is your name:
+           %install read $$name
+           %install echo Your name is $$name
+
+           f 0555 root sys ${bindir}/foo foo
+           f 0555 root sys $datadir/foo/foo.dat foo.dat
+
+       Variable  names  can  be  surrounded  by  curley  brackets
+       (${name})  or  alone ($name); without brackets the name is
+       terminated by the first slash (/), dash  (-),  or  whites-
+       pace. The dollar sign can be inserted using $$.
+
+
+</PRE>
+<H2>ENVIRONMENT VARIABLES</H2><PRE>
+       The  <EM>RPMDIR</EM>  environment  variable will override where EPM
+       looks for RPM  distributions  you  generate.  The  default
+       locations   are  /usr/src/redhat/RPMS,  /usr/src/RPM/RPMS,
+       /usr/src/packages/RPMS, and /usr/local/src/RPMS.
+
+
+</PRE>
+<H2>KNOWN BUGS</H2><PRE>
+       EPM does not currently support generation of IRIX software
+       patches.
+
+
+</PRE>
+<H2>COPYRIGHT</H2><PRE>
+       Copyright  1999-2001 by Easy Software Products, All Rights
+       Reserved.
+
+       This program is free software;  you  can  redistribute  it
+       and/or modify it under the terms of the GNU General Public
+       License as published  by  the  Free  Software  Foundation;
+       either version 2, or (at your option) any later version.
+
+       This  program  is  distributed in the hope that it will be
+       useful, but WITHOUT ANY WARRANTY; without even the implied
+       warranty  of  MERCHANTABILITY  or FITNESS FOR A PARTICULAR
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
 </BODY>
 </HTML>

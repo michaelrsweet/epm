@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.21 2001/01/23 13:35:43 mike Exp $"
+.\" "$Id: epm.man,v 1.22 2001/03/02 12:46:14 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "19 January 2001" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "2 March 2001" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -261,6 +261,27 @@ R \fImode user group destination\fR
 Specifies that the file is to be removed upon patching.  The \fIuser\fR and
 \fIgroup\fR fields are ignored.  The \fImode\fR field is only used to determine
 if a check should be made for a previous version of the file.
+.SH LIST VARIABLES
+\fIEPM\fR maintains a list of variables and their values which can be used
+to substitute values in the list file. These variables are imported from the
+current environment and taken from the command-line and list file as provided.
+Substitutions occur when the variable name is referenced with the dollar sign
+($):
+.nf
+.br
+
+    %install echo What is your name:
+    %install read $$name
+    %install echo Your name is $$name
+
+    f 0555 root sys ${bindir}/foo foo
+    f 0555 root sys $datadir/foo/foo.dat foo.dat
+.fi
+.LP
+Variable names can be surrounded by curley brackets (${name}) or
+alone ($name); without brackets the name is terminated by the
+first slash (/), dash (-), or whitespace. The dollar sign can be
+inserted using $$.
 .SH ENVIRONMENT VARIABLES
 The \fIRPMDIR\fR environment variable will override where EPM looks
 for RPM distributions you generate. The default locations are
@@ -281,5 +302,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.21 2001/01/23 13:35:43 mike Exp $".
+.\" End of "$Id: epm.man,v 1.22 2001/03/02 12:46:14 mike Exp $".
 .\"

@@ -6,6 +6,8 @@ WHAT'S NEW IN EPM 2.5?
     EPM 2.5 adds the following features, fixes, and changes to
     EPM 2.4:
 
+	- There was no way to use a literal $ in scripts or in
+	  filenames.  Use $$ to include a single $.
 	- The config file support for AT&T software packages
 	  did not check to see if the source file had an
 	  absolute path.
