@@ -10,16 +10,30 @@ EPM software.</P>
 
 <UL>
 
+	<LI>Added new documentation.
+	<LI>Added new "-a arch" option to support specific
+	architectures (e.g. i586, i686, ultrasparc, etc.)
+	<LI>Added support for the *BSD package format using
+	pkg_create.
+	<LI>Added experimental support for the AIX package format
+	using backup.
+	<LI>Added new epminstall utility to build list files
+	from "make install" targets.
+	<LI>Added snprintf/vsnprintf functions for systems that
+	don't provide them, and use snprintf and vsnprintf
+	for all formatted strings that aren't just numbers.
+	<LI>Added new run_command() function to replace use of
+	system() function.
 	<LI>The mkepmlist utility had a bad regular expression
 	that thought that any argument (directory names, etc.)
 	with a dash ("-") in it was an unsupported option.
-	<LI>Fixed a bug in the removal script - config files were
+	<LI>Fixed a bug in the removal script: config files were
 	removed by the remove script...
 	<LI>Changed the config file install logic to copy the new
 	config file (instead of moving it), so that an
 	unchanged config file can be detected and removed.
-	This provides the best of both worlds - unchanged
-	config files are update automatically by an
+	This provides the best of both worlds: unchanged
+	config files are updated automatically by an
 	upgrade/install, while changed ones are preserved.
 
 </UL>

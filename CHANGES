@@ -11,17 +11,24 @@ WHAT'S NEW IN EPM 3.0?
 	  architectures (e.g. i586, i686, ultrasparc, etc.)
 	- Added support for the *BSD package format using
 	  pkg_create.
+	- Added experimental support for the AIX package format
+	  using backup.
 	- Added new epminstall utility to build list files
 	  from "make install" targets.
+	- Added snprintf/vsnprintf functions for systems that
+	  don't provide them, and use snprintf and vsnprintf
+	  for all formatted strings that aren't just numbers.
+	- Added new run_command() function to replace use of
+	  system() function.
 	- The mkepmlist utility had a bad regular expression
 	  that thought that any argument (directory names, etc.)
 	  with a dash ("-") in it was an unsupported option.
-	- Fixed a bug in the removal script - config files were
+	- Fixed a bug in the removal script: config files were
 	  removed by the remove script...
 	- Changed the config file install logic to copy the new
 	  config file (instead of moving it), so that an
 	  unchanged config file can be detected and removed.
-	  This provides the best of both worlds - unchanged
+	  This provides the best of both worlds: unchanged
 	  config files are update automatically by an
 	  upgrade/install, while changed ones are preserved.
 
