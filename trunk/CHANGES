@@ -1,4 +1,4 @@
-CHANGES - ESP Package Manager (EPM) 2.6
+CHANGES - ESP Package Manager (EPM) 2.7
 ---------------------------------------
 
 WHAT'S NEW IN EPM 2.7?
@@ -8,6 +8,10 @@ WHAT'S NEW IN EPM 2.7?
 
 	- Fixed a bug in the configuration script with the
 	  --with-fltk-includes option.
+	- Tru64 UNIX distributions now use the name "tru64"
+	  instead of "dunix".  "dunix" is still supported
+	  in list files for compatibility with old list files.
+	- Added support for portable scripts under AIX.
 
 
 WHAT'S NEW IN EPM 2.6?
