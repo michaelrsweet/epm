@@ -1,5 +1,5 @@
 //
-// "$Id: uninst2.cxx,v 1.3 2003/05/20 20:06:15 mike Exp $"
+// "$Id: uninst2.cxx,v 1.4 2003/05/21 13:03:30 mike Exp $"
 //
 //   ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -495,6 +495,9 @@ remove_dist(const dist_t *dist)// I - Distribution to remove
   // Listen for data on the input pipe...
   Fl::add_fd(fds[0], (void (*)(int, void *))log_cb, fds);
 
+  // Show the user that we're busy...
+  UninstallWindow->cursor(FL_CURSOR_WAIT);
+
   // Loop until the child is done...
   while (fds[0])	// log_cb() will close and zero fds[0]...
   {
@@ -521,6 +524,9 @@ remove_dist(const dist_t *dist)// I - Distribution to remove
     // Get the child's exit status...
     wait(&status);
   }
+
+  // Show the user that we're ready...
+  UninstallWindow->cursor(FL_CURSOR_DEFAULT);
 
   // Return...
   return (status);
@@ -653,5 +659,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: uninst2.cxx,v 1.3 2003/05/20 20:06:15 mike Exp $".
+// End of "$Id: uninst2.cxx,v 1.4 2003/05/21 13:03:30 mike Exp $".
 //

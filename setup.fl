@@ -4,14 +4,14 @@ header_name {.h}
 code_name {.cxx}
 Function {make_window()} {open
 } {
-  Fl_Window {} {
+  Fl_Window SetupWindow {
     label {ESP Software Installation Wizard}
     callback {if (CancelButton->active())
-  exit(0);} open
+  exit(0);} open selected
     xywh {438 150 580 345}
     code0 {\#include "gui-common.h"} visible
   } {
-    Fl_Wizard Wizard {open selected
+    Fl_Wizard Wizard {open
       xywh {10 10 560 290}
     } {
       Fl_Group WelcomePane {

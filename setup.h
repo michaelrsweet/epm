@@ -5,6 +5,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include "gui-common.h"
+extern Fl_Window *SetupWindow;
 #include <FL/Fl_Wizard.H>
 extern Fl_Wizard *Wizard;
 #include <FL/Fl_Group.H>
