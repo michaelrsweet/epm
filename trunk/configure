@@ -1203,8 +1203,8 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-VERSION=3.5.1
-VERNUMBER=351
+VERSION=3.5.2
+VERNUMBER=352
 
 
 cat >>confdefs.h <<_ACEOF
@@ -4906,10 +4906,9 @@ fi
 
 
 if test "x$FLTKCONFIG" = x; then
-	INSTALL_SETUP=""
-	LIST_SETUP=""
 	SETUP=""
 	SETUP_LIBS=""
+	INSTALL_SETUP=""
 
 	{ echo "$as_me:$LINENO: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&5
 echo "$as_me: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&2;}
@@ -4918,7 +4917,6 @@ else
 	SETUP="setup"
 	SETUP_LIBS="`$FLTKCONFIG --ldstaticflags`"
 	INSTALL_SETUP="install-setup"
-	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 fi
 
 
