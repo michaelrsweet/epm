@@ -19,6 +19,7 @@ WHAT'S NEW IN EPM 3.1?
 	  after the license check.
 	- Fixed the dependency strings created for HP-UX
 	  swinstall (fix contributed by R. Begg.)
+	- Wasn't installing the man pages in section 5.
 
 
 WHAT'S NEW IN EPM 3.0?
