@@ -2952,10 +2952,18 @@ if test "x$RPM" != "x"; then
 	build="`$RPM -v | grep buildarch`"
 
 	if test "x$build" = "x"; then
-		cat >> confdefs.h <<EOF
+		target="`$RPM -v | grep target=`"
+		if test "x$target" = "x"; then
+			cat >> confdefs.h <<EOF
+#define EPM_RPMARCH "--target "
+EOF
+
+		else
+			cat >> confdefs.h <<EOF
 #define EPM_RPMARCH "--target="
 EOF
 
+		fi
 	else
 		cat >> confdefs.h <<EOF
 #define EPM_RPMARCH "--buildarch "

@@ -30,6 +30,8 @@ WHAT'S NEW IN EPM 3.1?
 	- Dependencies for Debian packages are now listed on a
 	  single line per type rather than one line per
 	  dependency.
+	- EPM now detects RPM 4.0.3, which (mysteriously) now
+	  uses "--target arch" instead of "--target=arch".
 
 
 WHAT'S NEW IN EPM 3.0?
