@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.15 2001/03/26 20:11:09 mike Exp $"
+ * "$Id: inst.c,v 1.16 2001/04/25 20:27:48 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -25,13 +25,6 @@
  */
 
 #include "epm.h"
-
-
-/*
- * Local functions...
- */
-
-static int	compare_files(const file_t *f0, const file_t *f1);
 
 
 /*
@@ -420,9 +413,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   * list...
   */
 
-  if (dist->num_files > 1)
-    qsort(dist->files, dist->num_files, sizeof(file_t),
-          (int (*)(const void *, const void *))compare_files);
+  sort_dist_files(dist);
 
  /*
   * Write the idb file for gendist...
@@ -595,17 +586,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * 'compare_files()' - Compare the destination filenames.
- */
-
-static int			/* O - Result of comparison */
-compare_files(const file_t *f0,	/* I - First file */
-              const file_t *f1)	/* I - Second file */
-{
-  return (strcmp(f0->dst, f1->dst));
-}
-
-
-/*
- * End of "$Id: inst.c,v 1.15 2001/03/26 20:11:09 mike Exp $".
+ * End of "$Id: inst.c,v 1.16 2001/04/25 20:27:48 mike Exp $".
  */

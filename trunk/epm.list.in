@@ -1,5 +1,5 @@
 #
-# "$Id: epm.list.in,v 1.4 2001/03/26 20:11:09 mike Exp $"
+# "$Id: epm.list.in,v 1.5 2001/04/25 20:27:48 mike Exp $"
 #
 #   Sample software list file for the ESP Package Manager (EPM).
 #
@@ -27,6 +27,7 @@
 # Directories...
 $prefix=@prefix@
 $exec_prefix=@exec_prefix@
+$bindir=@bindir@
 $datadir=@datadir@
 $libdir=@libdir@
 $mandir=@mandir@
@@ -39,7 +40,7 @@ $srcdir=@srcdir@
 %license ${srcdir}/COPYING
 %readme ${srcdir}/README
 %description Universal software packaging tool for UNIX.
-%version @VERSION@
+%version @VERSION@ @VERNUMBER@
 
 # Manpage extensions...
 $CAT1EXT=@CAT1EXT@
@@ -62,5 +63,5 @@ f 0444 root sys ${mandir}/man1/epm.$MAN1EXT $srcdir/epm.man
 f 0444 root sys ${mandir}/man1/mkepmlist.$MAN1EXT $srcdir/mkepmlist.man
 
 #
-# End of "$Id: epm.list.in,v 1.4 2001/03/26 20:11:09 mike Exp $".
+# End of "$Id: epm.list.in,v 1.5 2001/04/25 20:27:48 mike Exp $".
 #
