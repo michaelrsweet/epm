@@ -47,6 +47,7 @@ Fl_Button *InstallNoneButton=(Fl_Button *)0;
 
 static void cb_InstallNoneButton(Fl_Button*, void*) {
   SoftwareList->check_none();
+list_cb(0,0);
 }
 
 Fl_Box *SoftwareSize=(Fl_Box *)0;
@@ -75,6 +76,18 @@ Fl_Slider *InstallPercent=(Fl_Slider *)0;
 
 Fl_Browser *InstallLog=(Fl_Browser *)0;
 
+Fl_Button *PrevButton=(Fl_Button *)0;
+
+static void cb_PrevButton(Fl_Button*, void*) {
+  Wizard->prev();
+}
+
+static unsigned char bits_prev[] =
+"\0\0\0\0\0\0\0\0\0\0\0\0@\370\1\0\b\0`\b\3\0\b\0p\b\2\0\b\0x\b\342\341\211\0|\
+\b13K\0~\370\0\22(\0~\b\341\23\30\0|\b2\22(\0x\b\22\22J\0p\b33\213\0`\370\341\
+\346\t\1@\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+static Fl_Bitmap bitmap_prev(bits_prev, 42, 16);
+
 Fl_Window* make_window() {
   Fl_Window* w;
   { Fl_Window* o = new Fl_Window(580, 345, "ESP Software Wizard");
@@ -90,18 +103,19 @@ Fl_Window* make_window() {
     { Fl_Wizard* o = Wizard = new Fl_Wizard(0, 0, 580, 300);
       { Fl_Group* o = WelcomePane = new Fl_Group(10, 10, 560, 280);
         o->box(FL_FLAT_BOX);
+        o->hide();
         { Fl_Box* o = new Fl_Box(10, 10, 560, 25, "Welcome to Setup");
           o->labelfont(1);
           o->labelsize(18);
           o->labelcolor(4);
           o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
         }
-        { Fl_Box* o = new Fl_Box(40, 55, 500, 55, "This wizard will install the software you select on your system.\n\nTo select\
+        { Fl_Box* o = new Fl_Box(40, 235, 500, 55, "This wizard will install the software you select on your system.\n\nTo select\
  software for installation, please click on the \"Next\" button below.");
           o->align(133|FL_ALIGN_INSIDE);
         }
-        { Fl_Box* o = WelcomeImage = new Fl_Box(40, 110, 500, 180);
-          o->align(FL_ALIGN_BOTTOM_LEFT|FL_ALIGN_INSIDE);
+        { Fl_Box* o = WelcomeImage = new Fl_Box(40, 50, 500, 180);
+          o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
         }
         o->end();
       }
@@ -163,9 +177,8 @@ ton below.");
         }
         o->end();
       }
-      { Fl_Group* o = SoftwarePane = new Fl_Group(10, 10, 560, 280);
+      { Fl_Group* o = SoftwarePane = new Fl_Group(10, 10, 560, 285);
         o->box(FL_FLAT_BOX);
-        o->hide();
         { Fl_Box* o = new Fl_Box(10, 10, 560, 25, "Software Selection");
           o->labelfont(1);
           o->labelsize(18);
@@ -177,10 +190,12 @@ ton below.");
           o->align(133|FL_ALIGN_INSIDE);
         }
         { Fl_Check_Browser* o = SoftwareList = new Fl_Check_Browser(40, 120, 500, 135, " Available Software:");
+          o->type(3);
           o->box(FL_DOWN_BOX);
+          o->selection_color(7);
           o->callback((Fl_Callback*)list_cb);
           o->align(FL_ALIGN_TOP_LEFT);
-          o->when(FL_WHEN_RELEASE);
+          o->when(3);
         }
         { Fl_Button* o = InstallAllButton = new Fl_Button(365, 265, 75, 25, "Install All");
           o->callback((Fl_Callback*)cb_InstallAllButton);
@@ -188,7 +203,8 @@ ton below.");
         { Fl_Button* o = InstallNoneButton = new Fl_Button(450, 265, 90, 25, "Install None");
           o->callback((Fl_Callback*)cb_InstallNoneButton);
         }
-        { Fl_Box* o = SoftwareSize = new Fl_Box(40, 265, 320, 25, "0k marked for installation.");
+        { Fl_Box* o = SoftwareSize = new Fl_Box(40, 260, 320, 35, "0k marked for installation.");
+          o->box(FL_FLAT_BOX);
           o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
         }
         o->end();
@@ -245,6 +261,10 @@ t.");
         o->end();
       }
       o->end();
+    }
+    { Fl_Button* o = PrevButton = new Fl_Button(380, 310, 55, 25);
+      bitmap_prev.label(o);
+      o->callback((Fl_Callback*)cb_PrevButton);
     }
     o->end();
   }

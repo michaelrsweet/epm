@@ -29,8 +29,8 @@ Function {make_window()} {open
       code0 {\#include "Fl_Wizard.h"}
       class Fl_Wizard
     } {
-      Fl_Group WelcomePane {
-        xywh {10 10 560 280} box FLAT_BOX
+      Fl_Group WelcomePane {open
+        xywh {10 10 560 280} box FLAT_BOX hide
       } {
         Fl_Box {} {
           label {Welcome to Setup}
@@ -40,10 +40,10 @@ Function {make_window()} {open
           label {This wizard will install the software you select on your system.
 
 To select software for installation, please click on the "Next" button below.}
-          xywh {40 55 500 55} align 149
+          xywh {40 235 500 55} align 149
         }
-        Fl_Box WelcomeImage {selected
-          xywh {40 110 500 180} align 22
+        Fl_Box WelcomeImage {
+          xywh {40 50 500 180} align 21
         }
       }
       Fl_Group TypePane {open
@@ -104,7 +104,7 @@ To select software for installation, please click on the "Next" button below.}
         }
       }
       Fl_Group SoftwarePane {open
-        xywh {10 10 560 280} box FLAT_BOX hide
+        xywh {10 10 560 285} box FLAT_BOX
       } {
         Fl_Box {} {
           label {Software Selection}
@@ -117,7 +117,7 @@ To select software for installation, please click on the "Next" button below.}
         Fl_Browser SoftwareList {
           label { Available Software:}
           callback list_cb
-          xywh {40 120 500 135} box DOWN_BOX align 5 when 4
+          xywh {40 120 500 135} type Multi box DOWN_BOX selection_color 7 align 5 when 3
           code0 {\#include "Fl_Check_Browser.h"}
           class Fl_Check_Browser
         }
@@ -129,12 +129,13 @@ list_cb(0,0);}
         }
         Fl_Button InstallNoneButton {
           label {Install None}
-          callback {SoftwareList->check_none();}
+          callback {SoftwareList->check_none();
+list_cb(0,0);}
           xywh {450 265 90 25}
         }
         Fl_Box SoftwareSize {
           label {0k marked for installation.}
-          xywh {40 265 320 25} align 20
+          xywh {40 260 320 35} box FLAT_BOX align 20
         }
       }
       Fl_Group LicensePane {open
@@ -179,6 +180,11 @@ list_cb(0,0);}
           xywh {40 100 525 190}
         }
       }
+    }
+    Fl_Button PrevButton {
+      label {prev.xbm}
+      callback {Wizard->prev();} selected
+      xywh {380 310 55 25} labeltype image
     }
   }
 } 

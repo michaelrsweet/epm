@@ -21,9 +21,10 @@ WHAT'S NEW IN EPM 3.0?
 	- Added new run_command() function to replace use of
 	  system() function.
 	- Added new %provides directive.
-	- Added support for installation types in the setup
-	  GUI, so that you can select groups of products or
-	  choose a custom installation.
+	- Revamped the setup GUI, including support for
+	  installation types in the setup GUI, so that you can
+	  select groups of products or choose a custom
+	  installation.
 	- The mkepmlist utility had a bad regular expression
 	  that thought that any argument (directory names, etc.)
 	  with a dash ("-") in it was an unsupported option.

@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.13 2001/06/29 16:33:08 mike Exp $"
+// "$Id: setup2.cxx,v 1.14 2001/06/29 19:14:56 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -314,7 +314,7 @@ get_dists(const char *d)	// I - Directory to look in
     if ((installed = find_dist(temp->product, NumInstalled, Installed)) == NULL)
     {
       strcat(line, " (new)");
-      SoftwareList->add(line, 1);
+      SoftwareList->add(line, 0);
     }
     else if (installed->vernumber > temp->vernumber)
     {
@@ -552,6 +552,8 @@ list_cb(Fl_Check_Browser *, void *)
 
   if (SoftwareList->nchecked() == 0)
   {
+    update_sizes();
+
     NextButton->deactivate();
     return;
   }
@@ -752,7 +754,9 @@ load_types(void)
 
   for (i = 0, dt = InstTypes; i < NumInstTypes; i ++, dt ++)
   {
-    if (dt->size)
+    if (dt->size >= 1024)
+      sprintf(dt->label + strlen(dt->label), " (%.1fm)", dt->size / 1024.0);
+    else if (dt->size)
       sprintf(dt->label + strlen(dt->label), " (%dk)", dt->size);
 
     TypeButton[i]->label(dt->label);
@@ -797,7 +801,10 @@ next_cb(Fl_Button *, void *)
   }
 
   if (Wizard->value() == LicensePane)
+  {
+    PrevButton->deactivate();
     Wizard->next();
+  }
 
   if (Wizard->value() == InstallPane && !installing)
   {
@@ -887,13 +894,8 @@ type_cb(CheckButton *w, void *)	// I - Check button widget
   // And then any upgrade products...
   for (i = 0, temp = Dists; i < NumDists; i ++, temp ++)
   {
-    if ((installed = find_dist(temp->product, NumInstalled, Installed)) == NULL)
-    {
-      // Select new products when the type is custom...
-      if (dt->num_products == 0)
-        SoftwareList->checked(i + 1, 1);
-    }
-    else if (installed->vernumber < temp->vernumber)
+    if ((installed = find_dist(temp->product, NumInstalled, Installed)) != NULL &&
+        installed->vernumber < temp->vernumber)
       SoftwareList->checked(i + 1, 1);
   }
 
@@ -980,7 +982,7 @@ update_sizes(void)
     if (SoftwareList->checked(i + 1))
     {
       rootsize += dist->rootsize;
-      usrsize  += dist->rootsize;
+      usrsize  += dist->usrsize;
 
       if ((installed = find_dist(dist->product, NumInstalled,
                                  Installed)) != NULL)
@@ -992,31 +994,57 @@ update_sizes(void)
 
   // Get the sizes of the root and /usr partition...
   if (statfs("/", &rootpart, sizeof(rootpart), 0))
-    rootfree = 1024 * 1024;
+    rootfree = 1024;
   else
-    rootfree = (double)rootpart.f_bfree * (double)rootpart.f_bsize / 1024.0;
+    rootfree = (double)rootpart.f_bfree * (double)rootpart.f_bsize / 1024.0 / 1024.0;
 
   if (statfs("/usr", &usrpart, sizeof(usrpart), 0))
-    usrfree = 1024 * 1024;
+    usrfree = 1024;
   else
-    usrfree = (double)usrpart.f_bfree * (double)usrpart.f_bsize / 1024.0;
+    usrfree = (double)usrpart.f_bfree * (double)usrpart.f_bsize / 1024.0 / 1024.0;
+
+  usrfree --;
 
   // Display the results to the user...
   if (rootfree == usrfree)
   {
     rootsize += usrsize;
-    sprintf(sizelabel, "%+dk required, %dk available.", rootsize, rootfree);
+
+    if (rootsize >= 1024)
+      snprintf(sizelabel, sizeof(sizelabel),
+               "%+.1fm required, %dm available.", rootsize / 1024.0,
+               rootfree);
+    else
+      snprintf(sizelabel, sizeof(sizelabel),
+               "%+dk required, %dm available.", rootsize, rootfree);
   }
+  else if (rootsize >= 1024 && usrsize >= 1024)
+    snprintf(sizelabel, sizeof(sizelabel),
+             "%+.1fm required on /, %dm available,\n"
+             "%+.1fm required on /usr, %dm available.",
+             rootsize / 1024.0, rootfree, usrsize / 1024.0, usrfree);
+  else if (rootsize >= 1024)
+    snprintf(sizelabel, sizeof(sizelabel),
+             "%+.1fm required on /, %dm available,\n"
+             "%+dk required on /usr, %dm available.",
+             rootsize / 1024.0, rootfree, usrsize, usrfree);
+  else if (usrsize >= 1024)
+    snprintf(sizelabel, sizeof(sizelabel),
+             "%+dk required on /, %dm available,\n"
+             "%+.1fm required on /usr, %dm available.",
+             rootsize, rootfree, usrsize / 1024.0, usrfree);
   else
-    sprintf(sizelabel, "%+dk required on /, %dk available,\n"
-                       "%+dk required on /usr, %dk available.",
-            rootsize, rootfree, usrsize, usrfree);
+    snprintf(sizelabel, sizeof(sizelabel),
+             "%+dk required on /, %dm available,\n"
+             "%+dk required on /usr, %dm available.",
+             rootsize, rootfree, usrsize, usrfree);
 
   SoftwareSize->label(sizelabel);
+  SoftwareSize->redraw();
 }
 
 
 
 //
-// End of "$Id: setup2.cxx,v 1.13 2001/06/29 16:33:08 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.14 2001/06/29 19:14:56 mike Exp $".
 //
