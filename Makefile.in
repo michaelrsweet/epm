@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.42 2003/02/13 16:52:28 mike Exp $"
+# "$Id: Makefile.in,v 1.43 2003/02/13 19:24:39 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -277,7 +277,6 @@ test:	$(TARGETS)
 #
 
 aix: $(TARGETS)
-	echo Please note: AIX support is not working yet.
 	./epm -f aix -v epm
 
 bsd: $(TARGETS)
@@ -285,6 +284,10 @@ bsd: $(TARGETS)
 
 deb: $(TARGETS)
 	./epm -f deb -v epm
+
+gui: $(TARGETS)
+	./epm -v -s epm.xpm --setup-program setup \
+		--uninstall-program uninst --data-dir macosx epm
 
 inst tardist: $(TARGETS)
 	./epm -f tardist -v epm
@@ -369,5 +372,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.42 2003/02/13 16:52:28 mike Exp $".
+# End of "$Id: Makefile.in,v 1.43 2003/02/13 19:24:39 mike Exp $".
 #

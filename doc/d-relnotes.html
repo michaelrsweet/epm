@@ -7,9 +7,56 @@
 EPM software.</P>
 
 
-<H2>Changes in EPM v3.5.2</H2>
+<H2>Changes in EPM v3.6</H2>
 
 <UL>
+
+	<LI>Added a GUI uninstall program to be distributed with
+	portable distributions with a setup image.
+
+	<LI>MacOS X portable packages now support graphical setup
+	and uninstall using the Apple authorization API. 
+
+	<LI>Debian packages did not include the (required)
+	trailing period when running the update-rc.d script.
+
+	<LI>BSD packages now create directories using postinstall
+	commands instead of listing them directly.  This
+	should eliminate errors from the FreeBSD pkg_delete
+	command.
+
+	<LI>File dependencies were incorrectly specified in RPM
+	spec files.
+
+	<LI>IRIX portable distributions didn't write the chkconfig
+	commands properly.
+
+	<LI>The mkepmlist utility didn't support files as well as
+	directories.
+
+	<LI>EPM didn't do variable expansion of imported files
+	("&lt;foo.txt") or in-line data ("&lt;&lt;FOO")
+
+	<LI>Now build gzip'd depot files as well as the tar.gz
+	files when creating HP-UX software packages.
+
+	<LI>Now correctly use --libdir setting to locate the setup
+	GUI.
+
+	<LI>Now use rpmbuild command, if available, to build RPM
+	files since newer versions of RPM may not map the
+	"-bb" option to build a package.
+
+	<LI>Now set the RPMDIR environment variable when building
+	with older versions of RPM that don't understand the
+	"topdir_" variable.
+
+	<LI>Now handle dependencies of the form "package >=
+	version" in Debian packages.
+
+	<LI>Portable distributions that didn't have any files in
+	/usr or in / would look for a non-existent .sw or .ss
+	file.
 
 	<LI>EPM's sample list file didn't include the man pages
 	for setup or setup.types, and installed the epm list
