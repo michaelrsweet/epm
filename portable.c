@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.15 2000/08/22 12:56:17 mike Exp $"
+ * "$Id: portable.c,v 1.16 2000/10/12 16:04:26 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1064,6 +1064,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
     fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
@@ -1354,6 +1356,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
     fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
@@ -1487,6 +1491,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
 #ifdef __sgi
@@ -1552,5 +1557,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.15 2000/08/22 12:56:17 mike Exp $".
+ * End of "$Id: portable.c,v 1.16 2000/10/12 16:04:26 mike Exp $".
  */
