@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.13 2001/04/25 16:04:58 mike Exp $"
+ * "$Id: tar.c,v 1.14 2001/04/26 14:19:46 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -181,7 +181,7 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
       * Directory...
       */
 
-      if (tar_header(tar, TAR_DIR, srcinfo.st_mode, srcinfo.st_size,
+      if (tar_header(tar, TAR_DIR, srcinfo.st_mode, 0,
                      srcinfo.st_mtime, "root", "sys", dst, NULL))
         return (-1);
 
@@ -197,7 +197,7 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
       if (readlink(src, srclink, sizeof(srclink)) < 0)
         return (-1);
 
-      if (tar_header(tar, TAR_SYMLINK, srcinfo.st_mode, srcinfo.st_size,
+      if (tar_header(tar, TAR_SYMLINK, srcinfo.st_mode, 0,
                      srcinfo.st_mtime, "root", "sys", dst, srclink))
         return (-1);
     }
@@ -328,7 +328,9 @@ tar_header(tarf_t     *fp,	/* I - Tar file to write to */
 
   memset(&record, 0, sizeof(record));
 
-  strcpy(record.header.pathname, pathname);
+  strncpy(record.header.pathname, pathname, sizeof(record.header.pathname) - 1);
+  if (type == TAR_DIR)
+    strncat(record.header.pathname, "/", sizeof(record.header.pathname) - 1);
   sprintf(record.header.mode, "%-6o ", (unsigned)mode);
   sprintf(record.header.uid, "%o ", pwd == NULL ? 0 : (unsigned)pwd->pw_uid);
   sprintf(record.header.gid, "%o ", grp == NULL ? 0 : (unsigned)grp->gr_gid);
@@ -337,7 +339,8 @@ tar_header(tarf_t     *fp,	/* I - Tar file to write to */
   memset(&(record.header.chksum), ' ', sizeof(record.header.chksum));
   record.header.linkflag = type;
   if (type == TAR_SYMLINK)
-    strcpy(record.header.linkname, linkname);
+    strncpy(record.header.linkname, linkname,
+            sizeof(record.header.linkname) - 1);
   strcpy(record.header.magic, TAR_MAGIC);
   strcpy(record.header.uname, user);
   strcpy(record.header.gname, group);
@@ -415,5 +418,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.13 2001/04/25 16:04:58 mike Exp $".
+ * End of "$Id: tar.c,v 1.14 2001/04/26 14:19:46 mike Exp $".
  */
