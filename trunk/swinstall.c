@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.14 2001/06/26 16:22:22 mike Exp $"
+ * "$Id: swinstall.c,v 1.15 2001/07/19 20:27:42 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -349,9 +349,9 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
   if (i)
   {
-    fputs("    corequisites", fp);
-
     for (; i > 0; i --, d ++)
+    {
+      fputs("    corequisites", fp);
       if (d->type == DEPEND_REQUIRES && d->product[0] != '/')
       {
         fprintf(fp, " %s", d->product);
@@ -363,8 +363,8 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 	else
 	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
       }
-
-    fputs("\n", fp);
+      fputs("\n", fp);
+    }
   }
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
@@ -373,9 +373,9 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
   if (i)
   {
-    fputs("    ancestor", fp);
-
     for (; i > 0; i --, d ++)
+    {
+      fputs("    ancestor", fp);
       if (d->type == DEPEND_REPLACES && d->product[0] != '/')
       {
         fprintf(fp, " %s", d->product);
@@ -387,8 +387,8 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 	else
 	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
       }
-
-    fputs("\n", fp);
+      fputs("\n", fp);
+    }
   }
 
   if (preinstall[0])
@@ -506,5 +506,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.14 2001/06/26 16:22:22 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.15 2001/07/19 20:27:42 mike Exp $".
  */

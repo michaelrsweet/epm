@@ -11,6 +11,8 @@ WHAT'S NEW IN EPM 3.1?
 	  file.
 	- The GUI setup program left the "Next" button enabled
 	  after the license check.
+	- Fixed the dependency strings created for HP-UX
+	  swinstall (fix contributed by R. Begg.)
 
 
 WHAT'S NEW IN EPM 3.0?
