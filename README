@@ -1,5 +1,5 @@
-README - ESP Package Manager (EPM) 2.0
---------------------------------------
+README - ESP Package Manager (EPM) 2.0.1
+----------------------------------------
 
 WHAT IS EPM?
 
@@ -78,6 +78,17 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
 
     No!  EPM is free software and any installations you create are
     unencumbered by licensing of any kind (not even the GPL.)
+
+
+WHAT'S NEW IN EPM 2.0.1?
+
+    EPM 2.0.1 adds the following features, fixes, and changes to
+    EPM 2.0:
+
+	- Moved setup program to /usr/lib/epm ($prefix/lib/epm) to
+	  avoid name clash with RedHat setup program.
+	- Added Debian distribution files from Jeff Licquia.
+	- Configure script changes for GCC 2.95.x and Solaris.
 
 
 WHAT'S NEW IN EPM 2.0?
