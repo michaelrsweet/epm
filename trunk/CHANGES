@@ -1,5 +1,15 @@
-CHANGES - ESP Package Manager (EPM) 3.2
----------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.2.1
+-----------------------------------------
+
+WHAT'S NEW IN EPM 3.2.1?
+
+    EPM 3.2.1 adds the following features, fixes, and changes to
+    EPM 3.2:
+
+	- The check for Darwin (MacOS X) in the portable
+	  installation scripts was using "==" instead of just
+	  "=".
+
 
 WHAT'S NEW IN EPM 3.2?
 
