@@ -9,6 +9,8 @@ WHAT'S NEW IN EPM 3.2?
 	- Added "SHELL=/bin/sh" line to portable installation,
 	  patch, and remove scripts in case the root shell is
 	  not /bin/sh or a compatible shell.
+	- The epminstall utility didn't support the EPMLIST
+	  environment variable as documented.
 
 
 WHAT'S NEW IN EPM 3.1?
