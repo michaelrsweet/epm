@@ -3,7 +3,7 @@
 	<TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 	<META NAME="Author" CONTENT="Michael Sweet">
 	<META NAME="Copyright" CONTENT="Copyright 1999-2000 by Easy Software Products">
-	<META NAME="DocNumber" CONTENT="ESP-004-20001210">
+	<META NAME="DocNumber" CONTENT="ESP-004-20001211">
 </HEAD>
 <BODY>
 
@@ -11,11 +11,11 @@
 Using the<BR>
 ESP Package Manager</H1>
 
-<P ALIGN="CENTER">10 December 2000</P>
+<P ALIGN="CENTER">11 December 2000</P>
 
 <P ALIGN="CENTER">Michael Sweet, Easy Software Products</P>
 
-<P ALIGN="CENTER">ESP-004-20001210</P>
+<P ALIGN="CENTER">ESP-004-20001211</P>
 
 <H2>Contents</H2>
 
@@ -40,7 +40,7 @@ for the software development environment.
 
 <P>The ESP Package Manager ("EPM") is one solution to this
 problem. Besides its own "portable" distribution format, EPM
-also supports generation of several vendor-specific formats.
+also supports the generation of several vendor-specific formats.
 This allows you to build software distribution files for almost
 any UNIX/Linux operating system from the same sources.
 
@@ -81,24 +81,24 @@ investigation:
 <P>
 <TABLE ALIGN="CENTER" BORDER="1">
 <TR>
-	<TH>Format</TH>
-	<TH>Operating Systems<SUP>*</SUP></TH>
-	<TH>Binaries?</TH>
-	<TH>Sources?</TH>
-	<TH>Patches?</TH>
-	<TH>Upgrades?</TH>
-	<TH>Conflicts?</TH>
-	<TH>Requires?</TH>
-	<TH>Replaces?</TH>
-	<TH>Config Files?</TH>
-	<TH>Map Files?</TH>
+	<TH><SMALL>Format</SMALL></TH>
+	<TH><SMALL>Operating Systems<SUP>1</SUP></SMALL></TH>
+	<TH><SMALL>Binaries?</SMALL></TH>
+	<TH><SMALL>Cross- Platform?</SMALL></TH>
+	<TH><SMALL>Patches?</SMALL></TH>
+	<TH><SMALL>Upgrades?</SMALL></TH>
+	<TH><SMALL>Conflicts?</SMALL></TH>
+	<TH><SMALL>Requires?</SMALL></TH>
+	<TH><SMALL>Replaces?</SMALL></TH>
+	<TH><SMALL>Config Files?</SMALL></TH>
+	<TH><SMALL>Map Files?</SMALL></TH>
 </TR>
 <TR>
 	<TD>Debian</TD>
 	<TD>Corel Linux<BR>
 	Debian GNU/Linux</TD>
 	<TD>Yes</TD>
-	<TD>Yes</TD>
+	<TD>Yes<SUP>2</SUP></TD>
 	<TD>No</TD>
 	<TD>Yes</TD>
 	<TD>Yes</TD>
@@ -153,7 +153,7 @@ investigation:
 	SuSE<BR>
 	TurboLinux</TD>
 	<TD>Yes</TD>
-	<TD>Yes</TD>
+	<TD>Yes<SUP>2</SUP></TD>
 	<TD>No</TD>
 	<TD>Yes</TD>
 	<TD>Yes</TD>
@@ -164,17 +164,31 @@ investigation:
 </TR>
 </TABLE>
 
-<P ALIGN="CENTER">* = Standard packaging system for named
-operating systems.</P>
+<OL>
 
-<P>All of the package formats we looked at support binary
-distributions. The RPM and Debian formats also support source
-distributions that specifically allow for recompilation and
-installation. Only the commercial UNIX formats support patch
-distributions - you have to completely upgrade a software
-package with RPM and Debian. All but the Solaris pkg format
-allow you to upgrade a package without removing the old version
-first.
+	<LI>Standard packaging system for named operating systems.
+
+	<LI>These packaging systems are cross-platform but require
+	the package management utilities to be installed on the
+	platform before installing the package.
+
+</OL>
+
+<P>As you can see, none of the formats supported every feature
+we were looking for. One common fault of all these formats is
+that they do not support a common software specification file
+format. That is, making a Debian software distribution requires
+significantly different support files than required for a
+Solaris pkg distribution. This makes it extremely difficult to
+manage distributions for multiple operating systems.
+
+<P>All of the package formats support binary distributions. The
+RPM and Debian formats also support source distributions that
+specifically allow for recompilation and installation. Only the
+commercial UNIX formats support patch distributions - you have
+to completely upgrade a software package with RPM and Debian.
+All but the Solaris pkg format allow you to upgrade a package
+without removing the old version first.
 
 <P>When building the software packages, RPM and Debian force you
 to create the actual directories, copy the files to those
@@ -195,14 +209,9 @@ eliminates security issues with special permissions and building
 distributions as the root user. Using the proprietary format
 also has the added benefit of allowing for software patches and
 using the familiar software installation tools for that
-operating system.
-
-<P>One common fault of all these formats is that they do not
-support a common software specification file format. That is,
-making a Debian software distribution requires significantly
-different support files than required for a Solaris pkg
-distribution. This makes it extremely difficult to manage
-distributions for multiple operating systems.
+operating system. The primary disadvantage is that the same
+distributions and packaging software cannot be used on other
+operating systems.
 
 <H2><A NAME="DESIGN">Design Goals of EPM</A></H2>
 
@@ -596,6 +605,9 @@ page is at:
 <UL><PRE>
 <A HREF="http://www.easysw.com/epm">http://www.easysw.com/epm</A>
 </PRE></UL>
+
+<P>Easy Software Products also provides commercial support for
+EPM. Please consult the EPM home page for more information.
 
 </BODY>
 </HTML>
