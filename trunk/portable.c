@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.60 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: portable.c,v 1.61 2002/02/13 18:01:44 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1916,10 +1916,10 @@ write_space_checks(const char *prodname,/* I - Distribution name */
   fputs("	;;\n", fp);
   fputs("esac\n", fp);
   fputs("\n", fp);
-  fprintf(fp, "temp=`ls -l %s.%s | awk '{print $5}'`\n", prodname, sw);
+  fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, sw);
   fputs("spsw=`expr $temp / 1024`\n", fp);
   fputs("\n", fp);
-  fprintf(fp, "temp=`ls -l %s.%s | awk '{print $5}'`\n", prodname, ss);
+  fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, ss);
   fputs("spss=`expr $temp / 1024`\n", fp);
   fputs("\n", fp);
   fputs("spall=`expr $spsw + $spss`\n", fp);
@@ -1953,5 +1953,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.60 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: portable.c,v 1.61 2002/02/13 18:01:44 mike Exp $".
  */

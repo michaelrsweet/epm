@@ -13,6 +13,8 @@ WHAT'S NEW IN EPM 3.3?
 	- Various fixes for OpenServer.
 	- The mkepmlist utility could add extra unnecessary
 	  slashes in the destination path.
+	- Now use the "-ln" option when checking for the size
+	  of the distribution files in portable distributions.
 
 
 WHAT'S NEW IN EPM 3.2.1?
