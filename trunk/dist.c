@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.39 2001/07/09 20:45:07 mike Exp $"
+ * "$Id: dist.c,v 1.40 2001/07/25 20:30:11 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -68,6 +68,18 @@ static char	*get_line(char *buffer, int size, FILE *fp,
 			  int *skip);
 static int	get_vernumber(const char *version);
 static int	patmatch(const char *, const char *);
+
+
+/*
+ * Conditional "skip" bits...
+ */
+
+#define SKIP_SYSTEM	1	/* Not the right system */
+#define SKIP_FORMAT	2	/* Not the right format */
+#define SKIP_IF		4	/* Set if the current #if was not satisfied */
+#define SKIP_IFACTIVE	8	/* Set if we're in an #if */
+#define SKIP_IFSAT	16	/* Set if an #if statement has been satisfied */
+#define SKIP_MASK	7	/* Bits to look at */
 
 
 /*
@@ -1095,6 +1107,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 		*bufptr,		/* Pointer into buffer */
 		namever[255],		/* Name + version */
 		value[255];		/* Value string */
+  const char	*var;			/* Variable value */
 
 
   while (fgets(buffer, size, fp) != NULL)
@@ -1107,7 +1120,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
       continue;
 
    /*
-    * See if this is a %system or %format line...
+    * See if this is a %system, %format, or conditional line...
     */
 
     if (strncmp(buffer, "%system ", 8) == 0)
@@ -1116,7 +1129,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
       * Yes, do filtering based on the OS (+version)...
       */
 
-      *skip &= 2;
+      *skip &= ~SKIP_SYSTEM;
 
       if (strcmp(buffer + 8, "all\n") != 0)
       {
@@ -1125,10 +1138,24 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	snprintf(namever, sizeof(namever), "%s-%s", platform->sysname,
 	         platform->release);
 
-        *skip |= *bufptr != '!';
+	while (isspace((int)*bufptr))
+	  bufptr ++;
+
+        if (*bufptr != '!')
+	  *skip |= SKIP_SYSTEM;
 
         while (*bufptr)
 	{
+	 /*
+          * Skip leading whitespace...
+	  */
+
+	  while (isspace((int)*bufptr))
+	    bufptr ++;
+
+          if (!*bufptr)
+	    break;
+
           if (*bufptr == '!')
 	  {
 	    op = 1;
@@ -1137,13 +1164,12 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	  else
 	    op = 0;
 
-	  for (ptr = value; *bufptr && !isspace((int)*bufptr) &&
-	                        (ptr - value) < (sizeof(value) - 1);)
-	    *ptr++ = *bufptr++;
+	  for (ptr = value;
+	       *bufptr && !isspace((int)*bufptr) &&
+	           ptr < (value + sizeof(value) - 1);
+	       *ptr++ = *bufptr++);
 
 	  *ptr = '\0';
-	  while (isspace((int)*bufptr))
-	    bufptr ++;
 
           if (strncmp(value, "dunix", 5) == 0)
 	    memcpy(value, "tru64", 5); /* Keep existing nul/version */
@@ -1156,7 +1182,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
           if (len < namelen)
 	    match = 0;
 	  else
-	    match = strncasecmp(value, namever, strlen(value)) == 0;
+	    match = strncasecmp(value, namever, strlen(value)) == 0 ? SKIP_SYSTEM : 0;
 
           if (op)
 	    *skip |= match;
@@ -1171,15 +1197,30 @@ get_line(char           *buffer,	/* I - Buffer to read into */
       * Yes, do filtering based on the distribution format...
       */
 
-      *skip &= 1;
+      *skip &= ~SKIP_FORMAT;
 
       if (strcmp(buffer + 8, "all\n") != 0)
       {
         bufptr = buffer + 8;
-        *skip  |= (*bufptr != '!') * 2;
+
+	while (isspace((int)*bufptr))
+	  bufptr ++;
+
+        if (*bufptr != '!')
+	  *skip  |= SKIP_FORMAT;
 
         while (*bufptr)
 	{
+	 /*
+          * Skip leading whitespace...
+	  */
+
+	  while (isspace((int)*bufptr))
+	    bufptr ++;
+
+          if (!*bufptr)
+	    break;
+
           if (*bufptr == '!')
 	  {
 	    op = 1;
@@ -1188,15 +1229,14 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	  else
 	    op = 0;
 
-	  for (ptr = value; *bufptr && !isspace((int)*bufptr) &&
-	                        (ptr - value) < (sizeof(value) - 1);)
-	    *ptr++ = *bufptr++;
+	  for (ptr = value;
+	       *bufptr && !isspace((int)*bufptr) &&
+	           ptr < (value + sizeof(value) - 1);
+	       *ptr++ = *bufptr++);
 
 	  *ptr = '\0';
-	  while (isspace((int)*bufptr))
-	    bufptr ++;
 
-	  match = (strcasecmp(value, format) == 0) * 2;
+	  match = (strcasecmp(value, format) == 0) ? SKIP_FORMAT : 0;
 
           if (op)
 	    *skip |= match;
@@ -1204,6 +1244,198 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	    *skip &= ~match;
         }
       }
+    }
+    else if (strncmp(buffer, "%ifdef ", 7) == 0 ||
+             strncmp(buffer, "%elseifdef ", 11) == 0)
+    {
+     /*
+      * Yes, do filtering based on the presence of variables...
+      */
+
+      if ((*skip & SKIP_IFACTIVE) && buffer[1] != 'e')
+      {
+       /*
+        * Nested %if...
+	*/
+
+        fputs("epm: Warning, nested %ifdef's are not supported!\n", stderr);
+	continue;
+      }
+
+      if (buffer[1] == 'e')
+	bufptr = buffer + 11;
+      else
+	bufptr = buffer + 7;
+
+      *skip |= SKIP_IF | SKIP_IFACTIVE;
+
+      if (*skip & SKIP_IFSAT)
+        continue;
+
+      while (isspace((int)*bufptr))
+	bufptr ++;
+
+      if (*bufptr == '!')
+        *skip &= ~SKIP_IF;
+
+      while (*bufptr)
+      {
+       /*
+        * Skip leading whitespace...
+	*/
+
+	while (isspace((int)*bufptr))
+	  bufptr ++;
+
+        if (!*bufptr)
+	  break;
+
+       /*
+        * Get the variable name...
+	*/
+
+        if (*bufptr == '!')
+	{
+	  op = 1;
+	  bufptr ++;
+	}
+	else
+	  op = 0;
+
+	for (ptr = value;
+	     *bufptr && !isspace((int)*bufptr) &&
+	         ptr < (value + sizeof(value) - 1);
+	     *ptr++ = *bufptr++);
+
+	*ptr = '\0';
+
+	match = (getenv(value) != NULL) ? SKIP_IF : 0;
+
+        if (op)
+	  *skip |= match;
+	else
+	  *skip &= ~match;
+
+        if (match)
+	  *skip |= SKIP_IFSAT;
+      }
+    }
+    else if (strncmp(buffer, "%if ", 4) == 0 ||
+             strncmp(buffer, "%elseif ", 8) == 0)
+    {
+     /*
+      * Yes, do filtering based on the value of variables...
+      */
+
+      if ((*skip & SKIP_IFACTIVE) && buffer[1] != 'e')
+      {
+       /*
+        * Nested %if...
+	*/
+
+        fputs("epm: Warning, nested %if's are not supported!\n", stderr);
+	continue;
+      }
+
+      if (buffer[1] == 'e')
+        bufptr = buffer + 8;
+      else
+	bufptr = buffer + 4;
+
+      *skip |= SKIP_IF | SKIP_IFACTIVE;
+
+      if (*skip & SKIP_IFSAT)
+        continue;
+
+      while (isspace((int)*bufptr))
+	bufptr ++;
+
+      if (*bufptr == '!')
+        *skip &= ~SKIP_IF;
+
+      while (*bufptr)
+      {
+       /*
+        * Skip leading whitespace...
+	*/
+
+	while (isspace((int)*bufptr))
+	  bufptr ++;
+
+        if (!*bufptr)
+	  break;
+
+       /*
+        * Get the variable name...
+	*/
+
+        if (*bufptr == '!')
+	{
+	  op = 1;
+	  bufptr ++;
+	}
+	else
+	  op = 0;
+
+	for (ptr = value;
+	     *bufptr && !isspace((int)*bufptr) &&
+	         ptr < (value + sizeof(value) - 1);
+	     *ptr++ = *bufptr++);
+
+	*ptr = '\0';
+
+        match = ((var = getenv(value)) != NULL && *var) ? SKIP_IF : 0;
+
+        if (op)
+	  *skip |= match;
+	else
+	  *skip &= ~match;
+
+        if (match)
+	  *skip |= SKIP_IFSAT;
+      }
+    }
+    else if (strcmp(buffer, "%else") == 0)
+    {
+     /*
+      * Handle "else" condition of %ifdef statement...
+      */
+
+      if (!(*skip & SKIP_IFACTIVE))
+      {
+       /*
+        * No matching %if/%ifdef statement...
+	*/
+
+        fputs("epm: Warning, no matching %if or %ifdef for %else!\n", stderr);
+	break;
+      }
+
+      if (*skip & SKIP_IFSAT)
+        *skip |= SKIP_IF;
+      else
+      {
+	*skip &= ~SKIP_IF;
+	*skip |= SKIP_IFSAT;
+      }
+    }
+    else if (strcmp(buffer, "%endif") == 0 && (*skip & SKIP_IFACTIVE))
+    {
+     /*
+      * Cancel any filtering based on environment variables.
+      */
+
+      if (!(*skip & SKIP_IFACTIVE))
+      {
+       /*
+        * No matching %if/%ifdef statement...
+	*/
+
+        fputs("epm: Warning, no matching %if or %ifdef for %endif!\n", stderr);
+	break;
+      }
+
+      *skip &= ~(SKIP_IF | SKIP_IFACTIVE | SKIP_IFSAT);
     }
     else if (!*skip)
     {
@@ -1408,5 +1640,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.39 2001/07/09 20:45:07 mike Exp $".
+ * End of "$Id: dist.c,v 1.40 2001/07/25 20:30:11 mike Exp $".
  */
