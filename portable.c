@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.93 2005/01/11 21:36:57 mike Exp $"
+ * "$Id: portable.c,v 1.94 2005/01/14 16:40:31 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -184,7 +184,8 @@ write_combined(const char *title,	/* I - Title */
 {
   int		i;			/* Looping var */
   tarf_t	*tarfile;		/* Distribution tar file */
-  char		filename[1024];		/* Name of temporary file */
+  char		tarfilename[1024],	/* Name of tar file */
+		filename[1024];		/* Name of temporary file */
   struct stat	srcstat;		/* Source file information */
   const char	*destdir;		/* Destination directory */
   const char	*setup_img;		/* Setup image name */
@@ -195,28 +196,28 @@ write_combined(const char *title,	/* I - Title */
   */
 
   if (dist->relnumber)
-    snprintf(filename, sizeof(filename), "%s/%s-%s-%d", directory, prodname,
+    snprintf(tarfilename, sizeof(tarfilename), "%s/%s-%s-%d", directory, prodname,
              dist->version, dist->relnumber);
   else
-    snprintf(filename, sizeof(filename), "%s/%s-%s", directory, prodname,
+    snprintf(tarfilename, sizeof(tarfilename), "%s/%s-%s", directory, prodname,
              dist->version);
 
   if (!strcmp(title, "patch"))
-    strlcat(filename, "-patch", sizeof(filename));
+    strlcat(tarfilename, "-patch", sizeof(tarfilename));
 
   if (platname[0])
   {
-    strlcat(filename, "-", sizeof(filename));
-    strlcat(filename, platname, sizeof(filename));
+    strlcat(tarfilename, "-", sizeof(tarfilename));
+    strlcat(tarfilename, platname, sizeof(tarfilename));
   }
 
-  strlcat(filename, ".tar.gz", sizeof(filename));
+  strlcat(tarfilename, ".tar.gz", sizeof(tarfilename));
 
  /*
   * Open output file...
   */
 
-  if ((tarfile = tar_open(filename, 1)) == NULL)
+  if ((tarfile = tar_open(tarfilename, 1)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create output pipe to gzip -\n     %s\n",
             strerror(errno));
@@ -682,11 +683,11 @@ write_combined(const char *title,	/* I - Title */
 
   if (Verbosity)
   {
-    stat(filename, &srcstat);
+    stat(tarfilename, &srcstat);
 
     puts("     ------- ----------------------------------------");
     printf("    %7.0fk %s\n", srcstat.st_size / 1024.0,
-           filename);
+           tarfilename);
   }
 
   return (0);
@@ -1971,7 +1972,8 @@ write_instfiles(tarf_t     *tarfile,	/* I - Distribution tar file */
     snprintf(srcname, sizeof(srcname), "%s/%s.%s", directory, prodfull, files[i]);
     snprintf(dstname, sizeof(dstname), "%s%s.%s", destdir, prodfull, files[i]);
 
-    stat(srcname, &srcstat);
+    if (stat(srcname, &srcstat))
+      continue;
 
     if (srcstat.st_size == 0)
       continue;
@@ -2681,5 +2683,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.93 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id: portable.c,v 1.94 2005/01/14 16:40:31 mike Exp $".
  */
