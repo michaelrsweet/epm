@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.70 2002/10/07 19:29:45 mike Exp $"
+ * "$Id: epm.c,v 1.71 2002/10/17 15:41:40 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -161,6 +161,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    else if (strcasecmp(temp, "inst") == 0 ||
 	             strcasecmp(temp, "tardist") == 0)
 	      format = PACKAGE_INST;
+	    else if (strcasecmp(temp, "osx") == 0)
+	      format = PACKAGE_OSX;
 	    else if (strcasecmp(temp, "pkg") == 0)
 	      format = PACKAGE_PKG;
 	    else if (strcasecmp(temp, "rpm") == 0)
@@ -194,6 +196,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      format = PACKAGE_BSD;
 #elif defined(__svr4__) || defined(__SVR4) || defined(M_XENIX)
 	      format = PACKAGE_PKG;
+#elif defined(__APPLE__)
+              format = PACKAGE_OSX;
 #else
 	      format = PACKAGE_PORTABLE;
 #endif
@@ -461,6 +465,9 @@ main(int  argc,			/* I - Number of command-line arguments */
     case PACKAGE_INST :
         i = make_inst(prodname, directory, platname, dist, &platform);
 	break;
+    case PACKAGE_OSX :
+        i = make_osx(prodname, directory, platname, dist, &platform);
+	break;
     case PACKAGE_PKG :
         i = make_pkg(prodname, directory, platname, dist, &platform);
 	break;
@@ -555,5 +562,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.70 2002/10/07 19:29:45 mike Exp $".
+ * End of "$Id: epm.c,v 1.71 2002/10/17 15:41:40 mike Exp $".
  */

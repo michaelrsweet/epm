@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.37 2002/08/30 02:00:41 mike Exp $"
+# "$Id: Makefile.in,v 1.38 2002/10/17 15:41:40 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -91,7 +91,7 @@ VPATH		=	$(srcdir)
 #
 
 TARGETS	=	epm epminstall mkepmlist @SETUP@
-EPM_OBJS =	aix.o bsd.o deb.o dist.o epm.o file.o inst.o pkg.o \
+EPM_OBJS =	aix.o bsd.o deb.o dist.o epm.o file.o inst.o osx.o pkg.o \
 		portable.o qprintf.o rpm.o run.o setld.o snprintf.o \
 		string.o swinstall.o tar.o
 SETUP_OBJS =	setup.o setup2.o
@@ -335,5 +335,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.37 2002/08/30 02:00:41 mike Exp $".
+# End of "$Id: Makefile.in,v 1.38 2002/10/17 15:41:40 mike Exp $".
 #

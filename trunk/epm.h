@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.31 2002/08/30 02:00:42 mike Exp $"
+ * "$Id: epm.h,v 1.32 2002/10/17 15:41:41 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -91,6 +91,7 @@ enum
   PACKAGE_BSD,				/* BSD package format */
   PACKAGE_DEB,				/* Debian package format */
   PACKAGE_INST,				/* IRIX package format */
+  PACKAGE_OSX,				/* MacOS X package format */
   PACKAGE_PKG,				/* AT&T package format (AIX, Solaris) */
   PACKAGE_RPM,				/* RedHat package format */
   PACKAGE_SETLD,			/* Tru64 package format */
@@ -246,6 +247,9 @@ extern int	make_inst(const char *prodname, const char *directory,
 		          const char *platname, dist_t *dist,
 			  struct utsname *platform);
 extern int	make_link(const char *dst, const char *src);
+extern int	make_osx(const char *prodname, const char *directory,
+		         const char *platname, dist_t *dist,
+			 struct utsname *platform);
 extern int	make_pkg(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform);
@@ -279,5 +283,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.31 2002/08/30 02:00:42 mike Exp $".
+ * End of "$Id: epm.h,v 1.32 2002/10/17 15:41:41 mike Exp $".
  */
