@@ -25,6 +25,9 @@ WHAT'S NEW IN EPM 2.5?
 	- RPM distributions now use %config(noreplace) for
 	  config files, to duplicate the behavior that is
 	  expected.
+	- The portable scripts now use the autoconf echo test to
+	  determine the proper options for echo (-n or \c),
+	  rather then hardcoding this based on the build system.
 
 
 WHAT'S NEW IN EPM 2.4?

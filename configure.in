@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.19 2001/03/07 00:55:55 mike Exp $"
+dnl "$Id: configure.in,v 1.20 2001/03/15 15:31:02 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -140,11 +140,6 @@ fi)
 AC_SUBST(SETUP)
 AC_SUBST(INSTALL_SETUP)
 AC_SUBST(LIST_SETUP)
-
-dnl See if the echo command supports the \c escape; if not, then it's broken!
-if test "x$ac_c" = "x"; then
-	AC_DEFINE(HAVE_BROKEN_ECHO)
-fi
 
 dnl Update compiler options...
 if test -n "$GCC"; then
@@ -299,5 +294,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list)
 
 dnl
-dnl End of "$Id: configure.in,v 1.19 2001/03/07 00:55:55 mike Exp $".
+dnl End of "$Id: configure.in,v 1.20 2001/03/15 15:31:02 mike Exp $".
 dnl
