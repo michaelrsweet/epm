@@ -449,7 +449,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
       case '4' :
           qprintf(fp, "f %04o %s %s %s %s %s "
 	              "postop(cp $rbase/%s $rbase/%s.copy) "
-		      "removeop($rbase/%s.copy)\n",
+		      "removeop($rbase/%s.copy; rm -f $rbase/%s.copy)\n",
                   file->mode, file->user, file->group, file->dst + 1,
 		  file->src, subsys, file->dst + 1, file->dst + 1,
 		  file->dst + 1);
@@ -467,9 +467,15 @@ make_inst(const char     *prodname,	/* I - Product short name */
 	          file->user, file->group, file->dst + 1, file->src, subsys);
           break;
       case 'i' :
-          qprintf(fp, "f %04o %s %s %s %s %s exitop($rbase/etc/init.d/%s start) removeop($rbase/etc/init.d/%s stop)\n",
+          qprintf(fp, "f %04o %s %s %s %s %s "
+	              "postop(cp $rbase/etc/init.d/%s $rbase/etc/init.d/%s.copy) "
+	              "exitop($rbase/etc/init.d/%s start) "
+		      "removeop($rbase/etc/init.d/%s.copy stop; rm -f $rbase/etc/init.d/%s.copy)\n",
 	          file->mode, file->user, file->group, file->dst + 1,
-		  file->src, subsys, file->dst + 12, file->dst + 12);
+		  file->src, subsys,
+		  file->dst + 12, file->dst + 12,
+		  file->dst + 12,
+		  file->dst + 12, file->dst + 12);
           break;
       case 'l' :
           qprintf(fp, "l %04o %s %s %s - %s symval(%s)\n", file->mode,
