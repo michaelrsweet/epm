@@ -1,12 +1,14 @@
 *.bck
-Makefile
+autom4te*
 config.cache
 config.h
 config.log
 config.status
 epm
 epm.list
+epmeditor
 epminstall
 mkepmlist
+Makefile
 setup
 uninst
