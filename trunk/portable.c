@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.30 2001/03/26 20:11:09 mike Exp $"
+ * "$Id: portable.c,v 1.31 2001/03/27 14:41:09 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -111,7 +111,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
   */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (isupper(file->type))
+    if (isupper((int)file->type))
       break;
 
   havepatchfiles = i > 0;
@@ -1774,5 +1774,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.30 2001/03/26 20:11:09 mike Exp $".
+ * End of "$Id: portable.c,v 1.31 2001/03/27 14:41:09 mike Exp $".
  */

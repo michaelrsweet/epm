@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.46 2001/03/26 16:18:46 mike Exp $"
+ * "$Id: epm.c,v 1.47 2001/03/27 14:41:09 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -401,16 +401,16 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   * major and minor numbers...
   */
 
-  while (!isdigit(platform->release[0]) && platform->release[0])
+  while (!isdigit((int)platform->release[0]) && platform->release[0])
     strcpy(platform->release, platform->release + 1);
 
   if (platform->release[0] == '.')
     strcpy(platform->release, platform->release + 1);
 
-  for (temp = platform->release; *temp && isdigit(*temp); temp ++);
+  for (temp = platform->release; *temp && isdigit((int)*temp); temp ++);
 
   if (*temp == '.')
-    for (temp ++; *temp && isdigit(*temp); temp ++);
+    for (temp ++; *temp && isdigit((int)*temp); temp ++);
 
   *temp = '\0';
 
@@ -502,5 +502,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.46 2001/03/26 16:18:46 mike Exp $".
+ * End of "$Id: epm.c,v 1.47 2001/03/27 14:41:09 mike Exp $".
  */
