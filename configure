@@ -2334,10 +2334,72 @@ done
 
 fi
 
+echo $ac_n "checking for library containing gethostname""... $ac_c" 1>&6
+echo "configure:2339: checking for library containing gethostname" >&5
+if eval "test \"`echo '$''{'ac_cv_search_gethostname'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_func_search_save_LIBS="$LIBS"
+ac_cv_search_gethostname="no"
+cat > conftest.$ac_ext <<EOF
+#line 2346 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char gethostname();
+
+int main() {
+gethostname()
+; return 0; }
+EOF
+if { (eval echo configure:2357: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+  rm -rf conftest*
+  ac_cv_search_gethostname="none required"
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+fi
+rm -f conftest*
+test "$ac_cv_search_gethostname" = "no" && for i in socket; do
+LIBS="-l$i  $ac_func_search_save_LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 2368 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char gethostname();
+
+int main() {
+gethostname()
+; return 0; }
+EOF
+if { (eval echo configure:2379: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+  rm -rf conftest*
+  ac_cv_search_gethostname="-l$i"
+break
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+fi
+rm -f conftest*
+done
+LIBS="$ac_func_search_save_LIBS"
+fi
+
+echo "$ac_t""$ac_cv_search_gethostname" 1>&6
+if test "$ac_cv_search_gethostname" != "no"; then
+  test "$ac_cv_search_gethostname" = "none required" || LIBS="$ac_cv_search_gethostname $LIBS"
+  
+else :
+  
+fi
+
 # Extract the first word of "fltk-config", so it can be a program name with args.
 set dummy fltk-config; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:2341: checking for $ac_word" >&5
+echo "configure:2403: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_FLTKCONFIG'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2429,18 +2491,18 @@ if test -n "$GCC"; then
 
 	# See if GCC supports -fno-rtti...
 	echo $ac_n "checking if GCC supports -fno-rtti""... $ac_c" 1>&6
-echo "configure:2433: checking if GCC supports -fno-rtti" >&5
+echo "configure:2495: checking if GCC supports -fno-rtti" >&5
 	OLDCFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -fno-rtti"
 	cat > conftest.$ac_ext <<EOF
-#line 2437 "configure"
+#line 2499 "configure"
 #include "confdefs.h"
 
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:2444: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2506: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   OPTIM="$OPTIM -fno-rtti"
 		echo "$ac_t""yes" 1>&6
@@ -2455,18 +2517,18 @@ rm -f conftest*
 
 	# See if GCC supports -fno-exceptions...
 	echo $ac_n "checking if GCC supports -fno-exceptions""... $ac_c" 1>&6
-echo "configure:2459: checking if GCC supports -fno-exceptions" >&5
+echo "configure:2521: checking if GCC supports -fno-exceptions" >&5
 	OLDCFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -fno-exceptions"
 	cat > conftest.$ac_ext <<EOF
-#line 2463 "configure"
+#line 2525 "configure"
 #include "confdefs.h"
 
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:2470: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2532: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   OPTIM="$OPTIM -fno-exceptions"
 		echo "$ac_t""yes" 1>&6
@@ -2482,19 +2544,19 @@ rm -f conftest*
 	# See if we are running Solaris; if so, try the -fpermissive option...
 	if test "$uname" = SunOS; then
 		echo $ac_n "checking if GCC supports -fpermissive""... $ac_c" 1>&6
-echo "configure:2486: checking if GCC supports -fpermissive" >&5
+echo "configure:2548: checking if GCC supports -fpermissive" >&5
 
 		OLDCFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS -fpermissive"
 		cat > conftest.$ac_ext <<EOF
-#line 2491 "configure"
+#line 2553 "configure"
 #include "confdefs.h"
 
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:2498: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2560: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   OPTIM="$OPTIM -fpermissive"
 			echo "$ac_t""yes" 1>&6
