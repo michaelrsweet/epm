@@ -1,7 +1,7 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN="RIGHT"><A NAME="ADVANCED">Advanced Packaging with EPM</A></H1>
+<H1 ALIGN="RIGHT"><A NAME="ADVANCED">4 - Advanced Packaging with EPM</A></H1>
 
 <P>This chapter describes the advanced packaging features of EPM.</P>
 
@@ -162,6 +162,16 @@ defined to a non-empty string, while <CODE>%ifdef</CODE>
 directives only include the text if the named variable(s) are
 defined to any value.</P>
 
+<H2>Protecting Object Files from Stripping</H2>
+
+<P>The <CODE>nostrip()</CODE> option can be included at the end of a
+file line to prevent EPM from stripping the symbols and debugging
+information from the file:
+
+<UL><PRE>
+f 755 root sys /usr/lib/libfoo.so libfoo.so nostrip()
+</PRE></UL>
+
 <H2>Software Patches</H2>
 
 <P>EPM supports portable software patch distributions which
@@ -235,7 +245,17 @@ i 755 root sys foo foo.sh
 
 <P>The previous example creates an init script named
 <VAR>foo</VAR> on the end-user system and will create symbolic
-links to run levels 0, 2, 3, and 5 as needed.</P>
+links to run levels 0, 2, 3, and 5 as needed, using a sequence number
+of 00 (or 000) for the shutdown script and 99 (or 999) for the startup
+script.</P>
+
+<P>To specify run levels and sequence numbers, use the
+<CODE>runlevels()</CODE>, <CODE>start()</CODE>, and
+<CODE>stop()</CODE> options:
+
+<UL><PRE>
+i 755 root sys foo foo.sh "runlevels(02) start(50) stop(30)"
+</PRE></UL>
 
 </BODY>
 </HTML>
