@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.39 2001/07/24 11:57:58 mike Exp $"
+dnl "$Id: configure.in,v 1.40 2001/09/21 15:02:52 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -369,7 +369,12 @@ if test "x$RPM" != "x"; then
 	build="`$RPM -v | grep buildarch`"
 
 	if test "x$build" = "x"; then
-		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--target=")
+		target="`$RPM -v | grep target=`"
+		if test "x$target" = "x"; then
+			AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--target ")
+		else
+			AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--target=")
+		fi
 	else
 		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--buildarch ")
 	fi
@@ -381,5 +386,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist doc/Makefile)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.39 2001/07/24 11:57:58 mike Exp $".
+dnl End of "$Id: configure.in,v 1.40 2001/09/21 15:02:52 mike Exp $".
 dnl
