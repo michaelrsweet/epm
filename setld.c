@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.5 2001/04/26 16:21:02 mike Exp $"
+ * "$Id: setld.c,v 1.6 2001/04/27 12:18:37 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -71,9 +71,9 @@ make_setld(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  if (strlen(prodname) != 3)
+  if (strlen(prodname) < 3)
   {
-    fprintf(stderr, "epm: Need a product name containing exactly 3 characters.\n"
+    fprintf(stderr, "epm: Need a product name of at least 3 characters.\n"
                     "     The current product name (%s) is not acceptable.\n",
             prodname);
     return (1);
@@ -152,6 +152,12 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
   if (Verbosity)
     puts("Creating Tru64 (setld) distribution...");
+
+  sprintf(command, "/bin/rm -rf %s/output", directory);
+  system(command);
+
+  sprintf(command, "/bin/rm -rf %s/src", directory);
+  system(command);
 
   sprintf(filename, "%s/output", directory);
   mkdir(filename, 0777);
@@ -411,5 +417,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.5 2001/04/26 16:21:02 mike Exp $".
+ * End of "$Id: setld.c,v 1.6 2001/04/27 12:18:37 mike Exp $".
  */
