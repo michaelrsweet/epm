@@ -105,6 +105,8 @@ WHAT'S NEW IN EPM 2.3?
 	  avoid a *very* nasty installer bug in RedHat 7.0.
 	- The HP-UX swinstall code did not properly handle
 	  directories or config files.
+	- The [] wildcard matching rule did not accept ranges
+          (e.g. "[a-z]", "[0-9]", etc.)
 
 
 WHAT'S NEW IN EPM 2.2?
