@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.21.2.8 2004/10/31 17:22:53 mike Exp $"
+ * "$Id: inst.c,v 1.21.2.9 2004/12/07 14:06:11 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -67,7 +67,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 		};
 
 
-  (void)platform; /* Eliminates compiler warning about unused variable */
+  REF(platform);
 
   if (Verbosity)
     puts("Creating inst distribution...");
@@ -630,5 +630,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.21.2.8 2004/10/31 17:22:53 mike Exp $".
+ * End of "$Id: inst.c,v 1.21.2.9 2004/12/07 14:06:11 mike Exp $".
  */
