@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.63 2001/10/16 20:33:12 mike Exp $"
+ * "$Id: epm.c,v 1.64 2001/12/06 20:59:50 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -183,7 +183,7 @@ main(int  argc,			/* I - Number of command-line arguments */
             }
 #elif defined(__sgi)
 	      format = PACKAGE_INST;
-#elif defined(__sun)
+#elif defined(__sun) || defined(M_XENIX)
 	      format = PACKAGE_PKG;
 #elif defined(__osf__)
 	      format = PACKAGE_SETLD;
@@ -530,5 +530,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.63 2001/10/16 20:33:12 mike Exp $".
+ * End of "$Id: epm.c,v 1.64 2001/12/06 20:59:50 mike Exp $".
  */
