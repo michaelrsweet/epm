@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.17 2001/06/19 15:27:46 mike Exp $"
+# "$Id: Makefile.in,v 1.18 2001/06/20 16:54:25 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -59,6 +59,7 @@ MAN1EXT	=	@MAN1EXT@
 
 bindir		=	@bindir@
 datadir		=	@datadir@
+docdir		=	@docdir@
 exec_prefix	=	@exec_prefix@
 mandir		=	@mandir@
 prefix		=	@prefix@
@@ -142,15 +143,16 @@ install: epm @INSTALL_SETUP@
 	$(CP) $(srcdir)/epm.man $(mandir)/man1/epm.1
 	$(RM) $(mandir)/man1/mkepmlist.1
 	$(CP) $(srcdir)/mkepmlist.man $(mandir)/man1/mkepmlist.1
-	echo Installing EPM documentation in $(datadir)/doc/epm
-	-$(MKDIR) $(datadir)/doc
-	-$(MKDIR) $(datadir)/doc/epm
-	$(RM) $(datadir)/doc/epm/COPYING
-	$(CP) $(srcdir)/COPYING $(datadir)/doc/epm
-	$(RM) $(datadir)/doc/epm/README
-	$(CP) $(srcdir)/README $(datadir)/doc/epm
-	$(RM) $(datadir)/doc/epm/*.html
-	$(CP) $(srcdir)/*.html $(datadir)/doc/epm
+	echo Installing EPM documentation in $(docdir)
+	-$(MKDIR) $(docdir)
+	$(RM) $(docdir)/COPYING
+	$(CP) $(srcdir)/COPYING $(docdir)
+	$(RM) $(docdir)/README
+	$(CP) $(srcdir)/README $(docdir)
+	$(RM) $(docdir)/epm-manual.html
+	$(CP) $(srcdir)/doc/epm-manual.html $(docdir)
+	$(RM) $(docdir)/epm-manual.pdf
+	$(CP) $(srcdir)/doc/epm-manual.pdf $(docdir)
 
 install-setup:	setup
 	echo Installing EPM setup in $(libdir)/epm
@@ -213,5 +215,5 @@ Fl_Check_Browser.o:	Fl_Check_Browser.h
 $(OBJS):	Makefile config.h
 
 #
-# End of "$Id: Makefile.in,v 1.17 2001/06/19 15:27:46 mike Exp $".
+# End of "$Id: Makefile.in,v 1.18 2001/06/20 16:54:25 mike Exp $".
 #
