@@ -8,6 +8,7 @@ WHAT'S NEW IN EPM 2.6?
 
 	- Changed the automatic version number generation code to
 	  properly handle patch, beta, and pre releases.
+	- Added support for release numbers in RPM files.
 	- Added support for version number ranges in dependencies,
 	  either as "low-version high-version", "< version", or
 	  "> version".
@@ -15,6 +16,11 @@ WHAT'S NEW IN EPM 2.6?
 	  index into an array.
 	- Added a disk space check to the portable installation
 	  scripts.
+	- Added a new mkepmlist utility, based on a Perl script
+	  by Christian Lademann.
+	- Added a "keep files" option (-k) to epm to keep the
+	  intermediate (spec, etc.) files around after building
+	  the binary distribution.
 
 
 WHAT'S NEW IN EPM 2.5?
