@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.23 2001/11/01 16:43:07 mike Exp $"
+// "$Id: setup2.cxx,v 1.24 2001/12/21 20:42:18 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -869,7 +869,7 @@ next_cb(Fl_Button *, void *)
 
     CancelButton->activate();
 
-    XBell(fl_display, 100);
+    fl_beep();
 
     installing = 0;
   }
@@ -1082,5 +1082,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.23 2001/11/01 16:43:07 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.24 2001/12/21 20:42:18 mike Exp $".
 //
