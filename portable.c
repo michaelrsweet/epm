@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.16 2000/10/12 16:04:26 mike Exp $"
+ * "$Id: portable.c,v 1.17 2000/12/10 15:40:20 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -154,8 +154,6 @@ make_portable(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fchmod(fileno(tarfile->file), 0444);
-
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (strncmp(file->dst, "/usr", 4) != 0)
       switch (tolower(file->type))
@@ -242,8 +240,6 @@ make_portable(const char     *prodname,	/* I - Product short name */
             filename, strerror(errno));
     return (1);
   }
-
-  fchmod(fileno(tarfile->file), 0444);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (strncmp(file->dst, "/usr", 4) == 0)
@@ -334,8 +330,6 @@ make_portable(const char     *prodname,	/* I - Product short name */
       return (1);
     }
 
-    fchmod(fileno(tarfile->file), 0444);
-
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (strncmp(file->dst, "/usr", 4) != 0)
 	switch (file->type)
@@ -418,8 +412,6 @@ make_portable(const char     *prodname,	/* I - Product short name */
               filename, strerror(errno));
       return (1);
     }
-
-    fchmod(fileno(tarfile->file), 0444);
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (strncmp(file->dst, "/usr", 4) == 0)
@@ -544,7 +536,7 @@ write_common(dist_t     *dist,		/* I - Distribution */
   * Update the permissions on the file...
   */
 
-  fchmod(fileno(fp), 0555);
+  fchmod(fileno(fp), 0755);
 
  /*
   * Write the standard header...
@@ -569,6 +561,7 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fputs("	exit 1\n", fp);
   fputs("fi\n", fp);
   fprintf(fp, "echo Copyright %s\n", dist->copyright);
+  fputs("umask 002\n", fp);
 
  /*
   * Return the file pointer...
@@ -627,8 +620,9 @@ write_dist(const char *title,		/* I - Title to show */
     sprintf(dstname, "%s.%s", prodname, files[i]);
 
     stat(srcname, &srcstat);
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", dstname, NULL) < 0)
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (!0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   dstname, NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -661,14 +655,13 @@ write_dist(const char *title,		/* I - Title to show */
     * Include the ESP Software Wizard (setup)...
     */
 
-    if (stat(EPM_LIBDIR "/setup", &srcstat))
+    if (stat(SetupProgram, &srcstat))
     {
       if (Verbosity)
         puts("");
 
-      fprintf(stderr, "epm: Unable to stat GUI setup program "
-                      EPM_LIBDIR "/setup - %s\n",
-	      strerror(errno));
+      fprintf(stderr, "epm: Unable to stat GUI setup program %s - %s\n",
+	      SetupProgram, strerror(errno));
       return (-1);
     }
 
@@ -683,7 +676,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_file(tarfile, EPM_LIBDIR "/setup") < 0)
+    if (tar_file(tarfile, SetupProgram) < 0)
     {
       if (Verbosity)
         puts("");
@@ -704,7 +697,7 @@ write_dist(const char *title,		/* I - Title to show */
     */
 
     stat(setup, &srcstat);
-    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
 	           srcstat.st_mtime, "root", "root", "setup.xpm", NULL) < 0)
     {
       if (Verbosity)
@@ -1557,5 +1550,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.16 2000/10/12 16:04:26 mike Exp $".
+ * End of "$Id: portable.c,v 1.17 2000/12/10 15:40:20 mike Exp $".
  */
