@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63.2.28 2004/12/07 14:35:19 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.29 2004/12/09 21:16:37 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -235,7 +235,7 @@ write_combined(const char *title,	/* I - Title */
     * Create directories for the setup application...
     */
 
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+    if (tar_header(tarfile, TAR_DIR, (mode_t)0755, (size_t)0, deftime, "root", "root",
                    "Install.app", NULL) < 0)
     {
       fprintf(stderr, "epm: Error writing directory header - %s\n",
@@ -244,7 +244,7 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+    if (tar_header(tarfile, TAR_DIR, (mode_t)0755, (size_t)0, deftime, "root", "root",
                    "Install.app/Contents", NULL) < 0)
     {
       fprintf(stderr, "epm: Error writing directory header - %s\n",
@@ -253,7 +253,7 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+    if (tar_header(tarfile, TAR_DIR, (mode_t)0755, (size_t)0, deftime, "root", "root",
                    "Install.app/Contents/MacOS", NULL) < 0)
     {
       fprintf(stderr, "epm: Error writing directory header - %s\n",
@@ -262,7 +262,7 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+    if (tar_header(tarfile, TAR_DIR, (mode_t)0755, (size_t)0, deftime, "root", "root",
                    "Install.app/Contents/Resources", NULL) < 0)
     {
       fprintf(stderr, "epm: Error writing directory header - %s\n",
@@ -275,8 +275,8 @@ write_combined(const char *title,	/* I - Title */
     * Then copy the data files...
     */
 
-    snprintf(srcname, sizeof(srcname), "%s/setup.icns", DataDir);
-    stat(srcname, &srcstat);
+    snprintf(filename, sizeof(filename), "%s/setup.icns", DataDir);
+    stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
@@ -288,10 +288,10 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    if (tar_file(tarfile, srcname) < 0)
+    if (tar_file(tarfile, filename) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
+      fprintf(stderr, "epm: Error writing file data for setup.icns -\n    %s\n",
+	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -299,8 +299,8 @@ write_combined(const char *title,	/* I - Title */
     if (Verbosity)
       printf("    %7.0fk setup.icns\n", srcstat.st_size / 1024.0);
 
-    snprintf(srcname, sizeof(srcname), "%s/setup.info", DataDir);
-    stat(srcname, &srcstat);
+    snprintf(filename, sizeof(filename), "%s/setup.info", DataDir);
+    stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
@@ -312,10 +312,10 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    if (tar_file(tarfile, srcname) < 0)
+    if (tar_file(tarfile, filename) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
+      fprintf(stderr, "epm: Error writing file data for PkgInfo -\n    %s\n",
+	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -323,8 +323,8 @@ write_combined(const char *title,	/* I - Title */
     if (Verbosity)
       printf("    %7.0fk PkgInfo\n", srcstat.st_size / 1024.0);
 
-    snprintf(srcname, sizeof(srcname), "%s/setup.plist", DataDir);
-    stat(srcname, &srcstat);
+    snprintf(filename, sizeof(filename), "%s/setup.plist", DataDir);
+    stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
@@ -336,10 +336,10 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    if (tar_file(tarfile, srcname) < 0)
+    if (tar_file(tarfile, filename) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
+      fprintf(stderr, "epm: Error writing file data for Info.plist -\n    %s\n",
+	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -522,8 +522,8 @@ write_combined(const char *title,	/* I - Title */
     * Then copy the data files...
     */
 
-    snprintf(srcname, sizeof(srcname), "%s/uninst.icns", DataDir);
-    stat(srcname, &srcstat);
+    snprintf(filename, sizeof(filename), "%s/uninst.icns", DataDir);
+    stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
@@ -535,10 +535,10 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    if (tar_file(tarfile, srcname) < 0)
+    if (tar_file(tarfile, filename) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
+      fprintf(stderr, "epm: Error writing file data for uninst.icns -\n    %s\n",
+	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -546,8 +546,8 @@ write_combined(const char *title,	/* I - Title */
     if (Verbosity)
       printf("    %7.0fk uninst.icns\n", srcstat.st_size / 1024.0);
 
-    snprintf(srcname, sizeof(srcname), "%s/uninst.info", DataDir);
-    stat(srcname, &srcstat);
+    snprintf(filename, sizeof(filename), "%s/uninst.info", DataDir);
+    stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
@@ -559,10 +559,10 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    if (tar_file(tarfile, srcname) < 0)
+    if (tar_file(tarfile, filename) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
+      fprintf(stderr, "epm: Error writing file data for PkgInfo -\n    %s\n",
+	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -570,8 +570,8 @@ write_combined(const char *title,	/* I - Title */
     if (Verbosity)
       printf("    %7.0fk PkgInfo\n", srcstat.st_size / 1024.0);
 
-    snprintf(srcname, sizeof(srcname), "%s/uninst.plist", DataDir);
-    stat(srcname, &srcstat);
+    snprintf(filename, sizeof(filename), "%s/uninst.plist", DataDir);
+    stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
@@ -583,11 +583,11 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    if (tar_file(tarfile, srcname) < 0)
+    if (tar_file(tarfile, filename) < 0)
     {
       tar_close(tarfile);
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
+      fprintf(stderr, "epm: Error writing file data for Info.plist -\n    %s\n",
+	      strerror(errno));
       return (-1);
     }
 
@@ -2681,5 +2681,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63.2.28 2004/12/07 14:35:19 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.29 2004/12/09 21:16:37 mike Exp $".
  */

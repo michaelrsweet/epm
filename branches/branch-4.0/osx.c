@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.1.2.15 2004/12/09 17:38:08 mike Exp $"
+ * "$Id: osx.c,v 1.1.2.16 2004/12/09 21:16:37 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -96,6 +96,9 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
     if (Verbosity)
       puts("Copying temporary resource files...");
+
+    snprintf(filename, sizeof(filename), "%s/MetaPackage", directory);
+    make_directory(filename, 0777, 0, 0);
 
     snprintf(filename, sizeof(filename), "%s/MetaResources", directory);
     make_directory(filename, 0777, 0, 0);
@@ -226,11 +229,13 @@ make_osx(const char     *prodname,	/* I - Product short name */
     if (pm_paths[i])
       run_command(NULL, "%s/Contents/MacOS/PackageMaker -build "
 			"-p %s/%s.mpkg "
+		        "-f %s/MetaPackage "
 			"-r %s/MetaResources "
 			"-d %s/%s-metadesc.plist "
 			"-i %s/%s-metainfo.plist",
 		  pm_paths[i],
 		  filename, prodname,
+		  filename,
 		  filename,
 		  filename, prodname,
 		  filename, prodname);
@@ -252,6 +257,8 @@ make_osx(const char     *prodname,	/* I - Product short name */
     {
       if (Verbosity)
 	puts("Removing temporary distribution files...");
+
+      run_command(NULL, "/bin/rm -rf %s/MetaPackage", directory);
 
       run_command(NULL, "/bin/rm -rf %s/MetaResources", directory);
 
@@ -389,7 +396,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
   fputs("        <real>0.1</real>\n", fp);
   fputs("        <key>IFPkgFlagAuthorizationAction</key>\n", fp);
   fputs("        <string>RootAuthorization</string>\n", fp);
-  if (dist->num_subpackages)
+  if (dist->num_subpackages && !subpackage)
   {
     fputs("        <key>IFPkgFlagIsRequired</key>\n", fp);
     fputs("        <true/>\n", fp);
@@ -506,11 +513,11 @@ make_subpackage(const char *prodname,	/* I - Product short name */
       case 'c' :
       case 'f' :
           if (strncmp(file->dst, "/etc/", 5) == 0)
-            snprintf(filename, sizeof(filename), "%s/Package/private%s",
-	             directory, file->dst);
+            snprintf(filename, sizeof(filename), "%s/%s/Package/private%s",
+	             directory, prodfull, file->dst);
           else
-            snprintf(filename, sizeof(filename), "%s/Package%s",
-	             directory, file->dst);
+            snprintf(filename, sizeof(filename), "%s/%s/Package%s",
+	             directory, prodfull, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -521,8 +528,8 @@ make_subpackage(const char *prodname,	/* I - Product short name */
           break;
       case 'i' :
           snprintf(filename, sizeof(filename),
-	           "%s/Package/Library/StartupItems/%s/%s",
-	           directory, file->dst, file->dst);
+	           "%s/%s/Package/Library/StartupItems/%s/%s",
+	           directory, prodfull, file->dst, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -532,8 +539,8 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 	    return (1);
 
           snprintf(filename, sizeof(filename),
-	           "%s/Package/Library/StartupItems/%s/StartupParameters.plist",
-	           directory, file->dst);
+	           "%s/%s/Package/Library/StartupItems/%s/StartupParameters.plist",
+	           directory, prodfull, file->dst);
 	  if ((fp = fopen(filename, "w")) == NULL)
 	  {
 	    fprintf(stderr, "epm: Unable to create init data file \"%s\" - %s\n",
@@ -556,13 +563,13 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 	  fclose(fp);
 
           snprintf(filename, sizeof(filename),
-	           "%s/Package/Library/StartupItems/%s/Resources/English.lproj",
-	           directory, file->dst);
+	           "%s/%s/Package/Library/StartupItems/%s/Resources/English.lproj",
+	           directory, prodfull, file->dst);
           make_directory(filename, 0777, 0, 0);
 
           snprintf(filename, sizeof(filename),
-	           "%s/Package/Library/StartupItems/%s/Resources/English.lproj/Localizable.strings",
-	           directory, file->dst);
+	           "%s/%s/Package/Library/StartupItems/%s/Resources/English.lproj/Localizable.strings",
+	           directory, prodfull, file->dst);
 	  if ((fp = fopen(filename, "w")) == NULL)
 	  {
 	    fprintf(stderr, "epm: Unable to create init strings file \"%s\" - %s\n",
@@ -584,11 +591,11 @@ make_subpackage(const char *prodname,	/* I - Product short name */
       case 'd' :
           if (strncmp(file->dst, "/etc/", 5) == 0 ||
 	      strcmp(file->dst, "/etc") == 0)
-            snprintf(filename, sizeof(filename), "%s/Package/private%s",
-	             directory, file->dst);
+            snprintf(filename, sizeof(filename), "%s/%s/Package/private%s",
+	             directory, prodfull, file->dst);
           else
-            snprintf(filename, sizeof(filename), "%s/Package%s",
-	             directory, file->dst);
+            snprintf(filename, sizeof(filename), "%s/%s/Package%s",
+	             directory, prodfull, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", filename);
@@ -598,11 +605,11 @@ make_subpackage(const char *prodname,	/* I - Product short name */
           break;
       case 'l' :
           if (strncmp(file->dst, "/etc/", 5) == 0)
-            snprintf(filename, sizeof(filename), "%s/Package/private%s",
-	             directory, file->dst);
+            snprintf(filename, sizeof(filename), "%s/%s/Package/private%s",
+	             directory, prodfull, file->dst);
           else
-            snprintf(filename, sizeof(filename), "%s/Package%s",
-	             directory, file->dst);
+            snprintf(filename, sizeof(filename), "%s/%s/Package%s",
+	             directory, prodfull, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -701,5 +708,5 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.1.2.15 2004/12/09 17:38:08 mike Exp $".
+ * End of "$Id: osx.c,v 1.1.2.16 2004/12/09 21:16:37 mike Exp $".
  */
