@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.51 2001/07/05 19:01:41 mike Exp $"
+ * "$Id: portable.c,v 1.52 2001/07/23 17:54:21 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -187,7 +187,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    if (tolower(file->type) == 'c')
 	      snprintf(filename, sizeof(filename), "%s.N", file->dst);
 	    else if (tolower(file->type) == 'i')
-	      snprintf(filename, sizeof(filename), EPM_SOFTWARE "/init.d/%s", file->dst);
+	      snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
+	               file->dst);
 	    else
               strcpy(filename, file->dst);
 
@@ -286,7 +287,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    if (tolower(file->type) == 'c')
 	      snprintf(filename, sizeof(filename), "%s.N", file->dst);
 	    else if (tolower(file->type) == 'i')
-	      snprintf(filename, sizeof(filename), EPM_SOFTWARE "/init.d/%s", file->dst);
+	      snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
+	               file->dst);
 	    else
               strcpy(filename, file->dst);
 
@@ -383,7 +385,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      if (file->type == 'C')
 		snprintf(filename, sizeof(filename), "%s.N", file->dst);
 	      else if (file->type == 'I')
-		snprintf(filename, sizeof(filename), EPM_SOFTWARE "/init.d/%s", file->dst);
+		snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
+		         file->dst);
 	      else
         	strcpy(filename, file->dst);
 
@@ -470,7 +473,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      if (file->type == 'C')
 		snprintf(filename, sizeof(filename), "%s.N", file->dst);
 	      else if (file->type == 'I')
-		snprintf(filename, sizeof(filename), EPM_SOFTWARE "/init.d/%s", file->dst);
+		snprintf(filename, sizeof(filename), "%s/init.d/%s",
+		         SoftwareDir, file->dst);
 	      else
         	strcpy(filename, file->dst);
 
@@ -720,8 +724,8 @@ write_depends(dist_t *dist,		/* I - Distribution */
             * Require a product...
             */
 
-            fprintf(fp, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
-                    d->product);
+            fprintf(fp, "if test ! -x %s/%s.remove; then\n",
+                    SoftwareDir, d->product);
             fprintf(fp, "	if test -x %s.install; then\n",
                     d->product);
             fprintf(fp, "		echo Installing required %s software...\n",
@@ -740,8 +744,9 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	      * Do version number checking...
 	      */
 
-              fprintf(fp, "installed=`grep \'^#%%version\' " EPM_SOFTWARE
-	                  "/%s.remove | awk \'{print $3}\'`\n", d->product);
+              fprintf(fp, "installed=`grep \'^#%%version\' "
+	                  "%s/%s.remove | awk \'{print $3}\'`\n",
+                      SoftwareDir, d->product);
 
               fputs("if test x$installed = x; then\n", fp);
 	      fputs("	installed=0\n", fp);
@@ -785,8 +790,8 @@ write_depends(dist_t *dist,		/* I - Distribution */
             * Incompatible with a product...
             */
 
-            fprintf(fp, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
-                    d->product);
+            fprintf(fp, "if test -x %s/%s.remove; then\n",
+                    SoftwareDir, d->product);
 
             if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
 	    {
@@ -794,8 +799,9 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	      * Do version number checking...
 	      */
 
-              fprintf(fp, "	installed=`grep \'^#%%version\' " EPM_SOFTWARE
-	                  "/%s.remove | awk \'{print $3}\'`\n", d->product);
+              fprintf(fp, "	installed=`grep \'^#%%version\' "
+	                  "%s/%s.remove | awk \'{print $3}\'`\n",
+		      SoftwareDir, d->product);
 
               fputs("	if test x$installed = x; then\n", fp);
 	      fputs("		installed=0\n", fp);
@@ -805,8 +811,8 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	              d->vernumber[0], d->vernumber[1]);
               fprintf(fp, "		echo Sorry, this software is incompatible with \\'%s\\' version %s to %s!\n",
 	              d->product, d->version[0], d->version[1]);
-              fprintf(fp, "		echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
-	              d->product);
+              fprintf(fp, "		echo Please remove it first by running \\'%s/%s.remove\\'.\n",
+	              SoftwareDir, d->product);
               fputs("		exit 1\n", fp);
               fputs("	fi\n", fp);
 	    }
@@ -814,8 +820,8 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	    {
               fprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
 	              d->product);
-              fprintf(fp, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
-	              d->product);
+              fprintf(fp, "	echo Please remove it first by running \\'%s/%s.remove\\'.\n",
+	              SoftwareDir, d->product);
               fputs("	exit 1\n", fp);
 	    }
 
@@ -824,8 +830,8 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	  break;
 
       case DEPEND_REPLACES :
-          fprintf(fp, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
-                  d->product);
+          fprintf(fp, "if test -x %s/%s.remove; then\n", SoftwareDir,
+	          d->product);
 
           if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
 	  {
@@ -833,8 +839,9 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	    * Do version number checking...
 	    */
 
-            fprintf(fp, "	installed=`grep \'^#%%version\' " EPM_SOFTWARE
-	                "/%s.remove | awk \'{print $3}\'`\n", d->product);
+            fprintf(fp, "	installed=`grep \'^#%%version\' "
+	                "%s/%s.remove | awk \'{print $3}\'`\n",
+                    SoftwareDir, d->product);
 
             fputs("	if test x$installed = x; then\n", fp);
 	    fputs("		installed=0\n", fp);
@@ -844,16 +851,16 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	            d->vernumber[0], d->vernumber[1]);
             fprintf(fp, "		echo Automatically replacing \\'%s\\'...\n",
 	            d->product);
-            fprintf(fp, "		" EPM_SOFTWARE "/%s.remove now\n",
-	            d->product);
+            fprintf(fp, "		%s/%s.remove now\n",
+	            SoftwareDir, d->product);
             fputs("	fi\n", fp);
 	  }
 	  else
 	  {
             fprintf(fp, "	echo Automatically replacing \\'%s\\'...\n",
 	            d->product);
-            fprintf(fp, "	" EPM_SOFTWARE "/%s.remove now\n",
-	            d->product);
+            fprintf(fp, "	%s/%s.remove now\n",
+	            SoftwareDir, d->product);
           }
 
           fputs("fi\n", fp);
@@ -1193,10 +1200,10 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
   fputs("fi\n", scriptfile);
-  fprintf(scriptfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n", prodname);
+  fprintf(scriptfile, "if test -x %s/%s.remove; then\n", SoftwareDir, prodname);
   fprintf(scriptfile, "	echo Removing old versions of %s software...\n",
           prodname);
-  fprintf(scriptfile, "	" EPM_SOFTWARE "/%s.remove now\n", prodname);
+  fprintf(scriptfile, "	%s/%s.remove now\n", SoftwareDir, prodname);
   fputs("fi\n", scriptfile);
 
   write_space_checks(prodname, scriptfile, "sw", "ss");
@@ -1293,12 +1300,12 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "	$ac_tar %s.ss\n", prodname);
   fputs("fi\n", scriptfile);
 
-  fputs("if test -d " EPM_SOFTWARE "; then\n", scriptfile);
-  fprintf(scriptfile, "	/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  fprintf(scriptfile, "if test -d %s; then\n", SoftwareDir);
+  fprintf(scriptfile, "	/bin/rm -f %s/%s.remove\n", SoftwareDir, prodname);
   fputs("else\n", scriptfile);
-  fputs("	/bin/mkdir -p " EPM_SOFTWARE "\n", scriptfile);
+  fprintf(scriptfile, "	/bin/mkdir -p %s\n", SoftwareDir);
   fputs("fi\n", scriptfile);
-  fprintf(scriptfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
+  fprintf(scriptfile, "/bin/cp %s.remove %s\n", prodname, SoftwareDir);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c')
@@ -1354,22 +1361,28 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("		if test -d $rcdir/init.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
-    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
+    fprintf(scriptfile, "			/bin/ln -s %s/init.d/$file "
+                        "$rcdir/init.d/$file\n", SoftwareDir);
     fputs("		else\n", scriptfile);
     fputs("			if test -d /etc/init.d; then\n", scriptfile);
     fputs("				/bin/rm -f /etc/init.d/$file\n", scriptfile);
-    fputs("				/bin/ln -s " EPM_SOFTWARE "/init.d/$file /etc/init.d/$file\n", scriptfile);
+    fprintf(scriptfile, "				/bin/ln -s %s/init.d/$file "
+                        "/etc/init.d/$file\n", SoftwareDir);
     fputs("			fi\n", scriptfile);
     fputs("		fi\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
+    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+                        "$rcdir/rc0.d/K00$file\n", SoftwareDir);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+                        "$rcdir/rc2.d/S99$file\n", SoftwareDir);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+                        "$rcdir/rc3.d/S99$file\n", SoftwareDir);
     fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
-    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc5.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+                        "$rcdir/rc5.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
 #ifdef __sgi
     fputs("		/etc/chkconfig -f $file on\n", scriptfile);
@@ -1382,7 +1395,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s start\n", file->dst);
+      fprintf(scriptfile, "%s/init.d/%s start\n", SoftwareDir, file->dst);
 
   fputs("echo Installation is complete.\n", scriptfile);
 
@@ -1468,8 +1481,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   write_space_checks(prodname, scriptfile, "psw", "pss");
   write_depends(dist, scriptfile);
 
-  fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
-          prodname);
+  fprintf(scriptfile, "if test ! -x %s/%s.remove; then\n",
+          SoftwareDir, prodname);
   fputs("	echo You do not appear to have the base software installed!\n",
         scriptfile);
   fputs("	echo Please install the full distribution instead.\n", scriptfile);
@@ -1478,7 +1491,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
+      fprintf(scriptfile, "%s/init.d/%s stop\n", SoftwareDir, file->dst);
 
   write_commands(dist, scriptfile, COMMAND_PRE_PATCH);
 
@@ -1516,8 +1529,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "	$ac_tar %s.pss\n", prodname);
   fputs("fi\n", scriptfile);
 
-  fprintf(scriptfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
-  fprintf(scriptfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
+  fprintf(scriptfile, "/bin/rm -f %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "/bin/cp %s.remove %s\n", prodname, SoftwareDir);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (file->type == 'C')
@@ -1589,22 +1602,28 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("		if test -d $rcdir/init.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
-    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
+    fprintf(scriptfile, "			/bin/ln -s %s/init.d/$file "
+                        "$rcdir/init.d/$file\n", SoftwareDir);
     fputs("		else\n", scriptfile);
     fputs("			if test -d /etc/init.d; then\n", scriptfile);
     fputs("				/bin/rm -f /etc/init.d/$file\n", scriptfile);
-    fputs("				/bin/ln -s " EPM_SOFTWARE "/init.d/$file /etc/init.d/$file\n", scriptfile);
+    fprintf(scriptfile, "				/bin/ln -s %s/init.d/$file "
+                        "/etc/init.d/$file\n", SoftwareDir);
     fputs("			fi\n", scriptfile);
     fputs("		fi\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
+    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+                        "$rcdir/rc0.d/K00$file\n", SoftwareDir);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+                        "$rcdir/rc2.d/S99$file\n", SoftwareDir);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+                        "$rcdir/rc3.d/S99$file\n", SoftwareDir);
     fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
-    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc5.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+                        "$rcdir/rc5.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
 #ifdef __sgi
     fputs("		/etc/chkconfig -f $file on\n", scriptfile);
@@ -1617,7 +1636,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s start\n", file->dst);
+      fprintf(scriptfile, "%s/init.d/%s start\n", SoftwareDir, file->dst);
 
   fputs("echo Patching is complete.\n", scriptfile);
 
@@ -1688,7 +1707,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
+      fprintf(scriptfile, "%s/init.d/%s stop\n", SoftwareDir, file->dst);
 
   write_commands(dist, scriptfile, COMMAND_PRE_REMOVE);
 
@@ -1816,7 +1835,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   write_commands(dist, scriptfile, COMMAND_POST_REMOVE);
 
-  fprintf(scriptfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  fprintf(scriptfile, "/bin/rm -f %s/%s.remove\n", SoftwareDir, prodname);
 
   fputs("echo Removal is complete.\n", scriptfile);
 
@@ -1902,5 +1921,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.51 2001/07/05 19:01:41 mike Exp $".
+ * End of "$Id: portable.c,v 1.52 2001/07/23 17:54:21 mike Exp $".
  */

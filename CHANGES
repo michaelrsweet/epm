@@ -9,6 +9,9 @@ WHAT'S NEW IN EPM 3.1?
 	- Added support for "<<end ... end" and "<filename" to
 	  insert descriptions and commands in-line and from a
 	  file.
+	- Added new --software-dir option which specifies the
+	  location of the EPM software directory (default
+	  /etc/software).
 	- The GUI setup program left the "Next" button enabled
 	  after the license check.
 	- Fixed the dependency strings created for HP-UX
