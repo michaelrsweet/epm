@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.5 2002/05/20 00:47:56 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.6 2002/08/14 20:59:41 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -593,7 +593,8 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 		pattern[256],		/* Pattern for source files */
 		user[32],		/* User */
 		group[32],		/* Group */
-		*temp;			/* Temporary pointer */
+		*temp,			/* Temporary pointer */
+		options[256];		/* File options */
   int		mode,			/* File permissions */
 		skip;			/* 1 = skip files, 0 = archive files */
   dist_t	*dist;			/* Distribution data */
@@ -823,105 +824,116 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  }
 	}
       }
-      else if (sscanf(line, "%c%o%15s%15s%254s%254s", &type, &mode, user, group,
-        	      dst, src) < 5)
-	fprintf(stderr, "epm: Bad line - %s\n", line);
       else
       {
-	if (tolower(type) == 'd' || type == 'R')
-	  src[0] = '\0';
+        src[0]     = '\0';
+	options[0] = '\0';
 
-#ifdef __osf__ /* Remap group "sys" to "system" */
-        if (strcmp(group, "sys") == 0)
-	  strcpy(group, "system");
-#elif defined(__linux) /* Remap group "sys" to "root" */
-        if (strcmp(group, "sys") == 0)
-	  strcpy(group, "root");
-#endif /* __osf__ */
-
-        if ((temp = strrchr(src, '/')) == NULL)
-	  temp = src;
+        if (sscanf(line, "%c%o%15s%15s%254s%254s%254s", &type, &mode,
+	           user, group, dst, src, options) < 5)
+	  fprintf(stderr, "epm: Bad line - %s\n", line);
 	else
-	  temp ++;
-
-        for (; *temp; temp ++)
-	  if (strchr("*?[", *temp))
-	    break;
-
-        if (*temp)
 	{
-	 /*
-	  * Add using wildcards...
-	  */
+	  if (tolower(type) == 'd' || type == 'R')
+	  {
+	    strcpy(options, src);
+	    src[0] = '\0';
+	  }
+
+  #ifdef __osf__ /* Remap group "sys" to "system" */
+          if (strcmp(group, "sys") == 0)
+	    strcpy(group, "system");
+  #elif defined(__linux) /* Remap group "sys" to "root" */
+          if (strcmp(group, "sys") == 0)
+	    strcpy(group, "root");
+  #endif /* __osf__ */
 
           if ((temp = strrchr(src, '/')) == NULL)
 	    temp = src;
 	  else
-	    *temp++ = '\0';
+	    temp ++;
 
-	  strncpy(pattern, temp, sizeof(pattern) - 1);
-	  pattern[sizeof(pattern) - 1] = '\0';
+          for (; *temp; temp ++)
+	    if (strchr("*?[", *temp))
+	      break;
 
-          if (dst[strlen(dst) - 1] != '/')
-	    strncat(dst, "/", sizeof(dst) - 1);
-
-          if (temp == src)
-	    dir = opendir(".");
-	  else
-	    dir = opendir(src);
-
-          if (dir == NULL)
-	    fprintf(stderr, "epm: Unable to open directory \"%s\" - %s\n",
-	            src, strerror(errno));
-          else
+          if (*temp)
 	  {
 	   /*
-	    * Make sure we have a directory separator...
+	    * Add using wildcards...
 	    */
 
-	    if (temp > src)
-	      temp[-1] = '/';
+            if ((temp = strrchr(src, '/')) == NULL)
+	      temp = src;
+	    else
+	      *temp++ = '\0';
 
-	    while ((dent = readdir(dir)) != NULL)
+	    strncpy(pattern, temp, sizeof(pattern) - 1);
+	    pattern[sizeof(pattern) - 1] = '\0';
+
+            if (dst[strlen(dst) - 1] != '/')
+	      strncat(dst, "/", sizeof(dst) - 1);
+
+            if (temp == src)
+	      dir = opendir(".");
+	    else
+	      dir = opendir(src);
+
+            if (dir == NULL)
+	      fprintf(stderr, "epm: Unable to open directory \"%s\" - %s\n",
+	              src, strerror(errno));
+            else
 	    {
-	      strcpy(temp, dent->d_name);
-	      if (stat(src, &fileinfo))
-	        continue; /* Skip files we can't read */
+	     /*
+	      * Make sure we have a directory separator...
+	      */
 
-              if (S_ISDIR(fileinfo.st_mode))
-	        continue; /* Skip directories */
+	      if (temp > src)
+		temp[-1] = '/';
 
-              if (!patmatch(dent->d_name, pattern))
-	        continue;
+	      while ((dent = readdir(dir)) != NULL)
+	      {
+		strcpy(temp, dent->d_name);
+		if (stat(src, &fileinfo))
+	          continue; /* Skip files we can't read */
 
-              file = add_file(dist, subpkg);
+        	if (S_ISDIR(fileinfo.st_mode))
+	          continue; /* Skip directories */
 
-              file->type = type;
-	      file->mode = mode;
-              strcpy(file->src, src);
-	      strcpy(file->dst, dst);
-	      strncat(file->dst, dent->d_name, sizeof(file->dst) - 1);
-	      strcpy(file->user, user);
-	      strcpy(file->group, group);
+        	if (!patmatch(dent->d_name, pattern))
+	          continue;
+
+        	file = add_file(dist, subpkg);
+
+        	file->type = type;
+		file->mode = mode;
+        	strcpy(file->src, src);
+		strcpy(file->dst, dst);
+		strncat(file->dst, dent->d_name, sizeof(file->dst) - 1);
+		strcpy(file->user, user);
+		strcpy(file->group, group);
+		strcpy(file->options, options);
+	      }
+
+              closedir(dir);
 	    }
-
-            closedir(dir);
 	  }
-	}
-	else
-	{
-         /*
-	  * Add single file...
-	  */
+	  else
+	  {
+           /*
+	    * Add single file...
+	    */
 
-          file = add_file(dist, subpkg);
+            file = add_file(dist, subpkg);
 
-          file->type = type;
-	  file->mode = mode;
-          strcpy(file->src, src);
-	  strcpy(file->dst, dst);
-	  strcpy(file->user, user);
-	  strcpy(file->group, group);
+            file->type = type;
+	    file->mode = mode;
+            strcpy(file->src, src);
+	    strcpy(file->dst, dst);
+	    strcpy(file->user, user);
+	    strcpy(file->group, group);
+	    strcpy(file->options, options);
+	  }
 	}
       }
     }
@@ -1911,5 +1923,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.5 2002/05/20 00:47:56 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.6 2002/08/14 20:59:41 mike Exp $".
  */

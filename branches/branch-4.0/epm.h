@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.27.2.6 2002/06/03 16:46:23 mike Exp $"
+ * "$Id: epm.h,v 1.27.2.7 2002/08/14 20:59:41 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -174,7 +174,8 @@ typedef struct				/**** File to install ****/
   char		user[32],		/* Owner of file */
 		group[32],		/* Group of file */
 		src[512],		/* Source path */
-		dst[512];		/* Destination path */
+		dst[512],		/* Destination path */
+		options[256];		/* File options */
   const char	*subpackage;		/* Sub-package name */
 } file_t;
 
@@ -307,5 +308,5 @@ extern int	write_dist(const char *listname, dist_t *dist);
 
 
 /*
- * End of "$Id: epm.h,v 1.27.2.6 2002/06/03 16:46:23 mike Exp $".
+ * End of "$Id: epm.h,v 1.27.2.7 2002/08/14 20:59:41 mike Exp $".
  */
