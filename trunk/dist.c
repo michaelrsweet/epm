@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.49 2002/10/18 14:57:48 mike Exp $"
+ * "$Id: dist.c,v 1.50 2002/12/16 16:15:21 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -64,7 +64,7 @@ extern int	gethostname(char *, int);
 static int	add_string(int num_strings, char ***strings, FILE *fp,
 		           char *string);
 static int	compare_files(const file_t *f0, const file_t *f1);
-static void	expand_name(char *buffer, char *name);
+static void	expand_name(char *buffer, char *name, int bufsize);
 static void	free_strings(int num_strings, char **strings);
 static char	*get_file(const char *filename, char *buffer, int size);
 static char	*get_inline(const char *term, FILE *fp, char *buffer, int size);
@@ -602,7 +602,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
       */
 
       line[0] = buf[0]; /* Don't expand initial $ */
-      expand_name(line + 1, buf + 1);
+      expand_name(line + 1, buf + 1, sizeof(line) - 1);
 
      /*
       * Check line for config stuff...
@@ -1053,13 +1053,16 @@ compare_files(const file_t *f0,	/* I - First file */
 
 static void
 expand_name(char *buffer,	/* O - Output string */
-            char *name)		/* I - Input string */
+            char *name,		/* I - Input string */
+	    int  bufsize)	/* I - Size of output string */
 {
   char	var[255],		/* Environment variable name */
 	*varptr;		/* Current position in name */
+  int	varlen;			/* Length of variable string */
 
 
-  while (*name != '\0')
+  bufsize --;
+  while (*name != '\0' && bufsize > 0)
   {
     if (*name == '$')
     {
@@ -1071,6 +1074,7 @@ expand_name(char *buffer,	/* O - Output string */
 	*/
 
 	*buffer++ = *name++;
+	bufsize --;
 	continue;
       }
       else if (*name == '{')
@@ -1099,8 +1103,18 @@ expand_name(char *buffer,	/* O - Output string */
 
       if ((varptr = getenv(var)) != NULL)
       {
-        strcpy(buffer, varptr);
-	buffer += strlen(buffer);
+        varlen = strlen(varptr);
+
+	if (varlen > bufsize)
+	{
+	  strncpy(buffer, varptr, bufsize);
+	  buffer[bufsize] = '\0';
+	}
+	else
+          strcpy(buffer, varptr);
+
+        bufsize -= strlen(buffer);
+	buffer  += strlen(buffer);
       }
     }
     else
@@ -1141,6 +1155,7 @@ get_file(const char *filename,	/* I  - File to read from */
 {
   FILE		*fp;		/* File buffer */
   struct stat	info;		/* File information */
+  char		*expand;	/* Expansion buffer */
 
 
   if (stat(filename, &info))
@@ -1179,6 +1194,19 @@ get_file(const char *filename,	/* I  - File to read from */
   else
     buffer[info.st_size] = '\0';
 
+  if (strchr(buffer, '$') != NULL)
+  {
+   /*
+    * Do variable expansion before returning...
+    */
+
+    expand = strdup(buffer);
+
+    expand_name(buffer, expand, size);
+
+    free(expand);
+  }
+
   return (buffer);
 }
 
@@ -1194,17 +1222,20 @@ get_inline(const char *term,	/* I  - Termination string */
 	   int        size)	/* I  - Size of string buffer */
 {
   char	*bufptr;		/* Pointer into buffer */
+  int	left;			/* Remaining bytes in buffer */
   int	termlen;		/* Length of termination string */
   int	linelen;		/* Length of line */
+  char	*expand;		/* Expansion buffer */
 
 
   bufptr  = buffer;
+  left    = size;
   termlen = strlen(term);
 
   if (termlen == 0)
     return (NULL);
 
-  while (fgets(bufptr, size, fp) != NULL)
+  while (fgets(bufptr, left, fp) != NULL)
   {
     if (strncmp(bufptr, term, termlen) == 0 && bufptr[termlen] == '\n')
     {
@@ -1213,10 +1244,10 @@ get_inline(const char *term,	/* I  - Termination string */
     }
 
     linelen = strlen(bufptr);
-    size    -= linelen;
+    left    -= linelen;
     bufptr  += linelen;
 
-    if (size < 2)
+    if (left < 2)
     {
       fputs("epm: Inline script too long!\n", stderr);
       break;
@@ -1228,6 +1259,19 @@ get_inline(const char *term,	/* I  - Termination string */
     bufptr --;
     if (*bufptr == '\n')
       *bufptr = '\0';
+
+    if (strchr(buffer, '$') != NULL)
+    {
+     /*
+      * Do variable expansion before returning...
+      */
+
+      expand = strdup(buffer);
+
+      expand_name(buffer, expand, size);
+
+      free(expand);
+    }
 
     return (buffer);
   }
@@ -1926,5 +1970,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.49 2002/10/18 14:57:48 mike Exp $".
+ * End of "$Id: dist.c,v 1.50 2002/12/16 16:15:21 mike Exp $".
  */
