@@ -16,14 +16,17 @@
 <P>Includes can be nested, usually up to 250 levels (depends on the
 host operating system and libraries.)</P>
 
-<H2>Conflicts, Replaces, and Requires</H2>
+<H2>Conflicts, Provides, Replaces, and Requires</H2>
 
 <P>Software conflicts and requirements are specified using the
 <CODE>%incompat</CODE> and <CODE>%requires</CODE> directives. If
 your software replaces another package, you can specify that
-using the <CODE>%replaces</CODE> directive (<CODE>%replaces</CODE>
-is silently mapped to <CODE>%conflicts</CODE> when the distribution
-format does not support package replacement.)
+using the <CODE>%replaces</CODE> directive
+(<CODE>%replaces</CODE> is silently mapped to
+<CODE>%conflicts</CODE> when the distribution format does not
+support package replacement.) If your package provides certain
+functionality associated with a standard name, the
+<CODE>%provides</CODE> directive can be used.
 
 <P>Dependencies are specified using the package name and optionally the
 lower and upper version numbers:
@@ -35,6 +38,7 @@ lower and upper version numbers:
 %incompat foobar 0.9
 %replaces foobar
 %replaces foobar 1.2 3.4
+%provides foobar
 </PRE></UL>
 
 <P>or the filename:
@@ -91,7 +95,7 @@ of the software:</P>
 </PRE></UL>
 
 <P>To include multiple lines directly, use the
-<CODE>&lt;&lt;string</CODE> notation:</P>
+<CODE>&lt;&lt;string</CODE> notation (a.k.a. a "here" document):</P>
 
 <UL><PRE>
 %postinstall &lt;&lt;EOF
@@ -250,11 +254,11 @@ of 00 (or 000) for the shutdown script and 99 (or 999) for the startup
 script.</P>
 
 <P>To specify run levels and sequence numbers, use the
-<CODE>runlevels()</CODE>, <CODE>start()</CODE>, and
+<CODE>runlevel()</CODE>, <CODE>start()</CODE>, and
 <CODE>stop()</CODE> options:
 
 <UL><PRE>
-i 755 root sys foo foo.sh "runlevels(02) start(50) stop(30)"
+i 755 root sys foo foo.sh "runlevel(02) start(50) stop(30)"
 </PRE></UL>
 
 </BODY>

@@ -16,8 +16,8 @@ development system will need a C compiler, the
 Bash) shell (<CODE>sh(1)</CODE>), and <CODE>gzip(1)</CODE>.</P>
 
 <P>The optional graphical setup program requires a C++ compiler,
-the X11 libraries, and the FLTK library, version 1.1.x. FLTK is
-available at the following URL:</P>
+the FLTK library, version 1.1.x, and (for UNIX/Linux) the X11
+libraries. FLTK is available at the following URL:</P>
 
 <UL><PRE>
 <A HREF="http://www.fltk.org/">http://www.fltk.org/</A>
@@ -101,10 +101,11 @@ separately, as follows:
 
 <H3>Options for the Setup GUI</H3>
 
-<P>The setup GUI requires the X11 and FLTK libraries. The configure
-script will look for the <CODE>fltk-config</CODE> utility that comes
-with FLTK 1.1.x. Set the FLTKCONFIG environment variable to the full
-path of this utility if it cannot be found in the current path:</P>
+<P>The setup GUI requires the FLTK library. The configure script
+will look for the <CODE>fltk-config</CODE> utility that comes
+with FLTK 1.1.x. Set the FLTKCONFIG environment variable to the
+full path of this utility if it cannot be found in the current
+path:</P>
 
 <UL><PRE>
 <KBD>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</KBD>

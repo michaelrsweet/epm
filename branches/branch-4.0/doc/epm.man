@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.8.2.7 2004/03/05 05:28:17 mike Exp $"
+.\" "$Id: epm.man,v 1.8.2.8 2004/12/09 21:36:22 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "3 January 2003" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "9 December 2004" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -81,7 +81,7 @@ for MacOS X. All other operating systems default to the
 .TP 5
 osx
 .br
-Generate a MacOS X software package. These are used primarily under Solaris.
+Generate a MacOS X software package.
 .TP 5
 pkg
 .br
@@ -177,5 +177,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.8.2.7 2004/03/05 05:28:17 mike Exp $".
+.\" End of "$Id: epm.man,v 1.8.2.8 2004/12/09 21:36:22 mike Exp $".
 .\"

@@ -10,32 +10,154 @@ EPM software.</P>
 
 <UL>
 
+	<li>The setup and uninst GUIs now support GIF setup images
+	(setup.gif) as well as XPM images (setup.xpm)</li>
+
+	<li>Debian packages now properly install init
+	scripts.</li>
+
 	<li>MacOS X packages can now be created when using the
-	new Xcode developer tools.
+	new Xcode developer tools.</li>
 
 	<li>Packages created on MacOS X now use the system name
 	"macosx" and the MacOS X version number.  The old
-	"darwin" name is still accepted as a synonym.
+	"darwin" name is still accepted as a synonym.</li>
 
 	<li>EPM now supports version numbers that do not start
 	with a number (HP-UX workaround for OS
-	dependencies...)
+	dependencies...)</li>
 
 	<li>EPM now issues an error message if you have identical
-	destination files that don't match up.
+	destination files that don't match up.</li>
 
 	<li>HP-UX packages now use the %readme file for the readme
 	info in a package, and the %license file for the
-	copyright info in a package.
+	copyright info in a package.</li>
 
 	<li>Added %preremove support for AIX packages and fixed
-	some AIX packaging issues with patch from David Maltz.
+	some AIX packaging issues with patch from David Maltz.</li>
 
 </UL>
 
-<H2>Changes in EPM v3.5.2</H2>
+<H2>Changes in EPM v3.7</H2>
 
 <UL>
+
+	<LI>Fixed init script support for Tru64 packages.
+
+	<LI>AIX output now correctly generates the inventory file
+	for files in /usr and /opt.
+
+	<LI>The Slackware packaging code swapped the output
+	directory and product name when generating the
+	post-install script.
+
+	<LI>RPM dependencies of the form "%requires package >=
+	version" are now correctly written in the spec file.
+
+	<LI>AIX output now correctly lists file sizes by directory
+	and handles /opt properly.
+
+	<LI>RPM output now correctly handles installing,
+	upgrading, and removing init scripts.
+
+	<LI>RPM output did not work with filenames that contained
+	a dollar sign ($).
+
+	<LI>Added Slackware packager support based upon a patch
+	contributed by Alec Thomas.
+
+	<LI>The file copy code reported write errors for the
+	source filename and not the (correct) destination
+	filename.
+
+	<LI>Fixed the handling of absolute output directories when
+	generating RPM packages.
+
+	<LI>The configure script did not support the OPTIM
+	environment variable for custom optimization settings.
+
+	<LI>Portable packages updated the permissions of
+	configuration files before they were copied.
+
+	<LI>Portable installations did not remove empty
+	installation directories when the remove script was
+	run.
+
+	<LI>Portable patch installation did not correctly
+	determine when root or /usr files were present in the
+	patch.
+
+	<LI>OSX packages incorrectly looked in /System/Library for
+	the init scripts instead of /Library.
+
+	<LI>RPM building did not work properly when --output-dir
+	was specified using an absolute path.
+
+	<LI>Made cosmetic changes to the setup/uninstall GUIs.
+
+	<LI>The setup GUI did not support software patches.
+
+	<LI>The documentation incorrectly specified runlevels()
+	instead of runlevel().
+
+	<LI>The portable distributions incorrectly used
+	/usr/local/src/rc.d as a fallback location for init
+	scripts.
+
+</UL>
+
+
+<H2>Changes in EPM v3.6</H2>
+
+<UL>
+
+	<LI>Added a GUI uninstall program to be distributed with
+	portable distributions with a setup image.
+
+	<LI>MacOS X portable packages now support graphical setup
+	and uninstall using the Apple authorization API. 
+
+	<LI>Debian packages did not include the (required)
+	trailing period when running the update-rc.d script.
+
+	<LI>BSD packages now create directories using postinstall
+	commands instead of listing them directly.  This
+	should eliminate errors from the FreeBSD pkg_delete
+	command.
+
+	<LI>File dependencies were incorrectly specified in RPM
+	spec files.
+
+	<LI>IRIX portable distributions didn't write the chkconfig
+	commands properly.
+
+	<LI>The mkepmlist utility didn't support files as well as
+	directories.
+
+	<LI>EPM didn't do variable expansion of imported files
+	("&lt;foo.txt") or in-line data ("&lt;&lt;FOO")
+
+	<LI>Now build gzip'd depot files as well as the tar.gz
+	files when creating HP-UX software packages.
+
+	<LI>Now correctly use --libdir setting to locate the setup
+	GUI.
+
+	<LI>Now use rpmbuild command, if available, to build RPM
+	files since newer versions of RPM may not map the
+	"-bb" option to build a package.
+
+	<LI>Now set the RPMDIR environment variable when building
+	with older versions of RPM that don't understand the
+	"topdir_" variable.
+
+	<LI>Now handle dependencies of the form "package >=
+	version" in Debian packages.
+
+	<LI>Portable distributions that didn't have any files in
+	/usr or in / would look for a non-existent .sw or .ss
+	file.
 
 	<LI>EPM's sample list file didn't include the man pages
 	for setup or setup.types, and installed the epm list

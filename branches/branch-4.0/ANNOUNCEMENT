@@ -1,19 +1,18 @@
 ----HTML-PRESS-RELEASE---------------------------------------------------
 
-<H1>ESP Package Manager 3.3 Released</H1>
+<H1>ESP Package Manager 3.7 Released</H1>
 
-<P><B>Hollywood, MD (April 4, 2002)</B> -- Easy Software
-Products today announced the 3.3 release of the ESP Package
-Manager ("EPM"), a cross-platform software distribution
-program for UNIX.
+<P><B>Hollywood, MD (December 22, 2003)</B> -- Easy Software
+Products today announced the 3.7 release of the ESP Package
+Manager ("EPM"), a cross-platform software distribution program
+for UNIX.
 
-<P>EPM v3.3 fixes a number of portability issues in the portable
-installation scripts, provides a new implementation of the
-mkepmlist utility, and fixes a wildcard bug. The new release is
-available on-line at:
+<P>EPM v3.7 adds Slackware package support and fixes some bugs
+discovered in package generation for several operating systems.
+The new release is available on-line at:
 
 <UL><PRE>
-<A HREF="http://www.easysw.com/epm">http://www.easysw.com/epm</A>
+<A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
 </PRE></UL>
 
 <P>EPM is a software packaging tool for all versions of UNIX that
@@ -36,15 +35,19 @@ including:
 
 	<LI>IRIX software manager ("inst", "swmgr", or "tardist")
 
+	<LI>MacOS X software packages ("name.pkg")
+
 	<LI>Portable (installation and removal scripts with tar files)
 
 	<LI>Red Hat Package Manager ("rpm")
 
+	<LI>Slackware software packages ("name.pkg")
+
 </UL>
 
-<P>EPM also includes a graphical "setup" program that can be
-provided with your distributions to make installation of more
-than one package a snap.
+<P>EPM also includes graphical "setup" and "uninstall" programs
+that can be provided with your distributions to make
+installation and removal of more than one package a snap.
 
 <P>EPM is provided under the terms of the GNU General Public
 License.  Please contact Easy Software Products at
@@ -53,18 +56,18 @@ commercial support.
 
 ----TEXT-PRESS-RELEASE---------------------------------------------------
 
-ESP Package Manager 3.3 Released
+ESP Package Manager 3.7 Released
 
-Hollywood, MD (April 4, 2002) -- Easy Software Products today
-announced the 3.3 release of the ESP Package Manager ("EPM"), a
-cross-platform software distribution program for UNIX.
+Hollywood, MD (December 22, 2003) -- Easy Software Products
+today announced the 3.7 release of the ESP Package Manager
+("EPM"), a cross-platform software distribution program for
+UNIX.
 
-EPM v3.3 fixes a number of portability issues in the portable
-installation scripts, provides a new implementation of the
-mkepmlist utility, and fixes a wildcard bug. The new release is
-available on-line at:
+EPM v3.7 adds Slackware package support and fixes some bugs
+discovered in package generation for several operating systems. 
+The new release is available on-line at:
 
-    http://www.easysw.com/epm
+    http://www.easysw.com/epm/
 
 EPM is a software packaging tool for all versions of UNIX that
 generates software and patch distributions in various formats,
@@ -78,12 +81,14 @@ including:
     - Debian Package Manager ("dpkg")
     - HP-UX software packages ("swinstall")
     - IRIX software manager ("inst", "swmgr", or "tardist")
+    - MacOS X software packages ("name.pkg")
     - Portable (installation and removal scripts with tar files)
     - Red Hat Package Manager ("rpm")
+    - Slackware software packages ("name.pkg")
 
-EPM also includes a graphical "setup" program that can be
-provided with your distributions to make installation of more
-than one package a snap.
+EPM also includes graphical "setup" and "uninstall" programs
+that can be provided with your distributions to make
+installation and removal of more than one package a snap.
 
 EPM is provided under the terms of the GNU General Public
 License.  Please contact Easy Software Products at
