@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.00 
+version 1.0008 
 header_name {.h} 
 code_name {.cxx} 
 gridx 5 
@@ -10,8 +10,8 @@ Function {make_window()} {open
   Fl_Window LicenseWindow {
     label {Software License}
     callback {if (ContinueButton->active())
-  LicenseWindow->hide();} open
-    xywh {527 291 580 400} resizable modal visible
+  LicenseWindow->hide();}
+    xywh {527 291 580 400} hide resizable modal
   } {
     Fl_Browser LicenseBrowser {
       xywh {10 10 560 300} textfont 4 textsize 12 resizable
@@ -31,7 +31,7 @@ Function {make_window()} {open
       }
       Fl_Round_Button DeclineRadio {
         label {No, I do not accept the terms and conditions of the software license.}
-        callback {ContinueButton->activate();} selected
+        callback {ContinueButton->activate();}
         xywh {10 335 455 20} type Radio down_box ROUND_DOWN_BOX selection_color 4
       }
     }
@@ -40,7 +40,7 @@ Function {make_window()} {open
     label {ESP Software Wizard}
     callback {if (CancelButton->active())
   exit(0);} open
-    xywh {341 164 450 345}
+    xywh {625 170 450 345}
     code0 {\#include "setup2.h"} visible
   } {
     Fl_Button NextButton {
@@ -58,7 +58,7 @@ Function {make_window()} {open
       code0 {\#include "Fl_Wizard.h"}
       class Fl_Wizard
     } {
-      Fl_Group WelcomePane {
+      Fl_Group WelcomePane {selected
         xywh {10 10 430 280} box FLAT_BOX
       } {
         Fl_Box {} {
@@ -89,9 +89,20 @@ To select software for installation, please click on the "Next" button below.}
         Fl_Browser SoftwareList {
           label { Available Software:}
           callback list_cb
-          xywh {40 120 370 170} type Select box DOWN_BOX align 5 when 4
+          xywh {40 120 370 135} type Select box DOWN_BOX align 5 when 4
           code0 {\#include "Fl_Check_Browser.h"}
           class Fl_Check_Browser
+        }
+        Fl_Button InstallAllButton {
+          label {Install All}
+          callback {SoftwareList->check_all();
+list_cb(0,0);}
+          xywh {235 265 75 25}
+        }
+        Fl_Button InstallNoneButton {
+          label {Install None}
+          callback {SoftwareList->check_none();}
+          xywh {320 265 90 25}
         }
       }
       Fl_Group InstallPane {open

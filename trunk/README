@@ -94,6 +94,8 @@ WHAT'S NEW IN EPM 2.1.1?
 	- IRIX defaults to run level 2...
 	- The setup GUI now displays an error message if run by
 	  a non-root user.
+	- The setup GUI now provides "Install All" and "Install
+	  None" buttons in the software selection pane.
 
 
 WHAT'S NEW IN EPM 2.1?

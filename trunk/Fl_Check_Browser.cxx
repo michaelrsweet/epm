@@ -219,6 +219,7 @@ void Fl_Check_Browser::check_all() {
 	for (p = first; p; p = p->next) {
 		p->checked = 1;
 	}
+	redraw();
 }
 
 void Fl_Check_Browser::check_none() {
@@ -228,4 +229,5 @@ void Fl_Check_Browser::check_none() {
 	for (p = first; p; p = p->next) {
 		p->checked = 0;
 	}
+	redraw();
 }
