@@ -9,6 +9,8 @@ WHAT'S NEW IN EPM 3.3?
 
 	- UnixWare 7 needs the absolute path when transferring
 	  an AT&T package directory to a .pkg file.
+	- Now use the "id" command (POSIX) instead of "whoami"
+	  (BSD) to check that the installing user is root.
 
 
 WHAT'S NEW IN EPM 3.2.1?
