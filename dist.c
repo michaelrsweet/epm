@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.43 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: dist.c,v 1.44 2002/02/20 21:41:36 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -1631,6 +1631,14 @@ patmatch(const char *s,		/* I - String to match against */
   }
 
  /*
+  * If we are at the end of the string, see if the pattern remaining is
+  * "*"...
+  */
+
+  while (*pat == '*')
+    pat ++;
+    
+ /*
   * Done parsing the pattern and string; return 1 if the last character matches
   * and 0 otherwise...
   */
@@ -1640,5 +1648,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.43 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: dist.c,v 1.44 2002/02/20 21:41:36 mike Exp $".
  */
