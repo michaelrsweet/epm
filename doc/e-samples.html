@@ -1,16 +1,22 @@
 <HTML>
-<HEAD>
-	<TITLE>The Annotated EPM List File for CUPS</TITLE>
-</HEAD>
 <BODY>
 
-<H1>The Annotated EPM List File for CUPS</H1>
+<H1 ALIGN="RIGHT">E - Sample List Files</H1>
+
+<P>This appendix provides several sample list files that show the
+capabilities and format of EPM list files.
+
+<H2>The EPM List File</H2>
+
+<P>The EPM list file is very basic.
+
+<H2>The CUPS List File</H2>
 
 <P>The Common UNIX Printing System provides an EPM list file to
 generate software distributions for most UNIX operating systems.
-This is an annotated version of the CUPS 1.1.5 list file.
+This is an annotated version of the CUPS 1.1.5 list file.</P>
 
-<H2>Variables Used for the Distribution</H2>
+<H3>Variables Used for the Distribution</H3>
 
 <P>The CUPS makefile defines the following variables for the
 distribution:
@@ -71,7 +77,7 @@ distribution:
 
 </DL>
 
-<H2>Product Information</H2>
+<H3>Product Information</H3>
 
 <P>The list file starts with the product information:
 
@@ -88,7 +94,7 @@ distribution:
 <P>One incompatibility is flagged against the "printpro" package, since
 ESP Print Pro provides its own CUPS distribution.
 
-<H2>Server Programs</H2>
+<H3>Server Programs</H3>
 
 <P>Next comes the server programs; these are identical for all systems:
 
@@ -126,11 +132,11 @@ f 0555 root sys $SERVERBIN/filter/hpgltops filter/hpgltops
 f 0555 root sys $SERVERBIN/filter/imagetoraster filter/imagetoraster
 </PRE></UL>
 
-<H2>Administration Commands</H2>
+<H3>Administration Commands</H3>
 
 <P>The administration commands are all pretty much the same. The
 only difference is that IRIX needs a symlink for the
-<CODE>lpc</CODE> program in the <CODE>/usr/bsd</CODE> directory.
+<CODE>lpc</CODE> program in the <CODE>/usr/etc</CODE> directory.
 
 <UL><PRE>
 l 0555 root sys $BINDIR/disable $SBINDIR/accept
@@ -150,11 +156,11 @@ l 0555 root sys /usr/etc/lpc $SBINDIR/lpc
 %system all
 </PRE></UL>
 
-<H2>User Commands</H2>
+<H3>User Commands</H3>
 
 <P>The user commands are all pretty much the same. As with the
 administration commands, IRIX needs the Berkeley commands linked
-to <CODE>/usr/bsd</CODE>.
+to a different directory, <CODE>/usr/bsd</CODE>.
 
 <UL><PRE>
 f 0555 root sys $BINDIR/cancel systemv/cancel
@@ -173,7 +179,7 @@ l 0555 root sys /usr/bsd/lprm $BINDIR/lprm
 %system all
 </PRE></UL>
 
-<H2>Shared Libraries</H2>
+<H3>Shared Libraries</H3>
 
 <P>Shared libraries present their own challenges. HP-UX uses a different
 extension for shared libraries than other operating systems.
@@ -192,7 +198,7 @@ l 0555 root sys $LIBDIR/libcupsimage.so libcupsimage.so.2
 %system all
 </PRE></UL>
 
-<H2>Directories</H2>
+<H3>Directories</H3>
 
 <P>The CUPS distribution uses three directories to hold the log, request,
 and temporary files.
@@ -203,7 +209,7 @@ d 0700 lp sys $REQUESTS -
 d 1700 lp sys $REQUESTS/tmp -
 </PRE></UL>
 
-<H2>Data Files</H2>
+<H3>Data Files</H3>
 
 <P>CUPS has lots of data files. We use wildcards whenever possible.
 
@@ -268,7 +274,7 @@ d 0555 root sys $DATADIR/templates -
 f 0444 root sys $DATADIR/templates templates/*.tmpl
 </PRE></UL>
 
-<H2>Config Files</H2>
+<H3>Config Files</H3>
 
 <P>The server configuration files and directories go in
 <CODE>$SERVERROOT</CODE>. The MIME configuration files are not
@@ -287,7 +293,7 @@ c 0644 root sys $SERVERROOT conf/*.conf
 f 0644 root sys $SERVERROOT/mime.convs conf/mime.convs
 f 0644 root sys $SERVERROOT/mime.types conf/mime.types
 
-<H2>PAM Files</H2>
+<H3>PAM Files</H3>
 
 <P>Programmable Authentication Modules ("PAM") is supported by
 many operating systems. Currently Linux PAM is the only
@@ -306,7 +312,7 @@ c 0644 root sys $PAMDIR/cups.suse data/cups.suse
 %system all
 </PRE></UL>
 
-<H2>Developer Files</H2>
+<H3>Developer Files</H3>
 
 <P>The developer files include the C header files and static API
 library.
@@ -325,7 +331,7 @@ f 0444 root sys $INCLUDEDIR/cups/raster.h filter/raster.h
 f 0444 root sys $LIBDIR/libcups.a cups/libcups.a
 </PRE></UL>
 
-<H2>Documentation Files</H2>
+<H3>Documentation Files</H3>
 
 <P>The documentation files go under <CODE>$DOCDIR</CODE>. Wildcards take
 care of most of the work.
@@ -339,7 +345,7 @@ d 0555 root sys $DOCDIR/images -
 f 0444 root sys $DOCDIR/images doc/images/*.gif
 </PRE></UL>
 
-<H2>Man Pages</H2>
+<H3>Man Pages</H3>
 
 <P>Man pages are almost as much fun as initialization scripts.
 IRIX is the oddball of the bunch and needs packed, formatted man
@@ -445,7 +451,7 @@ f 0444 root sys $MANDIR/man5/mime.types.5 man/mime.types.man
 f 0444 root sys $MANDIR/man5/printers.conf.5 man/printers.conf.man
 </PRE></UL>
 
-<H2>Startup Script</H2>
+<H3>Startup Script</H3>
 
 <P>The CUPS startup script is last and specifies a script name
 of <CODE>cups</CODE>. Startup and shutdown scripts will be

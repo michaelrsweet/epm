@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: mkepmlist.man,v 1.1 2001/06/19 15:27:47 mike Exp $"
+.\" "$Id: mkepmlist.man,v 1.2 2001/06/20 18:34:57 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,9 +15,9 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH mkepmlist 1 "ESP Package Manager" "26 March 2001" "Easy Software Products"
+.TH mkepmlist 1 "ESP Package Manager" "20 June 2001" "Easy Software Products"
 .SH NAME
-mkepmlist \- make an EPM list file from a directory.
+mkepmlist \- make an epm list file from a directory.
 .SH SYNOPSIS
 .B mkepmlist
 [ \-g
@@ -44,9 +44,9 @@ the specified directories with the specified user name.
 .LP
 The \fI--prefix\fR option adds the specified directory to the
 destination path. For example, if you installed files to
-/opt/foo and wanted to build a distribution that installed the
-files in /usr/local, the following command would generate a file
-list that is installed in /usr/local:
+"/opt/foo" and wanted to build a distribution that installed the
+files in "/usr/local", the following command would generate a file
+list that is installed in "/usr/local":
 .nf
 .br
 
@@ -54,6 +54,8 @@ list that is installed in /usr/local:
 .fi
 .SH SEE ALSO
 epm(1) - create software packages.
+epminstall(1) - add a directory, file, or symlink to a list file.
+epm.list(5) - epm list file format.
 .SH COPYRIGHT
 Copyright 1999-2001 by Easy Software Products, All Rights Reserved.
 .LP
@@ -67,5 +69,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: mkepmlist.man,v 1.1 2001/06/19 15:27:47 mike Exp $".
+.\" End of "$Id: mkepmlist.man,v 1.2 2001/06/20 18:34:57 mike Exp $".
 .\"
