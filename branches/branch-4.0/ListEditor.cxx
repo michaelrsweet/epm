@@ -260,6 +260,27 @@ void ListEditor::cb_margin_items(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_margin_items_i(o,v);
 }
 
+inline void ListEditor::cb_User_i(Fl_Menu_*, void*) {
+  margins_cb(this);
+}
+void ListEditor::cb_User(Fl_Menu_* o, void* v) {
+  ((ListEditor*)(o->parent()->user_data()))->cb_User_i(o,v);
+}
+
+inline void ListEditor::cb_Group_i(Fl_Menu_*, void*) {
+  margins_cb(this);
+}
+void ListEditor::cb_Group(Fl_Menu_* o, void* v) {
+  ((ListEditor*)(o->parent()->user_data()))->cb_Group_i(o,v);
+}
+
+inline void ListEditor::cb_Destination_i(Fl_Menu_*, void*) {
+  margins_cb(this);
+}
+void ListEditor::cb_Destination(Fl_Menu_* o, void* v) {
+  ((ListEditor*)(o->parent()->user_data()))->cb_Destination_i(o,v);
+}
+
 inline void ListEditor::cb_Source_i(Fl_Menu_*, void*) {
   margins_cb(this);
 }
@@ -275,7 +296,10 @@ void ListEditor::cb_Package(Fl_Menu_* o, void* v) {
 }
 
 Fl_Menu_Item ListEditor::menu_margin_menu[] = {
- {"Destination Path", 0,  (Fl_Callback*)ListEditor::cb_margin_items, 0, 6, 0, 0, 14, 56},
+ {"Mode", 0,  (Fl_Callback*)ListEditor::cb_margin_items, 0, 6, 0, 0, 14, 56},
+ {"User", 0,  (Fl_Callback*)ListEditor::cb_User, 0, 6, 0, 0, 14, 56},
+ {"Group", 0,  (Fl_Callback*)ListEditor::cb_Group, 0, 6, 0, 0, 14, 56},
+ {"Destination Path", 0,  (Fl_Callback*)ListEditor::cb_Destination, 0, 6, 0, 0, 14, 56},
  {"Source Path", 0,  (Fl_Callback*)ListEditor::cb_Source, 0, 6, 0, 0, 14, 56},
  {"Package", 0,  (Fl_Callback*)ListEditor::cb_Package, 0, 6, 0, 0, 14, 56},
  {0}
@@ -296,30 +320,51 @@ set_title();
 
 ListEditor::ListEditor(const char *listfile) {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = window = new Fl_Double_Window(500, 495, "EPM List Editor 4.0");
+  { Fl_Double_Window* o = window = new Fl_Double_Window(605, 495, "EPM List Editor 4.0");
     w = o;
     o->callback((Fl_Callback*)cb_window, (void*)(this));
-    { Fl_Menu_Bar* o = menubar = new Fl_Menu_Bar(0, 0, 500, 25);
+    { Fl_Menu_Bar* o = menubar = new Fl_Menu_Bar(0, 0, 605, 25);
       o->menu(menu_menubar);
     }
-    { Fl_Tile* o = margin_tile = new Fl_Tile(0, 25, 500, 25);
+    { Fl_Tile* o = margin_tile = new Fl_Tile(0, 25, 605, 20);
       o->callback((Fl_Callback*)cb_margin_tile);
-      { Fl_Box* o = margin_buttons[0] = new Fl_Box(0, 25, 280, 20, "Destination Path");
-        o->box(FL_ENGRAVED_BOX);
+      { Fl_Box* o = margin_buttons[0] = new Fl_Box(0, 25, 70, 20, "Mode");
+        o->box(FL_THIN_UP_BOX);
+        o->labelsize(12);
+        o->align(FL_ALIGN_CLIP);
       }
-      { Fl_Box* o = margin_buttons[1] = new Fl_Box(280, 25, 150, 20, "Source Path");
-        o->box(FL_ENGRAVED_BOX);
+      { Fl_Box* o = margin_buttons[1] = new Fl_Box(70, 25, 60, 20, "User");
+        o->box(FL_THIN_UP_BOX);
+        o->labelsize(12);
+        o->align(FL_ALIGN_CLIP);
       }
-      { Fl_Box* o = margin_buttons[2] = new Fl_Box(430, 25, 70, 20, "Package");
-        o->box(FL_ENGRAVED_BOX);
+      { Fl_Box* o = margin_buttons[2] = new Fl_Box(130, 25, 60, 20, "Group");
+        o->box(FL_THIN_UP_BOX);
+        o->labelsize(12);
+        o->align(FL_ALIGN_CLIP);
+      }
+      { Fl_Box* o = margin_buttons[3] = new Fl_Box(190, 25, 210, 20, "Destination Path");
+        o->box(FL_THIN_UP_BOX);
+        o->labelsize(12);
+        o->align(FL_ALIGN_CLIP);
+      }
+      { Fl_Box* o = margin_buttons[4] = new Fl_Box(400, 25, 135, 20, "Source Path");
+        o->box(FL_THIN_UP_BOX);
+        o->labelsize(12);
+        o->align(FL_ALIGN_CLIP);
+      }
+      { Fl_Box* o = margin_buttons[5] = new Fl_Box(535, 25, 70, 20, "Package");
+        o->box(FL_THIN_UP_BOX);
+        o->labelsize(12);
+        o->align(FL_ALIGN_CLIP);
       }
       o->end();
     }
-    { Fl_Menu_Button* o = margin_menu = new Fl_Menu_Button(0, 25, 500, 20);
+    { Fl_Menu_Button* o = margin_menu = new Fl_Menu_Button(0, 25, 605, 20);
       o->box(FL_NO_BOX);
       o->menu(menu_margin_menu);
     }
-    { Fl_File_Browser* o = list = new Fl_File_Browser(0, 45, 500, 450);
+    { Fl_File_Browser* o = list = new Fl_File_Browser(0, 45, 605, 450);
       o->type(3);
       o->callback((Fl_Callback*)cb_list);
       Fl_Group::current()->resizable(o);
@@ -332,6 +377,7 @@ filename_[0] = '\0';
 modified_    = 0;
 title_[0]    = '\0';
 
+update_margins();
 open(listfile);
 
 next_  = first_;

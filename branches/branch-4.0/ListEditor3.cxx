@@ -1,5 +1,5 @@
 //
-// "$Id: ListEditor3.cxx,v 1.1.2.1 2002/05/06 04:11:03 mike Exp $"
+// "$Id: ListEditor3.cxx,v 1.1.2.2 2002/05/08 17:59:15 mike Exp $"
 //
 //   ESP List Editor callback methods for the ESP Package Manager (EPM).
 //
@@ -130,20 +130,75 @@ ListEditor::list_cb(ListEditor *le)		// I - List editor window
 void
 ListEditor::margins_cb(ListEditor *le)		// I - List editor window
 {
-  int	i, j;					// Looping vars
+  int	i, j, k, m, x;				// Looping vars
+  int	update;					// Update the list?
+  char	name[32];				// Attribute name
 
 
-  for (i = 0, j = 0; i < 3; i ++)
+  for (i = 0, j = 0, x = 0, update = 0; i < 6; i ++)
     if (le->margin_items[i].value())
     {
+      if (!le->margin_buttons[i]->visible())
+      {
+        update = 1;
+	le->margin_buttons[i]->show();
+	le->margin_buttons[i]->size(50, 20);
+
+	for (k = i, m = x; k < 6; k ++)
+	{
+	  if (!le->margin_buttons[k]->visible())
+	    continue;
+
+	  le->margin_buttons[k]->redraw();
+	  le->margin_buttons[k]->position(m, 25);
+	  if ((m + le->margin_buttons[k]->w()) > le->window->w())
+	    le->margin_buttons[k]->size(le->window->w() - m, 20);
+
+          m += le->margin_buttons[k]->w();
+	}
+      }
+
       le->margins_[j] = le->margin_buttons[i]->w();
+      x += le->margins_[j];
       j ++;
+    }
+    else if (le->margin_buttons[i]->visible())
+    {
+      update = 1;
+      le->margin_buttons[i]->hide();
+
+      for (k = i + 1, m = x; k < 6; k ++)
+      {
+	if (!le->margin_buttons[k]->visible())
+	  continue;
+
+	le->margin_buttons[k]->redraw();
+	le->margin_buttons[k]->position(m, 25);
+	if (k == 5)
+	  le->margin_buttons[k]->size(le->window->w() - m, 20);
+
+        m += le->margin_buttons[k]->w();
+      }
     }
 
   le->margins_[0] -= le->list->iconsize() + 9;
   le->margins_[j] = 0;
   le->list->column_widths(le->margins_);
-  le->list->redraw();
+
+  for (i = 0; i < 6; i ++)
+  {
+    sprintf(name, "margin%d", i);
+
+    if (le->margin_items[i].value())
+      le->prefs_.set(name, le->margin_buttons[i]->w());
+    else
+      le->prefs_.set(name, 0);
+  }
+
+  if (update)
+    le->update_list();
+  else
+    le->list->redraw();
 }
 
 
@@ -289,5 +344,5 @@ ListEditor::save_as_cb(ListEditor *le)		// I - List editor window
 
 
 //
-// End of "$Id: ListEditor3.cxx,v 1.1.2.1 2002/05/06 04:11:03 mike Exp $".
+// End of "$Id: ListEditor3.cxx,v 1.1.2.2 2002/05/08 17:59:15 mike Exp $".
 //

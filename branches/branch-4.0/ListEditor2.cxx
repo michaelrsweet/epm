@@ -1,5 +1,5 @@
 //
-// "$Id: ListEditor2.cxx,v 1.1.2.1 2002/05/06 04:11:03 mike Exp $"
+// "$Id: ListEditor2.cxx,v 1.1.2.2 2002/05/08 17:59:15 mike Exp $"
 //
 //   ESP List Editor file methods for the ESP Package Manager (EPM).
 //
@@ -42,6 +42,7 @@ char		ListEditor::history_[10][1024] =
 		  "",
 		  ""
 		};
+Fl_Preferences	ListEditor::prefs_(Fl_Preferences::USER, "easysw.com", "epmeditor");
 
 
 //
@@ -155,17 +156,45 @@ ListEditor::update_list()
 {
   int			i;		// Looping var
   file_t		*file;		// Current file
-  char			text[2048];	// Text for line
+  char			text[2048],	// Text for line
+			*textptr;	// Pointer into line
+  Fl_File_Icon		*temp;		// Temporary icon
   static Fl_File_Icon	*file_icon = (Fl_File_Icon *)0,
+			*exe_icon = (Fl_File_Icon *)0,
 			*dir_icon = (Fl_File_Icon *)0,
 			*link_icon = (Fl_File_Icon *)0;
 
 
   if (!file_icon)
   {
+    Fl_File_Icon::load_system_icons();
+
     file_icon = Fl_File_Icon::find("foo", Fl_File_Icon::PLAIN);
+    exe_icon  = Fl_File_Icon::find("foo.shell", Fl_File_Icon::PLAIN);
     dir_icon  = Fl_File_Icon::find("foo", Fl_File_Icon::DIRECTORY);
     link_icon = Fl_File_Icon::find("foo", Fl_File_Icon::LINK);
+
+    if ((temp = Fl_File_Icon::find("foo.man", Fl_File_Icon::PLAIN)) != NULL)
+    {
+      new Fl_File_Icon("{*.[012345678z]|*.1m}", Fl_File_Icon::PLAIN,
+                       temp->size(), temp->value());
+    }
+    else
+    {
+      static const char *types[] =
+      {
+        "ANY",
+	"PLAIN",
+	"FIFO",
+	"DEVICE",
+	"LINK",
+	"DIRECTORY"
+      };
+
+      for (temp = Fl_File_Icon::first(); temp; temp = temp->next())
+        printf("%p: pattern=\"%s\", type = %s\n", temp, temp->pattern(),
+	       types[temp->type()]);
+    }
   }
 
   list->clear();
@@ -177,13 +206,63 @@ ListEditor::update_list()
   {
     for (i = dist_->num_files, file = dist_->files; i > 0; i --, file ++)
     {
-      snprintf(text, sizeof(text), "%s\t%s\t%s", file->dst, file->src,
-	       file->subpackage ? file->subpackage : "(default)");
+      textptr = text;
+
+      if (margin_items[0].value())
+      {
+        snprintf(textptr, sizeof(text) - (textptr - text), "%s%04o",
+	         textptr != text ? "\t" : "", file->mode);
+        textptr += strlen(textptr);
+      }
+
+      if (margin_items[1].value())
+      {
+        snprintf(textptr, sizeof(text) - (textptr - text), "%s%s",
+	         textptr != text ? "\t" : "", file->user);
+        textptr += strlen(textptr);
+      }
+
+
+      if (margin_items[2].value())
+      {
+        snprintf(textptr, sizeof(text) - (textptr - text), "%s%s",
+	         textptr != text ? "\t" : "", file->group);
+        textptr += strlen(textptr);
+      }
+
+      if (margin_items[3].value())
+      {
+        snprintf(textptr, sizeof(text) - (textptr - text), "%s%s",
+	         textptr != text ? "\t" : "", file->dst);
+        textptr += strlen(textptr);
+      }
+
+      if (margin_items[4].value())
+      {
+        snprintf(textptr, sizeof(text) - (textptr - text), "%s%s",
+	         textptr != text ? "\t" : "", file->src);
+        textptr += strlen(textptr);
+      }
+
+      if (margin_items[5].value())
+      {
+        snprintf(textptr, sizeof(text) - (textptr - text), "%s%s",
+	         textptr != text ? "\t" : "",
+	         file->subpackage ? file->subpackage : "(default)");
+        textptr += strlen(textptr);
+      }
 
       switch (file->type)
       {
 	default :
-            list->add(text, file_icon);
+	    temp = Fl_File_Icon::find(file->dst, Fl_File_Icon::PLAIN);
+
+	    if (temp && (!(file->mode & 111) || temp != file_icon))
+              list->add(text, temp);
+	    else if (file->mode & 0111)
+              list->add(text, exe_icon);
+	    else
+              list->add(text, file_icon);
 	    break;
 	case 'd' :
             list->add(text, dir_icon);
@@ -272,5 +351,45 @@ ListEditor::save(const char *filename)	// I - Name of distribution to save
 
 
 //
-// End of "$Id: ListEditor2.cxx,v 1.1.2.1 2002/05/06 04:11:03 mike Exp $".
+// 'ListEditor::update_margins()' - Update the margin settings...
+//
+
+void
+ListEditor::update_margins()
+{
+  int	i, j, k;				// Looping var...
+  char	name[32];			// Attribute name
+  int	w;				// Width of margin...
+
+
+  for (i = 0, j = 0, k = 0; i < 6; i ++)
+  {
+    sprintf(name, "margin%d", i);
+    prefs_.get(name, w, 50);
+
+    margin_buttons[i]->resize(j, 25, w, 20);
+
+    if (w)
+    {
+      k = i;
+      margin_buttons[i]->show();
+      margin_buttons[i]->redraw();
+      margin_items[i].set();
+    }
+    else
+    {
+      margin_buttons[i]->hide();
+      margin_items[i].clear();
+    }
+
+    j += w;
+  }
+
+  if (j < window->w())
+    margin_buttons[k]->size(window->w() - margin_buttons[k]->x(), 20);
+}
+
+
+//
+// End of "$Id: ListEditor2.cxx,v 1.1.2.2 2002/05/08 17:59:15 mike Exp $".
 //

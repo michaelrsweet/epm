@@ -1,5 +1,5 @@
 //
-// "$Id: epmeditor.cxx,v 1.1.2.1 2002/05/06 04:11:06 mike Exp $"
+// "$Id: epmeditor.cxx,v 1.1.2.2 2002/05/08 17:59:15 mike Exp $"
 //
 //   ESP List Editor main entry for the ESP Package Manager (EPM).
 //
@@ -42,8 +42,7 @@ main(int  argc,		// I - Number of command-line arguments
   ListEditor	*w;	// Main window...
 
 
-  Fl::args(argc, argv);
-  Fl_File_Icon::load_system_icons();
+//  Fl::args(argc, argv);
 
   w = new ListEditor(argv[1]);
 
@@ -56,5 +55,5 @@ main(int  argc,		// I - Number of command-line arguments
 
 
 //
-// End of "$Id: epmeditor.cxx,v 1.1.2.1 2002/05/06 04:11:06 mike Exp $".
+// End of "$Id: epmeditor.cxx,v 1.1.2.2 2002/05/08 17:59:15 mike Exp $".
 //

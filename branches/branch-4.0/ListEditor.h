@@ -5,6 +5,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include "epm.h"
+#include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Box.H>
@@ -14,10 +15,11 @@
 class ListEditor {
   static ListEditor *first_;
   static char history_[10][1024];
+  static Fl_Preferences prefs_;
   dist_t *dist_;
   char filename_[1024];
   char icontitle_[1024];
-  int margins_[4];
+  int margins_[7];
   int modified_;
   ListEditor *next_;
   char title_[1024];
@@ -43,6 +45,7 @@ class ListEditor {
   void set_title();
   void update_history(const char *listfile);
   void update_list();
+  void update_margins();
 public:
   ListEditor(const char *listfile);
 private:
@@ -111,12 +114,18 @@ private:
   Fl_Tile *margin_tile;
   inline void cb_margin_tile_i(Fl_Tile*, void*);
   static void cb_margin_tile(Fl_Tile*, void*);
-  Fl_Box *margin_buttons[3];
+  Fl_Box *margin_buttons[6];
   Fl_Menu_Button *margin_menu;
   static Fl_Menu_Item menu_margin_menu[];
   static Fl_Menu_Item *margin_items;
   inline void cb_margin_items_i(Fl_Menu_*, void*);
   static void cb_margin_items(Fl_Menu_*, void*);
+  inline void cb_User_i(Fl_Menu_*, void*);
+  static void cb_User(Fl_Menu_*, void*);
+  inline void cb_Group_i(Fl_Menu_*, void*);
+  static void cb_Group(Fl_Menu_*, void*);
+  inline void cb_Destination_i(Fl_Menu_*, void*);
+  static void cb_Destination(Fl_Menu_*, void*);
   inline void cb_Source_i(Fl_Menu_*, void*);
   static void cb_Source(Fl_Menu_*, void*);
   inline void cb_Package_i(Fl_Menu_*, void*);
