@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.67 2002/06/04 21:12:20 mike Exp $"
+ * "$Id: portable.c,v 1.68 2002/06/05 15:03:44 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1299,10 +1299,18 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   }
 
   fputs("echo Installing software...\n", scriptfile);
-  fprintf(scriptfile, "$ac_tar %s.sw\n", prodname);
-  fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-  fprintf(scriptfile, "	$ac_tar %s.ss\n", prodname);
-  fputs("fi\n", scriptfile);
+
+  if (rootsize)
+  {
+    fprintf(scriptfile, "$ac_tar %s.sw\n", prodname);
+  }
+
+  if (usrsize)
+  {
+    fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
+    fprintf(scriptfile, "	$ac_tar %s.ss\n", prodname);
+    fputs("fi\n", scriptfile);
+  }
 
   fprintf(scriptfile, "if test -d %s; then\n", SoftwareDir);
   fprintf(scriptfile, "	rm -f %s/%s.remove\n", SoftwareDir, prodname);
@@ -1586,10 +1594,18 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   }
 
   fputs("echo Patching software...\n", scriptfile);
-  fprintf(scriptfile, "$ac_tar %s.psw\n", prodname);
-  fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-  fprintf(scriptfile, "	$ac_tar %s.pss\n", prodname);
-  fputs("fi\n", scriptfile);
+
+  if (rootsize)
+  {
+    fprintf(scriptfile, "$ac_tar %s.psw\n", prodname);
+  }
+
+  if (usrsize)
+  {
+    fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
+    fprintf(scriptfile, "	$ac_tar %s.pss\n", prodname);
+    fputs("fi\n", scriptfile);
+  }
 
   fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
   fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
@@ -2067,5 +2083,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.67 2002/06/04 21:12:20 mike Exp $".
+ * End of "$Id: portable.c,v 1.68 2002/06/05 15:03:44 mike Exp $".
  */

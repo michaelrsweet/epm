@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.17 2002/06/03 16:49:15 mike Exp $"
+ * "$Id: tar.c,v 1.18 2002/06/05 15:03:44 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -44,44 +44,49 @@ tar_close(tarf_t *fp)	/* I - File to write to */
 			/* Padding for tar blocks */
 
 
- /*
-  * Zero the padding record...
-  */
-
-  memset(padding, 0, sizeof(padding));
-
- /*
-  * Write a single 0 block to signal the end of the archive...
-  */
-
-  if (fwrite(padding, TAR_BLOCK, 1, fp->file) < 1)
-    return (-1);
-
-  fp->blocks ++;
-
- /*
-  * Pad the tar files to TAR_BLOCKS blocks...  This is bullshit of course,
-  * but old versions of tar need it...
-  */
-
-  status = 0;
-
-  if ((blocks = fp->blocks % TAR_BLOCKS) > 0)
-  {
-    blocks = TAR_BLOCKS - blocks;
-
-    if (fwrite(padding, TAR_BLOCK, blocks, fp->file) < blocks)
-      status = -1;
-  }
-  else
+  if (fp->blocks > 0)
   {
    /*
-    * Sun tar needs at least 2 0 blocks...
+    * Zero the padding record...
     */
 
-    if (fwrite(padding, TAR_BLOCK, blocks, fp->file) < blocks)
-      status = -1;
+    memset(padding, 0, sizeof(padding));
+
+   /*
+    * Write a single 0 block to signal the end of the archive...
+    */
+
+    if (fwrite(padding, TAR_BLOCK, 1, fp->file) < 1)
+      return (-1);
+
+    fp->blocks ++;
+
+   /*
+    * Pad the tar files to TAR_BLOCKS blocks...  This is bullshit of course,
+    * but old versions of tar need it...
+    */
+
+    status = 0;
+
+    if ((blocks = fp->blocks % TAR_BLOCKS) > 0)
+    {
+      blocks = TAR_BLOCKS - blocks;
+
+      if (fwrite(padding, TAR_BLOCK, blocks, fp->file) < blocks)
+	status = -1;
+    }
+    else
+    {
+     /*
+      * Sun tar needs at least 2 0 blocks...
+      */
+
+      if (fwrite(padding, TAR_BLOCK, blocks, fp->file) < blocks)
+	status = -1;
+    }
   }
+  else
+    status = 0;
 
  /*
   * Close the file and free memory...
@@ -481,5 +486,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.17 2002/06/03 16:49:15 mike Exp $".
+ * End of "$Id: tar.c,v 1.18 2002/06/05 15:03:44 mike Exp $".
  */
