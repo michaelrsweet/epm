@@ -35,7 +35,7 @@ WHY ANOTHER SOFTWARE PACKAGING TOOL?
 WHAT IS REQUIRED FOR EPM?
 
     On your development system you just need a C compiler, a make
-    program, the Bourne (or Korn or Bash) shell, and GNU zip.
+    program, the Bourne (or Korn or Bash) shell, and gzip.
 
     The graphical setup program needs a C++ compiler and the FLTK
     library, available at "http://www.fltk.org".
@@ -88,6 +88,7 @@ WHAT'S NEW IN EPM 2.2?
     EPM 2.2 adds the following features, fixes, and changes to
     EPM 2.1:
 
+	- New HTML documentation files.
 	- Updated the BuildRoot directive in RPM spec files to
 	  be an absolute path; RedHat 6.2's version of RPM adds
 	  a leading slash otherwise.
@@ -114,6 +115,8 @@ WHAT'S NEW IN EPM 2.2?
 	- Added command-line option to specify the location of
 	  the setup program.
 	- Added support for wildcards in source filenames.
+	- The OS version number is now truncated to only contain
+	  the major and minor release numbers.
 
 
 WHAT'S NEW IN EPM 2.1?

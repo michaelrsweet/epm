@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.8 2000/04/26 14:27:06 mike Exp $"
+# "$Id: Makefile.in,v 1.9 2000/12/11 04:00:36 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -48,6 +48,7 @@ OPTIM	=	@OPTIM@
 #
 
 bindir		=	@bindir@
+datadir		=	@datadir@
 exec_prefix	=	@exec_prefix@
 mandir		=	@mandir@
 prefix		=	@prefix@
@@ -109,15 +110,26 @@ distclean:
 #
 
 install: epm @INSTALL_SETUP@
-	echo Installing EPM in $(bindir) and $(mandir)/man1
+	echo Installing EPM program in $(bindir)
 	-$(MKDIR) $(bindir)
 	$(RM) $(bindir)/epm
 	$(CP) epm $(bindir)
+	echo Installing EPM manpage in $(mandir)/man1
 	-$(MKDIR) $(mandir)/man1
 	$(RM) $(mandir)/man1/epm.1
 	$(CP) epm.man $(mandir)/man1/epm.1
+	echo Installing EPM documentation in $(datadir)/doc/epm
+	-$(MKDIR) $(datadir)/doc
+	-$(MKDIR) $(datadir)/doc/epm
+	$(RM) $(datadir)/doc/epm/COPYING
+	$(CP) COPYING $(datadir)/doc/epm
+	$(RM) $(datadir)/doc/epm/README
+	$(CP) README $(datadir)/doc/epm
+	$(RM) $(datadir)/doc/epm/*.html
+	$(CP) *.html $(datadir)/doc/epm
 
 install-setup:	setup
+	echo Installing EPM setup in $(libdir)/setup
 	-$(MKDIR) $(libdir)
 	$(RM) $(libdir)/setup
 	$(CP) setup $(libdir)
@@ -150,5 +162,5 @@ Fl_Check_Browser.o:	Fl_Check_Browser.h
 $(OBJS):	Makefile config.h
 
 #
-# End of "$Id: Makefile.in,v 1.8 2000/04/26 14:27:06 mike Exp $".
+# End of "$Id: Makefile.in,v 1.9 2000/12/11 04:00:36 mike Exp $".
 #

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.42 2000/12/10 15:40:19 mike Exp $"
+ * "$Id: epm.c,v 1.43 2000/12/11 04:00:37 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -384,12 +384,22 @@ get_platform(struct utsname *platform)	/* O - Platform info */
 #endif /* __sgi */
 
  /*
-  * Remove any extra junk from the beginning of the release number -
-  * we just want the numbers thank you...
+  * Remove any extra junk from the release number - we just want the
+  * major and minor numbers...
   */
 
   while (!isdigit(platform->release[0]) && platform->release[0])
     strcpy(platform->release, platform->release + 1);
+
+  if (platform->release[0] == '.')
+    strcpy(platform->release, platform->release + 1);
+
+  for (temp = platform->release; *temp && isdigit(*temp); temp ++);
+
+  if (*temp == '.')
+    for (temp ++; *temp && isdigit(*temp); temp ++);
+
+  *temp = '\0';
 
  /*
   * Convert the operating system name to lowercase, and strip out
@@ -477,5 +487,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.42 2000/12/10 15:40:19 mike Exp $".
+ * End of "$Id: epm.c,v 1.43 2000/12/11 04:00:37 mike Exp $".
  */
