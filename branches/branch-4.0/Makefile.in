@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.34 2002/02/17 20:46:07 mike Exp $"
+# "$Id: Makefile.in,v 1.34.2.1 2002/05/06 04:11:03 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -20,11 +20,13 @@
 # Programs...
 #
 
+AR	=	@AR@
 CC	=	@CC@
 CHMOD	=	@CHMOD@
 CP	=	@CP@
 CXX	=	@CXX@
 MKDIR	=	@MKDIR@ -p
+RANLIB	=	@RANLIB@
 RM	=	@RM@ -f
 SHELL	=	/bin/sh
 STRIP	=	@STRIP@
@@ -36,10 +38,10 @@ STRIP	=	@STRIP@
 # OPTIM   defines the common compiler optimization/debugging options.
 #
 
-ARFLAGS	=	crvs
+ARFLAGS	=	@ARFLAGS@
 CFLAGS	=	@CFLAGS@ $(OPTIM)
 CXXFLAGS =	@CXXFLAGS@ $(OPTIM)
-SETUP_LIBS =	@SETUP_LIBS@
+GUILIBS =	@GUILIBS@
 LDFLAGS	=	@LDFLAGS@ $(OPTIM)
 LIBS	=	@LIBS@
 OPTIM	=	@OPTIM@
@@ -90,12 +92,13 @@ VPATH		=	$(srcdir)
 # Targets...
 #
 
-TARGETS	=	epm epminstall mkepmlist @SETUP@
-EPM_OBJS =	aix.o bsd.o deb.o dist.o epm.o file.o inst.o pkg.o \
+TARGETS	=	libepm.a epm epminstall mkepmlist @SETUP@ @EPMEDITOR@
+EPM_OBJS =	aix.o bsd.o deb.o dist.o file.o inst.o pkg.o \
 		portable.o rpm.o run.o setld.o snprintf.o string.o \
 		swinstall.o tar.o
 SETUP_OBJS =	setup.o setup2.o
-OBJS	=	$(EPM_OBJS) epminstall.o $(SETUP_OBJS)
+LEDIT_OBJS =	epmeditor.o ListEditor.o ListEditor2.o ListEditor3.o
+OBJS	=	epm.o $(EPM_OBJS) epminstall.o $(SETUP_OBJS) $(LEDIT_OBJS)
 
 
 #
@@ -257,23 +260,35 @@ swinstall depot: $(TARGETS)
 
 
 #
+# libepm.a
+#
+
+libepm.a:	$(EPM_OBJS)
+	echo Archiving libepm.a...
+	$(AR) $(ARFLAGS) libepm.a $(EPM_OBJS)
+	$(RANLIB) libepm.a
+
+$(EPM_OBJS):	epm.h epmstring.h
+
+
+#
 # epm
 #
 
-epm:	$(EPM_OBJS)
+epm:	epm.o $(EPM_OBJS)
 	echo Linking epm...
-	$(CC) $(LDFLAGS) -o epm $(EPM_OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -o epm epm.o libepm.a $(LIBS)
 
-$(EPM_OBJS):	epm.h epmstring.h
+epm.o:	epm.h epmstring.h
 
 
 #
 # epminstall
 #
 
-epminstall:	epminstall.o dist.o snprintf.o
+epminstall:	epminstall.o libepm.a
 	echo Linking epminstall...
-	$(CC) $(LDFLAGS) -o epminstall epminstall.o dist.o snprintf.o $(LIBS)
+	$(CC) $(LDFLAGS) -o epminstall epminstall.o libepm.a $(LIBS)
 
 epminstall.o:	epm.h epmstring.h
 
@@ -282,9 +297,9 @@ epminstall.o:	epm.h epmstring.h
 # mkepmlist
 #
 
-mkepmlist:	mkepmlist.o snprintf.o
+mkepmlist:	mkepmlist.o libepm.a
 	echo Linking mkepmlist...
-	$(CC) $(LDFLAGS) -o mkepmlist mkepmlist.o snprintf.o $(LIBS)
+	$(CC) $(LDFLAGS) -o mkepmlist mkepmlist.o libepm.a $(LIBS)
 
 mkepmlist.o:	epm.h epmstring.h
 
@@ -293,16 +308,29 @@ mkepmlist.o:	epm.h epmstring.h
 # setup
 #
 
-setup:	$(SETUP_OBJS) snprintf.o
+setup:	$(SETUP_OBJS) libepm.a
 	echo Linking setup...
-	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) snprintf.o $(SETUP_LIBS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) libepm.a $(GUILIBS) $(LIBS)
 
-setup.o:	setup.h setup2.h
-setup2.o:	setup.h setup2.h
+setup.o:	setup.h setup2.h epmstring.h
+setup2.o:	setup.h setup2.h epmstring.h
+
+
+#
+# epmeditor
+#
+
+epmeditor:	$(LEDIT_OBJS) libepm.a
+	echo Linking epmeditor...
+	$(CXX) $(LDFLAGS) -o epmeditor $(LEDIT_OBJS) libepm.a \
+		$(GUILIBS) $(LIBS)
+
+$(LEDIT_OBJS):	ListEditor.h epm.h epmstring.h
+
 
 $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.34 2002/02/17 20:46:07 mike Exp $".
+# End of "$Id: Makefile.in,v 1.34.2.1 2002/05/06 04:11:03 mike Exp $".
 #

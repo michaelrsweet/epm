@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.52.2.2 2002/05/01 01:22:24 mike Exp $"
+dnl "$Id: configure.in,v 1.52.2.3 2002/05/06 04:11:06 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -76,6 +76,8 @@ AC_ARG_WITH(softwaredir, [  --with-softwaredir        set directory for EPM unin
 dnl Checks for programs...
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_RANLIB
+AC_PATH_PROG(AR,ar)
 AC_PATH_PROG(CHMOD,chmod)
 AC_PATH_PROG(CP,cp)
 AC_PATH_PROG(GZIP,gzip)
@@ -128,24 +130,25 @@ AC_SEARCH_LIBS(gethostname, socket)
 AC_PATH_PROG(FLTKCONFIG,fltk-config)
 
 if test "x$FLTKCONFIG" = x; then
-	INSTALL_SETUP=""
-	LIST_SETUP=""
 	SETUP=""
-	SETUP_LIBS=""
+	EPMEDITOR=""
+	GUILIBS=""
+	INSTALL_GUIS=""
 
-	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x.])
+	AC_MSG_WARN([Sorry, GUIs require FLTK 1.1.x.])
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
 	SETUP="setup"
-	SETUP_LIBS="`$FLTKCONFIG --ldstaticflags`"
-	INSTALL_SETUP="install-setup"
+	EPMEDITOR="epmeditor"
+	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
+	INSTALL_GUIS="install-guis"
 	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 fi
 
-AC_SUBST(INSTALL_SETUP)
-AC_SUBST(LIST_SETUP)
+AC_SUBST(EPMEDITOR)
+AC_SUBST(GUILIBS)
+AC_SUBST(INSTALL_GUIS)
 AC_SUBST(SETUP)
-AC_SUBST(SETUP_LIBS)
 
 dnl Update compiler options...
 if test -n "$GCC"; then
@@ -202,18 +205,23 @@ if test -n "$GCC"; then
 		AC_MSG_RESULT(no))
 	CFLAGS="$OLDCFLAGS"
 
-	# See if we are running Solaris; if so, try the -fpermissive option...
-	if test "$uname" = SunOS; then
-		AC_MSG_CHECKING(if GCC supports -fpermissive)
+	# See if we are running HP-UX or Solaris; if so, try the
+	# -fpermissive option...
+	case $uname in
+		SunOS* | HP-UX*)
+			AC_MSG_CHECKING(if GCC supports -fpermissive)
 
-		OLDCFLAGS="$CFLAGS"
-		CFLAGS="$CFLAGS -fpermissive"
-		AC_TRY_COMPILE(,,
-			OPTIM="$OPTIM -fpermissive"
-			AC_MSG_RESULT(yes),
-			AC_MSG_RESULT(no))
-		CFLAGS="$OLDCFLAGS"
-	fi
+			OLDCFLAGS="$CFLAGS"
+			CFLAGS="$CFLAGS -fpermissive"
+			AC_TRY_COMPILE(,,
+				OPTIM="$OPTIM -fpermissive"
+				AC_MSG_RESULT(yes),
+				AC_MSG_RESULT(no))
+			CFLAGS="$OLDCFLAGS"
+			;;
+		*)
+			;;
+	esac
 else
 	case $uname in
 		AIX*)
@@ -256,6 +264,18 @@ else
 			;;
 	esac
 fi
+
+dnl Flags for "ar" command...
+case $uname in
+        Darwin* | *BSD*)
+                ARFLAGS="-rc"
+                ;;
+        *)
+                ARFLAGS="crs"
+                ;;
+esac
+
+AC_SUBST(ARFLAGS)
 
 dnl Fix "prefix" variable if it hasn't been specified...
 if test "$prefix" = "NONE"; then
@@ -349,5 +369,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52.2.2 2002/05/01 01:22:24 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52.2.3 2002/05/06 04:11:06 mike Exp $".
 dnl

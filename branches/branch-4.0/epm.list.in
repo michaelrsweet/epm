@@ -1,5 +1,5 @@
 #
-# "$Id: epm.list.in,v 1.8 2002/01/02 20:39:40 mike Exp $"
+# "$Id: epm.list.in,v 1.8.2.1 2002/05/06 04:11:06 mike Exp $"
 #
 #   Sample software list file for the ESP Package Manager (EPM).
 #
@@ -49,16 +49,24 @@ $MAN1EXT=@MAN1EXT@
 $CAT5EXT=@CAT5EXT@
 $MAN5EXT=@MAN5EXT@
 
+# GUI stuff...
+$SETUP=@SETUP@
+
 # Executables
 %system all
 f 0555 root sys ${bindir}/epm epm
 f 0555 root sys ${bindir}/epminstall epminstall
 f 0555 root sys ${bindir}/mkepmlist mkepmlist
-@LIST_SETUP@
 f 0444 root sys ${docdir}/README $srcdir/README
 f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
 f 0444 root sys ${docdir}/epm-manual.html $srcdir/doc/epm-manual.html
 f 0444 root sys ${docdir}/epm-manual.pdf $srcdir/doc/epm-manual.pdf
+
+# GUI programs...
+%if SETUP
+f 0555 root sys ${bindir}/epmeditor epmeditor
+f 0555 root sys ${libdir}/epm/setup setup
+%endif
 
 # Man pages
 f 0444 root sys ${mandir}/cat1/epm.$CAT1EXT $srcdir/doc/epm.1
@@ -72,5 +80,5 @@ f 0444 root sys ${mandir}/man1/mkepmlist.$MAN1EXT $srcdir/doc/mkepmlist.man
 f 0444 root sys ${mandir}/man1/epm.list.$MAN5EXT $srcdir/doc/epm.list.man
 
 #
-# End of "$Id: epm.list.in,v 1.8 2002/01/02 20:39:40 mike Exp $".
+# End of "$Id: epm.list.in,v 1.8.2.1 2002/05/06 04:11:06 mike Exp $".
 #

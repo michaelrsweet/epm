@@ -2360,6 +2360,125 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
+set dummy ${ac_tool_prefix}ranlib; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_prog_RANLIB+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test -n "$RANLIB"; then
+  ac_cv_prog_RANLIB="$RANLIB" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_RANLIB="${ac_tool_prefix}ranlib"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+fi
+fi
+RANLIB=$ac_cv_prog_RANLIB
+if test -n "$RANLIB"; then
+  echo "$as_me:$LINENO: result: $RANLIB" >&5
+echo "${ECHO_T}$RANLIB" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+fi
+if test -z "$ac_cv_prog_RANLIB"; then
+  ac_ct_RANLIB=$RANLIB
+  # Extract the first word of "ranlib", so it can be a program name with args.
+set dummy ranlib; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_prog_ac_ct_RANLIB+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test -n "$ac_ct_RANLIB"; then
+  ac_cv_prog_ac_ct_RANLIB="$ac_ct_RANLIB" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_RANLIB="ranlib"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  test -z "$ac_cv_prog_ac_ct_RANLIB" && ac_cv_prog_ac_ct_RANLIB=":"
+fi
+fi
+ac_ct_RANLIB=$ac_cv_prog_ac_ct_RANLIB
+if test -n "$ac_ct_RANLIB"; then
+  echo "$as_me:$LINENO: result: $ac_ct_RANLIB" >&5
+echo "${ECHO_T}$ac_ct_RANLIB" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+  RANLIB=$ac_ct_RANLIB
+else
+  RANLIB="$ac_cv_prog_RANLIB"
+fi
+
+# Extract the first word of "ar", so it can be a program name with args.
+set dummy ar; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_AR+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $AR in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_AR="$AR" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_AR="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  ;;
+esac
+fi
+AR=$ac_cv_path_AR
+
+if test -n "$AR"; then
+  echo "$as_me:$LINENO: result: $AR" >&5
+echo "${ECHO_T}$AR" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
 # Extract the first word of "chmod", so it can be a program name with args.
 set dummy chmod; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -4921,18 +5040,19 @@ fi
 
 
 if test "x$FLTKCONFIG" = x; then
-	INSTALL_SETUP=""
-	LIST_SETUP=""
 	SETUP=""
-	SETUP_LIBS=""
+	EPMEDITOR=""
+	GUILIBS=""
+	INSTALL_GUIS=""
 
-	{ echo "$as_me:$LINENO: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&5
-echo "$as_me: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&2;}
+	{ echo "$as_me:$LINENO: WARNING: Sorry, GUIs require FLTK 1.1.x." >&5
+echo "$as_me: WARNING: Sorry, GUIs require FLTK 1.1.x." >&2;}
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
 	SETUP="setup"
-	SETUP_LIBS="`$FLTKCONFIG --ldstaticflags`"
-	INSTALL_SETUP="install-setup"
+	EPMEDITOR="epmeditor"
+	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
+	INSTALL_GUIS="install-guis"
 	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 fi
 
@@ -5072,14 +5192,16 @@ fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 	CFLAGS="$OLDCFLAGS"
 
-	# See if we are running Solaris; if so, try the -fpermissive option...
-	if test "$uname" = SunOS; then
-		echo "$as_me:$LINENO: checking if GCC supports -fpermissive" >&5
+	# See if we are running HP-UX or Solaris; if so, try the
+	# -fpermissive option...
+	case $uname in
+		SunOS* | HP-UX*)
+			echo "$as_me:$LINENO: checking if GCC supports -fpermissive" >&5
 echo $ECHO_N "checking if GCC supports -fpermissive... $ECHO_C" >&6
 
-		OLDCFLAGS="$CFLAGS"
-		CFLAGS="$CFLAGS -fpermissive"
-		cat >conftest.$ac_ext <<_ACEOF
+			OLDCFLAGS="$CFLAGS"
+			CFLAGS="$CFLAGS -fpermissive"
+			cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
 
@@ -5110,7 +5232,7 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   OPTIM="$OPTIM -fpermissive"
-			echo "$as_me:$LINENO: result: yes" >&5
+				echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 else
   echo "$as_me: failed program was:" >&5
@@ -5119,8 +5241,11 @@ echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
-		CFLAGS="$OLDCFLAGS"
-	fi
+			CFLAGS="$OLDCFLAGS"
+			;;
+		*)
+			;;
+	esac
 else
 	case $uname in
 		AIX*)
@@ -5163,6 +5288,17 @@ else
 			;;
 	esac
 fi
+
+case $uname in
+        Darwin* | *BSD*)
+                ARFLAGS="-rc"
+                ;;
+        *)
+                ARFLAGS="crs"
+                ;;
+esac
+
+
 
 if test "$prefix" = "NONE"; then
 	prefix="/usr"
@@ -5841,6 +5977,9 @@ s,@OBJEXT@,$OBJEXT,;t t
 s,@CXX@,$CXX,;t t
 s,@CXXFLAGS@,$CXXFLAGS,;t t
 s,@ac_ct_CXX@,$ac_ct_CXX,;t t
+s,@RANLIB@,$RANLIB,;t t
+s,@ac_ct_RANLIB@,$ac_ct_RANLIB,;t t
+s,@AR@,$AR,;t t
 s,@CHMOD@,$CHMOD,;t t
 s,@CP@,$CP,;t t
 s,@GZIP@,$GZIP,;t t
@@ -5853,10 +5992,11 @@ s,@RPM@,$RPM,;t t
 s,@STRIP@,$STRIP,;t t
 s,@CPP@,$CPP,;t t
 s,@FLTKCONFIG@,$FLTKCONFIG,;t t
-s,@INSTALL_SETUP@,$INSTALL_SETUP,;t t
-s,@LIST_SETUP@,$LIST_SETUP,;t t
+s,@EPMEDITOR@,$EPMEDITOR,;t t
+s,@GUILIBS@,$GUILIBS,;t t
+s,@INSTALL_GUIS@,$INSTALL_GUIS,;t t
 s,@SETUP@,$SETUP,;t t
-s,@SETUP_LIBS@,$SETUP_LIBS,;t t
+s,@ARFLAGS@,$ARFLAGS,;t t
 s,@CAT1EXT@,$CAT1EXT,;t t
 s,@MAN1EXT@,$MAN1EXT,;t t
 s,@CAT5EXT@,$CAT5EXT,;t t

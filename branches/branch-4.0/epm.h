@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.27.2.2 2002/04/27 13:41:14 mike Exp $"
+ * "$Id: epm.h,v 1.27.2.3 2002/05/06 04:11:06 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -20,19 +20,22 @@
  * Include necessary headers...
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <limits.h>
-#include "epmstring.h"
-#include <ctype.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <pwd.h>
-#include <grp.h>
-#include <sys/utsname.h>
+#ifndef _EPM_H_
+#  define _EPM_H_
+
+#  include <stdio.h>
+#  include <stdlib.h>
+#  include <unistd.h>
+#  include <limits.h>
+#  include "epmstring.h"
+#  include <ctype.h>
+#  include <errno.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <time.h>
+#  include <pwd.h>
+#  include <grp.h>
+#  include <sys/utsname.h>
 
 #  if HAVE_DIRENT_H
 #    include <dirent.h>
@@ -53,31 +56,36 @@ typedef struct direct DIRENT;
 #  endif
 
 
+#  ifdef __cplusplus
+extern "C" {
+#  endif /* __cplusplus */
+
+
 /*
  * Macro to eliminate "variable was never referenced" errors...
  */
 
-#define REF(x)	(void)(x);
+#  define REF(x)	(void)(x);
 
 
 /*
  * TAR constants...
  */
 
-#define TAR_BLOCK	512		/* Number of bytes in a block */
-#define TAR_BLOCKS	10		/* Blocking factor */
+#  define TAR_BLOCK	512		/* Number of bytes in a block */
+#  define TAR_BLOCKS	10		/* Blocking factor */
 
-#define	TAR_MAGIC	"ustar  "	/* 7 chars and a null */
+#  define TAR_MAGIC	"ustar  "	/* 7 chars and a null */
 
-#define	TAR_OLDNORMAL	'\0'		/* Normal disk file, Unix compat */
-#define	TAR_NORMAL	'0'		/* Normal disk file */
-#define	TAR_LINK	'1'		/* Link to previously dumped file */
-#define	TAR_SYMLINK	'2'		/* Symbolic link */
-#define	TAR_CHR		'3'		/* Character special file */
-#define	TAR_BLK		'4'		/* Block special file */
-#define	TAR_DIR		'5'		/* Directory */
-#define	TAR_FIFO	'6'		/* FIFO special file */
-#define	TAR_CONTIG	'7'		/* Contiguous file */
+#  define TAR_OLDNORMAL	'\0'		/* Normal disk file, Unix compat */
+#  define TAR_NORMAL	'0'		/* Normal disk file */
+#  define TAR_LINK	'1'		/* Link to previously dumped file */
+#  define TAR_SYMLINK	'2'		/* Symbolic link */
+#  define TAR_CHR	'3'		/* Character special file */
+#  define TAR_BLK	'4'		/* Block special file */
+#  define TAR_DIR	'5'		/* Directory */
+#  define TAR_FIFO	'6'		/* FIFO special file */
+#  define TAR_CONTIG	'7'		/* Contiguous file */
 
 /*
  * Package formats...
@@ -286,6 +294,13 @@ extern int	tar_header(tarf_t *tar, char type, int mode, int size,
 extern tarf_t	*tar_open(const char *filename, int compress);
 
 
+#  ifdef __cplusplus
+}
+#  endif /* __cplusplus */
+
+#endif /* !_EPM_H_ */
+
+
 /*
- * End of "$Id: epm.h,v 1.27.2.2 2002/04/27 13:41:14 mike Exp $".
+ * End of "$Id: epm.h,v 1.27.2.3 2002/05/06 04:11:06 mike Exp $".
  */

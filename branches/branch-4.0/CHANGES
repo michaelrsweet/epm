@@ -1,5 +1,15 @@
-CHANGES - ESP Package Manager (EPM) 3.3
+CHANGES - ESP Package Manager (EPM) 4.0
 ---------------------------------------
+
+WHAT'S NEW IN EPM 4.0?
+
+    EPM 4.0 adds the following features, fixes, and changes to
+    EPM 3.3:
+
+	- No longer install init scripts in run levels 2 and 5
+	  under Solaris, which runs all init scripts in each run
+	  level.
+
 
 WHAT'S NEW IN EPM 3.3?
 

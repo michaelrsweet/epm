@@ -3,144 +3,291 @@ version 1.0100
 header_name {.h} 
 code_name {.cxx}
 class ListEditor {open
-} {} 
-
-Function {ListEditor(const char *listfile)} {open
 } {
-  Fl_Window window {
-    label {EPM List Editor 4.0} open
-    private xywh {312 20 503 495} resizable visible
+  decl {static ListEditor *first_;} {}
+  decl {static char history_[10][1024];} {}
+  decl {dist_t *dist_;} {}
+  decl {char filename_[1024];} {}
+  decl {char icontitle_[1024];} {}
+  decl {int margins_[4];} {}
+  decl {int modified_;} {}
+  decl {ListEditor *next_;} {}
+  decl {char title_[1024];} {}
+  decl {static void build_cb(ListEditor *le);} {}
+  decl {int check_save();} {}
+  decl {static void close_cb(ListEditor *le);} {}
+  decl {static void copy_cb(ListEditor *le);} {}
+  decl {static void cut_cb(ListEditor *le);} {}
+  decl {static void delete_cb(ListEditor *le);} {}
+  decl {static void file_settings_cb(ListEditor *le);} {}
+  decl {static void help_cb(ListEditor *le, const char *html);} {}
+  decl {static void list_cb(ListEditor *le);} {}
+  decl {static void margins_cb(ListEditor *le);} {}
+  Function {modified(int m)} {private return_type void
   } {
-    Fl_Menu_Bar menubar {open
-      private xywh {0 0 505 25}
+    code {modified_ = m;
+set_title();} {}
+  }
+  decl {static void new_cb(ListEditor *le);} {}
+  decl {static void open_cb(ListEditor *le);} {}
+  decl {static void open_history_cb(ListEditor *le, const char *listfile);} {}
+  decl {static void paste_cb(ListEditor *le);} {}
+  decl {static void project_settings_cb(ListEditor *le);} {}
+  decl {static void quit_cb(ListEditor *le);} {}
+  decl {static void save_cb(ListEditor *le);} {}
+  decl {static void save_as_cb(ListEditor *le);} {}
+  decl {void set_title();} {}
+  decl {void update_history(const char *listfile);} {}
+  decl {void update_list();} {}
+  Function {ListEditor(const char *listfile)} {open
+  } {
+    Fl_Window window {
+      label {EPM List Editor 4.0}
+      callback {close_cb(this);} open
+      private xywh {76 384 500 495} type Double resizable
+      code0 {\#include "epm.h"} visible
     } {
-      submenu {} {
-        label {&File} open
-        private xywh {0 0 100 20}
+      Fl_Menu_Bar menubar {
+        private xywh {0 0 500 25}
       } {
-        menuitem {} {
-          label {&New}
-          private xywh {0 0 100 20} shortcut 0x4006e
-        }
-        menuitem {} {
-          label {&Open...}
-          private xywh {10 10 100 20} shortcut 0x4006f
+        submenu {} {
+          label {&File} open
+          private xywh {0 0 100 20}
+        } {
+          menuitem {} {
+            label {&New}
+            callback {new_cb(this);}
+            private xywh {0 0 100 20} shortcut 0x4006e
+          }
+          menuitem {} {
+            label {&Open...}
+            callback {open_cb(this);}
+            private xywh {10 10 100 20} shortcut 0x4006f
+          }
+          submenu {} {
+            label {Open &Previous}
+            private xywh {0 0 100 20} deactivate
+          } {
+            menuitem history_items {
+              label filename
+              callback {open_history_cb(this, history_items[0].label());}
+              private xywh {0 0 100 20} shortcut 0x40030 hide
+            }
+            menuitem {} {
+              label filename
+              callback {open_history_cb(this, history_items[1].label());}
+              private xywh {10 10 100 20} shortcut 0x40031 hide
+            }
+            menuitem {} {
+              label filename
+              callback {open_history_cb(this, history_items[2].label());}
+              private xywh {20 20 100 20} shortcut 0x40032 hide
+            }
+            menuitem {} {
+              label filename
+              callback {open_history_cb(this, history_items[3].label());}
+              private xywh {30 30 100 20} shortcut 0x40033 hide
+            }
+            menuitem {} {
+              label filename
+              callback {open_history_cb(this, history_items[4].label());}
+              private xywh {40 40 100 20} shortcut 0x40034 hide
+            }
+            menuitem {} {
+              label filename
+              callback {open_history_cb(this, history_items[5].label());}
+              private xywh {50 50 100 20} shortcut 0x40035 hide
+            }
+            menuitem {} {
+              label filename
+              callback {open_history_cb(this, history_items[6].label());}
+              private xywh {60 60 100 20} shortcut 0x40036 hide
+            }
+            menuitem {} {
+              label filename
+              callback {open_history_cb(this, history_items[7].label());}
+              private xywh {70 70 100 20} shortcut 0x40037 hide
+            }
+            menuitem {} {
+              label filename
+              callback {open_history_cb(this, history_items[8].label());}
+              private xywh {80 80 100 20} shortcut 0x40038 hide
+            }
+            menuitem {} {
+              label filename
+              callback {open_history_cb(this, history_items[9].label());}
+              private xywh {90 90 100 20} shortcut 0x40039 hide
+            }
+          }
+          menuitem {} {
+            label {&Close}
+            callback {close_cb(this);}
+            private xywh {20 20 100 20} shortcut 0x40077 divider
+          }
+          menuitem {} {
+            label {&Save}
+            callback {save_cb(this);}
+            private xywh {30 30 100 20} shortcut 0x40073
+          }
+          menuitem {} {
+            label {Save &As...}
+            callback {save_as_cb(this);}
+            private xywh {40 40 100 20} shortcut 0x50073 divider
+          }
+          menuitem {} {
+            label {&Build Package...}
+            callback {build_cb(this);}
+            private xywh {50 50 100 20} shortcut 0x40062 divider
+          }
+          menuitem {} {
+            label {&Quit}
+            callback {quit_cb(this);}
+            private xywh {60 60 100 20} shortcut 0x40071
+          }
         }
         submenu {} {
-          label {Open &Previous} open selected
-          private xywh {0 0 100 20} deactivate
+          label {&Edit} open
+          private xywh {0 0 100 20}
         } {
-          menuitem {history_items[0]} {
-            private xywh {0 0 100 20}
+          menuitem {} {
+            label {&Copy}
+            callback {copy_cb(this);}
+            private xywh {0 0 100 20} shortcut 0x40063
           }
-          menuitem {history_items[1]} {
-            private xywh {10 10 100 20}
+          menuitem {} {
+            label {Cu&t}
+            callback {cut_cb(this);}
+            private xywh {10 10 100 20} shortcut 0x40078
           }
-          menuitem {history_items[2]} {
-            private xywh {20 20 100 20}
+          menuitem {} {
+            label {&Delete}
+            callback {delete_cb(this);}
+            private xywh {40 40 100 20} shortcut 0xffff
           }
-          menuitem {history_items[3]} {
-            private xywh {30 30 100 20}
+          menuitem {} {
+            label {&Paste}
+            callback {paste_cb(this);}
+            private xywh {20 20 100 20} shortcut 0x40076 divider
           }
-          menuitem {history_items[4]} {
+          menuitem {} {
+            label {&File Settings...}
+            callback {file_settings_cb(this);}
+            private xywh {30 30 100 20} shortcut 0x40066
+          }
+          menuitem {} {
+            label {P&roject Settings...}
+            callback {project_settings_cb(this);}
+            private xywh {40 40 100 20} shortcut 0x40070
+          }
+        }
+        submenu {} {
+          label {&Help} open
+          private xywh {0 0 100 20}
+        } {
+          menuitem {} {
+            label {&Contents...}
+            callback {help_cb(this, "index.html");}
+            private xywh {0 0 100 20} shortcut 0xffbe divider
+          }
+          menuitem {} {
+            label {&Introduction...}
+            callback {help_cb(this, "index.html");}
             private xywh {40 40 100 20}
           }
-          menuitem {history_items[5]} {
-            private xywh {50 50 100 20}
+          menuitem {} {
+            label {&Basic...}
+            callback {help_cb(this, "index.html");}
+            private xywh {20 20 100 20}
           }
-          menuitem {history_items[6]} {
-            private xywh {60 60 100 20}
+          menuitem {} {
+            label {&Advanced...}
+            callback {help_cb(this, "index.html");}
+            private xywh {30 30 100 20} divider
           }
-          menuitem {history_items[7]} {
-            private xywh {70 70 100 20}
+          menuitem {} {
+            label {&Version...}
+            callback {help_cb(this, "index.html");}
+            private xywh {10 10 100 20}
           }
-          menuitem {history_items[8]} {
-            private xywh {80 80 100 20}
-          }
-          menuitem {history_items[9]} {
-            private xywh {90 90 100 20}
-          }
-        }
-        menuitem {} {
-          label {&Close}
-          private xywh {20 20 100 20} shortcut 0x40077 divider
-        }
-        menuitem {} {
-          label {&Save}
-          private xywh {30 30 100 20} shortcut 0x40073
-        }
-        menuitem {} {
-          label {Save &As...}
-          private xywh {40 40 100 20} shortcut 0x50073 divider
-        }
-        menuitem {} {
-          label {&Build Package...}
-          private xywh {50 50 100 20} shortcut 0x40062 divider
-        }
-        menuitem {} {
-          label {&Quit}
-          private xywh {60 60 100 20} shortcut 0x40071
         }
       }
-      submenu {} {
-        label {&Edit} open
-        private xywh {0 0 100 20}
+      Fl_Tile margin_tile {
+        callback {margins_cb(this);} open
+        private xywh {0 25 500 25}
       } {
-        menuitem {} {
-          label {&Copy}
-          private xywh {0 0 100 20} shortcut 0x40063
+        Fl_Box {margin_buttons[0]} {
+          label {Destination Path}
+          private xywh {0 25 280 20} box ENGRAVED_BOX
         }
-        menuitem {} {
-          label {Cu&t}
-          private xywh {10 10 100 20} shortcut 0x40078
+        Fl_Box {margin_buttons[1]} {
+          label {Source Path}
+          private xywh {280 25 150 20} box ENGRAVED_BOX
         }
-        menuitem {} {
-          label {&Delete}
-          private xywh {40 40 100 20} shortcut 0xffff
-        }
-        menuitem {} {
-          label {&Paste}
-          private xywh {20 20 100 20} shortcut 0x40076 divider
-        }
-        menuitem {} {
-          label {&File Settings...}
-          private xywh {30 30 100 20} shortcut 0x40066
-        }
-        menuitem {} {
-          label {P&roject Settings...}
-          private xywh {40 40 100 20} shortcut 0x40070
+        Fl_Box {margin_buttons[2]} {
+          label Package
+          private xywh {430 25 70 20} box ENGRAVED_BOX
         }
       }
-      submenu {} {
-        label {&Help} open
-        private xywh {0 0 100 20}
+      Fl_Menu_Button margin_menu {
+        private xywh {0 25 500 20} box NO_BOX
       } {
-        menuitem {} {
-          label {&Contents...}
-          private xywh {0 0 100 20} shortcut 0xffbe divider
+        menuitem margin_items {
+          label {Destination Path}
+          callback {margins_cb(this);}
+          private xywh {0 0 100 20} type Toggle value 1
         }
         menuitem {} {
-          label {&Introduction...}
-          private xywh {40 40 100 20}
+          label {Source Path}
+          callback {margins_cb(this);}
+          private xywh {10 10 100 20} type Toggle value 1
         }
         menuitem {} {
-          label {&Basic...}
-          private xywh {20 20 100 20}
+          label Package
+          callback {margins_cb(this);}
+          private xywh {20 20 100 20} type Toggle value 1
         }
-        menuitem {} {
-          label {&Advanced...}
-          private xywh {30 30 100 20} divider
-        }
-        menuitem {} {
-          label {&Version...}
-          private xywh {10 10 100 20}
-        }
+      }
+      Fl_File_Browser list {
+        callback {list_cb(this);} selected
+        private xywh {0 45 500 450} type Multi resizable
+        code0 {list->has_scrollbar(Fl_Browser_::VERTICAL);}
       }
     }
-    Fl_Browser {} {
-      private xywh {0 25 505 470} type Multi resizable
-      code0 {\#include "ListBrowser.h"}
-      class ListBrowser
-    }
+    code {dist_        = (dist_t *)0;
+filename_[0] = '\\0';
+modified_    = 0;
+title_[0]    = '\\0';
+
+open(listfile);
+
+next_  = first_;
+first_ = this;} {}
+  }
+  decl {~ListEditor();} {public
+  }
+  Function {hide()} {return_type void
+  } {
+    code {window->hide();} {}
+  }
+  Function {modified()} {return_type int
+  } {
+    code {return modified_;} {}
+  }
+  decl {int open(const char *listfile);} {public
+  }
+  decl {int save(const char *listfile);} {public
+  }
+  Function {save()} {return_type int
+  } {
+    code {return save(filename_);} {}
+  }
+  Function {show()} {return_type void
+  } {
+    code {char *progname = (char *)"ListEditor";
+window->show(1, &progname);} {}
+  }
+  Function {shown()} {return_type int
+  } {
+    code {return window->shown();} {}
   }
 } 
