@@ -1,18 +1,26 @@
 TODO for EPM:
 
-	- Add /opt relocation hack (and maybe allow for
-	  relocatable packages in general?)
+	- Fix special char handling for strings that are in
+	  portable scripts.
+	- Add /opt relocation hack and allow for relocatable and
+	  non-root packages in general.
 	- Add support for executables and libraries created with
 	  libtool.
 	- Add a small script that can be installed with every
 	  portable software package to list and remove installed
 	  packages.
-	- Add better manpage installation support - specifically,
-	  add code to automatically locate the correct man directory
-	  for each file depending on the architecture.
+	- Add better manpage installation support -
+	  specifically, add code to automatically locate the
+	  correct man directory for each file depending on the
+	  architecture.
 	- Add support for dependency checking against vendor
 	  packages; that is, a portable package could check its
 	  dependencies against portable, RPM, Debian, etc.
-	  packages, rather than just packages of the same format.
+	  packages, rather than just packages of the same
+	  format.
 	- Support filenames with spaces.
 	- Support run levels for init scripts.
+	- Add support for checksums (probably just "sum"
+	  command) to verify the tar files and installed files.
+	- Don't install the root/usr tar files unless they are >
+	  0 bytes.
