@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.28 2002/02/13 18:01:45 mike Exp $"
+// "$Id: setup2.cxx,v 1.29 2002/03/27 19:55:49 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -245,7 +245,7 @@ get_dists(const char *d)	// I - Directory to look in
     exit(1);
   }
 
-  if ((num_files = filename_list(".", &files)) == 0)
+  if ((num_files = fl_filename_list(".", &files)) == 0)
   {
     fputs("setup: Error - no software products found!\n", stderr);
     exit(1);
@@ -257,7 +257,7 @@ get_dists(const char *d)	// I - Directory to look in
 
   for (i = 0; i < num_files; i ++)
   {
-    ext = filename_ext(files[i]->d_name);
+    ext = fl_filename_ext(files[i]->d_name);
     if (strcmp(ext, ".install") == 0)
     {
       // Found a .install script...
@@ -371,13 +371,13 @@ get_installed(void)
   NumInstalled = 0;
   Installed    = NULL;
 
-  if ((num_files = filename_list(EPM_SOFTWARE, &files)) == 0)
+  if ((num_files = fl_filename_list(EPM_SOFTWARE, &files)) == 0)
     return;
 
   // Build a distribution list...
   for (i = 0; i < num_files; i ++)
   {
-    ext = filename_ext(files[i]->d_name);
+    ext = fl_filename_ext(files[i]->d_name);
     if (strcmp(ext, ".remove") == 0)
     {
       // Found a .remove script...
@@ -1064,5 +1064,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.28 2002/02/13 18:01:45 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.29 2002/03/27 19:55:49 mike Exp $".
 //
