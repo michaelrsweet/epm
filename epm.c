@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.7 1999/07/07 18:21:30 mike Exp $"
+ * "$Id: epm.c,v 1.8 1999/07/26 20:43:38 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -1113,6 +1113,15 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	 struct utsname *platform,	/* I - Platform information */
 	 int            *skip)		/* IO - Skip lines? */
 {
+  int	op,				/* Operation (0 = OR, 1 = AND) */
+	namelen,			/* Length of system name + version */
+	len,				/* Length of string */
+	match;				/* 1 = match, 0 = not */
+  char	*ptr,				/* Pointer into value */
+	namever[255],			/* Name + version */
+	value[255];			/* Value string */
+
+
   while (fgets(buffer, size, fp) != NULL)
   {
    /*
@@ -1132,11 +1141,50 @@ get_line(char           *buffer,	/* I - Buffer to read into */
       * Yes, do filtering...
       */
 
-      if (strstr(buffer + 8, platform->sysname) != NULL ||
-          strcmp(buffer + 8, "all\n") == 0)
-        *skip = 0;
-      else
-        *skip = 1;
+      *skip = 0;
+
+      if (strcmp(buffer + 8, "all\n") != 0)
+      {
+	namelen = strlen(platform->sysname);
+        buffer  += 8;
+	sprintf(namever, "%s-%s", platform->sysname, platform->release);
+
+        skip = *buffer != '!';
+
+        while (*buffer)
+	{
+          if (*buffer == '!')
+	  {
+	    op = 1;
+	    buffer ++;
+	  }
+	  else
+	    op = 0;
+
+	  for (ptr = value; *buffer && !isspace(*buffer) &&
+	                        (ptr - value) < (sizeof(value) - 1);)
+	    *ptr++ = *buffer++;
+
+	  *ptr = '\0';
+	  while (isspace(*buffer))
+	    buffer ++;
+
+          if ((ptr = strchr(value, '-')) != NULL)
+	    len = ptr - value;
+	  else
+	    len = strlen(value);
+
+          if (len < namelen)
+	    match = 0;
+	  else
+	    match = strncasecmp(value, namever, strlen(value)) == 0;
+
+          if (op)
+	    *skip |= match;
+	  else
+	    *skip &= !match;
+        }
+      }
     }
     else if (!*skip)
     {
@@ -1230,6 +1278,8 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   }
   else if (strcmp(platform->sysname, "osf1") == 0)
     strcpy(platform->sysname, "dunix"); /* AKA Compaq Tru64 UNIX */
+  else if (strcmp(platform->sysname, "irix64") == 0)
+    strcpy(platform->sysname, "irix"); /* IRIX */
 
 #ifdef DEBUG
   printf("sysname = %s\n", platform->sysname);
@@ -1423,5 +1473,5 @@ write_header(FILE   *fp,	/* I - Tar file to write to */
 
 
 /*
- * End of "$Id: epm.c,v 1.7 1999/07/07 18:21:30 mike Exp $".
+ * End of "$Id: epm.c,v 1.8 1999/07/26 20:43:38 mike Exp $".
  */
