@@ -5,7 +5,7 @@ mkepmlist(1)          Easy Software Products         mkepmlist(1)
 
 
 NNAAMMEE
-       mkepmlist - make an EPM list file from a directory.
+       mkepmlist - make an epm list file from a directory.
 
 SSYYNNOOPPSSIISS
        mmkkeeppmmlliisstt  [ -g _g_r_o_u_p ] [ -u _u_s_e_r ] [ --prefix _d_i_r_e_c_t_o_r_y ]
@@ -25,28 +25,31 @@ DDEESSCCRRIIPPTTIIOONN
 
        The  _-_-_p_r_e_f_i_x  option  adds the specified directory to the
        destination path. For example, if you installed  files  to
-       /opt/foo and wanted to build a distribution that installed
-       the files in /usr/local, the following command would  gen-
-       erate a file list that is installed in /usr/local:
+       "/opt/foo"   and  wanted  to  build  a  distribution  that
+       installed the files in "/usr/local", the following command
+       would   generate   a   file  list  that  is  installed  in
+       "/usr/local":
 
             mkepmlist --prefix=/usr/local /opt/foo >foo.list
 
 SSEEEE AALLSSOO
-       epm(1) - create software packages.
+       epm(1) - create software packages.  epminstall(1) - add  a
+       directory, file, or symlink to a list file.  epm.list(5) -
+       epm list file format.
 
 CCOOPPYYRRIIGGHHTT
-       Copyright  1999-2001 by Easy Software Products, All Rights
+       Copyright 1999-2001 by Easy Software Products, All  Rights
        Reserved.
 
-       This program is free software;  you  can  redistribute  it
+       This  program  is  free  software; you can redistribute it
        and/or modify it under the terms of the GNU General Public
-       License as published  by  the  Free  Software  Foundation;
+       License  as  published  by  the  Free Software Foundation;
        either version 2, or (at your option) any later version.
 
-       This  program  is  distributed in the hope that it will be
+       This program is distributed in the hope that  it  will  be
        useful, but WITHOUT ANY WARRANTY; without even the implied
-       warranty  of  MERCHANTABILITY  or FITNESS FOR A PARTICULAR
-       PURPOSE.  See the GNU  General  Public  License  for  more
+       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
+       PURPOSE.   See  the  GNU  General  Public License for more
        details.
 
 
@@ -58,9 +61,6 @@ CCOOPPYYRRIIGGHHTT
 
 
 
-
-
-
-26 March 2001          ESP Package Manager                      1
+20 June 2001           ESP Package Manager                      1
 
 

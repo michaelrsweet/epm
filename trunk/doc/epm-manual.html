@@ -237,6 +237,10 @@ http://www.cups.org/</A>) in 1998, our initial goal was to add support
 Upgrades?</SMALL></TH><TH><SMALL>Conflicts?</SMALL></TH><TH><SMALL>
 Requires?</SMALL></TH><TH><SMALL>Replaces?</SMALL></TH><TH><SMALL>Config
  Files?</SMALL></TH><TH><SMALL>Map Files?</SMALL></TH></TR>
+<TR><TD>BSD</TD><TD>FreeBSD
+<BR> NetBSD
+<BR> OpenBSD</TD><TD>Yes</TD><TD>Yes<SUP>2</SUP></TD><TD>No</TD><TD>No</TD><TD>
+Yes</TD><TD>Yes</TD><TD>No</TD><TD>No</TD><TD>No</TD></TR>
 <TR><TD>Debian</TD><TD>Corel Linux
 <BR> Debian GNU/Linux</TD><TD>Yes</TD><TD>Yes<SUP>2</SUP></TD><TD>No</TD><TD>
 Yes</TD><TD>Yes</TD><TD>Yes</TD><TD>Yes</TD><TD>Yes</TD><TD>No</TD></TR>
@@ -1157,18 +1161,27 @@ epm -f rpm epm
 <HR>
 <P>Create software packages</P>
 <H3>Synopsis</H3>
-<P><B>epm</B> [ -f<I> format</I> ] [ -g ] [ -k ] [ -n[mrs] ] [ -s<I>
- setup.xpm</I> ] [ --setup-image<I> setup.xpm</I> ] [ --setup-program<I>
- /foo/bar/setup</I> ] [ -v ] [<I> name=value name=value</I> ] product [<I>
- listfile</I> ]</P>
+<P><B>epm</B> [ -a<I> architecture</I> ] [ -f<I> format</I> ] [ -g ] [
+ -k ] [ -n[mrs] ] [ -s<I> setup.xpm</I> ] [ --setup-image<I> setup.xpm</I>
+ ] [ --setup-program<I> /foo/bar/setup</I> ] [ -v ] [<I> name=value
+ name=value</I> ] product [<I> listfile</I> ]</P>
 <H3>Description</H3>
 <P><B>epm</B> generates software packages complete with installation,
  removal, and (if necessary) patch scripts. Unless otherwise specified,
  the files required for<I> product</I> are read from a file named &quot;<I>
 product</I>.list&quot;.</P>
+<P>The<I> -a</I> option (&quot;architecture&quot;) specifies the actual
+ architecture for the software. Without this option the generic
+ processor architecture is used (&quot;intel&quot;, &quot;sparc&quot;, &quot;mips&quot;, etc.)</P>
 <P>The<I> -f</I> option (&quot;format&quot;) specifies the distribution format:</P>
 <UL>
 <DL>
+<DT>aix</DT>
+<DD>Generate an AIX distribution suitable for installation on an AIX
+ system.</DD>
+<DT>bsd</DT>
+<DD>Generate a BSD distribution suitable for installation on a FreeBSD,
+ NetBSD, or OpenBSD system.</DD>
 <DT>deb</DT>
 <DD>Generate a Debian distribution suitable for installation on a Debian
  Linux system.</DD>
@@ -1177,9 +1190,9 @@ product</I>.list&quot;.</P>
  running IRIX.</DD>
 <DT>native</DT>
 <DD>Generate an native distribution. This uses<I> rpm</I> for Linux,<I>
- inst</I> for IRIX,<I> pkg</I> for Solaris, and<I> swinstall</I> for
- HP-UX. All other operating systems default to the<I> portable</I>
- format.</DD>
+ inst</I> for IRIX,<I> pkg</I> for Solaris,<I> swinstall</I> for HP-UX,
+ and<I> bsd</I> for FreeBSD, NetBSD, and OpenBSD. All other operating
+ systems default to the<I> portable</I> format.</DD>
 <DT>pkg</DT>
 <DD>Generate an ATTsoftware package. These are used primarily under
  Solaris.</DD>
@@ -1522,15 +1535,27 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
  software.</P>
 <H2><A NAME="9_1">Changes in EPM v3.0</A></H2>
 <UL>
+<LI>Added new documentation.</LI>
+<LI>Added new &quot;-a arch&quot; option to support specific architectures (e.g.
+ i586, i686, ultrasparc, etc.)</LI>
+<LI>Added support for the *BSD package format using pkg_create.</LI>
+<LI>Added experimental support for the AIX package format using backup.</LI>
+<LI>Added new epminstall utility to build list files from &quot;make install&quot;
+ targets.</LI>
+<LI>Added snprintf/vsnprintf functions for systems that don't provide
+ them, and use snprintf and vsnprintf for all formatted strings that
+ aren't just numbers.</LI>
+<LI>Added new run_command() function to replace use of system()
+ function.</LI>
 <LI>The mkepmlist utility had a bad regular expression that thought that
  any argument (directory names, etc.) with a dash (&quot;-&quot;) in it was an
  unsupported option.</LI>
-<LI>Fixed a bug in the removal script - config files were removed by the
+<LI>Fixed a bug in the removal script: config files were removed by the
  remove script...</LI>
 <LI>Changed the config file install logic to copy the new config file
  (instead of moving it), so that an unchanged config file can be
- detected and removed. This provides the best of both worlds - unchanged
- config files are update automatically by an upgrade/install, while
+ detected and removed. This provides the best of both worlds: unchanged
+ config files are updated automatically by an upgrade/install, while
  changed ones are preserved.</LI>
 </UL>
 <H2><A NAME="9_2">Changes in EPM v2.8</A></H2>
