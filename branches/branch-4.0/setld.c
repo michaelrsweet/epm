@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.11.2.8 2004/10/31 17:22:54 mike Exp $"
+ * "$Id: setld.c,v 1.11.2.9 2004/12/05 06:08:23 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -39,7 +39,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
            dist_t         *dist,	/* I - Distribution information */
            struct utsname *platform)	/* I - Platform information */
 {
-  int		i;			/* Looping var */
+  int		i, j;			/* Looping vars */
   FILE		*fp;			/* Spec file */
   tarf_t	*tarfile;		/* .tardist file */
   char		name[1024];		/* Full product name */
@@ -71,9 +71,9 @@ make_setld(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  if (strlen(prodname) < 3)
+  if (strlen(prodname) != 3)
   {
-    fprintf(stderr, "epm: Need a product name of at least 3 characters.\n"
+    fprintf(stderr, "epm: Need a product name consisting of 3 uppercase characters.\n"
                     "     The current product name (%s) is not acceptable.\n",
             prodname);
     return (1);
@@ -82,11 +82,31 @@ make_setld(const char     *prodname,	/* I - Product short name */
   for (i = 0; prodname[i]; i ++)
     if (!isupper(prodname[i] & 255))
     {
-      fprintf(stderr, "epm: Need a product name containing uppercase letters.\n"
+      fprintf(stderr, "epm: Need a product name consisting of 3 uppercase characters.\n"
                       "     The current product name (%s) is not acceptable.\n",
               prodname);
       return (1);
     }
+
+  for (i = 0; i < dist->num_subpackages; i ++)
+  {
+    if (strlen(dist->subpackages[i]) > 74)
+    {
+      fprintf(stderr, "epm: Subpackage names must be less than 75 characters.\n"
+                      "     The current subpackage name (%s) is not acceptable.\n",
+              dist->subpackages[i]);
+      return (1);
+    }
+
+    for (j = 0; dist->subpackages[i][j]; j ++)
+      if (!isupper(dist->subpackages[i][j] & 255))
+      {
+	fprintf(stderr, "epm: Subpackage names may only contain uppercase letters.\n"
+                	"     The current subpackage name (%s) is not acceptable.\n",
+        	dist->subpackages[i]);
+	return (1);
+      }
+  }
 
  /*
   * Prepare for packaging...
@@ -428,5 +448,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.11.2.8 2004/10/31 17:22:54 mike Exp $".
+ * End of "$Id: setld.c,v 1.11.2.9 2004/12/05 06:08:23 mike Exp $".
  */
