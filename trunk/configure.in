@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.10 2000/04/26 23:46:30 mike Exp $"
+dnl "$Id: configure.in,v 1.11 2000/05/01 14:25:11 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -81,7 +81,7 @@ if test "$x_libraries" = "/usr/lib"; then
 	echo "Ignoring X library directory \"$x_libraries\" requested by configure."
 	x_libraries="NONE"
 fi
-if test "$x_libraries" != "NONE"; then
+if test "$x_libraries" != "NONE" -a "x$x_libraries" != "x"; then
 	LDFLAGS="$LDFLAGS -L$x_libraries"
 	if test "$uname" = "SunOS"; then
 		LDFLAGS="$LDFLAGS -R$x_libraries"
@@ -91,7 +91,7 @@ if test "$x_includes" = "/usr/include"; then
 	echo "Ignoring X include directory \"$x_includes\" requested by configure."
 	x_includes="NONE"
 fi
-if test "$x_includes" != "NONE"; then
+if test "$x_includes" != "NONE" -a "x$x_includes" != "x"; then
 	CFLAGS="$CFLAGS -I$x_includes"
 	CXXFLAGS="$CXXFLAGS -I$x_includes"
 fi
@@ -198,5 +198,5 @@ AC_SUBST(EPM_WHOAMI)
 AC_OUTPUT(Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.10 2000/04/26 23:46:30 mike Exp $".
+dnl End of "$Id: configure.in,v 1.11 2000/05/01 14:25:11 mike Exp $".
 dnl
