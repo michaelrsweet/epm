@@ -1,9 +1,9 @@
 /*
- * "$Id: mkepmlist.c,v 1.4 2002/12/17 18:57:55 swdev Exp $"
+ * "$Id: mkepmlist.c,v 1.5 2003/01/03 01:19:27 mike Exp $"
  *
  *   List file generation utility for the ESP Package Manager (EPM).
  *
- *   Copyright 2003 by Easy Software Products
+ *   Copyright 2002-2003 by Easy Software Products
  *   Copyright 2002 Andreas Voegele
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -18,17 +18,18 @@
  *
  * Contents:
  *
- *   main()        - Scan directories to produce a distribution list.
- *   get_group()   - Get a group name for the given group ID.
- *   get_user()    - Get a user name for the given user ID.
- *   hash_deinit() - Deinitialize a hash table.
- *   hash_id()     - Generate a hash for a user or group ID.
- *   hash_init()   - Initialize a hash table.
- *   hash_insert() - Insert a new entry in a hash table.
- *   hash_search() - Find a user or group ID in the hash table...
- *   info()        - Show the EPM copyright and license.
- *   process_dir() - Process a directory...
- *   usage()       - Show command-line usage instructions.
+ *   main()         - Scan directories to produce a distribution list.
+ *   get_group()    - Get a group name for the given group ID.
+ *   get_user()     - Get a user name for the given user ID.
+ *   hash_deinit()  - Deinitialize a hash table.
+ *   hash_id()      - Generate a hash for a user or group ID.
+ *   hash_init()    - Initialize a hash table.
+ *   hash_insert()  - Insert a new entry in a hash table.
+ *   hash_search()  - Find a user or group ID in the hash table...
+ *   info()         - Show the EPM copyright and license.
+ *   process_dir()  - Process a directory...
+ *   process_file() - Process a file...
+ *   usage()        - Show command-line usage instructions.
  */
 
 #include "epm.h"
@@ -71,6 +72,7 @@ char		*hash_insert(struct node *a, unsigned id,
 char		*hash_search(struct node *a, unsigned id);
 void		info(void);
 int		process_dir(const char *srcpath, const char *dstpath);
+int		process_file(const char *src, const char *dstpath);
 void		usage(void);
 
 
@@ -85,7 +87,9 @@ main(int  argc,			/* I - Number of command-line arguments */
   int		i;		/* Looping var */
   const char	*prefix,	/* Installation prefix */
 		*temp;		/* Temporary prefix */
-  char		filename[1024];	/* Absolute directory */
+  char		filename[1024],	/* Absolute directory */
+		*ptr;		/* Pointer into filename */
+  struct stat	fileinfo;	/* File information */
 
 
  /*
@@ -155,36 +159,55 @@ main(int  argc,			/* I - Number of command-line arguments */
 
       if (prefix)
         temp = prefix;
-      else if (argv[i][0] == '/')
-        temp = argv[i];
       else
       {
-        if (argv[i][0] == '.')
-	{
-	  for (temp = argv[i]; *temp == '.';)
-	  {
-	    if (strncmp(temp, "./", 2) == 0)
-	      temp += 2;
-	    else if (strncmp(temp, "../", 3) == 0)
-	      temp += 3;
-	    else
-	      break;
-	  }
-
-	  if (strcmp(temp, ".") == 0)
-	    temp = "";
-	}
+        if (argv[i][0] == '/')
+          temp = argv[i];
 	else
-	  temp = argv[i];
-
-        if (temp[0])
 	{
-          snprintf(filename, sizeof(filename), "/%s", temp);
-	  temp = filename;
+          if (argv[i][0] == '.')
+	  {
+	    for (temp = argv[i]; *temp == '.';)
+	    {
+	      if (strncmp(temp, "./", 2) == 0)
+		temp += 2;
+	      else if (strncmp(temp, "../", 3) == 0)
+		temp += 3;
+	      else
+		break;
+	    }
+
+	    if (strcmp(temp, ".") == 0)
+	      temp = "";
+	  }
+	  else
+	    temp = argv[i];
+
+          if (temp[0])
+	  {
+            snprintf(filename, sizeof(filename), "/%s", temp);
+	    temp = filename;
+	  }
+	}
+
+        if (!stat(temp, &fileinfo))
+	{
+	  if (!S_ISDIR(fileinfo.st_mode))
+	  {
+	    if (temp != filename)
+	    {
+	      strncpy(filename, temp, sizeof(filename) - 1);
+	      filename[sizeof(filename) - 1] = '\0';
+	      temp = filename;
+	    }
+
+	    if ((ptr = strrchr(temp, '/')) != NULL)
+	      *ptr = '\0';
+	  }
 	}
       }
 
-      process_dir(argv[i], temp);
+      process_file(argv[i], temp);
     }
 
  /*
@@ -428,13 +451,8 @@ process_dir(const char *srcpath,/* I - Source path */
 {
   DIR		*dir;		/* Directory to read from */
   struct dirent *dent;		/* Current directory entry */
-  int		srclen,		/* Length of source path */
-		linklen,	/* Length of link path */
-		dstlen;		/* Length of destination path */
-  char		src[1024],	/* Temporary source path */
-		link[1024],	/* Link for source */
-		dst[1024];	/* Temporary destination path */
-  struct stat	srcinfo;	/* Information on the source file */
+  int		srclen;		/* Length of source path */
+  char		src[1024];	/* Temporary source path */
 
 
  /*
@@ -454,7 +472,6 @@ process_dir(const char *srcpath,/* I - Source path */
   */
 
   srclen = strlen(srcpath);
-  dstlen = strlen(dstpath);
 
   while ((dent = readdir(dir)) != NULL)
   {
@@ -467,7 +484,7 @@ process_dir(const char *srcpath,/* I - Source path */
       continue;
 
    /*
-    * Get source file info...
+    * Process file...
     */
 
     if (srclen > 0 && srcpath[srclen - 1] == '/')
@@ -475,66 +492,103 @@ process_dir(const char *srcpath,/* I - Source path */
     else
       snprintf(src, sizeof(src), "%s/%s", srcpath, dent->d_name);
 
-    if (dstlen > 0 && dstpath[dstlen - 1] == '/')
-      snprintf(dst, sizeof(dst), "%s%s", dstpath, dent->d_name);
-    else
-      snprintf(dst, sizeof(dst), "%s/%s", dstpath, dent->d_name);
-
-    if (lstat(src, &srcinfo))
+    if (process_file(src, dstpath))
     {
-      fprintf(stderr, "mkepmlist: Unable to stat \"%s\" - %s.\n", src,
-              strerror(errno));
-      continue;
-    }
-
-   /*
-    * Process accordingly...
-    */
-
-    if (S_ISDIR(srcinfo.st_mode))
-    {
-     /*
-      * Directory...
-      */
-
-      qprintf(stdout, "d %o %s %s %s -\n", (unsigned)(srcinfo.st_mode & 07777),
-	      get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), dst);
-
-      if (process_dir(src, dst))
-        return (-1);
-    }
-    else if (S_ISLNK(srcinfo.st_mode))
-    {
-     /*
-      * Symlink...
-      */
-
-      if ((linklen = readlink(src, link, sizeof(link) - 1)) < 0)
-      {
-        fprintf(stderr, "mkepmlist: Unable to read symlink \"%s\" - %s.\n",
-	        src, strerror(errno));
-        continue;
-      }
-
-      link[linklen] = '\0';
-
-      qprintf(stdout, "l %o %s %s %s %s\n",
-              (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid),
-	      get_group(srcinfo.st_gid), dst, link);
-    }
-    else if (S_ISREG(srcinfo.st_mode))
-    {
-     /*
-      * Regular file...
-      */
-
-      qprintf(stdout, "f %o %s %s %s %s\n",
-              (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid),
-	      get_group(srcinfo.st_gid), dst, src);
+      closedir(dir);
+      return (-1);
     }
   }
 
   closedir(dir);
+  return (0);
+}
+
+
+/*
+ * 'process_file()' - Process a file...
+ */
+
+int				/* O - 0 on success, -1 on error */
+process_file(const char *src,	/* I - Source path */
+             const char *dstpath)/* I - Destination path */
+{
+  const char	*srcptr;	/* Pointer into source path */
+  struct stat	srcinfo;	/* Information on the source file */
+  int		linklen,	/* Length of link path */
+		dstlen;		/* Length of destination path */
+  char		link[1024],	/* Link for source */
+		dst[1024];	/* Temporary destination path */
+
+
+ /*
+  * Get source file info...
+  */
+
+  dstlen = strlen(dstpath);
+
+  if ((srcptr = strrchr(src, '/')) != NULL)
+    srcptr ++;
+  else
+    srcptr = src;
+
+  if (dstlen > 0 && dstpath[dstlen - 1] == '/')
+    snprintf(dst, sizeof(dst), "%s%s", dstpath, srcptr);
+  else
+    snprintf(dst, sizeof(dst), "%s/%s", dstpath, srcptr);
+
+  if (lstat(src, &srcinfo))
+  {
+    fprintf(stderr, "mkepmlist: Unable to stat \"%s\" - %s.\n", src,
+            strerror(errno));
+    return (-1);
+  }
+
+ /*
+  * Process accordingly...
+  */
+
+  if (S_ISDIR(srcinfo.st_mode))
+  {
+   /*
+    * Directory...
+    */
+
+    qprintf(stdout, "d %o %s %s %s -\n", (unsigned)(srcinfo.st_mode & 07777),
+	    get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), dst);
+
+    if (process_dir(src, dst))
+      return (-1);
+  }
+  else if (S_ISLNK(srcinfo.st_mode))
+  {
+   /*
+    * Symlink...
+    */
+
+    if ((linklen = readlink(src, link, sizeof(link) - 1)) < 0)
+    {
+      fprintf(stderr, "mkepmlist: Unable to read symlink \"%s\" - %s.\n",
+	      src, strerror(errno));
+      return (-1);
+    }
+
+    link[linklen] = '\0';
+
+    qprintf(stdout, "l %o %s %s %s %s\n",
+            (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid),
+	    get_group(srcinfo.st_gid), dst, link);
+  }
+  else if (S_ISREG(srcinfo.st_mode))
+  {
+   /*
+    * Regular file...
+    */
+
+    qprintf(stdout, "f %o %s %s %s %s\n",
+            (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid),
+	    get_group(srcinfo.st_gid), dst, src);
+  }
+
   return (0);
 }
 
@@ -559,5 +613,5 @@ usage(void)
 
 
 /*
- * End of "$Id: mkepmlist.c,v 1.4 2002/12/17 18:57:55 swdev Exp $".
+ * End of "$Id: mkepmlist.c,v 1.5 2003/01/03 01:19:27 mike Exp $".
  */
