@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Wizard.cxx,v 1.3 2000/07/12 18:29:11 mike Exp $"
+// "$Id: Fl_Wizard.cxx,v 1.4 2001/01/22 15:03:34 mike Exp $"
 //
 //   Fl_Wizard widget routines.
 //
-//   Copyright 1997-2000 by Easy Software Products.
+//   Copyright 1997-2001 by Easy Software Products.
 //
 //   These coded instructions, statements, and computer programs are the
 //   property of Easy Software Products and are protected by Federal
@@ -197,5 +197,5 @@ Fl_Wizard::value(Fl_Widget *kid)
 
 
 //
-// End of "$Id: Fl_Wizard.cxx,v 1.3 2000/07/12 18:29:11 mike Exp $".
+// End of "$Id: Fl_Wizard.cxx,v 1.4 2001/01/22 15:03:34 mike Exp $".
 //
