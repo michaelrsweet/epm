@@ -6,6 +6,8 @@ WHAT'S NEW IN EPM 3.7.1?
     EPM 3.7.1 adds the following features, fixes, and changes to
     EPM 3.7:
 
+	- MacOS X packages can now be created when using the
+	  new Xcode developer tools.
 	- Packages created on MacOS X now use the system name
 	  "macosx" and the MacOS X version number.  The old
 	  "darwin" name is still accepted as a synonym.

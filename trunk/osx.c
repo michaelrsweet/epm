@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.11 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: osx.c,v 1.12 2004/04/21 18:54:38 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -48,6 +48,12 @@ make_osx(const char     *prodname,	/* I - Product short name */
   struct group	*grp;			/* Pointer to group record */
   char		current[1024];		/* Current directory */
   const char	*option;		/* Init script option */
+  static const char * const paths[] =	/* Paths to PackageMaker program */
+		{
+		  "/Developer/Applications/PackageMaker.app",
+		  "/Developer/Applications/Utilities/PackageMaker.app",
+		  NULL
+		};
 
 
   if (Verbosity)
@@ -373,10 +379,21 @@ make_osx(const char     *prodname,	/* I - Product short name */
   else
     snprintf(filename, sizeof(filename), "%s/%s", current, directory);
 
-  run_command(NULL, "/Developer/Applications/PackageMaker.app/"
-                    "Contents/MacOS/PackageMaker -build "
-		    "-p %s/%s.pkg -f %s/Package -r %s/Resources -d %s/%s-desc.plist -i %s/%s-info.plist",
-	      filename, prodname, filename, filename, filename, prodname, filename, prodname);
+  for (i = 0; paths[i]; i ++)
+    if (!access(paths[i], 0))
+      break;
+
+  if (paths[i])
+    run_command(NULL, "%s/Contents/MacOS/PackageMaker -build "
+		      "-p %s/%s.pkg -f %s/Package -r %s/Resources "
+		      "-d %s/%s-desc.plist -i %s/%s-info.plist",
+		paths[i], filename, prodname, filename, filename, filename,
+		prodname, filename, prodname);
+  else
+  {
+    fputs("epm: Unable to find \"PackageMaker\" program!\n", stderr);
+    return (1);
+  }
 
   snprintf(filename, sizeof(filename), "%s/%s.pkg", directory, prodname);
   if (access(filename, 0))
@@ -406,5 +423,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.11 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: osx.c,v 1.12 2004/04/21 18:54:38 mike Exp $".
  */
