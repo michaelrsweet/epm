@@ -1,30 +1,33 @@
-README - ESP Package Manager (EPM) 1.7
+README - ESP Package Manager (EPM) 2.0
 --------------------------------------
 
 WHAT IS EPM?
 
     EPM is the software packaging tool that we now use at Easy Software
-    Products.  It is a simple tool that generates compressed tar files
-    containing installation and removal scripts, a README and license
-    file, and a tar file containing the actual software files.  EPM can
-    also generate patch distributions and keeps track of software that
-    is installed using the EPM-generated scripts.
+    Products.  It is a simple tool that generates software and patch
+    distributions in various formats, including:
+
+        - Red Hat Package Manager ("RPM")
+	- Debian Package Manager ("dpkg")
+	- IRIX Software Manager ("inst" or "tardist")
+	- Portable (installation and removal scripts with tar files)
+
+    EPM also includes a graphical "setup" program that can be provided
+    with your distributions to make installation of more than one
+    package a snap.
 
 
 WHY ANOTHER SOFTWARE PACKAGING TOOL?
 
     We developed EPM because we are sick of developing and testing N
-    different software distributions for the operating systems we
-    support.  Also, when we started looking at selling software for
-    Linux we saw that there are at least four different "standard"
-    distribution formats, and none of them are compatible with the
-    other.  Also, many of these formats required that you install the
-    software on your development system (or perform some voodoo magic)
-    before you could build your distribution!
-
-    Clearly we needed something that could be used for all platforms,
-    *without* requiring special software packages on the customer's
-    system!
+    different software distributions, each with their own input files
+    and setup requirements.
+    
+    Also, when we started looking at selling software for Linux we saw
+    that there are at least four different "standard" distribution
+    formats, and none of them are compatible with the other.  Clearly
+    we needed something that could be used for all platforms, *without*
+    requiring special software packages on the customer's system!
 
 
 WHAT IS REQUIRED FOR EPM?
@@ -32,10 +35,14 @@ WHAT IS REQUIRED FOR EPM?
     On your development system you just need a C compiler, a make
     program, the Bourne (or Korn or Bash) shell, and GNU zip.
 
-    On the destination system your customers/users will need the Bourne
-    (or Korn or Bash) shell, a tar program, and GNU zip. The first two
-    are standard items, and GNU zip is being shipped by most vendors as
-    well.
+    The graphical setup program needs a C++ compiler and the FLTK
+    library, available at "http://www.fltk.org".
+
+    EPM can generate so-called "portable" distributions that are based
+    on shell scripts and tar files.  For these types of distributions
+    your customers/users will need the Bourne (or Korn or Bash) shell,
+    a tar program, and GNU zip. The first two are standard items, and
+    GNU zip is being shipped by most vendors as well.
 
 
 HOW DO I COMPILE EPM?
@@ -61,16 +68,28 @@ HOW DO I USE EPM?
 
         more epm.1
 
-    An example of an EPM software list file can be found in the CUPS
-    software distribution at:
-
-        http://www.cups.org/software.html
+    An example EPM software list file is provided with this distribution
+    in the file "epm.list".
 
 
 DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
 
     No!  EPM is free software and any installations you create are
     unencumbered by licensing of any kind (not even the GPL.)
+
+
+WHAT'S NEW IN EPM 2.0?
+
+    EPM 2.0 adds the following features and fixes to EPM 1.7:
+
+	- New "-f" option to generate vendor-specific software
+	  distributions.
+	- The "-t" option (test) is no longer supported.
+	- New "-v" option to control the amount of information
+	  that is reported.
+	- Now support "portable" (script-based), Red Hat, Debian,
+	  and IRIX software distributions.
+	- New graphical setup program for portable distributions.
 
 
 WHAT'S NEW IN EPM 1.7?
