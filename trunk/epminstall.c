@@ -1,5 +1,5 @@
 /*
- * "$Id: epminstall.c,v 1.8 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: epminstall.c,v 1.9 2002/08/17 22:26:08 mike Exp $"
  *
  *   Install program replacement for the ESP Package Manager (EPM).
  *
@@ -531,14 +531,20 @@ write_dist(const char *listname,	/* I - File to write to */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    fprintf(listfile, "%c %04o %s %s %s %s\n",
+  {
+    fprintf(listfile, "%c %04o %s %s %s %s",
 	    file->type, file->mode, file->user, file->group,
 	    file->dst, file->src);
 
+    if (file->options[0])
+      fprintf(listfile, "%s\n", file->options);
+    else
+      putc('\n', listfile);
+  }
   return (fclose(listfile));
 }
 
 
 /*
- * End of "$Id: epminstall.c,v 1.8 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: epminstall.c,v 1.9 2002/08/17 22:26:08 mike Exp $".
  */
