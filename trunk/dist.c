@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.34 2001/06/28 16:20:10 mike Exp $"
+ * "$Id: dist.c,v 1.35 2001/07/02 20:25:23 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -740,6 +740,8 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
       snprintf(dist->packager, sizeof(dist->packager), "unknown@%s", buf);
   }
 
+  sort_dist_files(dist);
+
   return (dist);
 }
 
@@ -751,9 +753,29 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 void
 sort_dist_files(dist_t *dist)	/* I - Distribution to sort */
 {
+  int		i;		/* Looping var */
+  file_t	*file;		/* File in distribution */
+
+
+ /*
+  * Sort the files...
+  */
+
   if (dist->num_files > 1)
     qsort(dist->files, dist->num_files, sizeof(file_t),
           (int (*)(const void *, const void *))compare_files);
+
+ /*
+  * Remove duplicates...
+  */
+
+  for (i = dist->num_files - 1, file = dist->files; i > 0; i --, file ++)
+    if (strcmp(file[0].dst, file[1].dst) == 0)
+    {
+      memcpy(file, file + 1, i * sizeof(file_t));
+      dist->num_files --;
+      file --;
+    }
 }
 
 
@@ -1204,5 +1226,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.34 2001/06/28 16:20:10 mike Exp $".
+ * End of "$Id: dist.c,v 1.35 2001/07/02 20:25:23 mike Exp $".
  */
