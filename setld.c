@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.7 2001/04/27 12:21:43 mike Exp $"
+ * "$Id: setld.c,v 1.8 2001/04/27 12:35:48 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -293,13 +293,13 @@ make_setld(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "NAME='%s'\n", dist->product);
+  fprintf(fp, "NAME='%s, %s'\n", dist->product, dist->version);
   fprintf(fp, "CODE=%s\n", prodname);
   fprintf(fp, "VER=%03d\n", dist->vernumber);
   fprintf(fp, "MI=%s%03d.mi\n", prodname, dist->vernumber);
   fputs("COMPRESS=0\n", fp);
   fputs("%%\n", fp);
-  fprintf(fp, "%s\t.\t0\t'%s'\n", subset, dist->product);
+  fprintf(fp, "%s\t.\t0\t'%s, %s'\n", subset, dist->product, dist->version);
   fclose(fp);
 
  /*
@@ -424,5 +424,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.7 2001/04/27 12:21:43 mike Exp $".
+ * End of "$Id: setld.c,v 1.8 2001/04/27 12:35:48 mike Exp $".
  */
