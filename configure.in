@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.41 2001/10/17 11:46:37 mike Exp $"
+dnl "$Id: configure.in,v 1.42 2001/10/17 12:12:10 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -366,17 +366,18 @@ AC_SUBST(EPM_LIBDIR)
 
 dnl Figure out the right option to use for the RPM build architecture...
 if test "x$RPM" != "x"; then
-	build="`$RPM -v | grep buildarch`"
+	# It would be nice if Red Hat could make up its mind...
+	rpmversion="`$RPM --version | awk '{print $3}' | awk -F. '{print $1 * 10000 + $2 * 100 + $3}'`"
 
-	if test "x$build" = "x"; then
-		target="`$RPM -v | grep target=`"
-		if test "x$target" = "x"; then
+	echo RPM version is $rpmversion
+	if test $rpmversion -lt 30000; then
+		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--buildarch ")
+	else
+		if test $rpmversion -lt 40003; then
 			AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--target ")
 		else
 			AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--target=")
 		fi
-	else
-		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--buildarch ")
 	fi
 fi
 
@@ -386,5 +387,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist doc/Makefile)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.41 2001/10/17 11:46:37 mike Exp $".
+dnl End of "$Id: configure.in,v 1.42 2001/10/17 12:12:10 mike Exp $".
 dnl

@@ -2949,11 +2949,17 @@ EOF
 
 
 if test "x$RPM" != "x"; then
-	build="`$RPM -v | grep buildarch`"
+	# It would be nice if Red Hat could make up its mind...
+	rpmversion="`$RPM --version | awk '{print $3}' | awk -F. '{print $1 * 10000 + $2 * 100 + $3}'`"
 
-	if test "x$build" = "x"; then
-		target="`$RPM -v | grep target=`"
-		if test "x$target" = "x"; then
+	echo RPM version is $rpmversion
+	if test $rpmversion -lt 30000; then
+		cat >> confdefs.h <<EOF
+#define EPM_RPMARCH "--buildarch "
+EOF
+
+	else
+		if test $rpmversion -lt 40003; then
 			cat >> confdefs.h <<EOF
 #define EPM_RPMARCH "--target "
 EOF
@@ -2964,11 +2970,6 @@ EOF
 EOF
 
 		fi
-	else
-		cat >> confdefs.h <<EOF
-#define EPM_RPMARCH "--buildarch "
-EOF
-
 	fi
 fi
 
