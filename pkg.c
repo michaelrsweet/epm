@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.32 2005/02/09 19:54:11 mike Exp $"
+ * "$Id$"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -142,7 +142,9 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   }
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (d->type == DEPEND_REQUIRES)
+    if (strcmp(d->product, "_self"))
+      continue;
+    else if (d->type == DEPEND_REQUIRES)
       fprintf(fp, "P %s\n", d->product);
     else
       fprintf(fp, "I %s\n", d->product);
@@ -536,5 +538,5 @@ pkg_path(const char *filename,		/* I - Source filename */
 
 
 /*
- * End of "$Id: pkg.c,v 1.32 2005/02/09 19:54:11 mike Exp $".
+ * End of "$Id$".
  */
