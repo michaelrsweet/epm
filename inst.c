@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.18 2001/07/23 17:56:09 mike Exp $"
+ * "$Id: inst.c,v 1.19 2001/10/31 20:31:08 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -204,7 +204,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_POST_INSTALL)
+    if (c->type == COMMAND_PRE_INSTALL)
       break;
 
   if (i)
@@ -245,7 +245,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (; i > 0; i --, c ++)
-      if (c->type == COMMAND_POST_INSTALL)
+      if (c->type == COMMAND_PRE_INSTALL)
         fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -312,7 +312,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_POST_INSTALL)
+    if (c->type == COMMAND_PRE_REMOVE)
       break;
 
   if (i)
@@ -353,7 +353,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (; i > 0; i --, c ++)
-      if (c->type == COMMAND_POST_INSTALL)
+      if (c->type == COMMAND_PRE_REMOVE)
         fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -366,7 +366,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_POST_INSTALL)
+    if (c->type == COMMAND_POST_REMOVE)
       break;
 
   if (i)
@@ -407,7 +407,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (; i > 0; i --, c ++)
-      if (c->type == COMMAND_POST_INSTALL)
+      if (c->type == COMMAND_POST_REMOVE)
         fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -591,5 +591,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.18 2001/07/23 17:56:09 mike Exp $".
+ * End of "$Id: inst.c,v 1.19 2001/10/31 20:31:08 mike Exp $".
  */
