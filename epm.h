@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.13 2001/03/20 14:06:50 mike Exp $"
+ * "$Id: epm.h,v 1.14 2001/03/26 16:18:47 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -206,6 +206,7 @@ typedef struct				/**** Distribution Structure ****/
  */
 
 extern int		Verbosity;	/* Be verbose? */
+extern int		KeepFiles;	/* Keep intermediate files? */
 extern const char	*SetupProgram;	/* Setup program */
 
 
@@ -254,5 +255,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.13 2001/03/20 14:06:50 mike Exp $".
+ * End of "$Id: epm.h,v 1.14 2001/03/26 16:18:47 mike Exp $".
  */
