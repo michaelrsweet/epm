@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.47 2003/07/23 21:41:08 mike Exp $"
+ * "$Id: rpm.c,v 1.48 2003/07/24 01:20:54 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -318,20 +318,20 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     switch (tolower(file->type))
     {
       case 'c' :
-          qprintf(fp, "%%attr(%04o,%s,%s) %%config(noreplace) %s\n", file->mode,
-	          file->user, file->group, file->dst);
+          fprintf(fp, "%%attr(%04o,%s,%s) %%config(noreplace) \"%s\"\n",
+	          file->mode, file->user, file->group, file->dst);
           break;
       case 'd' :
-          qprintf(fp, "%%attr(%04o,%s,%s) %%dir %s\n", file->mode, file->user,
-	          file->group, file->dst);
+          fprintf(fp, "%%attr(%04o,%s,%s) %%dir \"%s\"\n", file->mode,
+	          file->user, file->group, file->dst);
           break;
       case 'f' :
       case 'l' :
-          qprintf(fp, "%%attr(%04o,%s,%s) %s\n", file->mode, file->user,
+          fprintf(fp, "%%attr(%04o,%s,%s) \"%s\"\n", file->mode, file->user,
 	          file->group, file->dst);
           break;
       case 'i' :
-          qprintf(fp, "%%attr(0555,root,root) %s/init.d/%s\n", SoftwareDir,
+          fprintf(fp, "%%attr(0555,root,root) \"%s/init.d/%s\"\n", SoftwareDir,
 	          file->dst);
           break;
     }
@@ -457,5 +457,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.47 2003/07/23 21:41:08 mike Exp $".
+ * End of "$Id: rpm.c,v 1.48 2003/07/24 01:20:54 mike Exp $".
  */

@@ -6,6 +6,10 @@ WHAT'S NEW IN EPM 3.7?
     EPM 3.7 adds the following features, fixes, and changes to
     EPM 3.6:
 
+	- RPM output did not work with filenames that contained
+	  a dollar sign ($).
+	- Added Slackware packager support based upon a patch
+	  contributed by Alec Thomas.
 	- The file copy code reported write errors for the
 	  source filename and not the (correct) destination
 	  filename.

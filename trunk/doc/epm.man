@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.13 2002/12/17 18:57:59 swdev Exp $"
+.\" "$Id: epm.man,v 1.14 2003/07/24 01:20:56 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "17 October 2002" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "23 July 2003" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -102,6 +102,10 @@ setld
 .br
 Generate a Tru64 (setld) software distribution.
 .TP 5
+slackware
+.br
+Generate a Slackware Linux software distribution.
+.TP 5
 swinstall, depot
 .br
 Generate a HP-UX software distribution.
@@ -171,5 +175,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.13 2002/12/17 18:57:59 swdev Exp $".
+.\" End of "$Id: epm.man,v 1.14 2003/07/24 01:20:56 mike Exp $".
 .\"
