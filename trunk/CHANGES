@@ -14,6 +14,8 @@ WHAT'S NEW IN EPM 2.7?
 	- Added support for portable scripts under AIX.
 	- Fixed the space checking code in portable installation
 	  scripts.
+	- Now break up long lines in the portable install/patch/
+	  remove scripts.
 
 
 WHAT'S NEW IN EPM 2.6?
