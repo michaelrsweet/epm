@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.1 1999/11/04 20:31:08 mike Exp $"
+ * "$Id: tar.c,v 1.2 1999/11/05 14:44:41 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -258,7 +258,7 @@ tar_open(const char *filename,	/* I - File to create */
 
   if (compress)
   {
-    sprintf(command, EPM_GZIP " -9 > %s", filename);
+    sprintf(command, EPM_GZIP " > %s", filename);
     fp->file = popen(command, "wb");
   }
   else
@@ -285,5 +285,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.1 1999/11/04 20:31:08 mike Exp $".
+ * End of "$Id: tar.c,v 1.2 1999/11/05 14:44:41 mike Exp $".
  */
