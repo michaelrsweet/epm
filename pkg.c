@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.30 2005/02/08 20:24:59 mike Exp $"
+ * "$Id: pkg.c,v 1.31 2005/02/08 21:29:57 swdev Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -18,6 +18,7 @@
  * Contents:
  *
  *   make_pkg() - Make an AT&T software distribution package.
+ *   pkg_path() - Return an absolute path for the prototype file.
  */
 
 /*
@@ -25,6 +26,13 @@
  */
 
 #include "epm.h"
+
+
+/*
+ * Local functions...
+ */
+
+static const char	*pkg_path(const char *filename, const char *dirname);
 
 
 /*
@@ -380,20 +388,23 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
+#if 0 /* apparently does not work on Solaris 7... */
   fprintf(fp, "!search %s\n", current);
+#endif /* 0 */
 
-  fprintf(fp, "i copyright=%s\n", dist->license);
-  fprintf(fp, "i depend=%s/%s.depend\n", directory, prodname);
-  fprintf(fp, "i pkginfo=%s/%s.pkginfo\n", directory, prodname);
+  fprintf(fp, "i copyright=%s\n", pkg_path(dist->license, current));
+  fprintf(fp, "i depend=%s/%s.depend\n", pkg_path(directory, current), prodname);
+  fprintf(fp, "i pkginfo=%s/%s.pkginfo\n", pkg_path(directory, current),
+          prodname);
 
   if (preinstall[0])
-    fprintf(fp, "i preinstall=%s\n", preinstall);
+    fprintf(fp, "i preinstall=%s\n", pkg_path(preinstall, current));
   if (postinstall[0])
-    fprintf(fp, "i postinstall=%s\n", postinstall);
+    fprintf(fp, "i postinstall=%s\n", pkg_path(postinstall, current));
   if (preremove[0])
-    fprintf(fp, "i preremove=%s\n", preremove);
+    fprintf(fp, "i preremove=%s\n", pkg_path(preremove, current));
   if (postremove[0])
-    fprintf(fp, "i postremove=%s\n", postremove);
+    fprintf(fp, "i postremove=%s\n", pkg_path(postremove, current));
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     switch (tolower(file->type))
@@ -401,7 +412,8 @@ make_pkg(const char     *prodname,	/* I - Product short name */
       case 'c' :
           qprintf(fp, "e %s %s=%s %04o %s %s\n",
 	          file->subpackage ? file->subpackage : "none",
-	          file->dst, file->src, file->mode, file->user, file->group);
+	          file->dst, pkg_path(file->src, current),
+		  file->mode, file->user, file->group);
           break;
       case 'd' :
 	  qprintf(fp, "d %s %s %04o %s %s\n",
@@ -412,7 +424,8 @@ make_pkg(const char     *prodname,	/* I - Product short name */
       case 'i' :
           qprintf(fp, "f %s %s=%s %04o %s %s\n",
 	          file->subpackage ? file->subpackage : "none",
-	          file->dst, file->src, file->mode, file->user, file->group);
+	          file->dst, pkg_path(file->src, current),
+		  file->mode, file->user, file->group);
           break;
       case 'l' :
           qprintf(fp, "s %s %s=%s\n",
@@ -497,5 +510,24 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.30 2005/02/08 20:24:59 mike Exp $".
+ * 'pkg_path()' - Return an absolute path for the prototype file.
+ */
+
+static const char *			/* O - Absolute filename */
+pkg_path(const char *filename,		/* I - Source filename */
+         const char *dirname)		/* I - Source directory */
+{
+  static char	absname[1024];		/* Absolute filename */
+
+
+  if (filename[0] == '/')
+    return (filename);
+
+  snprintf(absname, sizeof(absname), "%s/%s", dirname, filename);
+  return (absname);
+}
+
+
+/*
+ * End of "$Id: pkg.c,v 1.31 2005/02/08 21:29:57 swdev Exp $".
  */
