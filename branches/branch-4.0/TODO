@@ -29,3 +29,4 @@ TODO for EPM:
 	- Support run levels for init scripts.
 	- Add support for checksums (probably just "sum"
 	  command) to verify the tar files and installed files.
+	- Support package categories (RPM, Debian, AT&T PKG, etc.)
