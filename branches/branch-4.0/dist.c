@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.7 2002/08/17 22:26:34 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.8 2002/08/29 11:53:23 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -22,6 +22,9 @@
  *   add_file()        - Add a file to the distribution.
  *   free_dist()       - Free memory used by a distribution.
  *   get_platform()    - Get the operating system information...
+ *   get_runlevels()   - Get the run levels for the specified init script.
+ *   get_start()       - Get the start number for an init script.
+ *   get_stop()        - Get the stop number for an init script.
  *   read_dist()       - Read a software distribution.
  *   sort_dist_files() - Sort the files in the distribution.
  *   write_dist()      - Write a distribution list file...
@@ -556,6 +559,62 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   printf("release = %s\n", platform->release);
   printf("machine = %s\n", platform->machine);
 #endif /* DEBUG */
+}
+
+
+/*
+ * 'get_runlevels()' - Get the run levels for the specified init script.
+ */
+
+const char *				/* O - Run levels */
+get_runlevels(file_t     *file,		/* I - File */
+              const char *deflevels)	/* I - Default run levels */
+{
+  const char	*runlevels;		/* Pointer to runlevels option */
+
+
+  if ((runlevels = strstr(file->options, "runlevel(")) != NULL)
+    runlevels += 9;
+  else
+    runlevels = deflevels;
+
+  return (runlevels);
+}
+
+
+/*
+ * 'get_start()' - Get the start number for an init script.
+ */
+
+int					/* O - Start number */
+get_start(file_t *file,			/* I - File */
+          int    defstart)		/* I - Default start number */
+{
+  const char	*start;			/* Pointer to start option */
+
+
+  if ((start = strstr(file->options, "start(")) != NULL)
+    return (atoi(start + 6));
+  else
+    return (defstart);
+}
+
+
+/*
+ * 'get_stop()' - Get the stop number for an init script.
+ */
+
+int					/* O - Start number */
+get_stop(file_t *file,			/* I - File */
+          int    defstop)		/* I - Default stop number */
+{
+  const char	*stop;			/* Pointer to stop option */
+
+
+  if ((stop = strstr(file->options, "stop(")) != NULL)
+    return (atoi(stop + 5));
+  else
+    return (defstop);
 }
 
 
@@ -1928,5 +1987,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.7 2002/08/17 22:26:34 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.8 2002/08/29 11:53:23 mike Exp $".
  */
