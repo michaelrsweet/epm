@@ -24,7 +24,9 @@ WHAT'S NEW IN EPM 2.6?
 	- Added support for Tru64 UNIX software packages (setld).
 	- Patch distributions were incorrectly backing up the
 	  original files, causing the original backup to be lost.
-	  
+	- Pre/post install/remove scripts were not using the
+	  right filename for Solaris PKG distributions.	
+  
 
 WHAT'S NEW IN EPM 2.5?
 
