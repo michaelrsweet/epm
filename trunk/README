@@ -104,6 +104,9 @@ WHAT'S NEW IN EPM 2.1?
 	- Added support for variables on the command line
 	  (name=value); insert into project filenames using
 	  $name.
+	- Variable expansion is now done on all lines and fields.
+	  This allows variables to be used in scripts and in the
+	  permissions field, for example.
 	- Now only specify run levels 0 and 3 for init scripts
 	  (0, 3, and 5 for Linux.)
 	- Now support init scripts in /sbin/init.d and

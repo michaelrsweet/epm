@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.7 2000/01/05 20:42:01 mike Exp $"
+ * "$Id: dist.c,v 1.8 2000/08/22 13:41:07 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -99,12 +99,11 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 {
   FILE		*listfiles[10];	/* File lists */
   int		listlevel;	/* Level in file list */
-  char		line[10240],	/* Line from list file */
+  char		line[2048],	/* Expanded line from list file */
+		buf[1024],	/* Original line from list file */
 		type,		/* File type */
 		dst[255],	/* Destination path */
 		src[255],	/* Source path */
-		tempdst[255],	/* Temporary destination before expansion */
-		tempsrc[255],	/* Temporary source before expansion */
 		user[32],	/* User */
 		group[32],	/* Group */
 		*temp;		/* Temporary pointer */
@@ -143,8 +142,19 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
   do
   {
-    while (get_line(line, sizeof(line), listfiles[listlevel], platform, format,
+    while (get_line(buf, sizeof(buf), listfiles[listlevel], platform, format,
                     &skip) != NULL)
+    {
+     /*
+      * Do variable substitution...
+      */
+
+      expand_name(line, buf);
+
+     /*
+      * Check line for config stuff...
+      */
+
       if (line[0] == '%')
       {
        /*
@@ -251,14 +261,11 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	}
       }
       else if (sscanf(line, "%c%o%15s%15s%254s%254s", &type, &mode, user, group,
-        	      tempdst, tempsrc) < 5)
+        	      dst, src) < 5)
 	fprintf(stderr, "epm: Bad line - %s\n", line);
       else
       {
-	expand_name(dst, tempdst);
-	if (tolower(type) != 'd' && type != 'R')
-	  expand_name(src, tempsrc);
-	else
+	if (tolower(type) == 'd' || type == 'R')
 	  src[0] = '\0';
 
         file = add_file(dist);
@@ -279,6 +286,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
 	strcpy(file->group, group);
       }
+    }
 
     fclose(listfiles[listlevel]);
     listlevel --;
@@ -507,5 +515,5 @@ expand_name(char *buffer,	/* O - Output string */
 
 
 /*
- * End of "$Id: dist.c,v 1.7 2000/01/05 20:42:01 mike Exp $".
+ * End of "$Id: dist.c,v 1.8 2000/08/22 13:41:07 mike Exp $".
  */
