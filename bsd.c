@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.8 2002/09/26 18:45:52 mike Exp $"
+ * "$Id: bsd.c,v 1.9 2002/10/17 18:13:13 mike Exp $"
  *
  *   FreeBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -92,7 +92,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  qprintf(fp, "%s\n", dist->product);
+  fprintf(fp, "%s\n", dist->product);
 
   fclose(fp);
 
@@ -112,19 +112,19 @@ make_bsd(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  qprintf(fp, "Summary: %s\n", dist->product);
-  qprintf(fp, "Name: %s\n", prodname);
-  qprintf(fp, "Version: %s\n", dist->version);
-  qprintf(fp, "Release: %d\n", dist->relnumber);
-  qprintf(fp, "Copyright: %s\n", dist->copyright);
-  qprintf(fp, "Packager: %s\n", dist->packager);
-  qprintf(fp, "Vendor: %s\n", dist->vendor);
-  qprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
+  fprintf(fp, "Summary: %s\n", dist->product);
+  fprintf(fp, "Name: %s\n", prodname);
+  fprintf(fp, "Version: %s\n", dist->version);
+  fprintf(fp, "Release: %d\n", dist->relnumber);
+  fprintf(fp, "Copyright: %s\n", dist->copyright);
+  fprintf(fp, "Packager: %s\n", dist->packager);
+  fprintf(fp, "Vendor: %s\n", dist->vendor);
+  fprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
   fputs("Group: Applications\n", fp);
 
   fputs("Description:\n\n", fp);
   for (i = 0; i < dist->num_descriptions; i ++)
-    qprintf(fp, "%s\n", dist->descriptions[i]);
+    fprintf(fp, "%s\n", dist->descriptions[i]);
 
   fclose(fp);
 
@@ -144,31 +144,31 @@ make_bsd(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  qprintf(fp, "@srcdir %s/%s/buildroot\n", current, directory);
+  fprintf(fp, "@srcdir %s/%s/buildroot\n", current, directory);
   fputs("@option preserve\n", fp);
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
   {
     if (d->type == DEPEND_REQUIRES)
-      qprintf(fp, "@pkgdep %s", d->product);
+      fprintf(fp, "@pkgdep %s", d->product);
     else
 #ifdef __FreeBSD__
      /*
       * FreeBSD doesn't have @pkgcfl command...
       */
-      qprintf(fp, "@comment conflicts with: %s", d->product);
+      fprintf(fp, "@comment conflicts with: %s", d->product);
 #else
-      qprintf(fp, "@pkgcfl %s", d->product);
+      fprintf(fp, "@pkgcfl %s", d->product);
 #endif /* __FreeBSD */
     if (d->vernumber[0] == 0)
     {
       if (d->vernumber[1] < INT_MAX)
-        qprintf(fp, " <= %s\n", d->version[1]);
+        fprintf(fp, " <= %s\n", d->version[1]);
       else
         putc('\n', fp);
     }
     else
-      qprintf(fp, " >= %s, <= %s\n", d->version[0], d->version[1]);
+      fprintf(fp, " >= %s, <= %s\n", d->version[0], d->version[1]);
   }
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
@@ -179,10 +179,10 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 	        "         by the BSD packager.\n", stderr);
           break;
       case COMMAND_POST_INSTALL :
-          qprintf(fp, "@exec %s\n", c->command);
+          fprintf(fp, "@exec %s\n", c->command);
 	  break;
       case COMMAND_PRE_REMOVE :
-          qprintf(fp, "@unexec %s\n", c->command);
+          fprintf(fp, "@unexec %s\n", c->command);
 	  break;
       case COMMAND_POST_REMOVE :
           fputs("WARNING: Package contains post-removal commands which are not supported\n"
@@ -196,11 +196,11 @@ make_bsd(const char     *prodname,	/* I - Product short name */
        i --, file ++)
   {
     if (file->mode != old_mode)
-      qprintf(fp, "@mode %04o\n", old_mode = file->mode);
+      fprintf(fp, "@mode %04o\n", old_mode = file->mode);
     if (strcmp(file->user, old_user))
-      qprintf(fp, "@owner %s\n", old_user = file->user);
+      fprintf(fp, "@owner %s\n", old_user = file->user);
     if (strcmp(file->group, old_group))
-      qprintf(fp, "@group %s\n", old_group = file->group);
+      fprintf(fp, "@group %s\n", old_group = file->group);
 
     switch (tolower(file->type))
     {
@@ -333,5 +333,5 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: bsd.c,v 1.8 2002/09/26 18:45:52 mike Exp $".
+ * End of "$Id: bsd.c,v 1.9 2002/10/17 18:13:13 mike Exp $".
  */

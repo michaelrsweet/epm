@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.76 2002/10/17 14:56:13 mike Exp $"
+ * "$Id: portable.c,v 1.77 2002/10/17 18:13:14 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -706,7 +706,7 @@ write_depends(dist_t *dist,		/* I - Distribution */
 
   for (i = 0, d= dist->depends; i < dist->num_depends; i ++, d ++)
   {
-    qprintf(fp, "#%%%s %s %d %d\n", depends[(int)d->type], d->product,
+    fprintf(fp, "#%%%s %s %d %d\n", depends[(int)d->type], d->product,
             d->vernumber[0], d->vernumber[1]);
 
     switch (d->type)
@@ -731,15 +731,15 @@ write_depends(dist_t *dist,		/* I - Distribution */
             * Require a product...
             */
 
-            qprintf(fp, "if test ! -x %s/%s.remove; then\n",
+            fprintf(fp, "if test ! -x %s/%s.remove; then\n",
                     SoftwareDir, d->product);
-            qprintf(fp, "	if test -x %s.install; then\n",
+            fprintf(fp, "	if test -x %s.install; then\n",
                     d->product);
-            qprintf(fp, "		echo Installing required %s software...\n",
+            fprintf(fp, "		echo Installing required %s software...\n",
                     d->product);
-            qprintf(fp, "		./%s.install now\n", d->product);
+            fprintf(fp, "		./%s.install now\n", d->product);
             fputs("	else\n", fp);
-            qprintf(fp, "		echo Sorry, you must first install \\'%s\\'!\n",
+            fprintf(fp, "		echo Sorry, you must first install \\'%s\\'!\n",
 	            d->product);
             fputs("		exit 1\n", fp);
             fputs("	fi\n", fp);
@@ -751,7 +751,7 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	      * Do version number checking...
 	      */
 
-              qprintf(fp, "installed=`grep \'^#%%version\' "
+              fprintf(fp, "installed=`grep \'^#%%version\' "
 	                  "%s/%s.remove | awk \'{print $3}\'`\n",
                       SoftwareDir, d->product);
 
@@ -759,15 +759,15 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	      fputs("	installed=0\n", fp);
 	      fputs("fi\n", fp);
 
-	      qprintf(fp, "if test $installed -lt %d -o $installed -gt %d; then\n",
+	      fprintf(fp, "if test $installed -lt %d -o $installed -gt %d; then\n",
 	              d->vernumber[0], d->vernumber[1]);
-              qprintf(fp, "	if test -x %s.install; then\n",
+              fprintf(fp, "	if test -x %s.install; then\n",
                       d->product);
-              qprintf(fp, "		echo Installing required %s software...\n",
+              fprintf(fp, "		echo Installing required %s software...\n",
                       d->product);
-              qprintf(fp, "		./%s.install now\n", d->product);
+              fprintf(fp, "		./%s.install now\n", d->product);
               fputs("	else\n", fp);
-              qprintf(fp, "		echo Sorry, you must first install \\'%s\\' version %s to %s!\n",
+              fprintf(fp, "		echo Sorry, you must first install \\'%s\\' version %s to %s!\n",
 	              d->product, d->version[0], d->version[1]);
               fputs("		exit 1\n", fp);
               fputs("	fi\n", fp);
@@ -797,7 +797,7 @@ write_depends(dist_t *dist,		/* I - Distribution */
             * Incompatible with a product...
             */
 
-            qprintf(fp, "if test -x %s/%s.remove; then\n",
+            fprintf(fp, "if test -x %s/%s.remove; then\n",
                     SoftwareDir, d->product);
 
             if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
@@ -806,7 +806,7 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	      * Do version number checking...
 	      */
 
-              qprintf(fp, "	installed=`grep \'^#%%version\' "
+              fprintf(fp, "	installed=`grep \'^#%%version\' "
 	                  "%s/%s.remove | awk \'{print $3}\'`\n",
 		      SoftwareDir, d->product);
 
@@ -814,20 +814,20 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	      fputs("		installed=0\n", fp);
 	      fputs("	fi\n", fp);
 
-	      qprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
+	      fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
 	              d->vernumber[0], d->vernumber[1]);
-              qprintf(fp, "		echo Sorry, this software is incompatible with \\'%s\\' version %s to %s!\n",
+              fprintf(fp, "		echo Sorry, this software is incompatible with \\'%s\\' version %s to %s!\n",
 	              d->product, d->version[0], d->version[1]);
-              qprintf(fp, "		echo Please remove it first by running \\'%s/%s.remove\\'.\n",
+              fprintf(fp, "		echo Please remove it first by running \\'%s/%s.remove\\'.\n",
 	              SoftwareDir, d->product);
               fputs("		exit 1\n", fp);
               fputs("	fi\n", fp);
 	    }
 	    else
 	    {
-              qprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+              fprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
 	              d->product);
-              qprintf(fp, "	echo Please remove it first by running \\'%s/%s.remove\\'.\n",
+              fprintf(fp, "	echo Please remove it first by running \\'%s/%s.remove\\'.\n",
 	              SoftwareDir, d->product);
               fputs("	exit 1\n", fp);
 	    }
@@ -837,7 +837,7 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	  break;
 
       case DEPEND_REPLACES :
-          qprintf(fp, "if test -x %s/%s.remove; then\n", SoftwareDir,
+          fprintf(fp, "if test -x %s/%s.remove; then\n", SoftwareDir,
 	          d->product);
 
           if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
@@ -846,7 +846,7 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	    * Do version number checking...
 	    */
 
-            qprintf(fp, "	installed=`grep \'^#%%version\' "
+            fprintf(fp, "	installed=`grep \'^#%%version\' "
 	                "%s/%s.remove | awk \'{print $3}\'`\n",
                     SoftwareDir, d->product);
 
@@ -854,19 +854,19 @@ write_depends(dist_t *dist,		/* I - Distribution */
 	    fputs("		installed=0\n", fp);
 	    fputs("	fi\n", fp);
 
-	    qprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
+	    fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
 	            d->vernumber[0], d->vernumber[1]);
-            qprintf(fp, "		echo Automatically replacing \\'%s\\'...\n",
+            fprintf(fp, "		echo Automatically replacing \\'%s\\'...\n",
 	            d->product);
-            qprintf(fp, "		%s/%s.remove now\n",
+            fprintf(fp, "		%s/%s.remove now\n",
 	            SoftwareDir, d->product);
             fputs("	fi\n", fp);
 	  }
 	  else
 	  {
-            qprintf(fp, "	echo Automatically replacing \\'%s\\'...\n",
+            fprintf(fp, "	echo Automatically replacing \\'%s\\'...\n",
 	            d->product);
-            qprintf(fp, "	%s/%s.remove now\n",
+            fprintf(fp, "	%s/%s.remove now\n",
 	            SoftwareDir, d->product);
           }
 
@@ -1196,7 +1196,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
 
-  qprintf(scriptfile, "	more %s.license\n", prodname);
+  fprintf(scriptfile, "	more %s.license\n", prodname);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
   fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
@@ -1214,10 +1214,10 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
   fputs("fi\n", scriptfile);
-  qprintf(scriptfile, "if test -x %s/%s.remove; then\n", SoftwareDir, prodname);
-  qprintf(scriptfile, "	echo Removing old versions of %s software...\n",
+  fprintf(scriptfile, "if test -x %s/%s.remove; then\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "	echo Removing old versions of %s software...\n",
           prodname);
-  qprintf(scriptfile, "	%s/%s.remove now\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "	%s/%s.remove now\n", SoftwareDir, prodname);
   fputs("fi\n", scriptfile);
 
   write_space_checks(prodname, scriptfile, "sw", "ss");
@@ -1311,23 +1311,23 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   if (rootsize)
   {
-    qprintf(scriptfile, "$ac_tar %s.sw\n", prodname);
+    fprintf(scriptfile, "$ac_tar %s.sw\n", prodname);
   }
 
   if (usrsize)
   {
     fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-    qprintf(scriptfile, "	$ac_tar %s.ss\n", prodname);
+    fprintf(scriptfile, "	$ac_tar %s.ss\n", prodname);
     fputs("fi\n", scriptfile);
   }
 
-  qprintf(scriptfile, "if test -d %s; then\n", SoftwareDir);
-  qprintf(scriptfile, "	rm -f %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "if test -d %s; then\n", SoftwareDir);
+  fprintf(scriptfile, "	rm -f %s/%s.remove\n", SoftwareDir, prodname);
   fputs("else\n", scriptfile);
-  qprintf(scriptfile, "	mkdir -p %s\n", SoftwareDir);
+  fprintf(scriptfile, "	mkdir -p %s\n", SoftwareDir);
   fputs("fi\n", scriptfile);
-  qprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
-  qprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
+  fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
 
   fputs("echo Updating file permissions...\n", scriptfile);
 
@@ -1532,7 +1532,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
 
-  qprintf(scriptfile, "	more %s.license\n", prodname);
+  fprintf(scriptfile, "	more %s.license\n", prodname);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
   fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
@@ -1554,7 +1554,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   write_space_checks(prodname, scriptfile, "psw", "pss");
   write_depends(dist, scriptfile);
 
-  qprintf(scriptfile, "if test ! -x %s/%s.remove; then\n",
+  fprintf(scriptfile, "if test ! -x %s/%s.remove; then\n",
           SoftwareDir, prodname);
   fputs("	echo You do not appear to have the base software installed!\n",
         scriptfile);
@@ -1599,19 +1599,19 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   if (rootsize)
   {
-    qprintf(scriptfile, "$ac_tar %s.psw\n", prodname);
+    fprintf(scriptfile, "$ac_tar %s.psw\n", prodname);
   }
 
   if (usrsize)
   {
     fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-    qprintf(scriptfile, "	$ac_tar %s.pss\n", prodname);
+    fprintf(scriptfile, "	$ac_tar %s.pss\n", prodname);
     fputs("fi\n", scriptfile);
   }
 
-  qprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
-  qprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
-  qprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
+  fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
 
   fputs("echo Updating file permissions...\n", scriptfile);
 
@@ -1999,7 +1999,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   write_commands(dist, scriptfile, COMMAND_POST_REMOVE);
 
-  qprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
 
   fputs("echo Removal is complete.\n", scriptfile);
 
@@ -2062,10 +2062,10 @@ write_space_checks(const char *prodname,/* I - Distribution name */
   fputs("	;;\n", fp);
   fputs("esac\n", fp);
   fputs("\n", fp);
-  qprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, sw);
+  fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, sw);
   fputs("spsw=`expr $temp / 1024`\n", fp);
   fputs("\n", fp);
-  qprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, ss);
+  fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, ss);
   fputs("spss=`expr $temp / 1024`\n", fp);
   fputs("\n", fp);
   fputs("spall=`expr $spsw + $spss`\n", fp);
@@ -2099,5 +2099,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.76 2002/10/17 14:56:13 mike Exp $".
+ * End of "$Id: portable.c,v 1.77 2002/10/17 18:13:14 mike Exp $".
  */
