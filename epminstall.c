@@ -1,5 +1,5 @@
 /*
- * "$Id: epminstall.c,v 1.5 2001/06/27 21:53:11 mike Exp $"
+ * "$Id: epminstall.c,v 1.6 2001/07/09 20:45:08 mike Exp $"
  *
  *   Install program replacement for the ESP Package Manager (EPM).
  *
@@ -415,6 +415,7 @@ write_dist(const char *listname,	/* I - File to write to */
            dist_t     *dist)		/* I - Distribution to write */
 {
   int		i;			/* Looping var */
+  int		is_inline;		/* Inline text? */
   char		listbck[1024],		/* Backup filename */
 		*ptr;			/* Pointer into command string */
   FILE		*listfile;		/* Output file */
@@ -432,7 +433,8 @@ write_dist(const char *listname,	/* I - File to write to */
 		{
 		  "%requires",
 		  "%incompat",
-		  "%replaces"
+		  "%replaces",
+		  "%provides"
 		};
 
 
@@ -479,7 +481,10 @@ write_dist(const char *listname,	/* I - File to write to */
     fprintf(listfile, "%%readme %s\n", dist->readme);
 
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(listfile, "%%description %s\n", dist->descriptions[i]);
+    if (strchr(dist->descriptions[i], '\n') != NULL)
+      fprintf(listfile, "%%description <<EPM-END-INLINE\n%s\nEPM-END-INLINE\n", dist->descriptions[i]);
+    else
+      fprintf(listfile, "%%description %s\n", dist->descriptions[i]);
 
   for (i = 0; i < dist->num_depends; i ++)
   {
@@ -502,15 +507,25 @@ write_dist(const char *listname,	/* I - File to write to */
   for (i = 0; i < dist->num_commands; i ++)
   {
     fputs(commands[(int)dist->commands[i].type], listfile);
-    putc(' ', listfile);
+
+    is_inline = strchr(dist->commands[i].command, '\n') != NULL;
+
+    if (is_inline)
+      fputs(" <<EPM-END-INLINE\n", listfile);
+    else
+      putc(' ', listfile);
+
     for (ptr = dist->commands[i].command; *ptr; ptr ++)
     {
-      if (*ptr == '$')
+      if (*ptr == '$' && !is_inline)
         putc(*ptr, listfile);
 
       putc(*ptr, listfile);
     }
     putc('\n', listfile);
+
+    if (is_inline)
+      fputs("EPM-END-INLINE\n", listfile);
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
@@ -523,5 +538,5 @@ write_dist(const char *listname,	/* I - File to write to */
 
 
 /*
- * End of "$Id: epminstall.c,v 1.5 2001/06/27 21:53:11 mike Exp $".
+ * End of "$Id: epminstall.c,v 1.6 2001/07/09 20:45:08 mike Exp $".
  */
