@@ -7,21 +7,51 @@ gridy 5
 snap 3
 Function {make_window()} {open
 } {
+  Fl_Window LicenseWindow {
+    label {Software License}
+    callback {if (ContinueButton->active())
+  LicenseWindow->hide();} open
+    xywh {527 291 580 400} resizable modal visible
+  } {
+    Fl_Browser LicenseBrowser {
+      xywh {10 10 560 300} textfont 4 textsize 12 resizable
+    }
+    Fl_Button ContinueButton {
+      label Continue
+      callback {LicenseWindow->hide();}
+      xywh {500 365 70 25} deactivate
+    }
+    Fl_Group {} {open
+      xywh {10 315 485 45}
+    } {
+      Fl_Round_Button AcceptRadio {
+        label {Yes, I accept the terms and conditions of the software license.}
+        callback {ContinueButton->activate();}
+        xywh {10 315 425 20} type Radio down_box ROUND_DOWN_BOX selection_color 4
+      }
+      Fl_Round_Button DeclineRadio {
+        label {No, I do not accept the terms and conditions of the software license.}
+        callback {ContinueButton->activate();} selected
+        xywh {10 335 455 20} type Radio down_box ROUND_DOWN_BOX selection_color 4
+      }
+    }
+  }
   Fl_Window {} {
-    label {ESP Software Wizard} open
-    xywh {341 164 450 345} hide
-    code0 {\#include "setup2.h"}
+    label {ESP Software Wizard}
+    callback {if (CancelButton->active())
+  exit(0);} open
+    xywh {341 164 450 345}
+    code0 {\#include "setup2.h"} visible
   } {
     Fl_Button NextButton {
       label {next.xbm}
-      callback {Wizard->next();
-NextButton->deactivate();}
-      private xywh {315 310 55 25} labeltype image
+      callback next_cb
+      xywh {315 310 55 25} labeltype image
     }
     Fl_Button CancelButton {
       label Cancel
       callback {exit(0);}
-      private xywh {380 310 60 25}
+      xywh {380 310 60 25}
     }
     Fl_Group Wizard {open
       xywh {0 0 450 300} box THIN_UP_BOX
@@ -41,7 +71,7 @@ NextButton->deactivate();}
 To select software for installation, please click on the "Next" button below.}
           xywh {40 55 370 80} align 149
         }
-        Fl_Box {} {
+        Fl_Box WelcomeImage {
           xywh {40 150 370 140} align 21
         }
       }
@@ -58,10 +88,7 @@ To select software for installation, please click on the "Next" button below.}
         }
         Fl_Browser SoftwareList {
           label { Available Software:}
-          callback {if (SoftwareList->nchecked())
-  NextButton->activate();
-else
-  NextButton->deactivate();} selected
+          callback list_cb
           xywh {40 120 370 170} type Select box DOWN_BOX align 5 when 4
           code0 {\#include "Fl_Check_Browser.h"}
           class Fl_Check_Browser
@@ -76,7 +103,7 @@ else
         }
         Fl_Slider InstallPercent {
           label {Progress Label...}
-          xywh {40 75 365 15} type {Horz Fill} selection_color 63 labelfont 3 align 5 maximum 100 value 50
+          xywh {40 75 365 15} type {Horz Fill} selection_color 63 labelfont 2 align 5 maximum 100 value 50
         }
         Fl_Browser InstallLog {
           xywh {40 100 365 180}
