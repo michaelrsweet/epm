@@ -11,6 +11,8 @@ WHAT'S NEW IN EPM 2.5?
 	- The config file support for AT&T software packages
 	  did not check to see if the source file had an
 	  absolute path.
+	- The RPM --target option was not being called with an
+	  equal sign, which caused problems with RPM 4.0.
 
 
 WHAT'S NEW IN EPM 2.4?
