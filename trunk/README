@@ -93,6 +93,7 @@ WHAT'S NEW IN EPM 2.0?
 	  and IRIX software distributions.
 	- New graphical setup program for portable distributions.
 	- New "replaces" directive.
+	- New "format" directive.
 
 
 WHAT'S NEW IN EPM 1.7?

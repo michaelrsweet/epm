@@ -61,7 +61,7 @@ DDEESSCCRRIIPPTTIIOONN
 
 
 
-5 November 1999        ESP Package Manager                      1
+15 December 1999       ESP Package Manager                      1
 
 
 
@@ -90,6 +90,14 @@ LLIISSTT FFIILLEESS
             Adds a line of descriptive text to the  distribution.
             Multiple lines are supported.
 
+       %format _f_o_r_m_a_t _[_._._. _f_o_r_m_a_t_]
+            Uses  following files and directives only if the dis-
+            tribution format is the same as _f_o_r_m_a_t.
+
+       %format !_f_o_r_m_a_t _[_._._. _f_o_r_m_a_t_]
+            Uses following files and directives only if the  dis-
+            tribution format is not the same as _f_o_r_m_a_t.
+
        %include _f_i_l_e_n_a_m_e
             Includes files listed in _f_i_l_e_n_a_m_e.
 
@@ -115,19 +123,11 @@ LLIISSTT FFIILLEESS
             Specifies the product name.
 
        %readme _r_e_a_d_m_e _f_i_l_e
-            Specifies a README file to be included in the distri-
-            bution.
-
-       %remove _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
-            Specifies a script or program to be run before remov-
-            ing or patching files.
-
-       %replaces _p_r_o_d_u_c_t
-            Indicates   that  this  product  replaces  the  named
+            Specifies  a  README  file  to  be  included  in  the
 
 
 
-5 November 1999        ESP Package Manager                      2
+15 December 1999       ESP Package Manager                      2
 
 
 
@@ -136,7 +136,15 @@ LLIISSTT FFIILLEESS
 epm(1)                Easy Software Products               epm(1)
 
 
-            product.
+            distribution.
+
+       %remove _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies a script or program to be run before remov-
+            ing or patching files.
+
+       %replaces _p_r_o_d_u_c_t
+            Indicates  that this product replaces the named prod-
+            uct.
 
        %requires _p_r_o_d_u_c_t
 
@@ -181,19 +189,11 @@ epm(1)                Easy Software Products               epm(1)
 
        d _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
 
-       D _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
-            Specifies   a   directory   should  be  created  when
-            installing the software. The  second  form  specifies
-            that  the  directory is new and should be included as
-            part of a patch.
-
-       i _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
 
 
 
 
-
-5 November 1999        ESP Package Manager                      3
+15 December 1999       ESP Package Manager                      3
 
 
 
@@ -201,6 +201,14 @@ epm(1)                Easy Software Products               epm(1)
 
 epm(1)                Easy Software Products               epm(1)
 
+
+       D _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
+            Specifies   a   directory   should  be  created  when
+            installing the software. The  second  form  specifies
+            that  the  directory is new and should be included as
+            part of a patch.
+
+       i _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
 
        I _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
             Specifies an initialization script for  installation.
@@ -251,14 +259,6 @@ CCOOPPYYRRIIGGHHTT
 
 
 
-
-
-
-
-
-
-
-
-5 November 1999        ESP Package Manager                      4
+15 December 1999       ESP Package Manager                      4
 
 
