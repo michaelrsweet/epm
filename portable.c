@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.53 2001/09/27 20:13:37 mike Exp $"
+ * "$Id: portable.c,v 1.54 2001/10/23 20:40:59 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -659,7 +659,7 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fprintf(fp, "#%%usrsize %d\n", usrsize);
   fputs("#\n", fp);
 
-  fputs("PATH=${PATH}:/bin:/usr/bin:/usr/ucb\n", fp);
+  fputs("PATH=/bin:/usr/bin:/usr/ucb:${PATH}\n", fp);
   fputs("SHELL=/bin/sh\n", fp);
   fputs("if test \"`whoami`\" != \"root\"; then\n", fp);
   fprintf(fp, "	echo Sorry, you must be root to %s this software.\n",
@@ -1117,10 +1117,10 @@ write_confcheck(FILE *fp)		/* I - Script file */
   */
 
   fputs("# Determine correct extract options for the tar command...\n", fp);
-  fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", fp);
-  fputs("	ac_tar=\"/bin/tar -xpf\"\n", fp);
+  fputs("if test \"`tar --help 2>&1 | grep GNU`\" = \"\"; then\n", fp);
+  fputs("	ac_tar=\"tar -xpf\"\n", fp);
   fputs("else\n", fp);
-  fputs("	ac_tar=\"/bin/tar -xpPf\"\n", fp);
+  fputs("	ac_tar=\"tar -xpPf\"\n", fp);
   fputs("fi\n", fp);
 
   return (0);
@@ -1233,7 +1233,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	if test -d $file -o -f $file -o -h $file; then\n", scriptfile);
-    fputs("		/bin/mv -f $file $file.O\n", scriptfile);
+    fputs("		mv -f $file $file.O\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1261,7 +1261,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("		if test -d $file -o -f $file -o -h $file; then\n", scriptfile);
-    fputs("			/bin/mv -f $file $file.O\n", scriptfile);
+    fputs("			mv -f $file $file.O\n", scriptfile);
     fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
     fputs("fi\n", scriptfile);
@@ -1280,7 +1280,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
       {
 	fprintf(scriptfile, "if test ! -d %s -a ! -f %s -a ! -h %s; then\n",
         	file->dst, file->dst, file->dst);
-	fprintf(scriptfile, "	/bin/mkdir -p %s\n", file->dst);
+	fprintf(scriptfile, "	mkdir -p %s\n", file->dst);
 	fputs("else\n", scriptfile);
 	fprintf(scriptfile, "	if test -f %s; then\n", file->dst);
 	fprintf(scriptfile, "		echo Error: %s already exists as a regular file!\n",
@@ -1288,25 +1288,25 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 	fputs("		exit 1\n", scriptfile);
 	fputs("	fi\n", scriptfile);
 	fputs("fi\n", scriptfile);
-	fprintf(scriptfile, "/bin/chown %s %s\n", file->user, file->dst);
-	fprintf(scriptfile, "/bin/chgrp %s %s\n", file->group, file->dst);
-	fprintf(scriptfile, "/bin/chmod %o %s\n", file->mode, file->dst);
+	fprintf(scriptfile, "chown %s %s\n", file->user, file->dst);
+	fprintf(scriptfile, "chgrp %s %s\n", file->group, file->dst);
+	fprintf(scriptfile, "chmod %o %s\n", file->mode, file->dst);
       }
   }
 
   fputs("echo Installing software...\n", scriptfile);
   fprintf(scriptfile, "$ac_tar %s.sw\n", prodname);
   fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-  fputs("/bin/rm -f /usr/.writetest\n", scriptfile);
+  fputs("rm -f /usr/.writetest\n", scriptfile);
   fprintf(scriptfile, "	$ac_tar %s.ss\n", prodname);
   fputs("fi\n", scriptfile);
 
   fprintf(scriptfile, "if test -d %s; then\n", SoftwareDir);
-  fprintf(scriptfile, "	/bin/rm -f %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "	rm -f %s/%s.remove\n", SoftwareDir, prodname);
   fputs("else\n", scriptfile);
-  fprintf(scriptfile, "	/bin/mkdir -p %s\n", SoftwareDir);
+  fprintf(scriptfile, "	mkdir -p %s\n", SoftwareDir);
   fputs("fi\n", scriptfile);
-  fprintf(scriptfile, "/bin/cp %s.remove %s\n", prodname, SoftwareDir);
+  fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c')
@@ -1328,7 +1328,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	if test ! -f $file; then\n", scriptfile);
-    fputs("		/bin/cp $file.N $file\n", scriptfile);
+    fputs("		cp $file.N $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1347,7 +1347,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc2.d -o -h $dir/rc2.d -o "
+          "-d $dir/rc3.d -o -h $dir/rc3.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1361,33 +1362,39 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("		if test -d $rcdir/init.d; then\n", scriptfile);
-    fputs("			/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
-    fprintf(scriptfile, "			/bin/ln -s %s/init.d/$file "
+    fputs("			rm -f $rcdir/init.d/$file\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/init.d/$file\n", SoftwareDir);
     fputs("		else\n", scriptfile);
     fputs("			if test -d /etc/init.d; then\n", scriptfile);
-    fputs("				/bin/rm -f /etc/init.d/$file\n", scriptfile);
-    fprintf(scriptfile, "				/bin/ln -s %s/init.d/$file "
+    fputs("				rm -f /etc/init.d/$file\n", scriptfile);
+    fprintf(scriptfile, "				ln -s %s/init.d/$file "
                         "/etc/init.d/$file\n", SoftwareDir);
     fputs("			fi\n", scriptfile);
     fputs("		fi\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
-    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+    fputs("		if test -d $rcdir/rc0.d; then\n", scriptfile);
+    fputs("			rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc0.d/K00$file\n", SoftwareDir);
-    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+    fputs("		fi\n", scriptfile);
+    fputs("		if test -d $rcdir/rc2.d; then\n", scriptfile);
+    fputs("			rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc2.d/S99$file\n", SoftwareDir);
-    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+    fputs("		fi\n", scriptfile);
+    fputs("		if test -d $rcdir/rc3.d; then\n", scriptfile);
+    fputs("			rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc3.d/S99$file\n", SoftwareDir);
+    fputs("		fi\n", scriptfile);
     fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
-    fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+    fputs("			rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "		ln -s %s/init.d/$file "
                         "$rcdir/rc5.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
-#ifdef __sgi
-    fputs("		/etc/chkconfig -f $file on\n", scriptfile);
-#endif /* __sgi */
+    fputs("		if test -x /etc/chkconfig; then\n", scriptfile);
+    fputs("			/etc/chkconfig -f $file on\n", scriptfile);
+    fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
     fputs("fi\n", scriptfile);
   }
@@ -1509,7 +1516,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
       {
 	fprintf(scriptfile, "if test ! -d %s -a ! -f %s -a ! -h %s; then\n",
         	file->dst, file->dst, file->dst);
-	fprintf(scriptfile, "	/bin/mkdir -p %s\n", file->dst);
+	fprintf(scriptfile, "	mkdir -p %s\n", file->dst);
 	fputs("else\n", scriptfile);
 	fprintf(scriptfile, "	if test -f %s; then\n", file->dst);
 	fprintf(scriptfile, "		echo Error: %s already exists as a regular file!\n",
@@ -1517,21 +1524,21 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 	fputs("		exit 1\n", scriptfile);
 	fputs("	fi\n", scriptfile);
 	fputs("fi\n", scriptfile);
-	fprintf(scriptfile, "/bin/chown %s %s\n", file->user, file->dst);
-	fprintf(scriptfile, "/bin/chgrp %s %s\n", file->group, file->dst);
-	fprintf(scriptfile, "/bin/chmod %o %s\n", file->mode, file->dst);
+	fprintf(scriptfile, "chown %s %s\n", file->user, file->dst);
+	fprintf(scriptfile, "chgrp %s %s\n", file->group, file->dst);
+	fprintf(scriptfile, "chmod %o %s\n", file->mode, file->dst);
       }
   }
 
   fputs("echo Patching software...\n", scriptfile);
   fprintf(scriptfile, "$ac_tar %s.psw\n", prodname);
   fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-  fputs("/bin/rm -f /usr/.writetest\n", scriptfile);
+  fputs("rm -f /usr/.writetest\n", scriptfile);
   fprintf(scriptfile, "	$ac_tar %s.pss\n", prodname);
   fputs("fi\n", scriptfile);
 
-  fprintf(scriptfile, "/bin/rm -f %s/%s.remove\n", SoftwareDir, prodname);
-  fprintf(scriptfile, "/bin/cp %s.remove %s\n", prodname, SoftwareDir);
+  fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (file->type == 'C')
@@ -1548,7 +1555,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	if test ! -f $file; then\n", scriptfile);
-    fputs("		/bin/cp $file.N $file\n", scriptfile);
+    fputs("		cp $file.N $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1567,9 +1574,9 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
-    fputs("	/bin/rm -f $file\n", scriptfile);
+    fputs("	rm -f $file\n", scriptfile);
     fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
-    fputs("		/bin/mv -f $file.O $file\n", scriptfile);
+    fputs("		mv -f $file.O $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1588,7 +1595,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc2.d -o -h $dir/rc2.d -o "
+          "-d $dir/rc3.d -o -h $dir/rc3.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1602,33 +1610,39 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("		if test -d $rcdir/init.d; then\n", scriptfile);
-    fputs("			/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
-    fprintf(scriptfile, "			/bin/ln -s %s/init.d/$file "
+    fputs("			rm -f $rcdir/init.d/$file\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/init.d/$file\n", SoftwareDir);
     fputs("		else\n", scriptfile);
     fputs("			if test -d /etc/init.d; then\n", scriptfile);
-    fputs("				/bin/rm -f /etc/init.d/$file\n", scriptfile);
-    fprintf(scriptfile, "				/bin/ln -s %s/init.d/$file "
+    fputs("				rm -f /etc/init.d/$file\n", scriptfile);
+    fprintf(scriptfile, "				ln -s %s/init.d/$file "
                         "/etc/init.d/$file\n", SoftwareDir);
     fputs("			fi\n", scriptfile);
     fputs("		fi\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
-    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+    fputs("		if test -d $rcdir/rc0.d; then\n", scriptfile);
+    fputs("			rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc0.d/K00$file\n", SoftwareDir);
-    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+    fputs("		fi\n", scriptfile);
+    fputs("		if test -d $rcdir/rc2.d; then\n", scriptfile);
+    fputs("			rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc2.d/S99$file\n", SoftwareDir);
-    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+    fputs("		fi\n", scriptfile);
+    fputs("		if test -d $rcdir/rc0.d; then\n", scriptfile);
+    fputs("			rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "$rcdir/rc3.d/S99$file\n", SoftwareDir);
+    fputs("		fi\n", scriptfile);
     fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
-    fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "		/bin/ln -s %s/init.d/$file "
+    fputs("			rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
+    fprintf(scriptfile, "		ln -s %s/init.d/$file "
                         "$rcdir/rc5.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", scriptfile);
-#ifdef __sgi
-    fputs("		/etc/chkconfig -f $file on\n", scriptfile);
-#endif /* __sgi */
+    fputs("		if test -x /etc/chkconfig; then\n", scriptfile);
+    fputs("			/etc/chkconfig -f $file on\n", scriptfile);
+    fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
     fputs("fi\n", scriptfile);
   }
@@ -1726,7 +1740,8 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc2.d -o -h $dir/rc2.d -o "
+          "-d $dir/rc3.d -o -h $dir/rc3.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1739,14 +1754,14 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
-#ifdef __sgi
-    fputs("		/bin/rm -f /etc/config/$file\n", scriptfile);
-#endif /* __sgi */
+    fputs("		rm -f $rcdir/init.d/$file\n", scriptfile);
+    fputs("		rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
+    fputs("		rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
+    fputs("		if test -x /etc/chkconfig; then\n", scriptfile);
+    fputs("			rm -f /etc/config/$file\n", scriptfile);
+    fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
     fputs("fi\n", scriptfile);
   }
@@ -1772,9 +1787,9 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
       }
 
     fputs("; do\n", scriptfile);
-    fputs("	/bin/rm -f $file\n", scriptfile);
+    fputs("	rm -f $file\n", scriptfile);
     fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
-    fputs("		/bin/mv -f $file.O $file\n", scriptfile);
+    fputs("		mv -f $file.O $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1799,9 +1814,9 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
       }
 
     fputs("; do\n", scriptfile);
-    fputs("		/bin/rm -f $file\n", scriptfile);
+    fputs("		rm -f $file\n", scriptfile);
     fputs("		if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
-    fputs("			/bin/mv -f $file.O $file\n", scriptfile);
+    fputs("			mv -f $file.O $file\n", scriptfile);
     fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
     fputs("fi\n", scriptfile);
@@ -1828,15 +1843,15 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("	if cmp -s $file $file.N; then\n", scriptfile);
     fputs("		# Config file not changed\n", scriptfile);
-    fputs("		/bin/rm -f $file\n", scriptfile);
+    fputs("		rm -f $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
-    fputs("	/bin/rm -f $file.N\n", scriptfile);
+    fputs("	rm -f $file.N\n", scriptfile);
     fputs("done\n", scriptfile);
   }
 
   write_commands(dist, scriptfile, COMMAND_POST_REMOVE);
 
-  fprintf(scriptfile, "/bin/rm -f %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
 
   fputs("echo Removal is complete.\n", scriptfile);
 
@@ -1922,5 +1937,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.53 2001/09/27 20:13:37 mike Exp $".
+ * End of "$Id: portable.c,v 1.54 2001/10/23 20:40:59 mike Exp $".
  */
