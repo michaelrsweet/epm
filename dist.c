@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.28 2001/03/26 20:11:08 mike Exp $"
+ * "$Id: dist.c,v 1.29 2001/03/27 14:41:09 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -137,11 +137,11 @@ add_depend(dist_t     *dist,		/* I - Distribution */
   * Get the product name string...
   */
 
-  for (ptr = temp->product; *line && !isspace(*line); line ++)
+  for (ptr = temp->product; *line && !isspace((int)*line); line ++)
     if (ptr < (temp->product + sizeof(temp->product) - 1))
       *ptr++ = *line;
 
-  while (isspace(*line))
+  while (isspace((int)*line))
     line ++;
 
  /*
@@ -154,7 +154,7 @@ add_depend(dist_t     *dist,		/* I - Distribution */
     * Handle <version, >version, etc.
     */
 
-    if (!isdigit(*line))
+    if (!isdigit((int)*line))
     {
       if (*line == '<' && i == 0)
       {
@@ -162,7 +162,7 @@ add_depend(dist_t     *dist,		/* I - Distribution */
 	i ++;
       }
 
-      while (!isdigit(*line) && *line)
+      while (!isdigit((int)*line) && *line)
         line ++;
     }
 
@@ -173,20 +173,20 @@ add_depend(dist_t     *dist,		/* I - Distribution */
     * Grab the version string...
     */
 
-    for (ptr = temp->version[i]; *line && !isspace(*line); line ++)
+    for (ptr = temp->version[i]; *line && !isspace((int)*line); line ++)
       if (ptr < (temp->version[i] + sizeof(temp->version[i]) - 1))
 	*ptr++ = *line;
 
-    while (isspace(*line))
+    while (isspace((int)*line))
       line ++;
 
    /*
     * Get the version number, if any...
     */
 
-    for (lineptr = line; isdigit(*lineptr); lineptr ++);
+    for (lineptr = line; isdigit((int)*lineptr); lineptr ++);
 
-    if (!*line || (!isspace(*lineptr) && *lineptr))
+    if (!*line || (!isspace((int)*lineptr) && *lineptr))
     {
      /*
       * No version number specified, or the next number is a version
@@ -203,7 +203,7 @@ add_depend(dist_t     *dist,		/* I - Distribution */
 
       temp->vernumber[i] = atoi(line);
 
-      for (line = lineptr; isspace(*line); line ++);
+      for (line = lineptr; isspace((int)*line); line ++);
     }
   }
 
@@ -354,8 +354,8 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
         * Find whitespace...
 	*/
 
-        for (temp = line; !isspace(*temp) && *temp; temp ++);
-	for (; isspace(*temp); *temp++ = '\0');
+        for (temp = line; !isspace((int)*temp) && *temp; temp ++);
+	for (; isspace((int)*temp); *temp++ = '\0');
 
        /*
         * Process directive...
@@ -792,12 +792,12 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	  else
 	    op = 0;
 
-	  for (ptr = value; *bufptr && !isspace(*bufptr) &&
+	  for (ptr = value; *bufptr && !isspace((int)*bufptr) &&
 	                        (ptr - value) < (sizeof(value) - 1);)
 	    *ptr++ = *bufptr++;
 
 	  *ptr = '\0';
-	  while (isspace(*bufptr))
+	  while (isspace((int)*bufptr))
 	    bufptr ++;
 
           if ((ptr = strchr(value, '-')) != NULL)
@@ -840,12 +840,12 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	  else
 	    op = 0;
 
-	  for (ptr = value; *bufptr && !isspace(*bufptr) &&
+	  for (ptr = value; *bufptr && !isspace((int)*bufptr) &&
 	                        (ptr - value) < (sizeof(value) - 1);)
 	    *ptr++ = *bufptr++;
 
 	  *ptr = '\0';
-	  while (isspace(*bufptr))
+	  while (isspace((int)*bufptr))
 	    bufptr ++;
 
 	  match = (strcasecmp(value, format) == 0) * 2;
@@ -895,9 +895,9 @@ get_vernumber(const char *version)	/* I - Version string */
   memset(numbers, 0, sizeof(numbers));
 
   for (ptr = version, offset = 0, temp = 0, nnumbers = 0;
-       *ptr && !isspace(*ptr);
+       *ptr && !isspace((int)*ptr);
        ptr ++)
-    if (isdigit(*ptr))
+    if (isdigit((int)*ptr))
       temp = temp * 10 + *ptr - '0';
     else
     {
@@ -1060,5 +1060,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.28 2001/03/26 20:11:08 mike Exp $".
+ * End of "$Id: dist.c,v 1.29 2001/03/27 14:41:09 mike Exp $".
  */
