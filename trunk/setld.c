@@ -1,9 +1,10 @@
 /*
- * "$Id: setld.c,v 1.2 2001/04/25 20:27:48 mike Exp $"
+ * "$Id: setld.c,v 1.3 2001/04/26 12:58:48 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
- *   Copyright 2001 by Easy Software Products and Aneesh Kumar.
+ *   Copyright 2001 by Easy Software Products and Aneesh
+ *   Kumar (aneesh.kumar@digital.com) at Digital Inida.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -60,9 +61,9 @@ make_setld(const char     *prodname,	/* I - Product short name */
   * extremely limited Tru64 packager requirements.
   */
 
-  if (dist->vernumber > 999)
+  if (dist->vernumber < 100 || dist->vernumber > 999)
   {
-    fprintf(stderr, "epm: Need a version number between 0 and 999 inclusive.\n"
+    fprintf(stderr, "epm: Need a version number between 100 and 999 inclusive.\n"
                     "     The current version number (%d) is out of range.\n",
             dist->vernumber);
     return (1);
@@ -77,9 +78,9 @@ make_setld(const char     *prodname,	/* I - Product short name */
   }
 
   for (i = 0; prodname[i]; i ++)
-    if (!isalnum(prodname[i]))
+    if (!isupper(prodname[i]))
     {
-      fprintf(stderr, "epm: Need a product name containing letters or numbers.\n"
+      fprintf(stderr, "epm: Need a product name containing uppercase letters.\n"
                       "     The current product name (%s) is not acceptable.\n",
               prodname);
       return (1);
@@ -408,5 +409,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.2 2001/04/25 20:27:48 mike Exp $".
+ * End of "$Id: setld.c,v 1.3 2001/04/26 12:58:48 mike Exp $".
  */
