@@ -46,9 +46,9 @@ set_title();} {}
     Fl_Window window {
       label {EPM List Editor 4.0}
       callback {close_cb(this);} open
-      private xywh {354 38 720 495} type Double resizable
+      private xywh {265 20 720 495} hide resizable
       code0 {\#include "epm.h"}
-      code1 {\#include <FL/Fl_Preferences.H>} visible
+      code1 {\#include <FL/Fl_Preferences.H>}
     } {
       Fl_Menu_Bar menubar {open
         private xywh {0 0 720 25}
@@ -271,14 +271,14 @@ set_title();} {}
         }
       }
       Fl_File_Browser list {
-        callback {list_cb(this);} selected
+        callback {list_cb(this);}
         private xywh {0 45 720 450} type Multi resizable
         code0 {list->has_scrollbar(Fl_Browser_::VERTICAL);}
       }
     }
     Fl_Window file_window {
       label {File Settings} open
-      private xywh {716 221 435 360} type Double modal visible
+      private xywh {716 221 435 360} hide modal
     } {
       Fl_Group {} {open
         private xywh {10 10 415 305} box THIN_UP_BOX
@@ -448,7 +448,7 @@ set_title();} {}
       Fl_Button file_cancel_button {
         label Cancel
         callback {file_window->hide();}
-        private xywh {340 325 85 25}
+        private xywh {335 325 85 25}
       }
     }
     code {dist_        = (dist_t *)0;
@@ -461,6 +461,95 @@ open(listfile);
 
 next_  = first_;
 first_ = this;} {}
+    Fl_Window project_window {
+      label {Project Settings} open
+      private xywh {4 20 535 540} visible
+    } {
+      Fl_Tabs {} {open
+        private xywh {10 10 480 410}
+      } {
+        Fl_Group {} {
+          label Information open
+          private xywh {10 35 480 385} hide
+        } {
+          Fl_Input name_field {
+            label {Project:}
+            private xywh {145 45 335 25}
+          }
+          Fl_Input version_field {
+            label {Version:}
+            private xywh {145 80 165 25}
+          }
+          Fl_Counter version_counter {
+            private xywh {310 80 170 25} minimum 0 maximum 1e+08 step 10 value 1e+06
+          }
+          Fl_Input copyright_field {
+            label {Copyright:}
+            private xywh {145 115 335 25}
+          }
+          Fl_Input vendor_field {
+            label {Vendor:}
+            private xywh {145 150 335 25}
+          }
+          Fl_Input packager_field {
+            label {Packager:}
+            private xywh {145 185 335 25}
+          }
+          Fl_Input license_field {
+            label {License:}
+            private xywh {145 220 240 25}
+          }
+          Fl_Input readme_field {
+            label {README:}
+            private xywh {145 255 240 25}
+          }
+          Fl_Button license_browse_button {
+            label {Browse...}
+            private xywh {385 220 95 25}
+          }
+          Fl_Button readme_browse_button {
+            label {Browse...}
+            private xywh {385 255 95 25}
+          }
+          Fl_Input setup_image_field {
+            label {Setup Image:}
+            private xywh {145 290 240 25}
+          }
+          Fl_Button setup_image_browse_button {
+            label {Browse...}
+            private xywh {385 290 95 25}
+          }
+          Fl_Input setup_types_field {
+            label {Setup Types:}
+            private xywh {145 325 240 25}
+          }
+          Fl_Button setup_types_browse_button {
+            label {Browse...}
+            private xywh {385 325 95 25}
+          }
+        }
+        Fl_Group {} {
+          label Subpackages open selected
+          private xywh {10 35 480 385}
+        } {
+          Fl_Browser subpackage_list {
+            private xywh {20 50 350 95} type Hold align 5
+          }
+          Fl_Button {} {
+            label {Add...}
+            private xywh {380 50 95 25}
+          }
+          Fl_Button {} {
+            label Delete
+            private xywh {380 85 95 25}
+          }
+          Fl_Button {} {
+            label {Edit...}
+            private xywh {380 120 95 25}
+          }
+        }
+      }
+    }
   }
   decl {~ListEditor();} {public
   }
