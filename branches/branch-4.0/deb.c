@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.16.2.12 2004/12/02 03:44:15 mike Exp $"
+ * "$Id: deb.c,v 1.16.2.13 2004/12/07 14:35:19 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -17,7 +17,8 @@
  *
  * Contents:
  *
- *   make_deb() - Make a Debian software distribution package.
+ *   make_deb()        - Make a Debian software distribution package.
+ *   make_subpackage() - Make a subpackage...
  */
 
 /*
@@ -509,5 +510,5 @@ make_subpackage(const char     *prodname,
 
 
 /*
- * End of "$Id: deb.c,v 1.16.2.12 2004/12/02 03:44:15 mike Exp $".
+ * End of "$Id: deb.c,v 1.16.2.13 2004/12/07 14:35:19 mike Exp $".
  */

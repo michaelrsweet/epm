@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63.2.27 2004/12/07 14:06:11 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.28 2004/12/07 14:35:19 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -18,12 +18,14 @@
  * Contents:
  *
  *   make_portable()      - Make a portable software distribution package.
+ *   write_combined()     - Write all of the distribution files in tar files.
  *   write_commands()     - Write commands.
  *   write_common()       - Write the common shell script header.
  *   write_confcheck()    - Write the echo check to find the right echo options.
+ *   write_depends()      - Write dependencies.
  *   write_distfiles()    - Write a software distribution...
- *   write_instfiles()    - Write the installer files to the tar file...
  *   write_install()      - Write the installation script.
+ *   write_instfiles()    - Write the installer files to the tar file...
  *   write_patch()        - Write the patch script.
  *   write_remove()       - Write the removal script.
  *   write_space_checks() - Write disk space checks for the installer.
@@ -2679,5 +2681,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63.2.27 2004/12/07 14:06:11 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.28 2004/12/07 14:35:19 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.4.2.10 2004/12/05 05:35:28 mike Exp $"
+ * "$Id: bsd.c,v 1.4.2.11 2004/12/07 14:35:19 mike Exp $"
  *
  *   Free/Net/OpenBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -17,7 +17,8 @@
  *
  * Contents:
  *
- *   make_bsd() - Make a Free/Net/OpenBSD software distribution package.
+ *   make_bsd()        - Make a Free/Net/OpenBSD software distribution package.
+ *   make_subpackage() - Create a subpackage...
  */
 
 /*
@@ -31,9 +32,9 @@
  * Local functions...
  */
 
-static int	bsd_package(const char *prodname, const char *directory,
-		            const char *platname, dist_t *dist,
-			    const char *subpackage);
+static int	make_subpackage(const char *prodname, const char *directory,
+		                const char *platname, dist_t *dist,
+			        const char *subpackage);
 
 
 /*
@@ -50,12 +51,12 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   int		i;			/* Looping var */
 
 
-  if (bsd_package(prodname, directory, platname, dist, NULL))
+  if (make_subpackage(prodname, directory, platname, dist, NULL))
     return (1);
 
   for (i = 0; i < dist->num_subpackages; i ++)
-    if (bsd_package(prodname, directory, platname, dist,
-                    dist->subpackages[i]))
+    if (make_subpackage(prodname, directory, platname, dist,
+                        dist->subpackages[i]))
       return (1);
 
   return (0);
@@ -63,15 +64,19 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * 'bsd_package()' - Create a subpackage...
+ * 'make_subpackage()' - Create a subpackage...
  */
 
 static int				/* O - 0 = success, 1 = fail */
-bsd_package(const char     *prodname,	/* I - Product short name */
-            const char     *directory,	/* I - Directory for distribution files */
-            const char     *platname,	/* I - Platform name */
-	    dist_t         *dist,	/* I - Distribution information */
-	    const char     *subpackage)	/* I - Subpackage name */
+make_subpackage(const char     *prodname,
+					/* I - Product short name */
+        	const char     *directory,
+					/* I - Directory for distribution files */
+        	const char     *platname,
+					/* I - Platform name */
+		dist_t         *dist,	/* I - Distribution information */
+		const char     *subpackage)
+					/* I - Subpackage name */
 {
   int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
@@ -403,5 +408,5 @@ bsd_package(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: bsd.c,v 1.4.2.10 2004/12/05 05:35:28 mike Exp $".
+ * End of "$Id: bsd.c,v 1.4.2.11 2004/12/07 14:35:19 mike Exp $".
  */

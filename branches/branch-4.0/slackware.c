@@ -1,5 +1,5 @@
 /*
- * "$Id: slackware.c,v 1.1.2.3 2004/12/07 14:06:11 mike Exp $"
+ * "$Id: slackware.c,v 1.1.2.4 2004/12/07 14:35:19 mike Exp $"
  *
  *   Slackware package gateway for the ESP Package Manager (EPM).
  *
@@ -19,7 +19,8 @@
  *
  * Contents:
  *
- *   make_slackware() - Make a Slackware software distribution package.
+ *   make_slackware()  - Make a Slackware software distribution package.
+ *   make_subpackage() - Make a Slackware subpackage.
  */
 
 /*
@@ -39,7 +40,7 @@ static int	make_subpackage(const char *prodname, const char *directory,
 
 
 /*
- * 'make_slackware()' - Make a Slackware software distribution package.
+ * 'make_slackware()' - Make a Slackware software distribution packages.
  */
 
 int					/* O - 0 = success, 1 = fail */
@@ -82,7 +83,7 @@ make_slackware(const char     *prodname,/* I - Product short name */
 
 
 /*
- * 'make_subpackage()' - Make a Slackware software distribution package.
+ * 'make_subpackage()' - Make a Slackware subpackage.
  */
 
 static int				/* O - 0 = success, 1 = fail */
@@ -329,5 +330,5 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: slackware.c,v 1.1.2.3 2004/12/07 14:06:11 mike Exp $".
+ * End of "$Id: slackware.c,v 1.1.2.4 2004/12/07 14:35:19 mike Exp $".
  */

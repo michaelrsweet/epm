@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.35.2.20 2004/11/01 12:19:44 mike Exp $"
+ * "$Id: rpm.c,v 1.35.2.21 2004/12/07 14:35:19 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -17,7 +17,9 @@
  *
  * Contents:
  *
- *   make_rpm() - Make a Red Hat software distribution package.
+ *   make_rpm()   - Make a Red Hat software distribution package.
+ *   move_rpms()  - Move RPM packages to the build directory...
+ *   write_spec() - Write the subpackage-specific parts of the RPM spec file.
  */
 
 /*
@@ -597,5 +599,5 @@ write_spec(const char *prodname,	/* I - Product name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.35.2.20 2004/11/01 12:19:44 mike Exp $".
+ * End of "$Id: rpm.c,v 1.35.2.21 2004/12/07 14:35:19 mike Exp $".
  */

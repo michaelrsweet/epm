@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.18.2.12 2004/12/07 14:06:11 mike Exp $"
+ * "$Id: swinstall.c,v 1.18.2.13 2004/12/07 14:35:19 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -18,6 +18,7 @@
  * Contents:
  *
  *   make_swinstall() - Make an HP-UX software distribution package.
+ *   write_fileset()  - Write a fileset specification for a subpackage.
  */
 
 /*
@@ -742,5 +743,5 @@ write_fileset(FILE       *fp,		/* I - File to write to */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.18.2.12 2004/12/07 14:06:11 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.18.2.13 2004/12/07 14:35:19 mike Exp $".
  */
