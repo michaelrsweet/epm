@@ -1,5 +1,17 @@
-CHANGES - ESP Package Manager (EPM) 2.5
+CHANGES - ESP Package Manager (EPM) 2.6
 ---------------------------------------
+
+WHAT'S NEW IN EPM 2.6?
+
+    EPM 2.6 adds the following features, fixes, and changes to
+    EPM 2.5:
+
+	- Changed the automatic version number generation code to
+	  properly handle patch, beta, and pre releases.
+	- Added support for version number ranges in dependencies,
+	  either as "low-version high-version", "< version", or
+	  "> version".
+
 
 WHAT'S NEW IN EPM 2.5?
 

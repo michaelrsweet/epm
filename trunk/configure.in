@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.22 2001/03/16 21:31:09 mike Exp $"
+dnl "$Id: configure.in,v 1.23 2001/03/20 14:06:50 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -22,7 +22,7 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=2.5
+VERSION=2.6
 AC_SUBST(VERSION)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
 
@@ -159,15 +159,15 @@ else
 fi
 
 if test x$fltklibs != x -a x$ac_cv_prog_CXX != x; then
-	SETUP="setup"
 	INSTALL_SETUP="install-setup"
 	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
-
-	LIBS="$LIBS $fltklibs/libfltk.a -lXext -lX11"
+	SETUP="setup"
+	SETUPLIBS="$fltklibs/libfltk.a -lXext -lX11"
 else
-	SETUP=""
 	INSTALL_SETUP=""
 	LIST_SETUP=""
+	SETUP=""
+	SETUPLIBS=""
 
 	if test x$ac_cv_prog_CXX = x; then
 		AC_MSG_WARN(C++ compiler not available so setup GUI will not be built.)
@@ -176,9 +176,10 @@ else
 	fi
 fi
 
-AC_SUBST(SETUP)
 AC_SUBST(INSTALL_SETUP)
 AC_SUBST(LIST_SETUP)
+AC_SUBST(SETUP)
+AC_SUBST(SETUPLIBS)
 
 dnl Update compiler options...
 if test -n "$GCC"; then
@@ -333,5 +334,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list)
 
 dnl
-dnl End of "$Id: configure.in,v 1.22 2001/03/16 21:31:09 mike Exp $".
+dnl End of "$Id: configure.in,v 1.23 2001/03/20 14:06:50 mike Exp $".
 dnl
