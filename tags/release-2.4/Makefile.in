@@ -1,0 +1,205 @@
+#
+# "$Id: Makefile.in,v 1.10 2001/01/19 16:16:50 mike Exp $"
+#
+#   Makefile for the ESP Package Manager (EPM).
+#
+#   Copyright 1999-2001 by Easy Software Products, all rights reserved.
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2, or (at your option)
+#   any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+
+#
+# Programs...
+#
+
+CC	=	@CC@
+CHMOD	=	@CHMOD@
+CP	=	@CP@
+CXX	=	@CXX@
+MKDIR	=	@MKDIR@ -p
+RM	=	@RM@ -f
+SHELL	=	/bin/sh
+
+
+#
+# Program options...
+#
+# OPTIM   defines the common compiler optimization/debugging options.
+#
+
+ARFLAGS	=	crvs
+CFLAGS	=	@CFLAGS@ $(OPTIM)
+CXXFLAGS =	@CXXFLAGS@ $(OPTIM)
+LDFLAGS	=	@LDFLAGS@ $(OPTIM)
+LIBS	=	@LIBS@
+OPTIM	=	@OPTIM@
+
+
+#
+# Manpage extensions...
+#
+
+CAT1EXT	=	@CAT1EXT@
+MAN1EXT	=	@MAN1EXT@
+
+
+#
+# Directories...
+#
+
+bindir		=	@bindir@
+datadir		=	@datadir@
+exec_prefix	=	@exec_prefix@
+mandir		=	@mandir@
+prefix		=	@prefix@
+libdir		=	@prefix@/lib/epm
+srcdir		=	@srcdir@
+
+VPATH		=	$(srcdir)
+
+
+#
+# Rules...
+#
+
+.SILENT:
+
+.SUFFIXES:	.c .cxx .h .o
+.c.o:
+	echo Compiling $<...
+	$(CC) $(CFLAGS) -I. -I$(srcdir) -c $<
+.cxx.o:
+	echo Compiling $<...
+	$(CXX) $(CXXFLAGS) -I. -I$(srcdir) -c $<
+
+
+#
+# Targets...
+#
+
+TARGETS	=	epm @SETUP@
+EPM_OBJS =	deb.o dist.o epm.o file.o inst.o pkg.o portable.o rpm.o \
+		string.o swinstall.o tar.o
+SETUP_OBJS =	setup.o setup2.o Fl_Check_Browser.o Fl_Wizard.o
+OBJS	=	$(EPM_OBJS) $(SETUP_OBJS)
+
+
+#
+# Make all targets...
+#
+
+all:	$(TARGETS)
+
+
+#
+# Clean all object files...
+#
+
+clean:
+	rm -f $(OBJS) $(TARGETS)
+
+
+#
+# Clean all object files and generated files...
+#
+
+distclean:
+	rm -f $(OBJS) $(TARGETS) \
+		config.cache config.h config.log config.status Makefile
+
+
+#
+# Install all targets...
+#
+
+install: epm @INSTALL_SETUP@
+	echo Installing EPM program in $(bindir)
+	-$(MKDIR) $(bindir)
+	$(RM) $(bindir)/epm
+	$(CP) epm $(bindir)
+	echo Installing EPM manpage in $(mandir)/man1
+	-$(MKDIR) $(mandir)/man1
+	$(RM) $(mandir)/cat1/epm.$(CAT1EXT)
+	$(CP) $(srcdir)/epm.1 $(mandir)/cat1/epm.$(CAT1EXT)
+	$(RM) $(mandir)/man1/epm.1
+	$(CP) $(srcdir)/epm.man $(mandir)/man1/epm.1
+	echo Installing EPM documentation in $(datadir)/doc/epm
+	-$(MKDIR) $(datadir)/doc
+	-$(MKDIR) $(datadir)/doc/epm
+	$(RM) $(datadir)/doc/epm/COPYING
+	$(CP) $(srcdir)/COPYING $(datadir)/doc/epm
+	$(RM) $(datadir)/doc/epm/README
+	$(CP) $(srcdir)/README $(datadir)/doc/epm
+	$(RM) $(datadir)/doc/epm/*.html
+	$(CP) $(srcdir)/*.html $(datadir)/doc/epm
+
+install-setup:	setup
+	echo Installing EPM setup in $(libdir)/setup
+	-$(MKDIR) $(libdir)
+	$(RM) $(libdir)/setup
+	$(CP) setup $(libdir)
+
+
+#
+# Make distributions using EPM...
+#
+
+portable: $(TARGETS)
+	./epm -v epm
+
+native: $(TARGETS)
+	./epm -f native -v epm
+
+rpm: $(TARGETS)
+	./epm -f rpm -v epm
+
+deb: $(TARGETS)
+	./epm -f deb -v epm
+
+pkg: $(TARGETS)
+	./epm -f pkg -v epm
+
+depot: $(TARGETS)
+	./epm -f depot -v epm
+
+tardist: $(TARGETS)
+	./epm -f tardist -v epm
+
+
+#
+# epm
+#
+
+epm:	$(EPM_OBJS)
+	echo Linking epm...
+	$(CC) $(LDFLAGS) -o epm $(EPM_OBJS)
+
+$(EPM_OBJS):	epm.h epmstring.h
+
+
+#
+# setup
+#
+
+setup:	$(SETUP_OBJS)
+	echo Linking setup...
+	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) $(LIBS)
+
+setup.o:	setup.h setup2.h Fl_Check_Browser.h Fl_Wizard.h
+setup2.o:	setup.h setup2.h Fl_Check_Browser.h Fl_Wizard.h
+Fl_Wizard.o:	Fl_Wizard.h
+Fl_Check_Browser.o:	Fl_Check_Browser.h
+
+$(OBJS):	Makefile config.h
+
+#
+# End of "$Id: Makefile.in,v 1.10 2001/01/19 16:16:50 mike Exp $".
+#
