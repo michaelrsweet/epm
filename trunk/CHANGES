@@ -27,6 +27,8 @@ WHAT'S NEW IN EPM 3.2?
 	- AIX packaging now works.
 	- Added support for the Darwin (MacOS X) tar command
 	  in portable packages (sudo ./foo.install :)
+	- IRIX inst packages incorrectly had the postinstall commands
+	  in the preinstall and removal scripts.
 
 
 WHAT'S NEW IN EPM 3.1?
