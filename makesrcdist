@@ -1,0 +1,48 @@
+#!/bin/csh -f
+#
+# makedist - make a distribution of EPM.
+#
+
+echo "Getting distribution..."
+
+cd /tmp
+cvs -d/development/cvs get epm >& /dev/null
+
+if ($#argv == 0) then
+	echo -n "Version number for distribution? "
+	set version = $<
+else
+	set version = $1
+endif
+
+rm -rf epm-$version
+mv epm epm-$version
+cd epm-$version
+
+if ("$version" != "snapshot") then
+	echo "Tagging release..."
+
+	set tag = `echo v$version | tr '.' '_'`
+
+	cvs tag -F $tag
+endif
+
+echo "Removing CVS directories..."
+
+rm -rf CVS
+
+echo "Making .tar.gz distribution..."
+
+cd ..
+gtar czf epm-$version-source.tar.gz epm-$version
+
+echo "Making .tar.bz2 distribution..."
+
+rm -f epm-$version-source.tar.bz2
+gunzip -c epm-$version-source.tar.gz | bzip2 >epm-$version-source.tar.bz2
+
+echo "Removing distribution directory..."
+
+rm -rf epm-$version
+
+echo "Done\!"
