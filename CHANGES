@@ -6,6 +6,9 @@ WHAT'S NEW IN EPM 3.5.2?
     EPM 3.5.2 adds the following features, fixes, and changes to
     EPM 3.5.1:
 
+	- EPM's sample list file didn't include the man pages
+	  for setup or setup.types, and installed the epm list
+	  file format man page in the wrong directories.
 	- EPM would quote the ":" character in filenames but
 	  didn't need to.
 	- EPM tried to move the wrong RPM file on non-intel
