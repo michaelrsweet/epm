@@ -11,6 +11,8 @@ WHAT'S NEW IN EPM 2.6?
 	- Added support for version number ranges in dependencies,
 	  either as "low-version high-version", "< version", or
 	  "> version".
+	- Eliminated some GCC warnings about using a char to
+	  index into an array.
 
 
 WHAT'S NEW IN EPM 2.5?
