@@ -6,6 +6,25 @@
 <P>This appendix lists the change log for each release of the
 EPM software.</P>
 
+
+<H2>Changes in EPM v3.5.1</H2>
+
+<UL>
+
+	<LI>OSX packages did not set the "install as root" package
+	type, so package installation usually failed.
+
+	<LI>OSX packages installed init scripts in
+	/System/Library/StartupItems, but non-Apple packages
+	should be installed in /Library/StartupItems.
+
+	<LI>Added support for "requires(foo)", "uses(foo)",
+	"provides(foo)", and "order(foo)" as options for init
+	scripts. These options are currently only used when
+	creating OSX packages.
+
+</UL>
+
 <H2>Changes in EPM v3.5</H2>
 
 <UL>

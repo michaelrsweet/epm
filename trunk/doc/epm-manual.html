@@ -4,7 +4,7 @@
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
 <META NAME="copyright" CONTENT="Copyright 1999-2002 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20021017">
+<META NAME="docnumber" CONTENT="ESP-004-20021018">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: serif }
@@ -22,7 +22,7 @@ PRE { font-family: monospace }
 <BODY>
 <CENTER><A HREF="#CONTENTS"><IMG SRC="epmlogo.gif" BORDER="0" WIDTH="256" HEIGHT="256"><BR>
 <H1>Software Distribution Using the ESP Package Manager</H1></A><BR>
-ESP-004-20021017<BR>
+ESP-004-20021018<BR>
 Michael Sweet<BR>
 Copyright 1999-2002 by Easy Software Products<BR>
 </CENTER>
@@ -85,34 +85,35 @@ Copyright 1999-2002 by Easy Software Products<BR>
 </UL>
 <B><A HREF="#RELNOTES">D - Release Notes</A></B>
 <UL>
-<LI><A HREF="#9_1">Changes in EPM v3.5</A></LI>
-<LI><A HREF="#9_2">Changes in EPM v3.4</A></LI>
-<LI><A HREF="#9_3">Changes in EPM v3.3</A></LI>
-<LI><A HREF="#9_4">Changes in EPM v3.2.1</A></LI>
-<LI><A HREF="#9_5">Changes in EPM v3.2</A></LI>
-<LI><A HREF="#9_6">Changes in EPM v3.1</A></LI>
-<LI><A HREF="#9_7">Changes in EPM v3.0</A></LI>
-<LI><A HREF="#9_8">Changes in EPM v2.8</A></LI>
-<LI><A HREF="#9_9">Changes in EPM v2.7</A></LI>
-<LI><A HREF="#9_10">Changes in EPM v2.6</A></LI>
-<LI><A HREF="#9_11">Changes in EPM v2.5</A></LI>
-<LI><A HREF="#9_12">Changes in EPM v2.4</A></LI>
-<LI><A HREF="#9_13">Changes in EPM v2.3</A></LI>
-<LI><A HREF="#9_14">Changes in EPM v2.2</A></LI>
-<LI><A HREF="#9_15">Changes in EPM v2.1</A></LI>
-<LI><A HREF="#9_16">Changes in EPM v2.0</A></LI>
-<LI><A HREF="#9_17">Changes in EPM v1.7</A></LI>
-<LI><A HREF="#9_18">Changes in EPM v1.6</A></LI>
-<LI><A HREF="#9_19">Changes in EPM v1.5</A></LI>
-<LI><A HREF="#9_20">Changes in EPM v1.4</A></LI>
-<LI><A HREF="#9_21">Changes in EPM v1.3</A></LI>
-<LI><A HREF="#9_22">Changes in EPM v1.2</A></LI>
-<LI><A HREF="#9_23">Changes in EPM v1.1</A></LI>
+<LI><A HREF="#9_1">Changes in EPM v3.5.1</A></LI>
+<LI><A HREF="#9_2">Changes in EPM v3.5</A></LI>
+<LI><A HREF="#9_3">Changes in EPM v3.4</A></LI>
+<LI><A HREF="#9_4">Changes in EPM v3.3</A></LI>
+<LI><A HREF="#9_5">Changes in EPM v3.2.1</A></LI>
+<LI><A HREF="#9_6">Changes in EPM v3.2</A></LI>
+<LI><A HREF="#9_7">Changes in EPM v3.1</A></LI>
+<LI><A HREF="#9_8">Changes in EPM v3.0</A></LI>
+<LI><A HREF="#9_9">Changes in EPM v2.8</A></LI>
+<LI><A HREF="#9_10">Changes in EPM v2.7</A></LI>
+<LI><A HREF="#9_11">Changes in EPM v2.6</A></LI>
+<LI><A HREF="#9_12">Changes in EPM v2.5</A></LI>
+<LI><A HREF="#9_13">Changes in EPM v2.4</A></LI>
+<LI><A HREF="#9_14">Changes in EPM v2.3</A></LI>
+<LI><A HREF="#9_15">Changes in EPM v2.2</A></LI>
+<LI><A HREF="#9_16">Changes in EPM v2.1</A></LI>
+<LI><A HREF="#9_17">Changes in EPM v2.0</A></LI>
+<LI><A HREF="#9_18">Changes in EPM v1.7</A></LI>
+<LI><A HREF="#9_19">Changes in EPM v1.6</A></LI>
+<LI><A HREF="#9_20">Changes in EPM v1.5</A></LI>
+<LI><A HREF="#9_21">Changes in EPM v1.4</A></LI>
+<LI><A HREF="#9_22">Changes in EPM v1.3</A></LI>
+<LI><A HREF="#9_23">Changes in EPM v1.2</A></LI>
+<LI><A HREF="#9_24">Changes in EPM v1.1</A></LI>
 </UL>
 <HR>
 <H1 ALIGN="RIGHT"><A NAME="1">Preface</A></H1>
 <P>This document provides a tutorial and reference for the ESP Package
- Manager (&quot;EPM&quot;) software, version 3.5.</P>
+ Manager (&quot;EPM&quot;) software, version 3.5.1.</P>
 <H2><A NAME="1_1">Organization of this Manual</A></H2>
 <P>This document is organized into the following chapters and
  appendices:</P>
@@ -178,6 +179,8 @@ Copyright 1999-2002 by Easy Software Products<BR>
 <BR>&nbsp;</DD>
 </DL>
 </UL>
+
+<!-- NEED 4in -->
 <H2><A NAME="1_4">Other References</A></H2>
 <UL>
 <DL>
@@ -452,18 +455,20 @@ setenv CXX /foo/bar/gcc ENTER</KBD>
 </PRE>
 </UL>
 <H3>Options for the Setup GUI</H3>
-<P>The setup GUI requires the X11 and FLTK libraries. If these libraries
- are not provided in standard locations, then the <CODE>
---with-x-includes</CODE>, <CODE>--with-x-libs</CODE>, <CODE>
---with-fltk-includes</CODE>, and <CODE>--with-fltk-libs</CODE> options
- can be used to tell the <CODE>configure</CODE> script where to find
- them, as follows:</P>
+<P>The setup GUI requires the X11 and FLTK libraries. The configure
+ script will look for the <CODE>fltk-config</CODE> utility that comes
+ with FLTK 1.1.x. Set the FLTKCONFIG environment variable to the full
+ path of this utility if it cannot be found in the current path:</P>
 <UL>
 <PRE>
-<KBD>./configure --with-x-includes=/usr/X11R6/include \
-    --with-x-libs=/usr/X11R6/lib \
-    --with-fltk-includes=/usr/local/include \
-    --with-fltk-libs=/usr/local/lib ENTER</KBD>
+<KBD>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</KBD>
+</PRE>
+</UL>
+<P>or:</P>
+<UL>
+<PRE>
+<KBD>FLTKCONFIG=/foo/bar/bin/fltk-config ENTER
+export FLTKCONFIG</KBD>
 </PRE>
 </UL>
 <H2><A NAME="3_3">Building the Software</A></H2>
@@ -533,10 +538,12 @@ Installing EPM documentation in /usr/share/doc/epm
 <TR><TD>Compaq Tru64 UNIX
 <BR> Digital UNIX
 <BR> OSF/1</TD><TD><CODE>tru64</CODE></TD></TR>
+<TR><TD>Darwin</TD><TD><CODE>darwin</CODE></TD></TR>
 <TR><TD>FreeBSD</TD><TD><CODE>freebsd</CODE></TD></TR>
 <TR><TD>HP-UX</TD><TD><CODE>hpux</CODE></TD></TR>
 <TR><TD>IRIX</TD><TD><CODE>irix</CODE></TD></TR>
 <TR><TD>Linux</TD><TD><CODE>linux</CODE></TD></TR>
+<TR><TD>MacOS X</TD><TD><CODE>darwin</CODE></TD></TR>
 <TR><TD>NetBSD</TD><TD><CODE>netbsd</CODE></TD></TR>
 <TR><TD>OpenBSD</TD><TD><CODE>openbsd</CODE></TD></TR>
 <TR><TD>Solaris</TD><TD><CODE>solaris</CODE></TD></TR>
@@ -563,6 +570,8 @@ Installing EPM documentation in /usr/share/doc/epm
 <BR> UltraSPARC</TD><TD><CODE>sparc</CODE></TD></TR>
 </TABLE>
 </CENTER>
+
+<!-- NEED 3in -->
 <P>Once you have determined the subdirectory containing the
  distribution, type the following commands to install EPM from the
  portable distribution:</P>
@@ -574,8 +583,6 @@ Installing EPM documentation in /usr/share/doc/epm
 </UL>
 <P>The software will be installed after answering a few yes/no
  questions.</P>
-
-<!-- NEW PAGE -->
 <H3>Installing Using the Native Distribution</H3>
 <P>The <CODE>test</CODE> target also builds a distribution in the native
  operating system format, if supported. Table 2.3 lists the native
@@ -602,6 +609,8 @@ directory</I> epm</CODE></TD></TR>
  directory</I></CODE></TD></TR>
 <TR><TD>Linux</TD><TD><CODE>rpm</CODE></TD><TD NOWRAP><CODE>rpm -i<I>
  directory</I>/epm-3.0.rpm</CODE></TD></TR>
+<TR><TD>MacOS X</TD><TD><CODE>osx</CODE></TD><TD NOWRAP>Double-click on
+ the <CODE>.pkg</CODE> folder in the finder.</TD></TR>
 <TR><TD>Solaris</TD><TD><CODE>pkg</CODE></TD><TD NOWRAP><CODE>pkgadd -d<I>
  directory</I> epm</CODE></TD></TR>
 </TABLE>
@@ -647,7 +656,7 @@ directory</I> epm</CODE></TD></TR>
  letter. The format of all lines is:</P>
 <UL>
 <PRE>
-type mode owner group destination source
+type mode owner group destination source <I>options</I>
 </PRE>
 </UL>
 <P>Regular files use the letter <CODE>f</CODE> for the type field:</P>
@@ -722,6 +731,7 @@ f 0444 root sys /usr/share/doc/foo *.html
  distribution.</LI>
 <LI><CODE>native</CODE> - &quot;Native&quot; software distribution (RPM, INST,
  DEPOT, PKG, etc.) for the platform.</LI>
+<LI><CODE>osx</CODE> - MacOS X software distribution.</LI>
 <LI><CODE>pkg</CODE> - Solaris software distribution.</LI>
 <LI><CODE>portable</CODE> - Portable software distribution (default).</LI>
 <LI><CODE>rpm</CODE> - RedHat software distribution.</LI>
@@ -1573,25 +1583,51 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
 <DD>Specifies a directory should be created when installing the
  software. The second form specifies that the directory is new and
  should be included as part of a patch.</DD>
-<DT>f<I> mode user group destination source</I></DT>
-<DT>F<I> mode user group destination source</I></DT>
+<DT>f<I> mode user group destination source [nostrip()]</I></DT>
+<DT>F<I> mode user group destination source [nostrip()]</I></DT>
 <DD>Specifies a file for installation. The second form specifies that
  the file has changed or is new and should be included as part of a
- patch.</DD>
-<DT>f<I> mode user group destination source/pattern</I></DT>
-<DT>F<I> mode user group destination source/pattern</I></DT>
+ patch. If the &quot;nostrip()&quot; option is included, the file will not be
+ stripped before the installation is created.</DD>
+<DT>f<I> mode user group destination source/pattern [nostrip()]</I></DT>
+<DT>F<I> mode user group destination source/pattern [nostrip()]</I></DT>
 <DD>Specifies one or more files for installation using shell wildcard
  patterns. The second form specifies that the files have changed or are
- new and should be included as part of a patch.</DD>
-<DT>i<I> mode user group service-name source</I></DT>
-<DT>I<I> mode user group service-name source</I></DT>
+ new and should be included as part of a patch. If the &quot;nostrip()&quot;
+ option is included, the file will not be stripped before the
+ installation is created.</DD>
+<DT>i<I> mode user group service-name source [&quot;options&quot;]</I></DT>
+<DT>I<I> mode user group service-name source [&quot;options&quot;]</I></DT>
 <DD>Specifies an initialization script for installation. The second form
  specifies that the file has changed or is new and should be included as
  part of a patch. Initialization scripts are stored in<VAR>
  /etc/software/init.d</VAR> and are linked to the appropriate
  system-specific directories for run levels 0, 2, 3, and 5.
  Initialization scripts<B> must</B> accept at least the<I> start</I> and<I>
- stop</I> commands.</DD>
+ stop</I> commands. The optional<I> options</I> following the source
+ filename can be any of the following:
+<DL>
+<DT>order(<I>string</I>)</DT>
+<DD>Specifies the relative startup order compared to the required and
+ used system functions. Supported values include First, Early, None,
+ Late, and Last (OSX only).</DD>
+<DT>provides(<I>name(s)</I>)</DT>
+<DD>Specifies names of system functions that are provided by this
+ startup item (OSX only).</DD>
+<DT>requires(<I>name(s)</I>)</DT>
+<DD>Specifies names of system functions that are required by this
+ startup item (OSX only).</DD>
+<DT>runlevels(<I>levels</I>)</DT>
+<DD>Specifies the run levels to use.</DD>
+<DT>start(<I>number</I>)</DT>
+<DD>Specifies the starting sequence number from 00 to 99.</DD>
+<DT>stop(<I>number</I>)</DT>
+<DD>Specifies the ending sequence number from 00 to 99.</DD>
+<DT>uses(<I>name(s)</I>)</DT>
+<DD>Specifies names of system functions that are used by this startup
+ item (OSX only).</DD>
+</DL>
+</DD>
 <DT>l<I> mode user group destination source</I></DT>
 <DT>L<I> mode user group destination source</I></DT>
 <DD>Specifies a symbolic link in the installation. The second form
@@ -1661,7 +1697,17 @@ TYPE Custom Configuration
 <H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
 <P>This appendix lists the change log for each release of the EPM
  software.</P>
-<H2><A NAME="9_1">Changes in EPM v3.5</A></H2>
+<H2><A NAME="9_1">Changes in EPM v3.5.1</A></H2>
+<UL>
+<LI>OSX packages did not set the &quot;install as root&quot; package type, so
+ package installation usually failed.</LI>
+<LI>OSX packages installed init scripts in /System/Library/StartupItems,
+ but non-Apple packages should be installed in /Library/StartupItems.</LI>
+<LI>Added support for &quot;requires(foo)&quot;, &quot;uses(foo)&quot;, &quot;provides(foo)&quot;, and
+ &quot;order(foo)&quot; as options for init scripts. These options are currently
+ only used when creating OSX packages.</LI>
+</UL>
+<H2><A NAME="9_2">Changes in EPM v3.5</A></H2>
 <UL>
 <LI>Added support for MacOS X package generation.</LI>
 <LI>No longer need/use RPMDIR when building RPMs, just set the &quot;topdir_&quot;
@@ -1682,7 +1728,7 @@ TYPE Custom Configuration
 <LI>BSD packages needed to list the directories to remove separately and
  in reverse order.</LI>
 </UL>
-<H2><A NAME="9_2">Changes in EPM v3.4</A></H2>
+<H2><A NAME="9_3">Changes in EPM v3.4</A></H2>
 <UL>
 <LI>No longer install init scripts in run levels 2 and 5 under Solaris,
  which runs all init scripts in each run level.</LI>
@@ -1697,7 +1743,7 @@ TYPE Custom Configuration
 <LI>No longer use or pad empty tar files, which saves 5k of disk space
  per distribution.</LI>
 </UL>
-<H2><A NAME="9_3">Changes in EPM v3.3</A></H2>
+<H2><A NAME="9_4">Changes in EPM v3.3</A></H2>
 <UL>
 <LI>UnixWare 7 needs the absolute path when transferring an AT&amp;T package
  directory to a .pkg file.</LI>
@@ -1722,12 +1768,12 @@ TYPE Custom Configuration
 <LI>EPM now checks to see if an executable file is a shell script before
  running the &quot;strip&quot; command.</LI>
 </UL>
-<H2><A NAME="9_4">Changes in EPM v3.2.1</A></H2>
+<H2><A NAME="9_5">Changes in EPM v3.2.1</A></H2>
 <UL>
 <LI>The check for Darwin (MacOS X) in the portable installation scripts
  was using &quot;==&quot; instead of just &quot;=&quot;.</LI>
 </UL>
-<H2><A NAME="9_5">Changes in EPM v3.2</A></H2>
+<H2><A NAME="9_6">Changes in EPM v3.2</A></H2>
 <UL>
 <LI>Added &quot;SHELL=/bin/sh&quot; line to portable installation, patch, and
  remove scripts in case the root shell is not /bin/sh or a compatible
@@ -1752,7 +1798,7 @@ TYPE Custom Configuration
  preinstall and removal scripts.</LI>
 <LI>The setup GUI now requires FLTK 1.1.x.</LI>
 </UL>
-<H2><A NAME="9_6">Changes in EPM v3.1</A></H2>
+<H2><A NAME="9_7">Changes in EPM v3.1</A></H2>
 <UL>
 <LI>Added support for &quot;&lt;&lt;end ... end&quot; and &quot;&lt;filename&quot; to insert
  descriptions and commands in-line and from a file.</LI>
@@ -1775,7 +1821,7 @@ TYPE Custom Configuration
 <LI>EPM now detects RPM 4.0.3, which (mysteriously) now uses &quot;--target
  arch&quot; instead of &quot;--target=arch&quot;.</LI>
 </UL>
-<H2><A NAME="9_7">Changes in EPM v3.0</A></H2>
+<H2><A NAME="9_8">Changes in EPM v3.0</A></H2>
 <UL>
 <LI>Added new documentation.</LI>
 <LI>Added new &quot;-a arch&quot; option to support specific architectures (e.g.
@@ -1804,7 +1850,7 @@ TYPE Custom Configuration
  config files are update automatically by an upgrade/install, while
  changed ones are preserved.</LI>
 </UL>
-<H2><A NAME="9_8">Changes in EPM v2.8</A></H2>
+<H2><A NAME="9_9">Changes in EPM v2.8</A></H2>
 <UL>
 <LI>The line breaking code did not include an extra space, so filenames
  in the portable install/patch/ remove scripts would be joined instead
@@ -1819,7 +1865,7 @@ TYPE Custom Configuration
  exclusively since it is supported on all UNIX's we have access to, even
  with GNU test even though it isn't documented...</LI>
 </UL>
-<H2><A NAME="9_9">Changes in EPM v2.7</A></H2>
+<H2><A NAME="9_10">Changes in EPM v2.7</A></H2>
 <UL>
 <LI>Fixed a bug in the configuration script with the
  --with-fltk-includes option.</LI>
@@ -1831,7 +1877,7 @@ TYPE Custom Configuration
 <LI>Now break up long lines in the portable install/patch/ remove
  scripts.</LI>
 </UL>
-<H2><A NAME="9_10">Changes in EPM v2.6</A></H2>
+<H2><A NAME="9_11">Changes in EPM v2.6</A></H2>
 <UL>
 <LI>Changed the automatic version number generation code to properly
  handle patch, beta, and pre releases.</LI>
@@ -1851,7 +1897,7 @@ TYPE Custom Configuration
 <LI>Pre/post install/remove scripts were not using the right filename
  for Solaris PKG distributions.</LI>
 </UL>
-<H2><A NAME="9_11">Changes in EPM v2.5</A></H2>
+<H2><A NAME="9_12">Changes in EPM v2.5</A></H2>
 <UL>
 <LI>Added support for pre-install, post-install, pre-patch, post-patch,
  pre-remove, and post-remove commands.</LI>
@@ -1873,12 +1919,12 @@ TYPE Custom Configuration
  proper options for echo (-n or \c), rather then hardcoding this based
  on the build system.</LI>
 </UL>
-<H2><A NAME="9_12">Changes in EPM v2.4</A></H2>
+<H2><A NAME="9_13">Changes in EPM v2.4</A></H2>
 <UL>
 <LI>The [] wildcard matching did not skip over the character that was
  matched. This prevented matches in most cases...</LI>
 </UL>
-<H2><A NAME="9_13">Changes in EPM v2.3</A></H2>
+<H2><A NAME="9_14">Changes in EPM v2.3</A></H2>
 <UL>
 <LI>Fix for an incredibly stupid bug in the portable distribution code -
  was using ! instead of ~ to mask off the write permission bits in the
@@ -1898,7 +1944,7 @@ TYPE Custom Configuration
  &quot;$name=value&quot;.</LI>
 <LI>The variable expansion code didn't check for ${name}.</LI>
 </UL>
-<H2><A NAME="9_14">Changes in EPM v2.2</A></H2>
+<H2><A NAME="9_15">Changes in EPM v2.2</A></H2>
 <UL>
 <LI>New HTML documentation files.</LI>
 <LI>Updated the BuildRoot directive in RPM spec files to be an absolute
@@ -1925,7 +1971,7 @@ TYPE Custom Configuration
 <LI>The OS version number is now truncated to only contain the major and
  minor release numbers.</LI>
 </UL>
-<H2><A NAME="9_15">Changes in EPM v2.1</A></H2>
+<H2><A NAME="9_16">Changes in EPM v2.1</A></H2>
 <UL>
 <LI>Moved setup program to /usr/lib/epm ($prefix/lib/epm) to avoid name
  clash with RedHat setup program.</LI>
@@ -1954,7 +2000,7 @@ TYPE Custom Configuration
 <LI>PKG distributions are now also generated in the &quot;package stream&quot;
  format as well as the directory and tar.gz file formats.</LI>
 </UL>
-<H2><A NAME="9_16">Changes in EPM v2.0</A></H2>
+<H2><A NAME="9_17">Changes in EPM v2.0</A></H2>
 <UL>
 <LI>New &quot;-f&quot; option to generate vendor-specific software distributions.
  Now support AT&amp;T, Debian, HP-UX, IRIX, and Red Hat software
@@ -1971,7 +2017,7 @@ TYPE Custom Configuration
 <LI>New &quot;replaces&quot; directive.</LI>
 <LI>Portable distributions should now be more portable.</LI>
 </UL>
-<H2><A NAME="9_17">Changes in EPM v1.7</A></H2>
+<H2><A NAME="9_18">Changes in EPM v1.7</A></H2>
 <UL>
 <LI>The %requires and %incompat directives now support specification of
  files as well as products.</LI>
@@ -1980,7 +2026,7 @@ TYPE Custom Configuration
 <LI>The progress messages for shared and non-shared software were the
  same.</LI>
 </UL>
-<H2><A NAME="9_18">Changes in EPM v1.6</A></H2>
+<H2><A NAME="9_19">Changes in EPM v1.6</A></H2>
 <UL>
 <LI>Installation archives were missing the &quot;.ss&quot; and &quot;.pss&quot; files that
  were added to support diskless installations.</LI>
@@ -1989,20 +2035,20 @@ TYPE Custom Configuration
 <LI>The scripts didn't return a non-zero exit status if the user did not
  agree with the license or want to install.</LI>
 </UL>
-<H2><A NAME="9_19">Changes in EPM v1.5</A></H2>
+<H2><A NAME="9_20">Changes in EPM v1.5</A></H2>
 <UL>
 <LI>Now support diskless installations; all files destined for /usr are
  put in a separate archive and are installed (or removed) only if /usr
  is read+write.</LI>
 </UL>
-<H2><A NAME="9_20">Changes in EPM v1.4</A></H2>
+<H2><A NAME="9_21">Changes in EPM v1.4</A></H2>
 <UL>
 <LI>Now map group &quot;sys&quot; to &quot;system&quot; for Digital UNIX and &quot;root&quot; for
  Linux.</LI>
 <LI>The initialization script installation now checks for the presence
  of run levels 4 and 5.</LI>
 </UL>
-<H2><A NAME="9_21">Changes in EPM v1.3</A></H2>
+<H2><A NAME="9_22">Changes in EPM v1.3</A></H2>
 <UL>
 <LI>Now use the &quot;p&quot; option to tar to ensure that file permissions are
  created properly. This is normally the default for the super-user, but
@@ -2010,7 +2056,7 @@ TYPE Custom Configuration
 <LI>Initialization scripts are now linked to run levels 0, 2, 3, 4, and
  5.</LI>
 </UL>
-<H2><A NAME="9_22">Changes in EPM v1.2</A></H2>
+<H2><A NAME="9_23">Changes in EPM v1.2</A></H2>
 <UL>
 <LI>Patch distributions were not correctly named.</LI>
 <LI>Added new &quot;initialization script&quot; file types &quot;i&quot; and &quot;I&quot;. The new
@@ -2018,7 +2064,7 @@ TYPE Custom Configuration
  the appropriate system-specific rc.d directories and run the scripts to
  start and stop things accordingly.</LI>
 </UL>
-<H2><A NAME="9_23">Changes in EPM v1.1</A></H2>
+<H2><A NAME="9_24">Changes in EPM v1.1</A></H2>
 <UL>
 <LI>The &quot;whoami&quot; command isn't always in the user's path, so scripts now
  use a hard-coded path (setup by the configure script) to the program.</LI>
