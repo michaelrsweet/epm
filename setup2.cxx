@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.24 2001/12/21 20:42:18 mike Exp $"
+// "$Id: setup2.cxx,v 1.25 2001/12/28 21:51:38 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -34,7 +34,7 @@
 #include <FL/x.H>
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
-#include <FL/Fl_Pixmap.H>
+#include <FL/Fl_XPM_Image.H>
 #include <errno.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -653,32 +653,12 @@ list_cb(Fl_Check_Browser *, void *)
 void
 load_image(void)
 {
-  FILE		*fp;		// Setup image file
-  char		line[1024];	// Line from file
-  Fl_Pixmap	*image;		// New image
-  int		num_lines;	// Number of lines in file
-  static const char *lines[1000];// Pointer to lines
+  Fl_XPM_Image	*xpm;		// New image
 
 
-  if ((fp = fopen("setup.xpm", "r")) == NULL)
-    return;
+  xpm = new Fl_XPM_Image("setup.xpm");
 
-  num_lines = 0;
-  while (fgets(line, sizeof(line), fp) != NULL &&
-         num_lines < 1000)
-  {
-    if (line[0] != '\"')
-      continue;
-
-    line[strlen(line) - 3] = '\0';	/* Drop ",\n */
-    lines[num_lines] = strdup(line + 1);
-    num_lines ++;
-  }
-
-  fclose(fp);
-
-  image = new Fl_Pixmap(lines);
-  image->label(WelcomeImage);
+  WelcomeImage->image(xpm);
 }
 
 
@@ -1021,7 +1001,7 @@ update_sizes(void)
     }
 
   // Get the sizes of the root and /usr partition...
-#if defined(__sgi) || defined(__sun)
+#if defined(__sgi) || defined(__sun) || defined(M_XENIX)
   if (statfs("/", &rootpart, sizeof(rootpart), 0))
 #else
   if (statfs("/", &rootpart))
@@ -1031,7 +1011,7 @@ update_sizes(void)
     rootfree = (int)((double)rootpart.f_bfree * (double)rootpart.f_bsize /
                      1024.0 / 1024.0 + 0.5);
 
-#if defined(__sgi) || defined(__sun)
+#if defined(__sgi) || defined(__sun) || defined(M_XENIX)
   if (statfs("/usr", &usrpart, sizeof(usrpart), 0))
 #else
   if (statfs("/usr", &usrpart))
@@ -1082,5 +1062,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.24 2001/12/21 20:42:18 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.25 2001/12/28 21:51:38 mike Exp $".
 //
