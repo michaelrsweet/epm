@@ -1,0 +1,61 @@
+/*
+ * "$Id: config.h.in,v 1.1 1999/06/21 14:25:15 mike Exp $"
+ *
+ *   Configuration file for the ESP Package Manager (EPM).
+ *
+ *   Copyright 1999 by Easy Software Products.
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2, or (at your option)
+ *   any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ */
+
+/*
+ * Version of software...
+ */
+
+#define EPM_VERSION	"ESP Package Manager 1.0"
+
+/*
+ * Where are files stored?
+ */
+
+#define EPM_SOFTWARE	"/etc/software"
+
+/*
+ * What options does the strip command take?
+ */
+
+#define EPM_STRIP	"/bin/strip"
+
+/*
+ * Compiler stuff...
+ */
+
+#undef const
+#undef __CHAR_UNSIGNED__
+
+/*
+ * Do we have the strXXX() functions?
+ */
+
+#undef HAVE_STRDUP
+#undef HAVE_STRCASECMP
+#undef HAVE_STRNCASECMP
+
+/*
+ * Are we using a broken "echo" command that doesn't support the \c
+ * escape (like GNU echo?)
+ */
+
+#undef HAVE_BROKEN_ECHO
+
+/*
+ * End of "$Id: config.h.in,v 1.1 1999/06/21 14:25:15 mike Exp $".
+ */

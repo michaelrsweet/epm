@@ -1,0 +1,143 @@
+.\"
+.\" "$Id: epm.man,v 1.1 1999/06/21 14:25:17 mike Exp $"
+.\"
+.\"   Manual page for the ESP Package Manager (EPM).
+.\"
+.\"   Copyright 1999 by Easy Software Products, all rights reserved.
+.\"
+.\"   This program is free software; you can redistribute it and/or modify
+.\"   it under the terms of the GNU General Public License as published by
+.\"   the Free Software Foundation; either version 2, or (at your option)
+.\"   any later version.
+.\"
+.\"   This program is distributed in the hope that it will be useful,
+.\"   but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"   GNU General Public License for more details.
+.\"
+.TH epm 1 "ESP Package Manager" "21 June 1999" "Easy Software Products"
+.SH NAME
+epm \- create software packages
+.SH SYNOPSIS
+.B epm
+[ \-c
+.I copyright
+] [ \-g ] [ \-l
+.I license
+] \-r
+.I readme
+] [ \-v
+.I version
+] [ \-V
+.I vendor
+] product [
+.I listfile
+]
+.SH DESCRIPTION
+\fBepm\fR generates software packages complete with installation, removal, and
+(if necessary) patch scripts. Unless otherwise specified, the files required
+for \fIproduct\fR are read from a file named "\fIproduct\fR.list".
+.LP
+Executable files in the distribution are normally stripped of debugging
+information when packaged. To disable this functionality use the
+\fI\-g\fR option.
+.SH LIST FILES
+Each product has an associated list file that describes the files to include
+with the product. Comment lines begin with the "#" character and are ignored.
+All other non-blank lines must begin with a letter or the percent sign ("%")
+as follows:
+.TP
+%copyright \fIcopyright notice\fR
+.br
+Sets the copyright notice for the file.
+.TP
+%incompat \fIproduct\fR
+.br
+Indicates that this product is incompatible with the named product.
+.TP 5
+%install \fIscript or program\fR
+.br
+Specifies a script or program to be run after all files are installed.
+.TP
+%license \fIlicense file\fR
+.br
+Specifies the file to display as the software license.
+.TP 5
+%patch \fIscript or program\fR
+.br
+Specifies a script or program to be run after all files are patched.
+.TP 5
+%product \fIproduct name\fR
+.br
+Specifies the product name.
+.TP 5
+%readme \fIreadme file\fR
+.br
+Specifies a README file to be included in the distribution.
+.TP 5
+%remove \fIscript or program\fR
+.br
+Specifies a script or program to be run before removing or patching files.
+.TP 5
+%vendor \fIvendor or author name\fR
+.br
+Specifies the vendor or author of the product.
+.TP 5
+%version \fIversion number\fR
+.br
+Specifies the version number of the product.
+.TP 5
+%system \fIoperating system name(s)\fR
+.br
+Specifies that the following files should only be used for the specified
+operating system names.
+.TP 5
+%system all
+.br
+Specifies that the following files are applicable to all operating systems.
+.TP 5
+f \fImode user group destination source\fR
+.TP 5
+F \fImode user group destination source\fR
+.br
+Specifies a file for installation. The second form specifies that the file
+has changed or is new and should be included as part of a patch.
+.TP 5
+c \fImode user group destination source\fR
+.TP 5
+C \fImode user group destination source\fR
+.br
+Specifies a configuration file for installation. The second form
+specifies that the file has changed or is new and should be included as
+part of a patch. Configuration files are installed as "destination.N"
+if the destination already exists.
+.TP 5
+d \fImode user group destination -\fR
+.TP 5
+D \fImode user group destination -\fR
+.br
+Specifies a directory should be created when installing the software. The
+second form specifies that the directory is new and should be included as part
+of a patch.
+.TP 5
+l \fImode user group destination source\fR
+.TP 5
+L \fImode user group destination source\fR
+.br
+Specifies a symbolic link in the installation. The second form specifies that
+the link has changed or is new and should be included as part of a patch.
+.SH COPYRIGHT
+Copyright 1999 by Easy Software Products, All Rights Reserved.
+.LP
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+.LP
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.\"
+.\" End of "$Id: epm.man,v 1.1 1999/06/21 14:25:17 mike Exp $".
+.\"
