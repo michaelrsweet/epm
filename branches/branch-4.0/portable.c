@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63.2.22 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.23 2004/08/29 04:17:44 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -935,6 +935,7 @@ write_distfiles(const char *title,	/* I - Title to show */
 		srcname[1024],		/* Name of source file in distribution */
 		dstname[1024];		/* Name of destination file in distribution */
   struct stat	srcstat;		/* Source file information */
+  const char	*setup_img;		/* Setup image name */
 
 
   if (Verbosity)
@@ -968,9 +969,143 @@ write_distfiles(const char *title,	/* I - Title to show */
     return (-1);
   }
 
+#ifdef __APPLE__
+  if (setup)
+  {
+   /*
+    * Create directories for the setup application...
+    */
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app/Contents", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app/Contents/MacOS", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app/Contents/Resources", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+   /*
+    * Then copy the data files...
+    */
+
+    snprintf(srcname, sizeof(srcname), "%s/setup.icns", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Install.app/Contents/Resources/setup.icns", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    snprintf(srcname, sizeof(srcname), "%s/setup.info", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Install.app/Contents/PkgInfo", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    snprintf(srcname, sizeof(srcname), "%s/setup.plist", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Install.app/Contents/Info.plist", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+  }
+#endif /* __APPLE__ */
+
   for (i = 0; files[i] != NULL; i ++)
   {
     snprintf(srcname, sizeof(srcname), "%s/%s.%s", directory, prodname, files[i]);
+
+#ifdef __APPLE__
+    if (setup)
+      snprintf(dstname, sizeof(dstname), "Install.app/Contents/Resources/%s.%s", prodname, files[i]);
+    else
+#endif /* __APPLE__ */
     snprintf(dstname, sizeof(dstname), "%s.%s", prodname, files[i]);
 
     stat(srcname, &srcstat);
@@ -1010,7 +1145,7 @@ write_distfiles(const char *title,	/* I - Title to show */
   if (setup)
   {
    /*
-    * Include the ESP Software Wizard (setup)...
+    * Include the ESP Software Installation Wizard (setup)...
     */
 
     if (stat(SetupProgram, &srcstat))
@@ -1023,8 +1158,14 @@ write_distfiles(const char *title,	/* I - Title to show */
       return (-1);
     }
 
+#ifdef __APPLE__
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root",
+		   "Install.app/Contents/MacOS/setup", NULL) < 0)
+#else
     if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
 	           srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
+#endif /* __APPLE__ */
     {
       if (Verbosity)
         puts("");
@@ -1055,8 +1196,23 @@ write_distfiles(const char *title,	/* I - Title to show */
     */
 
     stat(setup, &srcstat);
+#ifdef __APPLE__
+    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
+      setup_img = "Install.app/Contents/Resources/setup.gif";
+    else
+      setup_img = "Install.app/Contents/Resources/setup.xpm";
+
     if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", "setup.xpm", NULL) < 0)
+	           srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
+#else
+    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
+      setup_img = "setup.gif";
+    else
+      setup_img = "setup.xpm";
+
+    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
+#endif /* __APPLE__ */
     {
       if (Verbosity)
         puts("");
@@ -1089,8 +1245,13 @@ write_distfiles(const char *title,	/* I - Title to show */
     if (types)
     {
       stat(types, &srcstat);
+#ifdef __APPLE__
       if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	             srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
+		     srcstat.st_mtime, "root", "root", "Install.app/Contents/Resources/setup.types", NULL) < 0)
+#else
+      if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+		     srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
+#endif /* __APPLE__ */
       {
 	if (Verbosity)
           puts("");
@@ -1116,6 +1277,213 @@ write_distfiles(const char *title,	/* I - Title to show */
 	fflush(stdout);
       }
     }
+
+   /*
+    * And finally the uninstall stuff...
+    */
+
+#ifdef __APPLE__
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root",
+                   "Uninstall.app", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Uninstall.app/Contents", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/MacOS", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/Resources", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+   /*
+    * Then copy the data files...
+    */
+
+    snprintf(srcname, sizeof(srcname), "%s/uninst.icns", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/Resources/uninst.icns", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    snprintf(srcname, sizeof(srcname), "%s/uninst.info", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/PkgInfo", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    snprintf(srcname, sizeof(srcname), "%s/uninst.plist", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/Info.plist", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+#endif /* __APPLE__ */
+
+   /*
+    * Include the ESP Software Removal Wizard (uninst)...
+    */
+
+    if (stat(UninstProgram, &srcstat))
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Unable to stat GUI uninstall program %s - %s\n",
+	      UninstProgram, strerror(errno));
+      return (-1);
+    }
+
+#ifdef __APPLE__
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/MacOS/uninst", NULL) < 0)
+#else
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "uninst", NULL) < 0)
+#endif /* __APPLE__ */
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, UninstProgram) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for uninst -\n    %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (Verbosity)
+    {
+      printf(" uninst");
+      fflush(stdout);
+    }
+
+#ifdef __APPLE__
+   /*
+    * And the image file...
+    */
+
+    stat(setup, &srcstat);
+
+    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
+      setup_img = "Uninstall.app/Contents/Resources/setup.gif";
+    else
+      setup_img = "Uninstall.app/Contents/Resources/setup.xpm";
+
+    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, setup) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for setup.xpm -\n    %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+#endif /* __APPLE__ */
   }
 
   tar_close(tarfile);
@@ -1415,8 +1783,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
       switch (tolower(file->type))
       {
 	case 'c' :
-	    qprintf(scriptfile, "chown %s %s.N\n", file->user, file->dst);
-	    qprintf(scriptfile, "chgrp %s %s.N\n", file->group, file->dst);
+	    qprintf(scriptfile, "	chown %s %s.N\n", file->user, file->dst);
+	    qprintf(scriptfile, "	chgrp %s %s.N\n", file->group, file->dst);
 	case 'f' :
 	    qprintf(scriptfile, "	chown %s %s\n", file->user, file->dst);
 	    qprintf(scriptfile, "	chgrp %s %s\n", file->group, file->dst);
@@ -1536,7 +1904,6 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 	    const char *directory)	/* I - Directory */
 {
   int		i;			/* Looping var */
-  int		col;			/* Current column */
   FILE		*scriptfile;		/* Patch script */
   char		filename[1024];		/* Name of temporary file */
   file_t	*file;			/* Software file */
@@ -1663,30 +2030,34 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
   fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
 
+  fputs("echo Updating file permissions...\n", scriptfile);
+
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'c')
-      break;
-
-  if (i)
-  {
-    fputs("echo Checking configuration files...\n", scriptfile);
-
-    col = fputs("for file in", scriptfile);
-    for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'c')
+    if (strncmp(file->dst, "/usr", 4) != 0 &&
+        strcmp(file->user, "root") != 0)
+      switch (file->type)
       {
-        if (col > 80)
-	  col = qprintf(scriptfile, " \\\n%s", file->dst) - 2;
-	else
-          col += qprintf(scriptfile, " %s", file->dst);
+	case 'C' :
+	case 'F' :
+	    qprintf(scriptfile, "chown %s %s\n", file->user, file->dst);
+	    qprintf(scriptfile, "chgrp %s %s\n", file->group, file->dst);
+	    break;
       }
 
-    fputs("; do\n", scriptfile);
-    fputs("	if test ! -f \"$file\"; then\n", scriptfile);
-    fputs("		cp \"$file.N\" \"$file\"\n", scriptfile);
-    fputs("	fi\n", scriptfile);
-    fputs("done\n", scriptfile);
-  }
+  fputs("if test -f /usr/.writetest; then\n", scriptfile);
+  fputs("	rm -f /usr/.writetest\n", scriptfile);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) == 0 &&
+        strcmp(file->user, "root") != 0)
+      switch (file->type)
+      {
+	case 'C' :
+	case 'F' :
+	    qprintf(scriptfile, "	chown %s %s\n", file->user, file->dst);
+	    qprintf(scriptfile, "	chgrp %s %s\n", file->group, file->dst);
+	    break;
+      }
+  fputs("fi\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (file->type == 'C')
@@ -1707,39 +2078,6 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
-
-  fputs("echo Updating file permissions...\n", scriptfile);
-
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (strncmp(file->dst, "/usr", 4) != 0 &&
-        strcmp(file->user, "root") != 0)
-      switch (file->type)
-      {
-	case 'C' :
-	    qprintf(scriptfile, "chown %s %s.N\n", file->user, file->dst);
-	    qprintf(scriptfile, "chgrp %s %s.N\n", file->group, file->dst);
-	case 'F' :
-	    qprintf(scriptfile, "chown %s %s\n", file->user, file->dst);
-	    qprintf(scriptfile, "chgrp %s %s\n", file->group, file->dst);
-	    break;
-      }
-
-  fputs("if test -f /usr/.writetest; then\n", scriptfile);
-  fputs("	rm -f /usr/.writetest\n", scriptfile);
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (strncmp(file->dst, "/usr", 4) == 0 &&
-        strcmp(file->user, "root") != 0)
-      switch (file->type)
-      {
-	case 'C' :
-	    qprintf(scriptfile, "	chown %s %s.N\n", file->user, file->dst);
-	    qprintf(scriptfile, "	chgrp %s %s.N\n", file->group, file->dst);
-	case 'F' :
-	    qprintf(scriptfile, "	chown %s %s\n", file->user, file->dst);
-	    qprintf(scriptfile, "	chgrp %s %s\n", file->group, file->dst);
-	    break;
-      }
-  fputs("fi\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (file->type == 'R')
@@ -2220,5 +2558,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63.2.22 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.23 2004/08/29 04:17:44 mike Exp $".
  */

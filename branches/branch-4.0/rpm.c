@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.35.2.16 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: rpm.c,v 1.35.2.17 2004/08/29 04:17:44 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -202,37 +202,38 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   if (i)
   {
-    fputs("echo Setting up init scripts...\n", fp);
+    fputs("if test \"x$1\" = x1; then\n", fp);
+    fputs("	echo Setting up init scripts...\n", fp);
 
    /*
     * Find where the frigging init scripts go...
     */
 
-    fputs("rcdir=\"\"\n", fp);
-    fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
-    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", fp);
-    fputs("		rcdir=\"$dir\"\n", fp);
-    fputs("	fi\n", fp);
-    fputs("done\n", fp);
-    fputs("if test \"$rcdir\" = \"\" ; then\n", fp);
-    fputs("	echo Unable to determine location of startup scripts!\n", fp);
-    fputs("else\n", fp);
+    fputs("	rcdir=\"\"\n", fp);
+    fputs("	for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
+    fputs("		if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", fp);
+    fputs("			rcdir=\"$dir\"\n", fp);
+    fputs("		fi\n", fp);
+    fputs("	done\n", fp);
+    fputs("	if test \"$rcdir\" = \"\" ; then\n", fp);
+    fputs("		echo Unable to determine location of startup scripts!\n", fp);
+    fputs("	else\n", fp);
     for (; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
       {
-	fputs("	if test -d $rcdir/init.d; then\n", fp);
-	qprintf(fp, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
-	qprintf(fp, "		/bin/ln -s %s/init.d/%s "
-                    "$rcdir/init.d/%s\n", SoftwareDir, file->dst, file->dst);
-	fputs("	else\n", fp);
-	fputs("		if test -d /etc/init.d; then\n", fp);
-	qprintf(fp, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
+	fputs("		if test -d $rcdir/init.d; then\n", fp);
+	qprintf(fp, "			/bin/rm -f $rcdir/init.d/%s\n", file->dst);
 	qprintf(fp, "			/bin/ln -s %s/init.d/%s "
+                    "$rcdir/init.d/%s\n", SoftwareDir, file->dst, file->dst);
+	fputs("		else\n", fp);
+	fputs("			if test -d /etc/init.d; then\n", fp);
+	qprintf(fp, "				/bin/rm -f /etc/init.d/%s\n", file->dst);
+	qprintf(fp, "				/bin/ln -s %s/init.d/%s "
                     "/etc/init.d/%s\n", SoftwareDir, file->dst, file->dst);
+	fputs("			fi\n", fp);
 	fputs("		fi\n", fp);
-	fputs("	fi\n", fp);
 
-	for (runlevels = get_runlevels(dist->files + i, "0235");
+	for (runlevels = get_runlevels(dist->files + i, "0123456");
              isdigit(*runlevels);
 	     runlevels ++)
 	{
@@ -241,16 +242,20 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	  else
 	    number = get_start(file, 99);
 
-	  qprintf(fp, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
-	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
-	  qprintf(fp, "	/bin/ln -s %s/init.d/%s "
+	  qprintf(fp, "		/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
+	          (*runlevels == '0' || *runlevels == '1' ||
+		   *runlevels == '6') ? 'K' : 'S', number, file->dst);
+	  qprintf(fp, "		/bin/ln -s %s/init.d/%s "
                       "$rcdir/rc%c.d/%c%02d%s\n", SoftwareDir, file->dst,
-		  *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
+		  *runlevels,
+		  (*runlevels == '0' || *runlevels == '1' ||
+		   *runlevels == '6') ? 'K' : 'S', number, file->dst);
         }
 
-        qprintf(fp, "	%s/init.d/%s start\n", SoftwareDir, file->dst);
+        qprintf(fp, "		%s/init.d/%s start\n", SoftwareDir, file->dst);
       }
 
+    fputs("	fi\n", fp);
     fputs("fi\n", fp);
   }
 
@@ -261,35 +266,36 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   if (i)
   {
-    fputs("echo Cleaning up init scripts...\n", fp);
+    fputs("if test \"x$1\" = x0; then\n", fp);
+    fputs("	echo Cleaning up init scripts...\n", fp);
 
    /*
     * Find where the frigging init scripts go...
     */
 
-    fputs("rcdir=\"\"\n", fp);
-    fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
-    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", fp);
-    fputs("		rcdir=\"$dir\"\n", fp);
-    fputs("	fi\n", fp);
-    fputs("done\n", fp);
-    fputs("if test \"$rcdir\" = \"\" ; then\n", fp);
-    fputs("	echo Unable to determine location of startup scripts!\n", fp);
-    fputs("else\n", fp);
+    fputs("	rcdir=\"\"\n", fp);
+    fputs("	for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
+    fputs("		if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", fp);
+    fputs("			rcdir=\"$dir\"\n", fp);
+    fputs("		fi\n", fp);
+    fputs("	done\n", fp);
+    fputs("	if test \"$rcdir\" = \"\" ; then\n", fp);
+    fputs("		echo Unable to determine location of startup scripts!\n", fp);
+    fputs("	else\n", fp);
     for (; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
       {
-        qprintf(fp, "	%s/init.d/%s stop\n", SoftwareDir, file->dst);
+        qprintf(fp, "		%s/init.d/%s stop\n", SoftwareDir, file->dst);
 
-	fputs("	if test -d $rcdir/init.d; then\n", fp);
-	qprintf(fp, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
-	fputs("	else\n", fp);
-	fputs("		if test -d /etc/init.d; then\n", fp);
-	qprintf(fp, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
+	fputs("		if test -d $rcdir/init.d; then\n", fp);
+	qprintf(fp, "			/bin/rm -f $rcdir/init.d/%s\n", file->dst);
+	fputs("		else\n", fp);
+	fputs("			if test -d /etc/init.d; then\n", fp);
+	qprintf(fp, "				/bin/rm -f /etc/init.d/%s\n", file->dst);
+	fputs("			fi\n", fp);
 	fputs("		fi\n", fp);
-	fputs("	fi\n", fp);
 
-	for (runlevels = get_runlevels(dist->files + i, "0235");
+	for (runlevels = get_runlevels(dist->files + i, "0123456");
              isdigit(*runlevels);
 	     runlevels ++)
 	{
@@ -298,11 +304,13 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	  else
 	    number = get_start(file, 99);
 
-	  qprintf(fp, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
-	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
+	  qprintf(fp, "		/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
+	          (*runlevels == '0' || *runlevels == '1' ||
+		   *runlevels == '6') ? 'K' : 'S', number, file->dst);
         }
       }
 
+    fputs("	fi\n", fp);
     fputs("fi\n", fp);
   }
 
@@ -432,11 +440,11 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   if (strcmp(platform->machine, "intel") == 0)
     run_command(NULL, "/bin/mv %s/RPMS/i386/%s-%s-%d.i386.rpm %s/%s.rpm",
-		rpmdir, prodname, dist->version,
-		dist->relnumber, directory, name);
+		rpmdir, prodname, dist->version, dist->relnumber,
+		directory, name);
   else
     run_command(NULL, "/bin/mv %s/RPMS/%s/%s-%s-%d.%s.rpm %s/%s.rpm",
-		rpmdir, prodname, dist->version,
+		rpmdir, platform->machine, prodname, dist->version,
 		dist->relnumber, platform->machine, directory, name);
 
  /*
@@ -459,5 +467,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.35.2.16 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: rpm.c,v 1.35.2.17 2004/08/29 04:17:44 mike Exp $".
  */

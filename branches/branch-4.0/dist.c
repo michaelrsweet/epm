@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.14 2004/08/26 18:43:17 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.15 2004/08/29 04:17:44 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -676,6 +676,8 @@ get_runlevels(file_t     *file,		/* I - File */
 
   if ((runlevels = strstr(file->options, "runlevel(")) != NULL)
     runlevels += 9;
+  else if ((runlevels = strstr(file->options, "runlevels(")) != NULL)
+    runlevels += 10;			/* Compatible mis-spelling... */
   else
     runlevels = deflevels;
 
@@ -2319,5 +2321,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.14 2004/08/26 18:43:17 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.15 2004/08/29 04:17:44 mike Exp $".
  */

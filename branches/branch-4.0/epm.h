@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.27.2.14 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: epm.h,v 1.27.2.15 2004/08/29 04:17:44 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -231,10 +231,12 @@ typedef struct				/**** Distribution Structure ****/
  * Globals...
  */
 
-extern int		Verbosity;	/* Be verbose? */
+extern const char	*DataDir;	/* Directory for setup data files */
 extern int		KeepFiles;	/* Keep intermediate files? */
 extern const char	*SetupProgram;	/* Setup program */
 extern const char	*SoftwareDir;	/* Software directory path */
+extern const char	*UninstProgram;	/* Uninstall program */
+extern int		Verbosity;	/* Be verbose? */
 
 
 /*
@@ -321,5 +323,5 @@ extern int	write_dist(const char *listname, dist_t *dist);
 
 
 /*
- * End of "$Id: epm.h,v 1.27.2.14 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: epm.h,v 1.27.2.15 2004/08/29 04:17:44 mike Exp $".
  */

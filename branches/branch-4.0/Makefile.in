@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.34.2.8 2004/03/05 05:28:17 mike Exp $"
+# "$Id: Makefile.in,v 1.34.2.9 2004/08/29 04:17:44 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -267,6 +267,7 @@ uninstall:
 	echo Uninstalling EPM OSX data files from $(datadir)/epm
 	$(RM) -r $(datadir)/epm
 
+
 #
 # Makefile
 #
@@ -320,7 +321,6 @@ test:	$(TARGETS)
 #
 
 aix: $(TARGETS)
-	echo Please note: AIX support is not working yet.
 	./epm -f aix -v epm
 
 bsd: $(TARGETS)
@@ -331,6 +331,10 @@ slackware: $(TARGETS)
 
 deb: $(TARGETS)
 	./epm -f deb -v epm
+
+gui: $(TARGETS)
+	./epm -v -s epm.xpm --setup-program setup \
+		--uninstall-program uninst --data-dir macosx epm
 
 inst tardist: $(TARGETS)
 	./epm -f tardist -v epm
@@ -407,8 +411,8 @@ setup:	$(SETUP_OBJS) libepm.a
 	echo Linking setup...
 	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) libepm.a $(GUILIBS) $(LIBS)
 
-setup.o:	setup.h setup2.h epmstring.h gui-common.h
-setup2.o:	setup.h setup2.h epmstring.h gui-common.h
+setup.o:	setup.h gui-common.h epmstring.h
+setup2.o:	setup.h gui-common.h epmstring.h
 gui-common.o:	gui-common.h
 
 
@@ -445,5 +449,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.34.2.8 2004/03/05 05:28:17 mike Exp $".
+# End of "$Id: Makefile.in,v 1.34.2.9 2004/08/29 04:17:44 mike Exp $".
 #

@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0104 
+version 1.0105 
 header_name {.h} 
 code_name {.cxx}
 Function {make_window()} {open
@@ -7,20 +7,17 @@ Function {make_window()} {open
   Fl_Window SetupWindow {
     label {ESP Software Installation Wizard}
     callback {if (CancelButton->active())
-  exit(0);} open selected
-    xywh {438 150 580 345}
+  exit(0);} open
+    xywh {438 150 580 345} type Double
     code0 {\#include "gui-common.h"} visible
   } {
     Fl_Wizard Wizard {open
       xywh {10 10 560 290}
     } {
       Fl_Group WelcomePane {
-        xywh {10 10 560 280} hide
+        label {Welcome to the Software Installation Wizard}
+        xywh {15 15 550 280} labelfont 1 labelsize 18 labelcolor 4 align 21 hide
       } {
-        Fl_Box {} {
-          label {Welcome to the Software Installation Wizard}
-          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
-        }
         Fl_Box WelcomeImage {
           xywh {20 50 540 180} align 16
         }
@@ -32,12 +29,9 @@ To select software for installation, please click on the "Next" button below.}
         }
       }
       Fl_Group TypePane {
-        xywh {10 10 555 280} hide
+        label {Installation Type} open
+        xywh {15 15 550 275} labelfont 1 labelsize 18 labelcolor 4 align 21 hide
       } {
-        Fl_Box {} {
-          label {Installation Type}
-          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
-        }
         Fl_Box {} {
           label {Please select the type of software installation and click on the "Next" button below.}
           xywh {20 55 540 35} align 149
@@ -80,12 +74,9 @@ To select software for installation, please click on the "Next" button below.}
         }
       }
       Fl_Group SoftwarePane {
-        xywh {10 10 560 290} hide
+        label {Software Selection}
+        xywh {15 15 550 280} labelfont 1 labelsize 18 labelcolor 4 align 21 hide
       } {
-        Fl_Box {} {
-          label {Software Selection}
-          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
-        }
         Fl_Box {} {
           label {Please select the software you would like to install and click on the "Next" button below.}
           xywh {20 55 540 35} align 149
@@ -113,12 +104,9 @@ list_cb(0,0);}
         }
       }
       Fl_Group ConfirmPane {
-        xywh {10 10 560 280} hide
+        label {Confirm Installation}
+        xywh {15 15 550 280} labelfont 1 labelsize 18 labelcolor 4 align 21 hide
       } {
-        Fl_Box {} {
-          label {Confirm Installation}
-          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
-        }
         Fl_Box {} {
           label {You have selected the software below for installation. Click on the "Next" button to start the software installation or the "Back" button to change your selections.}
           xywh {20 55 540 50} align 149
@@ -128,12 +116,9 @@ list_cb(0,0);}
         }
       }
       Fl_Group LicensePane {
-        xywh {10 10 560 280} hide
+        label {License Agreement}
+        xywh {15 15 550 280} labelfont 1 labelsize 18 labelcolor 4 align 21 hide
       } {
-        Fl_Box LicenseLabel {
-          label {License Agreement for Some Product}
-          xywh {20 20 540 40} labelfont 1 labelsize 18 labelcolor 4 align 149
-        }
         Fl_Browser LicenseBrowser {
           xywh {20 65 540 175} textfont 4 textsize 12 resizable
         }
@@ -153,12 +138,9 @@ list_cb(0,0);}
         }
       }
       Fl_Group InstallPane {
-        xywh {10 10 560 290}
+        label {Installing Software...} selected
+        xywh {15 15 550 280} labelfont 1 labelsize 18 labelcolor 4 align 21
       } {
-        Fl_Box {} {
-          label {Installing Software...}
-          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
-        }
         Fl_Progress InstallPercent {
           label {Progress Label...}
           xywh {20 75 540 15} selection_color 63 labelfont 2 align 5

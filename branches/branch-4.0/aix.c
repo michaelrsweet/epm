@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.8.2.7 2004/04/21 18:55:19 mike Exp $"
+ * "$Id: aix.c,v 1.8.2.8 2004/08/29 04:17:44 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -455,6 +455,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   command_t		*c;		/* Current command */
   file_t		*file;		/* Current distribution file */
   int			configcount;	/* Number of config files */
+  int 			shared_file;	/* Shared file? */
 
 
  /*
@@ -488,12 +489,29 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
           if (root)
             qprintf(fp, "./etc/rc.d/rc2.d/S99%s\n", file->dst);
 	  break;
+
       default :
-          if ((strcmp(file->dst, "/usr") ||
-	       strncmp(file->dst, "/usr/", 5) ||
-	       strcmp(file->dst, "/opt") ||
-	       strncmp(file->dst, "/opt/", 5)) == root)
+          shared_file = !(strcmp(file->dst, "/usr") && 
+                          strncmp(file->dst, "/usr/", 5) && 
+                          strcmp(file->dst, "/opt") && 
+                          strncmp(file->dst, "/opt/", 5));
+
+         /*
+	  * Put file in root or share .al file as appropriate
+          */
+
+          if ((shared_file && !root) || (!shared_file && root))
             qprintf(fp, ".%s\n", file->dst);
+
+         /*
+	  * Put any root file in the share .al so it will be extracted
+	  * to /usr/lpp/<prodname>/inst_root directory.  I have no
+	  * idea if this is really the way to do it but it seems to
+	  * work...
+	  */
+
+          if (!shared_file && !root)
+            qprintf(fp, "./usr/lpp/%s/inst_root%s\n", prodname, file->dst);
 	  break;
     }
 
@@ -520,9 +538,9 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c' &&
         (strcmp(file->dst, "/usr") ||
-	       strncmp(file->dst, "/usr/", 5) ||
-	       strcmp(file->dst, "/opt") ||
-	       strncmp(file->dst, "/opt/", 5)) == root)
+	 strncmp(file->dst, "/usr/", 5) ||
+	 strcmp(file->dst, "/opt") ||
+	 strncmp(file->dst, "/opt/", 5)) == root)
     {
       qprintf(fp, ".%s hold_new\n", file->dst);
       configcount ++;
@@ -788,5 +806,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: aix.c,v 1.8.2.7 2004/04/21 18:55:19 mike Exp $".
+ * End of "$Id: aix.c,v 1.8.2.8 2004/08/29 04:17:44 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.67.2.9 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: epm.c,v 1.67.2.10 2004/08/29 04:17:44 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -33,10 +33,12 @@
  * Globals...
  */
 
-int		Verbosity = 0;
+const char	*DataDir = EPM_DATADIR;
 int		KeepFiles = 0;
 const char	*SetupProgram = EPM_LIBDIR "/setup";
 const char	*SoftwareDir = EPM_SOFTWARE;
+const char	*UninstProgram = EPM_LIBDIR "/uninst";
+int		Verbosity = 0;
 
 
 /*
@@ -250,8 +252,33 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    break;
 
         case '-' : /* --option */
-	    if (strcmp(argv[i], "--keep-files") == 0)
+	    if (strcmp(argv[i], "--data-dir") == 0)
+	    {
+	      i ++;
+	      if (i < argc)
+	        DataDir = argv[i];
+	      else
+	      {
+		puts("epm: Expected data directory.");
+		usage();
+	      }
+	    }
+	    else if (strcmp(argv[i], "--keep-files") == 0)
 	      KeepFiles = 1;
+	    else if (strcmp(argv[i], "--output-dir") == 0)
+	    {
+	      i ++;
+	      if (i < argc)
+	      {
+		strncpy(directory, argv[i], sizeof(directory) - 1);
+		directory[sizeof(directory) - 1] = '\0';
+	      }
+	      else
+	      {
+		puts("epm: Expected output directory.");
+		usage();
+	      }
+	    }
 	    else if (strcmp(argv[i], "--setup-image") == 0)
 	    {
 	      i ++;
@@ -296,20 +323,17 @@ main(int  argc,			/* I - Number of command-line arguments */
 	        usage();
               }
             }
-            else if (strcmp(argv[i], "--output-dir") == 0)
-            {
-              i ++;
-              if (i < argc)
+	    else if (strcmp(argv[i], "--uninstall-program") == 0)
+	    {
+	      i ++;
+	      if (i < argc)
+	        UninstProgram = argv[i];
+	      else
 	      {
-                strncpy(directory, argv[i], sizeof(directory) - 1);
-		directory[sizeof(directory) - 1] = '\0';
+		puts("epm: Expected uninstall program.");
+		usage();
 	      }
-              else
-              {
-                puts("epm: Expected output directory.");
-                usage();
-              }
-            }
+	    }
 	    else
             {
               printf("epm: Unknown option \"%s\".\n", argv[i]);
@@ -556,20 +580,28 @@ usage(void)
   puts("-v");
   puts("    Be verbose.");
   puts("-s setup.xpm");
+  puts("    Enable the setup GUI and use \"setup.xpm\" for the setup image.");
+  puts("--data-dir /foo/bar/directory");
+  puts("    Use the named setup data file directory instead of " EPM_DATADIR ".");
   puts("--help");
+  puts("    Show this usage message.");
   puts("--keep-files");
+  puts("    Keep temporary distribution files in the output directory.");
   puts("--output-dir /foo/bar/directory");
+  puts("    Enable the setup GUI and use \"setup.xpm\" for the setup image.");
   puts("--setup-image setup.xpm");
   puts("    Enable the setup GUI and use \"setup.xpm\" for the setup image.");
   puts("--setup-program /foo/bar/setup");
   puts("    Use the named setup program instead of " EPM_LIBDIR "/setup.");
   puts("--setup-types setup.types");
   puts("    Include the named setup.types file with the distribution.");
+  puts("--uninstalll-program /foo/bar/uninst");
+  puts("    Use the named uninstall program instead of " EPM_LIBDIR "/uninst.");
 
   exit(1);
 }
 
 
 /*
- * End of "$Id: epm.c,v 1.67.2.9 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: epm.c,v 1.67.2.10 2004/08/29 04:17:44 mike Exp $".
  */
