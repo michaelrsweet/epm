@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.12 1999/08/12 21:06:40 mike Exp $"
+ * "$Id: epm.c,v 1.13 1999/08/12 21:07:16 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -481,7 +481,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   {
     puts("Creating software patch file...");
 
-    sprintf(pswname, "%s-patch.psw", prodname);
+    sprintf(pswname, "%s.psw", prodname);
     sprintf(filename, "%s/%s", directory, pswname);
 
     unlink(filename);
@@ -1953,5 +1953,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.12 1999/08/12 21:06:40 mike Exp $".
+ * End of "$Id: epm.c,v 1.13 1999/08/12 21:07:16 mike Exp $".
  */
