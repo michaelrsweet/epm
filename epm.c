@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.31 1999/10/22 20:36:48 mike Exp $"
+ * "$Id: epm.c,v 1.32 1999/10/25 12:46:15 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -1721,7 +1721,7 @@ write_install(dist_t *dist,	/* I - Software distribution */
   {
     fprintf(scriptfile, "#%%incompats: %s\n", dist->incompats[i]);
 
-    if (dist->requires[i][0] == '/')
+    if (dist->incompats[i][0] == '/')
     {
      /*
       * Incompatible with a file...
@@ -2465,5 +2465,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.31 1999/10/22 20:36:48 mike Exp $".
+ * End of "$Id: epm.c,v 1.32 1999/10/25 12:46:15 mike Exp $".
  */
