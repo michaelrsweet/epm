@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.6 2002/08/14 20:59:41 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.7 2002/08/17 22:26:34 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -1159,9 +1159,14 @@ write_dist(const char *listname,	/* I - File to write to */
       fprintf(listfile, "%%subpackage %s\n", subpkg ? subpkg : "");
     }
 
-    fprintf(listfile, "%c %04o %s %s %s %s\n",
+    fprintf(listfile, "%c %04o %s %s %s %s",
 	    file->type, file->mode, file->user, file->group,
 	    file->dst, file->src);
+
+    if (file->options[0])
+      fprintf(listfile, "%s\n", file->options);
+    else
+      putc('\n', listfile);
   }
 
   return (fclose(listfile));
@@ -1923,5 +1928,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.6 2002/08/14 20:59:41 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.7 2002/08/17 22:26:34 mike Exp $".
  */
