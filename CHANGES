@@ -17,6 +17,10 @@ WHAT'S NEW IN EPM 3.5?
 	  get written to the spec file properly.
 	- Added support for file options - nostrip(),
 	  runlevel(12345), start(nn), and stop(nn).
+	- List files can now contain filenames with spaces,
+	  either by putting the full name in quotes
+	  ("file with spaces") or using the backslash character
+	  (file\ with\ spaces).
 
 
 WHAT'S NEW IN EPM 3.4?
