@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.26 2001/03/20 17:16:13 mike Exp $"
+ * "$Id: portable.c,v 1.27 2001/03/21 21:31:30 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -766,7 +766,6 @@ write_depends(dist_t *dist,		/* I - Distribution */
               fprintf(fp, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
 	              d->product);
               fputs("	exit 1\n", fp);
-              fputs("fi\n", fp);
 	    }
 
             fputs("fi\n", fp);
@@ -1709,5 +1708,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.26 2001/03/20 17:16:13 mike Exp $".
+ * End of "$Id: portable.c,v 1.27 2001/03/21 21:31:30 mike Exp $".
  */
