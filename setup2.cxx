@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.12 2001/06/28 22:32:29 mike Exp $"
+// "$Id: setup2.cxx,v 1.13 2001/06/29 16:33:08 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -43,6 +43,18 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 
+#ifdef HAVE_SYS_MOUNT_H
+#  include <sys/mount.h>
+#endif // HAVE_SYS_MOUNT_H
+
+#ifdef HAVE_SYS_STATFS_H
+#  include <sys/statfs.h>
+#endif // HAVE_SYS_STATFS_H
+
+#ifdef HAVE_SYS_VFS_H
+#  include <sys/vfs.h>
+#endif // HAVE_SYS_VFS_H
+
 
 //
 // Define a C API function type for comparisons...
@@ -58,6 +70,7 @@ typedef int (*compare_func_t)(const void *, const void *);
 //
 
 static void	log_cb(int fd, int *fdptr);
+static void	update_sizes(void);
 
 
 //
@@ -261,6 +274,10 @@ get_dists(const char *d)	// I - Directory to look in
 	  strncpy(temp->name, line + 10, sizeof(temp->name) - 1);
 	else if (strncmp(line, "#%version ", 10) == 0)
 	  sscanf(line + 10, "%31s%d", temp->version, &(temp->vernumber));
+	else if (strncmp(line, "#%rootsize ", 11) == 0)
+	  temp->rootsize = atoi(line + 11);
+	else if (strncmp(line, "#%usrsize ", 10) == 0)
+	  temp->usrsize = atoi(line + 10);
 	else if (strncmp(line, "#%incompat ", 11) == 0 ||
 	         strncmp(line, "#%requires ", 11) == 0)
 	{
@@ -315,6 +332,8 @@ get_dists(const char *d)	// I - Directory to look in
       SoftwareList->add(line, 1);
     }
   }
+
+  update_sizes();
 }
 
 
@@ -376,6 +395,10 @@ get_installed(void)
 	  strncpy(temp->name, line + 10, sizeof(temp->name) - 1);
 	else if (strncmp(line, "#%version ", 10) == 0)
 	  sscanf(line + 10, "%31s%d", temp->version, &(temp->vernumber));
+	else if (strncmp(line, "#%rootsize ", 11) == 0)
+	  temp->rootsize = atoi(line + 11);
+	else if (strncmp(line, "#%usrsize ", 10) == 0)
+	  temp->usrsize = atoi(line + 10);
       }
 
       fclose(fp);
@@ -599,6 +622,8 @@ list_cb(Fl_Check_Browser *, void *)
 	}
     }
 
+  update_sizes();
+
   if (SoftwareList->nchecked())
     NextButton->activate();
   else
@@ -689,7 +714,7 @@ load_types(void)
 	NumInstTypes ++;
 
 	memset(dt, 0, sizeof(dtype_t));
-	strncpy(dt->label, lineptr, sizeof(dt->label) - 1);
+	strncpy(dt->label, lineptr, sizeof(dt->label) - 10);
       }
       else if (strncasecmp(line, "INSTALL", 7) == 0 && dt && isspace(line[7]))
       {
@@ -708,6 +733,7 @@ load_types(void)
 	{
           dt->products[dt->num_products] = dist - Dists;
 	  dt->num_products ++;
+	  dt->size += dist->rootsize + dist->usrsize;
 	}
 	else
 	  fprintf(stderr, "setup: Unable to find product \"%s\" for \"%s\"!\n",
@@ -726,6 +752,9 @@ load_types(void)
 
   for (i = 0, dt = InstTypes; i < NumInstTypes; i ++, dt ++)
   {
+    if (dt->size)
+      sprintf(dt->label + strlen(dt->label), " (%dk)", dt->size);
+
     TypeButton[i]->label(dt->label);
     TypeButton[i]->show();
   }
@@ -868,6 +897,8 @@ type_cb(CheckButton *w, void *)	// I - Check button widget
       SoftwareList->checked(i + 1, 1);
   }
 
+  update_sizes();
+
   NextButton->activate();
 }
 
@@ -924,5 +955,68 @@ log_cb(int fd,			// I - Pipe to read from
 
 
 //
-// End of "$Id: setup2.cxx,v 1.12 2001/06/28 22:32:29 mike Exp $".
+// 'update_size()' - Update the total +/- sizes of the installations.
+//
+
+static void
+update_sizes(void)
+{
+  int		i;		// Looping var
+  dist_t	*dist,		// Distribution
+		*installed;	// Installed distribution
+  int		rootsize,	// Total root size difference in kbytes
+		usrsize;	// Total /usr size difference in kbytes
+  struct statfs	rootpart,	// Available root partition
+		usrpart;	// Available /usr partition
+  int		rootfree,	// Free space on root partition
+		usrfree;	// Free space on /usr partition
+  static char	sizelabel[1024];// Label for selected sizes...
+
+
+  // Get the sizes for the selected products...
+  for (i = 0, dist = Dists, rootsize = 0, usrsize = 0;
+       i < NumDists;
+       i ++, dist ++)
+    if (SoftwareList->checked(i + 1))
+    {
+      rootsize += dist->rootsize;
+      usrsize  += dist->rootsize;
+
+      if ((installed = find_dist(dist->product, NumInstalled,
+                                 Installed)) != NULL)
+      {
+        rootsize -= installed->rootsize;
+	usrsize  -= installed->usrsize;
+      }
+    }
+
+  // Get the sizes of the root and /usr partition...
+  if (statfs("/", &rootpart, sizeof(rootpart), 0))
+    rootfree = 1024 * 1024;
+  else
+    rootfree = (double)rootpart.f_bfree * (double)rootpart.f_bsize / 1024.0;
+
+  if (statfs("/usr", &usrpart, sizeof(usrpart), 0))
+    usrfree = 1024 * 1024;
+  else
+    usrfree = (double)usrpart.f_bfree * (double)usrpart.f_bsize / 1024.0;
+
+  // Display the results to the user...
+  if (rootfree == usrfree)
+  {
+    rootsize += usrsize;
+    sprintf(sizelabel, "%+dk required, %dk available.", rootsize, rootfree);
+  }
+  else
+    sprintf(sizelabel, "%+dk required on /, %dk available,\n"
+                       "%+dk required on /usr, %dk available.",
+            rootsize, rootfree, usrsize, usrfree);
+
+  SoftwareSize->label(sizelabel);
+}
+
+
+
+//
+// End of "$Id: setup2.cxx,v 1.13 2001/06/29 16:33:08 mike Exp $".
 //

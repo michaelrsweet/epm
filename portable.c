@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.46 2001/06/26 16:22:22 mike Exp $"
+ * "$Id: portable.c,v 1.47 2001/06/29 16:33:07 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -41,6 +41,7 @@
 
 static int	write_commands(dist_t *dist, FILE *fp, int type);
 static FILE	*write_common(dist_t *dist, const char *title,
+			      int rootsize, int usrsize,
 		              const char *filename);
 static int	write_depends(dist_t *dist, FILE *fp);
 static int	write_dist(const char *title, const char *directory,
@@ -49,10 +50,13 @@ static int	write_dist(const char *title, const char *directory,
 			   const char *setup);
 static int	write_confcheck(FILE *fp);
 static int	write_install(dist_t *dist, const char *prodname,
+			      int rootsize, int usrsize,
 		              const char *directory);
 static int	write_patch(dist_t *dist, const char *prodname,
+			    int rootsize, int usrsize,
 		            const char *directory);
 static int	write_remove(dist_t *dist, const char *prodname,
+			     int rootsize, int usrsize,
 		             const char *directory);
 static int	write_space_checks(const char *prodname, FILE *fp,
 		                   const char *sw, const char *ss);
@@ -79,6 +83,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
   time_t	deftime;	/* File creation time */
   struct stat	srcstat;	/* Source file information */
   file_t	*file;		/* Software file */
+  int		rootsize,	/* Size of files in root partition */
+		usrsize;	/* Size of files in /usr partition */
   static const char	*distfiles[] =	/* Distribution files */
 		{
 		  "install",
@@ -134,20 +140,6 @@ make_portable(const char     *prodname,	/* I - Product short name */
     return (1);
 
  /*
-  * Create the scripts...
-  */
-
-  if (write_install(dist, prodname, directory))
-    return (1);
-
-  if (havepatchfiles)
-    if (write_patch(dist, prodname, directory))
-      return (1);
-
-  if (write_remove(dist, prodname, directory))
-    return (1);
-
- /*
   * Create the non-shared software distribution file...
   */
 
@@ -165,7 +157,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+  for (i = dist->num_files, file = dist->files, rootsize = 0;
+       i > 0;
+       i --, file ++)
     if (strncmp(file->dst, "/usr", 4) != 0)
       switch (tolower(file->type))
       {
@@ -179,6 +173,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      tar_close(tarfile);
 	      return (1);
 	    }
+
+            rootsize += (srcstat.st_size + 1023) / 1024;
 
            /*
 	    * Configuration files are extracted to the config file name with
@@ -219,6 +215,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	case 'd' : /* Create directory */
             if (Verbosity > 1)
 	      printf("Directory %s...\n", file->dst);
+
+            rootsize ++;
 	    break;
 
 	case 'l' : /* Link file */
@@ -233,6 +231,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      tar_close(tarfile);
 	      return (1);
 	    }
+
+            rootsize ++;
 	    break;
       }
 
@@ -256,7 +256,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+  for (i = dist->num_files, file = dist->files, usrsize = 0;
+       i > 0;
+       i --, file ++)
     if (strncmp(file->dst, "/usr", 4) == 0)
       switch (tolower(file->type))
       {
@@ -270,6 +272,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      tar_close(tarfile);
 	      return (1);
 	    }
+
+            usrsize += (srcstat.st_size + 1023) / 1024;
 
            /*
 	    * Configuration files are extracted to the config file name with
@@ -310,6 +314,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	case 'd' : /* Create directory */
             if (Verbosity > 1)
 	      printf("%s...\n", file->dst);
+
+	    usrsize ++;
 	    break;
 
 	case 'l' : /* Link file */
@@ -324,6 +330,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      tar_close(tarfile);
 	      return (1);
 	    }
+
+	    usrsize ++;
 	    break;
       }
 
@@ -511,6 +519,20 @@ make_portable(const char     *prodname,	/* I - Product short name */
   }
 
  /*
+  * Create the scripts...
+  */
+
+  if (write_install(dist, prodname, rootsize, usrsize, directory))
+    return (1);
+
+  if (havepatchfiles)
+    if (write_patch(dist, prodname, rootsize, usrsize, directory))
+      return (1);
+
+  if (write_remove(dist, prodname, rootsize, usrsize, directory))
+    return (1);
+
+ /*
   * Create the distribution archives...
   */
 
@@ -586,6 +608,8 @@ write_commands(dist_t *dist,		/* I - Distribution */
 static FILE *				/* O - File pointer */
 write_common(dist_t     *dist,		/* I - Distribution */
              const char *title,		/* I - "Installation", etc... */
+             int        rootsize,	/* I - Size of root files in kbytes */
+	     int        usrsize,	/* I - Size of /usr files in kbytes */
              const char *filename)	/* I - Script to create */
 {
   int	i;				/* Looping var */
@@ -626,6 +650,8 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fprintf(fp, "#%%version %s %d\n", dist->version, dist->vernumber);
   for (i = 0; i < dist->num_descriptions; i ++)
     fprintf(fp, "#%%description %s\n", dist->descriptions[i]);
+  fprintf(fp, "#%%rootsize %d\n", rootsize);
+  fprintf(fp, "#%%usrsize %d\n", usrsize);
   fputs("#\n", fp);
 
   fputs("PATH=${PATH}:/bin:/usr/bin:/usr/ucb\n", fp);
@@ -1062,6 +1088,8 @@ write_confcheck(FILE *fp)		/* I - Script file */
 static int				/* O - -1 on error, 0 on success */
 write_install(dist_t     *dist,		/* I - Software distribution */
               const char *prodname,	/* I - Product name */
+              int        rootsize,	/* I - Size of root files in kbytes */
+	      int        usrsize,	/* I - Size of /usr files in kbytes */
 	      const char *directory)	/* I - Directory */
 {
   int		i;		/* Looping var */
@@ -1076,7 +1104,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   snprintf(filename, sizeof(filename), "%s/%s.install", directory, prodname);
 
-  if ((scriptfile = write_common(dist, "Installation", filename)) == NULL)
+  if ((scriptfile = write_common(dist, "Installation", rootsize, usrsize,
+                                 filename)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create installation script \"%s\" -\n"
                     "     %s\n", filename, strerror(errno));
@@ -1330,6 +1359,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 static int				/* O - -1 on error, 0 on success */
 write_patch(dist_t     *dist,		/* I - Software distribution */
             const char *prodname,	/* I - Product name */
+            int        rootsize,	/* I - Size of root files in kbytes */
+	    int        usrsize,		/* I - Size of /usr files in kbytes */
 	    const char *directory)	/* I - Directory */
 {
   int		i;		/* Looping var */
@@ -1343,7 +1374,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   snprintf(filename, sizeof(filename), "%s/%s.patch", directory, prodname);
 
-  if ((scriptfile = write_common(dist, "Patch", filename)) == NULL)
+  if ((scriptfile = write_common(dist, "Patch", rootsize, usrsize,
+                                 filename)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create patch script \"%s\" -\n"
                     "     %s\n", filename, strerror(errno));
@@ -1560,6 +1592,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 static int				/* O - -1 on error, 0 on success */
 write_remove(dist_t     *dist,		/* I - Software distribution */
              const char *prodname,	/* I - Product name */
+             int        rootsize,	/* I - Size of root files in kbytes */
+	     int        usrsize,	/* I - Size of /usr files in kbytes */
 	     const char *directory)	/* I - Directory */
 {
   int		i;		/* Looping var */
@@ -1574,7 +1608,8 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   snprintf(filename, sizeof(filename), "%s/%s.remove", directory, prodname);
 
-  if ((scriptfile = write_common(dist, "Removal", filename)) == NULL)
+  if ((scriptfile = write_common(dist, "Removal", rootsize, usrsize,
+                                 filename)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create removal script \"%s\" -\n"
                     "     %s\n", filename, strerror(errno));
@@ -1825,5 +1860,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.46 2001/06/26 16:22:22 mike Exp $".
+ * End of "$Id: portable.c,v 1.47 2001/06/29 16:33:07 mike Exp $".
  */

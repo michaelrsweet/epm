@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.36 2001/06/26 19:59:37 mike Exp $"
+dnl "$Id: configure.in,v 1.37 2001/06/29 16:33:07 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -105,6 +105,9 @@ dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_CHECK_HEADER(strings.h,AC_DEFINE(HAVE_STRINGS_H))
+AC_CHECK_HEADER(sys/mount.h,AC_DEFINE(HAVE_SYS_MOUNT_H))
+AC_CHECK_HEADER(sys/statfs.h,AC_DEFINE(HAVE_SYS_STATFS_H))
+AC_CHECK_HEADER(sys/vfs.h,AC_DEFINE(HAVE_SYS_VFS_H))
 
 dnl Checks for string functions.
 AC_CHECK_FUNCS(strdup)
@@ -369,5 +372,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist doc/Makefile)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.36 2001/06/26 19:59:37 mike Exp $".
+dnl End of "$Id: configure.in,v 1.37 2001/06/29 16:33:07 mike Exp $".
 dnl

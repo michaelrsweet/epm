@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.h,v 1.5 2001/06/28 22:32:29 mike Exp $"
+// "$Id: setup2.h,v 1.6 2001/06/29 16:33:08 mike Exp $"
 //
 //   ESP Software Wizard header file for the ESP Package Manager (EPM).
 //
@@ -57,13 +57,16 @@ struct dist_t			//// Distributions
   int		vernumber;	// Version number
   int		num_depends;	// Number of dependencies
   depend_t	*depends;	// Dependencies
+  int		rootsize,	// Size of root partition files in kbytes
+		usrsize;	// Size of /usr partition files in kbytes
 };
 
 struct dtype_t			//// Installation types
 {
-  char		label[64];	// Type name;
+  char		label[80];	// Type name;
   int		num_products;	// Number of products to install (0 = select)
   int		products[50];	// Products to install
+  int		size;		// Size of products in kbytes
 };
 
 
@@ -101,5 +104,5 @@ int	sort_dists(const dist_t *d0, const dist_t *d1);
 
 
 //
-// End of "$Id: setup2.h,v 1.5 2001/06/28 22:32:29 mike Exp $".
+// End of "$Id: setup2.h,v 1.6 2001/06/29 16:33:08 mike Exp $".
 //
