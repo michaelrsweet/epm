@@ -5395,6 +5395,29 @@ _ACEOF
 	fi
 fi
 
+if test "x$RPMBUILD" != x; then
+	cat >>confdefs.h <<_ACEOF
+#define EPM_RPMBUILD "$RPMBUILD"
+_ACEOF
+
+	cat >>confdefs.h <<\_ACEOF
+#define EPM_RPMTOPDIR 1
+_ACEOF
+
+else
+	if test "x$RPM" != x; then
+		cat >>confdefs.h <<_ACEOF
+#define EPM_RPMBUILD "$RPM"
+_ACEOF
+
+	else
+		cat >>confdefs.h <<_ACEOF
+#define EPM_RPMBUILD "rpm"
+_ACEOF
+
+	fi
+fi
+
 ac_config_files="$ac_config_files Makefile epm.list doc/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
