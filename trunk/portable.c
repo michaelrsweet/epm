@@ -1903,15 +1903,9 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 	fputs("		fi\n", scriptfile);
 	fputs("	fi\n", scriptfile);
 
-#ifndef __sun
 	for (runlevels = get_runlevels(dist->files + i, "0235");
              isdigit(*runlevels & 255);
 	     runlevels ++)
-#else
-	for (runlevels = get_runlevels(dist->files + i, "03");
-             isdigit(*runlevels & 255);
-	     runlevels ++)
-#endif /* !__sun */
 	{
 	  if (*runlevels == '0')
             number = get_stop(file, 0);
@@ -2284,15 +2278,9 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 	fputs("		fi\n", scriptfile);
 	fputs("	fi\n", scriptfile);
 
-#ifndef __sun
 	for (runlevels = get_runlevels(dist->files + i, "0235");
              isdigit(*runlevels & 255);
 	     runlevels ++)
-#else
-	for (runlevels = get_runlevels(dist->files + i, "03");
-             isdigit(*runlevels & 255);
-	     runlevels ++)
-#endif /* !__sun */
 	{
 	  if (*runlevels == '0')
             number = get_stop(file, 0);
@@ -2452,15 +2440,9 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 	fputs("		fi\n", scriptfile);
 	fputs("	fi\n", scriptfile);
 
-#ifndef __sun
 	for (runlevels = get_runlevels(dist->files + i, "0235");
              isdigit(*runlevels & 255);
 	     runlevels ++)
-#else
-	for (runlevels = get_runlevels(dist->files + i, "03");
-             isdigit(*runlevels & 255);
-	     runlevels ++)
-#endif /* !__sun */
 	{
 	  if (*runlevels == '0')
             number = get_stop(file, 0);
