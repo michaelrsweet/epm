@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.33 2002/01/02 20:39:39 mike Exp $"
+# "$Id: Makefile.in,v 1.34 2002/02/17 20:46:07 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -90,7 +90,7 @@ VPATH		=	$(srcdir)
 # Targets...
 #
 
-TARGETS	=	epm epminstall @SETUP@
+TARGETS	=	epm epminstall mkepmlist @SETUP@
 EPM_OBJS =	aix.o bsd.o deb.o dist.o epm.o file.o inst.o pkg.o \
 		portable.o rpm.o run.o setld.o snprintf.o string.o \
 		swinstall.o tar.o
@@ -188,6 +188,25 @@ install-setup:	setup
 
 
 #
+# Uninstall EPM...
+#
+
+uninstall:
+	echo Uninstalling EPM programs from $(bindir)
+	$(RM) $(bindir)/epm
+	$(RM) $(bindir)/epminstall
+	$(RM) $(bindir)/mkepmlist
+	echo Installing EPM manpages in $(mandir)/cat1 and $(mandir)/man1
+	$(RM) $(mandir)/cat5/epm.list.$(CAT5EXT)
+	$(RM) $(mandir)/cat5/setup.types.$(CAT5EXT)
+	$(RM) $(mandir)/man5/epm.list.5
+	$(RM) $(mandir)/man5/setup.types.5
+	echo Uninstalling EPM documentation from $(docdir)
+	$(RM) -r $(docdir)
+	echo Uninstalling EPM setup from $(libdir)/epm
+	$(RM) $(libdir)/epm/setup
+
+#
 # Test EPM...
 #
 
@@ -249,7 +268,7 @@ $(EPM_OBJS):	epm.h epmstring.h
 
 
 #
-# epm
+# epminstall
 #
 
 epminstall:	epminstall.o dist.o snprintf.o
@@ -257,6 +276,17 @@ epminstall:	epminstall.o dist.o snprintf.o
 	$(CC) $(LDFLAGS) -o epminstall epminstall.o dist.o snprintf.o $(LIBS)
 
 epminstall.o:	epm.h epmstring.h
+
+
+#
+# mkepmlist
+#
+
+mkepmlist:	mkepmlist.o snprintf.o
+	echo Linking mkepmlist...
+	$(CC) $(LDFLAGS) -o mkepmlist mkepmlist.o snprintf.o $(LIBS)
+
+mkepmlist.o:	epm.h epmstring.h
 
 
 #
@@ -274,5 +304,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.33 2002/01/02 20:39:39 mike Exp $".
+# End of "$Id: Makefile.in,v 1.34 2002/02/17 20:46:07 mike Exp $".
 #

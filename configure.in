@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.51 2002/02/13 03:26:46 mike Exp $"
+dnl "$Id: configure.in,v 1.52 2002/02/17 20:46:07 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -90,7 +90,6 @@ if test x$NROFF = x; then
         	NROFF="$GROFF -T ascii"
 	fi
 fi
-AC_PATH_PROG(PERL,perl)
 AC_PATH_PROG(RM,rm)
 AC_PATH_PROG(RPM,rpm)
 AC_PATH_PROG(STRIP,strip)
@@ -177,11 +176,7 @@ if test -n "$GCC"; then
 	CXX="$CC"
 
 	if test -z "$OPTIM"; then
-		if test "$uname" = "HP-UX"; then
-			OPTIM="-O1 -fforce-mem -fforce-addr -fcaller-saves"
-		else
-	        	OPTIM="-O2 -fforce-mem -fforce-addr -fcaller-saves"
-		fi
+        	OPTIM="-O2 -fforce-mem -fforce-addr -fcaller-saves"
 	fi
 
 	CXX="$CC"
@@ -351,10 +346,8 @@ if test "x$RPM" != "x"; then
 fi
 
 dnl Output the makefile, list file, and config header...
-AC_OUTPUT(Makefile epm.list mkepmlist doc/Makefile)
-
-chmod +x mkepmlist
+AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.51 2002/02/13 03:26:46 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52 2002/02/17 20:46:07 mike Exp $".
 dnl
