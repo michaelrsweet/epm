@@ -1,151 +1,82 @@
 <HTML>
 <BODY>
-<H2>epminstall</H2>
+<H2><A NAME="epminstall">epminstall</A></H2>
 <HR>
-<P>Install files into an EPM list file.</P>
+<P>Add a directory, file, or symlink to a list file.</P>
 
-<H3>SYNOPSIS</H3>
+<H3>Synopsis</H3>
 
-<P><B>epm</B> [ -f <I>format</I> ] [ -g ] [ -k ] [ -n[mrs] ] [
--s <I>setup.xpm</I> ] [ --setup-image <I>setup.xpm</I> ] [
---setup-program <I>/foo/bar/setup</I> ] [ -v ] [ <I>name=value
-name=value</I> ] product [ <I>listfile</I> ]</P>
+<P><B>epminstall</B> <I>options</I> file1 file2 ... fileN directory</P>
 
-<H3>DESCRIPTION</H3>
+<P><B>epminstall</B> <I>options</I> file1 file2</P>
 
-<P><B>epm</B> generates software packages complete with
-installation, removal, and (if necessary) patch scripts. Unless
-otherwise specified, the files required for <I>product</I> are
-read from a file named "<I>product</I>.list".</P>
+<P><B>epminstall</B> <I>options</I> -d directory1 directory2 ... directoryN </P>
 
-<P>The <I>-f</I> option ("format") specifies the distribution
-format:</P>
+<H3>Description</H3>
+
+<P><B>epminstall</B> adds or replaces a directory, file, or
+symlink in a list file. The default list file is
+<VAR>epm.list</VAR> and can be overridden using the
+<CODE>EPMLIST</CODE> environment variable or the
+<CODE>--list-file</CODE> option.</P>
+
+<P>Entries are either added to the end of the list file or
+replaced in-line. Comments, directives, and variable
+declarations in the list file are preserved.</P>
+
+<H3>Options</H3>
+
+<P><B>epminstall</B> recognizes the standard Berkeley
+<I>install</I> command options:
 
 <UL><DL>
 
-	<DT>deb</DT>
+	<DT>-b</DT>
 
-	<DD>Generate a Debian distribution suitable for
-	installation on a Debian Linux system.</DD>
+	<DD>Make a backup of existing files (ignored, default
+	for EPM.)</DD>
 
-	<DT>inst, tardist</DT>
+	<DT>-c</DT>
 
-	<DD>Generate an IRIX distribution suitable for
-	installation on an system running IRIX.</DD>
+	<DD>BSD old compatibility mode (ignored.)</DD>
 
-	<DT>native</DT>
+	<DT>-g <I>group</I></DT>
 
-	<DD>Generate an native distribution. This uses
-	<I>rpm</I> for Linux, <I>inst</I> for IRIX, <I>pkg</I>
-	for Solaris, and <I>swinstall</I> for HP-UX. All other
-	operating systems default to the <I>portable</I>
-	format.</DD>
+	<DD>Set the group owner of the file or directory to
+	<I>group</I>. The default group is "sys".</DD>
 
-	<DT>pkg</DT>
+	<DT>-m <I>mode</I></DT>
 
-	<DD>Generate an AT&T software package. These are used
-	primarily under Solaris.</DD>
+	<DD>Set the permissions of the file or directory to
+	<I>mode</I>. The default permissions are 0755 for
+	directories and executable files and 0644 for
+	non-executable files.</DD>
 
-	<DT>portable</DT>
+	<DT>-s</DT>
 
-	<DD>Generate a portable distribution based on shell
-	scripts and tar files. The resulting distribution is
-	installed and removed the same way on all operating
-	systems. [default]</DD>
+	<DD>Strip the files (ignored, default for EPM.)</DD>
 
-	<DT>rpm</DT>
+	<DT>-u <I>owner</I></DT>
 
-	<DD>Generate a Red Hat Package Manager ("RPM")
-	distribution suitable for installation on a Red Hat
-	Linux system.</DD>
+	<DD>Set the owner of the file or directory to
+	<I>owner</I>. The default owner is "root".</DD>
 
-	<DT>setld</DT>
+	<DT>--list-file <I>filename.list</I></DT>
 
-	<DD>Generate a Tru64 (setld) software distribution.</DD>
-
-	<DT>swinstall, depot</DT>
-
-	<DD>Generate a HP-UX software distribution.</DD>
+	<DD>Specify the list file to update.</DD>
 
 </DL></UL>
 
-<P>Executable files in the distribution are normally stripped of
-debugging information when packaged. To disable this
-functionality use the <I>-g</I> option.</P>
+<H3>See Also</H3>
 
-<P>Intermediate (spec, etc.) files used to create the
-distribution are normally removed after the distribution is
-created. The <I>-k</I> option keeps these files in the
-distribution directory.</P>
+<P><A HREF="#epm">epm(1)</A> - create software packages.</P>
 
-<P>The <I>-s</I> and <I>--setup-image</I> options ("setup")
-include the ESP Software Wizard with the specified XPM image
-file with the distribution. This option is currently only
-supported by portable distributions.</P>
+<P><A HREF="#mkepmlist">mkepmlist(1)</A> - make an epm list file
+from a directory.</P>
 
-<P>The <I>--setup-program</I> option specifies the setup
-executable to use with the distribution. This option is
-currently only supported by portable distributions.</P>
+<P><A HREF="#REFERENCE">epm.list(5)</A> - epm list file format.</P>
 
-<P>The <I>-v</I> option ("verbose") increases the amount of
-information that is reported. Use multiple v's for more verbose
-output.</P>
-
-<P>Distributions normally are named
-"product-version-system-release-machine.ext" and
-"product-version-system- release-machine-patch.ext" (for patch
-distributions.) The "system-release-machine" information can be
-cus- tomized or eliminated using the <I>-n</I> option with the
-appropriate trailing letters. Using <I>-n</I> by itself will
-remove the "system-release-machine" string from the filename
-entirely.</P>
-
-<P>Debian, IRIX, portable, and Red Hat distributions use the
-extensions ".deb", ".tardist", "tar.gz", and ".rpm"
-respectively.</P>
-
-<H3>LIST VARIABLES</H3>
-
-<P><I>EPM</I> maintains a list of variables and their values
-which can be used to substitute values in the list file. These
-vari- ables are imported from the current environment and taken
-from the command-line and list file as provided. Sub- stitutions
-occur when the variable name is referenced with the dollar sign
-($):</P>
-
-<UL><PRE>
-%install echo What is your name:
-%install read $$name
-%install echo Your name is $$name
-</PRE></UL>
-
-<UL><PRE>
-f 0555 root sys ${bindir}/foo foo
-f 0555 root sys $datadir/foo/foo.dat foo.dat
-</PRE></UL>
-
-<P>Variable names can be surrounded by curley brackets (${name})
-or alone ($name); without brackets the name is terminated by the
-first slash (/), dash (-), or whitespace. The dollar sign can be
-inserted using $$.</P>
-
-<H3>ENVIRONMENT VARIABLES</H3>
-
-<P>The <I>RPMDIR</I> environment variable will override where
-EPM looks for RPM distributions you generate. The default
-locations are /usr/src/redhat/RPMS, /usr/src/RPM/RPMS,
-/usr/src/packages/RPMS, and /usr/local/src/RPMS.</P>
-
-<H3>KNOWN BUGS</H3>
-
-<P>EPM does not currently support generation of IRIX software
-patches.</P>
-
-<H3>SEE ALSO</H3>
-
-<P>mkepmlist(1) - make an EPM list file from a directory.</P>
-
-<H3>COPYRIGHT</H3>
+<H3>Copyright</H3>
 
 <P>Copyright 1999-2001 by Easy Software Products, All Rights
 Reserved.</P>

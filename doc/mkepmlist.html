@@ -1,15 +1,15 @@
 <HTML>
-<H2>mkepmlist</H2>
+<H2><A NAME="mkepmlist">mkepmlist</A></H2>
 <HR>
 <P>Make an EPM list file from a directory.</P>
 
-<H3>SYNOPSIS</H3>
+<H3>Synopsis</H3>
 
 <P><B>mkepmlist</B> [ -g <I>group</I> ] [ -u <I>user</I> ] [
 --prefix <I>directory</I> ] <I>directory</I> [ ...
 <I>directory</I> ]</P>
 
-<H3>DESCRIPTION</H3>
+<H3>Description</H3>
 
 <P><B>mkepmlist</B> recursively generates file list entries for
 files, links, and directories. The file list is send to the
@@ -25,19 +25,25 @@ name.</P>
 
 <P>The <I>--prefix</I> option adds the specified directory to
 the destination path. For example, if you installed files to
-/opt/foo and wanted to build a distribution that installed the
-files in /usr/local, the following command would gener- ate a
-file list that is installed in /usr/local:</P>
+<VAR>/opt/foo</VAR> and wanted to build a distribution that
+installed the files in <VAR>/usr/local</VAR>, the following
+command would generate a file list that is installed in
+<VAR>/usr/local</VAR>:</P>
 
 <UL><PRE>
 <KBD>mkepmlist --prefix=/usr/local /opt/foo &gt;foo.list ENTER</KBD>
 </PRE></UL>
 
-<H3>SEE ALSO</H3>
+<H3>See Also</H3>
 
-<P>epm(1) - create software packages.</P>
+<P><A HREF="#epm">epm(1)</A> - create software packages.</P>
 
-<H3>COPYRIGHT</H3>
+<P><A HREF="#epminstall">epminstall(1)</A> - add a directory,
+file, or symlink to a list file.</P>
+
+<P><A HREF="#REFERENCE">epm.list(5)</A> - epm list file format.</P>
+
+<H3>Copyright</H3>
 
 <P>Copyright 1999-2001 by Easy Software Products, All Rights
 Reserved.</P>
