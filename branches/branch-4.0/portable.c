@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63.2.19 2003/01/24 03:02:27 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.20 2003/07/05 02:00:37 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1426,7 +1426,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
       if (tolower(file->type) == 'i')
         qprintf(scriptfile, " %s", file->dst);
     fputs("; do\n", scriptfile);
-    fputs("			rm -f /usr/local/src/rc.d/$file.sh\n", scriptfile);
+    fputs("			rm -f /usr/local/etc/rc.d/$file.sh\n", scriptfile);
     qprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "/usr/local/etc/rc.d/$file.sh\n",
             SoftwareDir);
@@ -1734,7 +1734,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
       if (tolower(file->type) == 'I')
         qprintf(scriptfile, " %s", file->dst);
     fputs("; do\n", scriptfile);
-    fputs("			rm -f /usr/local/src/rc.d/$file.sh\n", scriptfile);
+    fputs("			rm -f /usr/local/etc/rc.d/$file.sh\n", scriptfile);
     qprintf(scriptfile, "			ln -s %s/init.d/$file "
                         "/usr/local/etc/rc.d/$file.sh\n",
             SoftwareDir);
@@ -1900,7 +1900,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
       if (tolower(file->type) == 'i')
         qprintf(scriptfile, " %s", file->dst);
     fputs("; do\n", scriptfile);
-    fputs("			rm -f /usr/local/src/rc.d/$file.sh\n", scriptfile);
+    fputs("			rm -f /usr/local/etc/rc.d/$file.sh\n", scriptfile);
     fputs("		done\n", scriptfile);
     fputs("	else\n", scriptfile);
     fputs("		echo Unable to determine location of startup scripts!\n", scriptfile);
@@ -2149,5 +2149,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63.2.19 2003/01/24 03:02:27 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.20 2003/07/05 02:00:37 mike Exp $".
  */
