@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.5 2000/01/05 20:42:01 mike Exp $"
+ * "$Id: pkg.c,v 1.6 2000/06/20 13:51:50 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -269,8 +269,12 @@ make_pkg(const char     *prodname,	/* I - Product short name */
           break;
       case 'f' :
       case 'i' :
-          fprintf(fp, "f none %s=%s/%s %04o %s %s\n", file->dst,
-	          current, file->src, file->mode, file->user, file->group);
+          if (file->src[0] == '/')
+            fprintf(fp, "f none %s=%s %04o %s %s\n", file->dst,
+	            file->src, file->mode, file->user, file->group);
+          else
+            fprintf(fp, "f none %s=%s/%s %04o %s %s\n", file->dst,
+	            current, file->src, file->mode, file->user, file->group);
           break;
       case 'l' :
           fprintf(fp, "s none %s=%s\n", file->dst, file->src);
@@ -337,5 +341,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.5 2000/01/05 20:42:01 mike Exp $".
+ * End of "$Id: pkg.c,v 1.6 2000/06/20 13:51:50 mike Exp $".
  */
