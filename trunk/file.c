@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.16 2004/08/26 18:42:41 mike Exp $"
+ * "$Id: file.c,v 1.17 2004/09/08 21:04:06 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -230,10 +230,11 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 	fclose(fp);
 
        /*
-        * Check for "#!/" at the beginning of the file...
+        * Check for "#!/" or "#" + whitespace at the beginning of the file...
 	*/
 
-        if (strncmp(header, "#!/", 3) == 0)
+        if (!strncmp(header, "#!/", 3) ||
+	    (header[0] == '#' && isspace(header[1] & 255)))
 	  continue;
       }
       else
@@ -259,5 +260,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.16 2004/08/26 18:42:41 mike Exp $".
+ * End of "$Id: file.c,v 1.17 2004/09/08 21:04:06 mike Exp $".
  */
