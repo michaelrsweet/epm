@@ -1,5 +1,5 @@
 /*
- * "$Id: makedist.c,v 1.3 1999/05/20 18:51:20 mike Exp $"
+ * "$Id: makedist.c,v 1.4 1999/05/20 20:50:35 mike Exp $"
  *
  *   Patch file builder for espPrint, a collection of printer drivers.
  *
@@ -16,6 +16,9 @@
  * Revision History:
  *
  *   $Log: makedist.c,v $
+ *   Revision 1.4  1999/05/20 20:50:35  mike
+ *   Updated makedist for HPPA, SPARC, Intel CPUs.
+ *
  *   Revision 1.3  1999/05/20 18:51:20  mike
  *   Removed extra rastertopcl filter.
  *
@@ -193,6 +196,13 @@ main(int  argc,			/* I - Number of command-line arguments */
 
 #ifdef __sgi
   strcpy(platform.machine, "mips");
+#elif defined(__hpux)
+  strcpy(platform.machine, "hppa");
+#else
+  if (strstr(platform.machine, "86") == 0)
+    strcpy(platform.machine, "intel");
+  else if (strncmp(platform.machine, "sun", 3) == 0)
+    strcpy(platform.machine, "sparc");
 #endif /* __sgi */
 
   for (temp = platform.sysname; *temp != '\0'; temp ++)
@@ -824,5 +834,5 @@ write_file(FILE *fp,
 
 
 /*
- * End of "$Id: makedist.c,v 1.3 1999/05/20 18:51:20 mike Exp $".
+ * End of "$Id: makedist.c,v 1.4 1999/05/20 20:50:35 mike Exp $".
  */
