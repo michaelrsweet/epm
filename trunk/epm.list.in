@@ -1,5 +1,5 @@
 #
-# "$Id: epm.list.in,v 1.10 2002/12/17 18:57:55 swdev Exp $"
+# "$Id: epm.list.in,v 1.11 2003/01/30 04:27:45 mike Exp $"
 #
 #   Sample software list file for the ESP Package Manager (EPM).
 #
@@ -50,7 +50,7 @@ $CAT5EXT=@CAT5EXT@
 $MAN5EXT=@MAN5EXT@
 
 # Is the setup GUI available?
-$SETUP=@SETUP@
+#GUIS=@GUIS@
 
 # Executables
 %system all
@@ -76,8 +76,9 @@ f 0444 root sys ${mandir}/man1/mkepmlist.$MAN1EXT $srcdir/doc/mkepmlist.man
 f 0444 root sys ${mandir}/man5/epm.list.$MAN5EXT $srcdir/doc/epm.list.man
 
 # Setup GUI files...
-%if SETUP
+%if GUIS
 f 0555 root sys ${libdir}/epm/setup setup
+f 0555 root sys ${libdir}/epm/uninstall uninstall
 
 f 0444 root sys ${mandir}/cat1/setup.$CAT1EXT $srcdir/doc/setup.1
 f 0444 root sys ${mandir}/cat5/setup.types.$CAT5EXT $srcdir/doc/setup.types.5
@@ -87,5 +88,5 @@ f 0444 root sys ${mandir}/man5/setup.types.$MAN5EXT $srcdir/doc/setup.types.man
 %endif
 
 #
-# End of "$Id: epm.list.in,v 1.10 2002/12/17 18:57:55 swdev Exp $".
+# End of "$Id: epm.list.in,v 1.11 2003/01/30 04:27:45 mike Exp $".
 #

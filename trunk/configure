@@ -1203,8 +1203,8 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-VERSION=3.5.2
-VERNUMBER=352
+VERSION=3.6.0
+VERNUMBER=360
 
 
 cat >>confdefs.h <<_ACEOF
@@ -4945,19 +4945,22 @@ fi
 
 
 if test "x$FLTKCONFIG" = x; then
-	SETUP=""
-	SETUP_LIBS=""
-	INSTALL_SETUP=""
+	GUIS=""
+	GUILIBS=""
+	INSTALL_GUIS=""
 
 	{ echo "$as_me:$LINENO: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&5
 echo "$as_me: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&2;}
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
-	SETUP="setup"
-	SETUP_LIBS="`$FLTKCONFIG --ldstaticflags`"
-	INSTALL_SETUP="install-setup"
-fi
+	GUIS="setup uninst"
+	GUILIBS="`$FLTKCONFIG --ldstaticflags`"
+	INSTALL_GUIS="install-guis"
 
+	if test "$uname" = Darwin; then
+		GUILIBS="$GUILIBS -framework Security"
+	fi
+fi
 
 
 
@@ -5912,10 +5915,9 @@ s,@RPMBUILD@,$RPMBUILD,;t t
 s,@STRIP@,$STRIP,;t t
 s,@CPP@,$CPP,;t t
 s,@FLTKCONFIG@,$FLTKCONFIG,;t t
-s,@INSTALL_SETUP@,$INSTALL_SETUP,;t t
-s,@LIST_SETUP@,$LIST_SETUP,;t t
-s,@SETUP@,$SETUP,;t t
-s,@SETUP_LIBS@,$SETUP_LIBS,;t t
+s,@INSTALL_GUIS@,$INSTALL_GUIS,;t t
+s,@GUIS@,$GUIS,;t t
+s,@GUILIBS@,$GUILIBS,;t t
 s,@CAT1EXT@,$CAT1EXT,;t t
 s,@MAN1EXT@,$MAN1EXT,;t t
 s,@CAT5EXT@,$CAT5EXT,;t t
