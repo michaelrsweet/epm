@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.list.man,v 1.7 2002/12/17 18:57:59 swdev Exp $"
+.\" "$Id: epm.list.man,v 1.8 2003/06/17 12:37:22 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM) list file format.
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm.list 5 "ESP Package Manager" "18 October 2002" "Easy Software Products"
+.TH epm.list 5 "ESP Package Manager" "17 June 2003" "Easy Software Products"
 .SH NAME
 epm.list \- epm list file format.
 .SH DESCRIPTION
@@ -267,7 +267,7 @@ item (OSX only).
 Specifies names of system functions that are required by this startup
 item (OSX only).
 .TP 10
-     runlevels(\fIlevels\fR)
+     runlevel(\fIlevels\fR)
 .br
 Specifies the run levels to use.
 .TP 10
@@ -339,5 +339,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.list.man,v 1.7 2002/12/17 18:57:59 swdev Exp $".
+.\" End of "$Id: epm.list.man,v 1.8 2003/06/17 12:37:22 mike Exp $".
 .\"
