@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.22 2005/01/11 21:36:57 mike Exp $"
+ * "$Id: tar.c,v 1.23 2005/02/09 19:54:11 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -22,6 +22,7 @@
  *   tar_file()      - Write the contents of a file...
  *   tar_header()    - Write a TAR header for the specified file...
  *   tar_open()      - Open a TAR file for writing.
+ *   tar_package()   - Archive a package file.
  */
 
 /*
@@ -482,5 +483,76 @@ tar_open(const char *filename,		/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.22 2005/01/11 21:36:57 mike Exp $".
+ * 'tar_package()' - Archive a package file.
+ */
+
+int					/* O - 0 on success, -1 on failure */
+tar_package(tarf_t     *tar,		/* I - Tar file */
+            const char *ext,		/* I - Package filename extension */
+            const char *prodname,	/* I - Product short name */
+	    const char *directory,	/* I - Directory for distribution files */
+            const char *platname,	/* I - Platform name */
+            dist_t     *dist,		/* I - Distribution information */
+	    const char *subpackage)	/* I - Subpackage */
+{
+  char		prodfull[255],		/* Full name of product */
+		name[1024],		/* Full product name */
+		filename[1024];		/* File to archive */
+  struct stat	filestat;		/* File information */
+
+
+ /*
+  * Figure out the full name of the distribution...
+  */
+
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
+ /*
+  * Then the subdirectory name...
+  */
+
+  if (dist->relnumber)
+    snprintf(name, sizeof(name), "%s-%s-%d", prodfull, dist->version,
+             dist->relnumber);
+  else
+    snprintf(name, sizeof(name), "%s-%s", prodfull, dist->version);
+
+  if (platname[0])
+  {
+    strlcat(name, "-", sizeof(name));
+    strlcat(name, platname, sizeof(name));
+  }
+
+  strlcat(name, ".", sizeof(name));
+  strlcat(name, ext, sizeof(name));
+
+ /*
+  * Find out more about the package file...
+  */
+
+  snprintf(filename, sizeof(filename), "%s/%s", directory, name);
+  if (stat(filename, &filestat))
+  {
+    fprintf(stderr, "epm: Error reading package file \"%s\" - %s\n",
+            filename, strerror(errno));
+    return (-1);
+  }
+
+ /*
+  * Write the header and the file...
+  */
+
+  if (tar_header(tar, TAR_NORMAL, (mode_t)0644, filestat.st_size,
+                 filestat.st_mtime, "root", "root", name, NULL))
+    return (-1);
+
+  return (tar_file(tar, filename));
+}
+
+
+/*
+ * End of "$Id: tar.c,v 1.23 2005/02/09 19:54:11 mike Exp $".
  */
