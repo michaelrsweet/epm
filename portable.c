@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.75 2002/09/24 14:13:17 mike Exp $"
+ * "$Id: portable.c,v 1.76 2002/10/17 14:56:13 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1454,8 +1454,6 @@ write_install(dist_t     *dist,		/* I - Software distribution */
                       "$rcdir/rc%c.d/%c%02d%s\n", SoftwareDir, file->dst,
 		  *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
         }
-
-        qprintf(scriptfile, "	%s/init.d/%s start\n", SoftwareDir, file->dst);
       }
 
     fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
@@ -1756,8 +1754,6 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
                       "$rcdir/rc%c.d/%c%02d%s\n", SoftwareDir, file->dst,
 		  *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
         }
-
-        qprintf(scriptfile, "	%s/init.d/%s start\n", SoftwareDir, file->dst);
       }
 
     fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
@@ -2103,5 +2099,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.75 2002/09/24 14:13:17 mike Exp $".
+ * End of "$Id: portable.c,v 1.76 2002/10/17 14:56:13 mike Exp $".
  */

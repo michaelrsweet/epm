@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.18 2002/08/30 02:00:42 mike Exp $"
+ * "$Id: deb.c,v 1.19 2002/10/17 14:56:13 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -96,12 +96,12 @@ make_deb(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  qprintf(fp, "Package: %s\n", prodname);
+  fprintf(fp, "Package: %s\n", prodname);
   if (dist->relnumber)
-    qprintf(fp, "Version: %s-%d\n", dist->version, dist->relnumber);
+    fprintf(fp, "Version: %s-%d\n", dist->version, dist->relnumber);
   else
-    qprintf(fp, "Version: %s\n", dist->version);
-  qprintf(fp, "Maintainer: %s\n", dist->vendor);
+    fprintf(fp, "Version: %s\n", dist->version);
+  fprintf(fp, "Maintainer: %s\n", dist->vendor);
 
  /*
   * The Architecture attribute needs to match the uname info
@@ -111,12 +111,12 @@ make_deb(const char     *prodname,	/* I - Product short name */
   if (strcmp(platform->machine, "intel") == 0)
     fputs("Architecture: i386\n", fp);
   else
-    qprintf(fp, "Architecture: %s\n", platform->machine);
+    fprintf(fp, "Architecture: %s\n", platform->machine);
 
-  qprintf(fp, "Description: %s\n", dist->product);
-  qprintf(fp, " Copyright: %s\n", dist->copyright);
+  fprintf(fp, "Description: %s\n", dist->product);
+  fprintf(fp, " Copyright: %s\n", dist->copyright);
   for (i = 0; i < dist->num_descriptions; i ++)
-    qprintf(fp, " %s\n", dist->descriptions[i]);
+    fprintf(fp, " %s\n", dist->descriptions[i]);
 
   for (j = DEPEND_REQUIRES; j <= DEPEND_PROVIDES; j ++)
   {
@@ -129,15 +129,15 @@ make_deb(const char     *prodname,	/* I - Product short name */
       for (header = depends[j]; i > 0; i --, d ++, header = ",")
 	if (d->type == j)
 	{
-          qprintf(fp, "%s %s", header, d->product);
+          fprintf(fp, "%s %s", header, d->product);
 
 	  if (d->vernumber[0] == 0)
 	  {
 	    if (d->vernumber[1] < INT_MAX)
-              qprintf(fp, " (<= %s)", d->version[1]);
+              fprintf(fp, " (<= %s)", d->version[1]);
 	  }
 	  else
-	    qprintf(fp, " (>= %s, <= %s)", d->version[0], d->version[1]);
+	    fprintf(fp, " (>= %s, <= %s)", d->version[0], d->version[1]);
 	}
 
       putc('\n', fp);
@@ -175,7 +175,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_INSTALL)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -214,7 +214,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_INSTALL)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
@@ -224,14 +224,14 @@ make_deb(const char     *prodname,	/* I - Product short name */
 	     runlevels ++)
 	{
 	  if (*runlevels == '0')
-            qprintf(fp, "update-rc.d %s stop %02d 0 >/dev/null\n", file->dst,
+            fprintf(fp, "update-rc.d %s stop %02d 0 >/dev/null\n", file->dst,
 	            get_stop(file, 0));
           else
-            qprintf(fp, "update-rc.d %s start %02d %c >/dev/null\n", file->dst,
+            fprintf(fp, "update-rc.d %s start %02d %c >/dev/null\n", file->dst,
 	            get_start(file, 99), *runlevels);
         }
 
-        qprintf(fp, "/etc/init.d/%s start\n", file->dst);
+        fprintf(fp, "/etc/init.d/%s start\n", file->dst);
       }
 
     fclose(fp);
@@ -271,15 +271,15 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_REMOVE)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
       {
-        qprintf(fp, "/etc/init.d/%s stop\n", file->dst);
+        fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
 
         fputs("if [ purge = \"$1\" ]; then\n", fp);
-        qprintf(fp, "	update-rc.d %s remove >/dev/null\n", file->dst);
+        fprintf(fp, "	update-rc.d %s remove >/dev/null\n", file->dst);
         fputs("fi\n", fp);
       }
 
@@ -315,7 +315,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_REMOVE)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -338,9 +338,9 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c')
-      qprintf(fp, "%s\n", file->dst);
+      fprintf(fp, "%s\n", file->dst);
     else if (tolower(file->type) == 'i')
-      qprintf(fp, "/etc/init.d/%s\n", file->dst);
+      fprintf(fp, "/etc/init.d/%s\n", file->dst);
 
   fclose(fp);
 
@@ -437,5 +437,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.18 2002/08/30 02:00:42 mike Exp $".
+ * End of "$Id: deb.c,v 1.19 2002/10/17 14:56:13 mike Exp $".
  */
