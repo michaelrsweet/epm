@@ -1,0 +1,66 @@
+
+
+
+Easy Software Products                               mkepmlist(1)
+
+
+
+NNNNAAAAMMMMEEEE
+     mkepmlist - make an EPM list file from a directory.
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     mmmmkkkkeeeeppppmmmmlllliiiisssstttt [ -g _g_r_o_u_p ] [ -u _u_s_e_r ] [  --prefix  _d_i_r_e_c_t_o_r_y  ]
+     _d_i_r_e_c_t_o_r_y [ ...  _d_i_r_e_c_t_o_r_y ]
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     mmmmkkkkeeeeppppmmmmlllliiiisssstttt recursively generates file list entries for files,
+     links,  and  directories. The file list is send to the stan-
+     dard output.
+
+     The -_g option overrides the group ownership of the files  in
+     the specified directories with the specified group name.
+
+     The -_u option overrides the user ownership of the  files  in
+     the specified directories with the specified user name.
+
+     The --_p_r_e_f_i_x option adds the specified directory to the des-
+     tination  path.  For  example,  if  you  installed  files to
+     /opt/foo and wanted to build a distribution  that  installed
+     the  files  in  /usr/local, the following command would gen-
+     erate a file list that is installed in /usr/local:
+
+          mkepmlist --prefix=/usr/local /opt/foo >foo.list
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     epm(1) - create software packages.
+
+CCCCOOOOPPPPYYYYRRRRIIIIGGGGHHHHTTTT
+     Copyright 1999-2001 by Easy Software  Products,  All  Rights
+     Reserved.
+
+     This program is  free  software;  you  can  redistribute  it
+     and/or  modify  it under the terms of the GNU General Public
+     License as published by the Free Software Foundation; either
+     version 2, or (at your option) any later version.
+
+     This program is distributed in the hope that it will be use-
+     ful, but WITHOUT ANY WARRANTY; without even the implied war-
+     ranty of MERCHANTABILITY or FITNESS FOR  A  PARTICULAR  PUR-
+     POSE.  See the GNU General Public License for more details.
+
+
+
+
+
+
+
+
+
+
+
+
+
+26 March 2001   Last change: ESP Package Manager                1
+
+
+

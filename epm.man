@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.23 2001/03/26 16:18:47 mike Exp $"
+.\" "$Id: epm.man,v 1.24 2001/03/26 20:11:09 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -178,6 +178,10 @@ Specifies a README file to be included in the distribution.
 .br
 Specifies a script or program to be run before removing or patching files.
 .TP 5
+%release \fInumber\fR
+.br
+Specifies the release or build number of a product (defaults to 0).
+.TP 5
 %replaces \fIproduct\fR
 .br
 Indicates that this product replaces the named product.
@@ -308,5 +312,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.23 2001/03/26 16:18:47 mike Exp $".
+.\" End of "$Id: epm.man,v 1.24 2001/03/26 20:11:09 mike Exp $".
 .\"

@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.27 2001/03/26 16:18:47 mike Exp $"
+ * "$Id: rpm.c,v 1.28 2001/03/26 20:11:09 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -58,7 +58,15 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   getcwd(current, sizeof(current));
 
-  if (platname[0])
+  if (dist->relnumber)
+  {
+    if (platname[0])
+      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+              platname);
+    else
+      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+  }
+  else if (platname[0])
     sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
   else
     sprintf(name, "%s-%s", prodname, dist->version);
@@ -82,7 +90,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "Summary: %s\n", dist->product);
   fprintf(fp, "Name: %s\n", prodname);
   fprintf(fp, "Version: %s\n", dist->version);
-  fputs("Release: 1\n", fp);
+  fprintf(fp, "Release: %d\n", dist->relnumber);
   fprintf(fp, "Copyright: %s\n", dist->copyright);
   fprintf(fp, "Packager: %s\n", dist->packager);
   fprintf(fp, "Vendor: %s\n", dist->vendor);
@@ -351,8 +359,9 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   */
 
   if (strcmp(platform->machine, "intel") == 0)
-    sprintf(command, "cd %s; /bin/mv %s/RPMS/i386/%s-%s-1.i386.rpm %s.rpm",
-            directory, rpmdir, prodname, dist->version, name);
+    sprintf(command, "cd %s; /bin/mv %s/RPMS/i386/%s-%s-%d.i386.rpm %s.rpm",
+            directory, rpmdir, prodname, dist->version, dist->relnumber,
+	    name);
   else
     sprintf(command, "cd %s; /bin/mv %s/RPMS/%s/%s-%s-1.%s.rpm %s.rpm",
             directory, rpmdir, platform->machine, prodname, dist->version,
@@ -380,5 +389,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.27 2001/03/26 16:18:47 mike Exp $".
+ * End of "$Id: rpm.c,v 1.28 2001/03/26 20:11:09 mike Exp $".
  */
