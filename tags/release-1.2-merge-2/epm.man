@@ -1,0 +1,347 @@
+.\"
+.\" "$Id: epm.man,v 1.27 2001/05/28 13:44:36 mike Exp $"
+.\"
+.\"   Manual page for the ESP Package Manager (EPM).
+.\"
+.\"   Copyright 1999-2001 by Easy Software Products, all rights reserved.
+.\"
+.\"   This program is free software; you can redistribute it and/or modify
+.\"   it under the terms of the GNU General Public License as published by
+.\"   the Free Software Foundation; either version 2, or (at your option)
+.\"   any later version.
+.\"
+.\"   This program is distributed in the hope that it will be useful,
+.\"   but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"   GNU General Public License for more details.
+.\"
+.TH epm 1 "ESP Package Manager" "28 May 2001" "Easy Software Products"
+.SH NAME
+epm \- create software packages
+.SH SYNOPSIS
+.B epm
+[ \-f
+.I format
+] [ \-g ] [ \-k ] [ \-n[mrs] ] [ \-s
+.I setup.xpm
+] [ \--setup-image
+.I setup.xpm
+] [ \--setup-program
+.I /foo/bar/setup
+] [ \-v ] [
+.I name=value
+...
+.I name=value
+] product [
+.I listfile
+]
+.SH DESCRIPTION
+\fBepm\fR generates software packages complete with installation, removal, and
+(if necessary) patch scripts. Unless otherwise specified, the files required
+for \fIproduct\fR are read from a file named "\fIproduct\fR.list".
+.LP
+The \fI-f\fR option ("format") specifies the distribution format:
+.TP 5
+deb
+.br
+Generate a Debian distribution suitable for installation on a Debian Linux
+system.
+.TP 5
+inst, tardist
+.br
+Generate an IRIX distribution suitable for installation on an system running
+IRIX.
+.TP 5
+native
+.br
+Generate an native distribution. This uses \fIrpm\fR for Linux, \fIinst\fR for
+IRIX, \fIpkg\fR for Solaris, and \fIswinstall\fR for HP-UX. All other
+operating systems default to the \fIportable\fR format.
+.TP 5
+pkg
+.br
+Generate an AT&T software package. These are used primarily under Solaris.
+.TP 5
+portable
+.br
+Generate a portable distribution based on shell scripts and tar files.  The
+resulting distribution is installed and removed the same way on all
+operating systems. [default]
+.TP 5
+rpm
+.br
+Generate a Red Hat Package Manager ("RPM") distribution suitable
+for installation on a Red Hat Linux system.
+.TP 5
+setld
+.br
+Generate a Tru64 (setld) software distribution.
+.TP 5
+swinstall, depot
+.br
+Generate a HP-UX software distribution.
+.LP
+Executable files in the distribution are normally stripped of debugging
+information when packaged. To disable this functionality use the
+\fI\-g\fR option.
+.LP
+Intermediate (spec, etc.) files used to create the distribution are normally
+removed after the distribution is created. The \fI\-k\fR option keeps these
+files in the distribution directory.
+.LP
+The \fI-s\fR and \fI--setup-image\fR options ("setup") include
+the ESP Software Wizard with the specified XPM image file with
+the distribution. This option is currently only supported by
+portable distributions.
+.LP
+The \fI--setup-program\fR option specifies the setup executable
+to use with the distribution. This option is currently only
+supported by portable distributions.
+.LP
+The \fI-v\fR option ("verbose") increases the amount of information that is
+reported. Use multiple v's for more verbose output.
+.LP
+Distributions normally are named
+"product-version-system-release-machine.ext" and
+"product-version-system-release-machine-patch.ext" (for patch
+distributions.) The "system-release-machine" information can be
+customized or eliminated using the \fI-n\fR option with the
+appropriate trailing letters. Using \fI-n\fR by itself will
+remove the "system-release-machine" string from the filename
+entirely.
+.LP
+Debian, IRIX, portable, and Red Hat distributions use the extensions ".deb",
+".tardist", "tar.gz", and ".rpm" respectively.
+.SH LIST FILES
+Each product has an associated list file that describes the files to include
+with the product. Comment lines begin with the "#" character and are ignored.
+All other non-blank lines must begin with a letter, dollar sign ("$"),
+or the percent sign ("%") as follows:
+.TP 5
+$name=value
+.br
+Sets the named variable to \fIvalue\fR. \fBNote:\fR Variables
+set in the list file are overridden by variables specified on
+the command-line or in the current environment.
+.TP 5
+%copyright \fIcopyright notice\fR
+.br
+Sets the copyright notice for the file.
+.TP 5
+%description \fIdescription text\fR
+.br
+Adds a line of descriptive text to the distribution. Multiple lines are
+supported.
+.TP 5
+%format \fIformat [... format]\fR
+.br
+Uses following files and directives only if the distribution format is
+the same as \fIformat\fR.
+.TP 5
+%format !\fIformat [... format]\fR
+.br
+Uses following files and directives only if the distribution format is
+not the same as \fIformat\fR.
+.TP 5
+%include \fIfilename\fR
+.br
+Includes files listed in \fIfilename\fR.
+.TP 5
+%incompat \fIproduct\fR
+.TP 5
+%incompat \fIfilename\fR
+.br
+Indicates that this product is incompatible with the named product or
+file.
+.TP 5
+%install \fIscript or program\fR
+.br
+Specifies a script or program to be run after all files are installed.
+(This has been obsoleted by the %postinstall directive)
+.TP 5
+%license \fIlicense file\fR
+.br
+Specifies the file to display as the software license.
+.TP 5
+%packager \fIname of packager\fR
+.br
+Specifies the name of the packager.
+.TP 5
+%patch \fIscript or program\fR
+.br
+Specifies a script or program to be run after all files are patched.
+(This has been obsoleted by the %postpatch directive)
+.TP 5
+%postinstall \fIscript or program\fR
+.br
+Specifies a script or program to be run after all files are installed.
+.TP 5
+%postpatch \fIscript or program\fR
+.br
+Specifies a script or program to be run after all files are patched.
+.TP 5
+%postremove \fIscript or program\fR
+.br
+Specifies a script or program to be run after removing files.
+.TP 5
+%preinstall \fIscript or program\fR
+.br
+Specifies a script or program to be run before all files are installed.
+.TP 5
+%prepatch \fIscript or program\fR
+.br
+Specifies a script or program to be run before all files are patched.
+.TP 5
+%preremove \fIscript or program\fR
+.br
+Specifies a script or program to be run before removing files.
+.TP 5
+%product \fIproduct name\fR
+.br
+Specifies the product name.
+.TP 5
+%readme \fIreadme file\fR
+.br
+Specifies a README file to be included in the distribution.
+.TP 5
+%remove \fIscript or program\fR
+.br
+Specifies a script or program to be run before removing files.
+(This has been obsoleted by the %preremove directive)
+.TP 5
+%release \fInumber\fR
+.br
+Specifies the release or build number of a product (defaults to 0).
+.TP 5
+%replaces \fIproduct\fR
+.br
+Indicates that this product replaces the named product.
+.TP 5
+%requires \fIproduct\fR
+.TP 5
+%requires \fIfilename\fR
+.br
+Indicates that this product requires the named product or file.
+.TP 5
+%vendor \fIvendor or author name\fR
+.br
+Specifies the vendor or author of the product.
+.TP 5
+%version \fIversion number\fR
+.br
+Specifies the version number of the product.
+.TP 5
+%system \fIsystem[-release] [... system[-release]]\fR
+.br
+Specifies that the following files should only be used for the specified
+operating systems and releases.
+.TP 5
+%system !\fIsystem[-release] [... system[-release]]\fR
+.br
+Specifies that the following files should not be used for the specified
+operating systems and releases.
+.TP 5
+%system all
+.br
+Specifies that the following files are applicable to all operating systems.
+.TP 5
+c \fImode user group destination source\fR
+.TP 5
+C \fImode user group destination source\fR
+.br
+Specifies a configuration file for installation. The second form
+specifies that the file has changed or is new and should be included as
+part of a patch. Configuration files are installed as "destination.N"
+if the destination already exists.
+.TP 5
+d \fImode user group destination -\fR
+.TP 5
+D \fImode user group destination -\fR
+.br
+Specifies a directory should be created when installing the software. The
+second form specifies that the directory is new and should be included as part
+of a patch.
+.TP 5
+f \fImode user group destination source\fR
+.TP 5
+F \fImode user group destination source\fR
+.br
+Specifies a file for installation. The second form specifies that the file
+has changed or is new and should be included as part of a patch.
+.TP 5
+f \fImode user group destination source/pattern\fR
+.TP 5
+F \fImode user group destination source/pattern\fR
+.br
+Specifies one or more files for installation using shell
+wildcard patterns. The second form specifies that the files have
+changed or are new and should be included as part of a patch.
+.TP 5
+i \fImode user group service-name source\fR
+.TP 5
+I \fImode user group service-name source\fR
+.br
+Specifies an initialization script for installation. The second form
+specifies that the file has changed or is new and should be included as
+part of a patch. Initialization scripts are stored in /etc/software/init.d and
+are linked to the appropriate system-specific directories for run levels 0,
+2, 3, and 5. Initialization scripts \fBmust\fR accepts at least the \fIstart\fR
+and \fIstop\fR commands.
+.TP 5
+l \fImode user group destination source\fR
+.TP 5
+L \fImode user group destination source\fR
+.br
+Specifies a symbolic link in the installation. The second form specifies that
+the link has changed or is new and should be included as part of a patch.
+.TP 5
+R \fImode user group destination\fR
+.br
+Specifies that the file is to be removed upon patching.  The \fIuser\fR and
+\fIgroup\fR fields are ignored.  The \fImode\fR field is only used to determine
+if a check should be made for a previous version of the file.
+.SH LIST VARIABLES
+\fIEPM\fR maintains a list of variables and their values which can be used
+to substitute values in the list file. These variables are imported from the
+current environment and taken from the command-line and list file as provided.
+Substitutions occur when the variable name is referenced with the dollar sign
+($):
+.nf
+.br
+
+    %install echo What is your name:
+    %install read $$name
+    %install echo Your name is $$name
+
+    f 0555 root sys ${bindir}/foo foo
+    f 0555 root sys $datadir/foo/foo.dat foo.dat
+.fi
+.LP
+Variable names can be surrounded by curley brackets (${name}) or
+alone ($name); without brackets the name is terminated by the
+first slash (/), dash (-), or whitespace. The dollar sign can be
+inserted using $$.
+.SH ENVIRONMENT VARIABLES
+The \fIRPMDIR\fR environment variable will override where EPM looks
+for RPM distributions you generate. The default locations are
+/usr/src/redhat/RPMS, /usr/src/RPM/RPMS, /usr/src/packages/RPMS,
+and /usr/local/src/RPMS.
+.SH KNOWN BUGS
+EPM does not currently support generation of IRIX software patches.
+.SH SEE ALSO
+mkepmlist(1) - make an EPM list file from a directory.
+.SH COPYRIGHT
+Copyright 1999-2001 by Easy Software Products, All Rights Reserved.
+.LP
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+.LP
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.\"
+.\" End of "$Id: epm.man,v 1.27 2001/05/28 13:44:36 mike Exp $".
+.\"
