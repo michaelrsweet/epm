@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.7 2000/06/28 20:46:01 mike Exp $"
+ * "$Id: inst.c,v 1.8 2000/08/15 17:54:34 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -172,7 +172,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
       sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/etc/rc2.d/S99%s", dist->files[i].dst);
+      sprintf(file->dst, "/etc/rc3.d/S99%s", dist->files[i].dst);
 
       file = dist->files + i;
 
@@ -446,5 +446,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.7 2000/06/28 20:46:01 mike Exp $".
+ * End of "$Id: inst.c,v 1.8 2000/08/15 17:54:34 mike Exp $".
  */
