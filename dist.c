@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.2 1999/11/05 16:52:52 mike Exp $"
+ * "$Id: dist.c,v 1.3 1999/12/02 22:27:41 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -238,6 +238,9 @@ read_dist(char           *filename,	/* I - Main distribution list file */
 	else if (strcmp(line, "%requires") == 0)
 	  dist->num_requires = add_string(dist->num_requires, &(dist->requires),
 	                                  temp);
+	else if (strcmp(line, "%replaces") == 0)
+	  dist->num_replaces = add_string(dist->num_replaces, &(dist->replaces),
+	                                  temp);
 	else
 	{
 	  fprintf(stderr, "epm: Unknown directive \"%s\" ignored!\n", line);
@@ -460,5 +463,5 @@ expand_name(char *buffer,	/* O - Output string */
 
 
 /*
- * End of "$Id: dist.c,v 1.2 1999/11/05 16:52:52 mike Exp $".
+ * End of "$Id: dist.c,v 1.3 1999/12/02 22:27:41 mike Exp $".
  */

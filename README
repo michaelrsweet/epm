@@ -84,12 +84,15 @@ WHAT'S NEW IN EPM 2.0?
 
 	- New "-f" option to generate vendor-specific software
 	  distributions.
+	- New "-s" option to include the ESP Software Wizard (GUI)
+	  with portable distributions.
 	- The "-t" option (test) is no longer supported.
 	- New "-v" option to control the amount of information
 	  that is reported.
 	- Now support "portable" (script-based), Red Hat, Debian,
 	  and IRIX software distributions.
 	- New graphical setup program for portable distributions.
+	- New "replaces" directive.
 
 
 WHAT'S NEW IN EPM 1.7?

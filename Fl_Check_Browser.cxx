@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <FL/fl_draw.H>
-#include "Check_Browser.h"
+#include "Fl_Check_Browser.h"
 
 /* This uses a cache for faster access when you're scanning the list
 either forwards or backwards. */
 
-Check_Browser::cb_item *Check_Browser::find_item(int n) const {
+Fl_Check_Browser::cb_item *Fl_Check_Browser::find_item(int n) const {
 	int i = n;
 	cb_item *p = first;
 
@@ -32,13 +32,13 @@ Check_Browser::cb_item *Check_Browser::find_item(int n) const {
 
 	/* Cast to not const and cache it. */
 
-	((Check_Browser *)this)->cache = p;
-	((Check_Browser *)this)->cached_item = i;
+	((Fl_Check_Browser *)this)->cache = p;
+	((Fl_Check_Browser *)this)->cached_item = i;
 
 	return p;
 }
 
-int Check_Browser::lineno(cb_item *p0) const {
+int Fl_Check_Browser::lineno(cb_item *p0) const {
 	cb_item *p = first;
 
 	if (p == 0) {
@@ -57,7 +57,7 @@ int Check_Browser::lineno(cb_item *p0) const {
 	return 0;
 }
 
-Check_Browser::Check_Browser(int x, int y, int w, int h, const char *l = 0)
+Fl_Check_Browser::Fl_Check_Browser(int x, int y, int w, int h, const char *l)
 	: Fl_Browser_(x, y, w, h, l) {
 	type(FL_SELECT_BROWSER);
 	when(FL_WHEN_NEVER);
@@ -66,30 +66,30 @@ Check_Browser::Check_Browser(int x, int y, int w, int h, const char *l = 0)
 	cached_item = -1;
 }
 
-void *Check_Browser::item_first() const {
+void *Fl_Check_Browser::item_first() const {
 	return first;
 }
 
-void *Check_Browser::item_next(void *l) const {
+void *Fl_Check_Browser::item_next(void *l) const {
 	return ((cb_item *)l)->next;
 }
 
-void *Check_Browser::item_prev(void *l) const {
+void *Fl_Check_Browser::item_prev(void *l) const {
 	return ((cb_item *)l)->prev;
 }
 
-int Check_Browser::item_height(void *) const {
+int Fl_Check_Browser::item_height(void *) const {
 	return textsize() + 2;
 }
 
 #define CHECK_SIZE 8
 
-int Check_Browser::item_width(void *v) const {
+int Fl_Check_Browser::item_width(void *v) const {
 	fl_font(textfont(), textsize());
-	return int(fl_width(((cb_item *)v)->text)) + CHECK_SIZE + 4;
+	return int(fl_width(((cb_item *)v)->text)) + CHECK_SIZE + 8;
 }
 
-void Check_Browser::item_draw(void *v, int x, int y, int, int) const {
+void Fl_Check_Browser::item_draw(void *v, int x, int y, int, int) const {
 	cb_item *i = (cb_item *)v;
 	char *s = i->text;
 	int size = textsize();
@@ -98,22 +98,21 @@ void Check_Browser::item_draw(void *v, int x, int y, int, int) const {
 	x += 2;
 
 	fl_color(FL_BLACK);
+	fl_loop(x, cy, x, cy + CHECK_SIZE,
+	        x + CHECK_SIZE, cy + CHECK_SIZE, x + CHECK_SIZE, cy);
 	if (i->checked) {
-		fl_polygon(x, cy, x, cy + CHECK_SIZE,
-		x + CHECK_SIZE, cy + CHECK_SIZE, x + CHECK_SIZE, cy);
-	} else {
-		fl_loop(x, cy, x, cy + CHECK_SIZE,
-		x + CHECK_SIZE, cy + CHECK_SIZE, x + CHECK_SIZE, cy);
+		fl_line(x, cy, x + CHECK_SIZE, cy + CHECK_SIZE);
+		fl_line(x, cy + CHECK_SIZE, x + CHECK_SIZE, cy);
 	}
 	fl_font(textfont(), size);
 	if (i->selected) {
 		col = contrast(col, selection_color());
 	}
 	fl_color(col);
-	fl_draw(s, x + CHECK_SIZE + 4, y + size - 1);
+	fl_draw(s, x + CHECK_SIZE + 8, y + size - 1);
 }
 
-void Check_Browser::item_select(void *v, int state) {
+void Fl_Check_Browser::item_select(void *v, int state) {
 	cb_item *i = (cb_item *)v;
 	i->selected = state;
 	if (state) {
@@ -127,16 +126,16 @@ void Check_Browser::item_select(void *v, int state) {
 	}
 }
 
-int Check_Browser::item_selected(void *v) const {
+int Fl_Check_Browser::item_selected(void *v) const {
 	cb_item *i = (cb_item *)v;
 	return i->selected;
 }
 
-int Check_Browser::add(char *s) {
+int Fl_Check_Browser::add(char *s) {
 	return (add(s, 0));
 }
 
-int Check_Browser::add(char *s, int b) {
+int Fl_Check_Browser::add(char *s, int b) {
 	cb_item *p = (cb_item *)malloc(sizeof(cb_item));
 	p->next = 0;
 	p->prev = 0;
@@ -160,7 +159,7 @@ int Check_Browser::add(char *s, int b) {
 	return (nitems_);
 }
 
-void Check_Browser::clear() {
+void Fl_Check_Browser::clear() {
 	cb_item *p = first;
 	cb_item *next;
 
@@ -181,14 +180,14 @@ void Check_Browser::clear() {
 	cached_item = -1;
 }
 
-int Check_Browser::checked(int i) const {
+int Fl_Check_Browser::checked(int i) const {
 	cb_item *p = find_item(i);
 
 	if (p) return p->checked;
 	return 0;
 }
 
-void Check_Browser::checked(int i, int b) {
+void Fl_Check_Browser::checked(int i, int b) {
 	cb_item *p = find_item(i);
 
 	if (p && (p->checked ^ b)) {
@@ -201,18 +200,18 @@ void Check_Browser::checked(int i, int b) {
 	}
 }
 
-int Check_Browser::value() const {
+int Fl_Check_Browser::value() const {
 	return lineno((cb_item *)selection());
 }
 
-char *Check_Browser::text(int i) const {
+char *Fl_Check_Browser::text(int i) const {
 	cb_item *p = find_item(i);
 
 	if (p) return p->text;
 	return 0;
 }
 
-void Check_Browser::check_all() {
+void Fl_Check_Browser::check_all() {
 	cb_item *p;
 
 	nchecked_ = nitems_;
@@ -221,7 +220,7 @@ void Check_Browser::check_all() {
 	}
 }
 
-void Check_Browser::check_none() {
+void Fl_Check_Browser::check_none() {
 	cb_item *p;
 
 	nchecked_ = 0;

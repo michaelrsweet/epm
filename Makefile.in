@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.4 1999/11/04 20:34:26 mike Exp $"
+# "$Id: Makefile.in,v 1.5 1999/12/02 22:27:40 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -28,6 +28,7 @@ MKDIR	=	@MKDIR@ -p
 RM	=	@RM@ -f
 SHELL	=	/bin/sh
 
+
 #
 # Program options...
 #
@@ -41,6 +42,7 @@ LDFLAGS	=	@LDFLAGS@ $(OPTIM)
 LIBS	=	@LIBS@
 OPTIM	=	@OPTIM@
 
+
 #
 # Directories...
 #
@@ -49,6 +51,7 @@ bindir		=	@bindir@
 exec_prefix	=	@exec_prefix@
 mandir		=	@mandir@
 prefix		=	@prefix@
+
 
 #
 # Rules...
@@ -64,6 +67,7 @@ prefix		=	@prefix@
 	echo Compiling $<...
 	$(CXX) $(CXXFLAGS) -c $<
 
+
 #
 # Targets...
 #
@@ -74,11 +78,13 @@ EPM_OBJS =	deb.o dist.o epm.o file.o inst.o pkg.o portable.o rpm.o \
 SETUP_OBJS =	setup.o setup2.o Fl_Check_Browser.o Fl_Wizard.o
 OBJS	=	$(EPM_OBJS) $(SETUP_OBJS)
 
+
 #
 # Make all targets...
 #
 
 all:	$(TARGETS)
+
 
 #
 # Clean all object files...
@@ -86,6 +92,16 @@ all:	$(TARGETS)
 
 clean:
 	rm -f $(OBJS) $(TARGETS)
+
+
+#
+# Clean all object files and generated files...
+#
+
+distclean:
+	rm -f $(OBJS) $(TARGETS) \
+		config.cache config.h config.log config.status Makefile
+
 
 #
 # Install all targets...
@@ -100,6 +116,7 @@ install: $(TARGETS)
 	$(RM) $(mandir)/man1/epm.1
 	$(CP) epm.man $(mandir)/man1/epm.1
 
+
 #
 # epm
 #
@@ -110,21 +127,22 @@ epm:	$(EPM_OBJS)
 
 $(EPM_OBJS):	epm.h string.h
 
+
 #
 # setup
 #
 
 setup:	$(SETUP_OBJS)
 	echo Linking setup...
-	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) $(LIBS)
+	$(CXX) -static $(LDFLAGS) -o setup $(SETUP_OBJS) $(LIBS)
 
-setup.o:	setup.h Fl_Check_Browser.h Fl_Wizard.h
-setup2.o:	setup.h Fl_Check_Browser.h Fl_Wizard.h
+setup.o:	setup.h setup2.h Fl_Check_Browser.h Fl_Wizard.h
+setup2.o:	setup.h setup2.h Fl_Check_Browser.h Fl_Wizard.h
 Fl_Wizard.o:	Fl_Wizard.h
 Fl_Check_Browser.o:	Fl_Check_Browser.h
 
 $(OBJS):	Makefile config.h
 
 #
-# End of "$Id: Makefile.in,v 1.4 1999/11/04 20:34:26 mike Exp $".
+# End of "$Id: Makefile.in,v 1.5 1999/12/02 22:27:40 mike Exp $".
 #

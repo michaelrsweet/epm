@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.3 1999/11/04 20:31:07 mike Exp $"
+dnl "$Id: configure.in,v 1.4 1999/12/02 22:27:41 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -68,7 +68,7 @@ AC_CHECK_FUNCS(strcasecmp)
 AC_CHECK_FUNCS(strncasecmp)
 
 dnl Check for libraries...
-LDFLAGS="$CXXFLAGS"
+LDFLAGS="${LDFLAGS:=}"
 AC_SUBST(LDFLAGS)
 
 AC_PATH_X
@@ -128,11 +128,14 @@ AC_SUBST(EPM_GZIP)
 AC_DEFINE_UNQUOTED(EPM_STRIP, "$STRIP")
 AC_SUBST(EPM_STRIP)
 
+AC_DEFINE_UNQUOTED(EPM_BINDIR, "$prefix/lib")
+AC_SUBST(EPM_BINDIR)
+
 AC_DEFINE_UNQUOTED(EPM_WHOAMI, "$WHOAMI")
 AC_SUBST(EPM_WHOAMI)
 
 AC_OUTPUT(Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.3 1999/11/04 20:31:07 mike Exp $".
+dnl End of "$Id: configure.in,v 1.4 1999/12/02 22:27:41 mike Exp $".
 dnl

@@ -8,19 +8,19 @@ snap 3
 Function {make_window()} {open
 } {
   Fl_Window {} {
-    label Setup open
-    xywh {341 164 450 345} visible
+    label {ESP Software Wizard} open
+    xywh {341 164 450 345} hide
+    code0 {\#include "setup2.h"}
   } {
-    Fl_Button PrevButton {
-      label {prev.xbm}
-      private xywh {250 310 55 25} labeltype image
-    }
     Fl_Button NextButton {
       label {next.xbm}
+      callback {Wizard->next();
+NextButton->deactivate();}
       private xywh {315 310 55 25} labeltype image
     }
     Fl_Button CancelButton {
       label Cancel
+      callback {exit(0);}
       private xywh {380 310 60 25}
     }
     Fl_Group Wizard {open
@@ -29,7 +29,7 @@ Function {make_window()} {open
       class Fl_Wizard
     } {
       Fl_Group WelcomePane {
-        xywh {10 10 430 280} box FLAT_BOX hide
+        xywh {10 10 430 280} box FLAT_BOX
       } {
         Fl_Box {} {
           label {Welcome to Setup}
@@ -42,7 +42,6 @@ To select software for installation, please click on the "Next" button below.}
           xywh {40 55 370 80} align 149
         }
         Fl_Box {} {
-          label Image
           xywh {40 150 370 140} align 21
         }
       }
@@ -59,8 +58,14 @@ To select software for installation, please click on the "Next" button below.}
         }
         Fl_Browser SoftwareList {
           label { Available Software:}
-          xywh {40 120 370 170} box DOWN_BOX color 196 align 5
-        } {}
+          callback {if (SoftwareList->nchecked())
+  NextButton->activate();
+else
+  NextButton->deactivate();} selected
+          xywh {40 120 370 170} type Select box DOWN_BOX align 5 when 4
+          code0 {\#include "Fl_Check_Browser.h"}
+          class Fl_Check_Browser
+        }
       }
       Fl_Group InstallPane {open
         xywh {10 10 430 280} box FLAT_BOX hide
@@ -70,27 +75,11 @@ To select software for installation, please click on the "Next" button below.}
           xywh {10 10 430 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Slider InstallPercent {
-          label {Installing ESP Print Pro v4.0...}
+          label {Progress Label...}
           xywh {40 75 365 15} type {Horz Fill} selection_color 63 labelfont 3 align 5 maximum 100 value 50
         }
         Fl_Browser InstallLog {
           xywh {40 100 365 180}
-        }
-      }
-      Fl_Group CompletePane {open
-        xywh {10 10 430 280} box FLAT_BOX
-      } {
-        Fl_Box {} {
-          label {Software Installation Complete}
-          xywh {10 10 430 25} labelfont 1 labelsize 18 labelcolor 4 align 20
-        }
-        Fl_Box {} {
-          label {Software installation is complete.}
-          xywh {40 55 370 20} align 21
-        }
-        Fl_Button {} {
-          label {View the README File...} selected
-          xywh {270 265 170 25}
         }
       }
     }
