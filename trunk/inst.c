@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.23 2002/08/30 02:00:42 mike Exp $"
+ * "$Id: inst.c,v 1.24 2002/10/17 18:13:13 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -100,17 +100,17 @@ make_inst(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  qprintf(fp, "product %s\n", prodname);
+  fprintf(fp, "product %s\n", prodname);
   qprintf(fp, "	id \"%s, %s\"\n", dist->product, dist->version);
 
   fputs("	image sw\n", fp);
   qprintf(fp, "		id \"%s, Software, %s\"\n", dist->product,
           dist->version);
-  qprintf(fp, "		version %d\n", dist->vernumber);
+  fprintf(fp, "		version %d\n", dist->vernumber);
   fputs("		subsys eoe default\n", fp);
   qprintf(fp, "			id \"%s, Software, %s\"\n", dist->product,
           dist->version);
-  qprintf(fp, "			exp \"%s.sw.eoe\"\n", prodname);
+  fprintf(fp, "			exp \"%s.sw.eoe\"\n", prodname);
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
     if (d->type == DEPEND_REQUIRES)
@@ -124,10 +124,10 @@ make_inst(const char     *prodname,	/* I - Product short name */
       if (d->type == DEPEND_REQUIRES)
       {
         if (strchr(d->product, '.') != NULL)
-  	  qprintf(fp, "				%s %d %d\n",
+  	  fprintf(fp, "				%s %d %d\n",
          	  d->product, d->vernumber[0], d->vernumber[1]);
         else if (d->product[0] != '/')
-  	  qprintf(fp, "				%s.sw.eoe %d %d\n",
+  	  fprintf(fp, "				%s.sw.eoe %d %d\n",
          	  d->product, d->vernumber[0], d->vernumber[1]);
       }
     fputs("			)\n", fp);
@@ -137,19 +137,19 @@ make_inst(const char     *prodname,	/* I - Product short name */
     if (d->type == DEPEND_REPLACES)
     {
       if (strchr(d->product, '.') != NULL)
-        qprintf(fp, "			replaces %s %d %d\n",
+        fprintf(fp, "			replaces %s %d %d\n",
          	d->product, d->vernumber[0], d->vernumber[1]);
       else if (d->product[0] != '/')
-        qprintf(fp, "			replaces %s.sw.eoe %d %d\n",
+        fprintf(fp, "			replaces %s.sw.eoe %d %d\n",
          	d->product, d->vernumber[0], d->vernumber[1]);
     }
     else if (d->type == DEPEND_INCOMPAT)
     {
       if (strchr(d->product, '.') != NULL)
-        qprintf(fp, "			incompat %s %d %d\n",
+        fprintf(fp, "			incompat %s %d %d\n",
          	d->product, d->vernumber[0], d->vernumber[1]);
       else if (d->product[0] != '/')
-        qprintf(fp, "			incompat %s.sw.eoe %d %d\n",
+        fprintf(fp, "			incompat %s.sw.eoe %d %d\n",
          	d->product, d->vernumber[0], d->vernumber[1]);
     }
 
@@ -159,11 +159,11 @@ make_inst(const char     *prodname,	/* I - Product short name */
   fputs("	image man\n", fp);
   qprintf(fp, "		id \"%s, Man Pages, %s\"\n", dist->product,
           dist->version);
-  qprintf(fp, "		version %d\n", dist->vernumber);
+  fprintf(fp, "		version %d\n", dist->vernumber);
   fputs("		subsys eoe default\n", fp);
   qprintf(fp, "			id \"%s, Man Pages, %s\"\n", dist->product,
           dist->version);
-  qprintf(fp, "			exp \"%s.man.eoe\"\n", prodname);
+  fprintf(fp, "			exp \"%s.man.eoe\"\n", prodname);
   fputs("		endsubsys\n", fp);
   fputs("	endimage\n", fp);
 
@@ -260,7 +260,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_INSTALL)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -314,7 +314,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_INSTALL)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -368,7 +368,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_REMOVE)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     qprintf(fp, "/bin/rm -f %s.copy\n", file->dst);
 
@@ -424,7 +424,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_REMOVE)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     qprintf(fp, "/bin/rm -f %s.copy\n", file->dst);
 
@@ -612,5 +612,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.23 2002/08/30 02:00:42 mike Exp $".
+ * End of "$Id: inst.c,v 1.24 2002/10/17 18:13:13 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.22 2002/08/30 02:00:42 mike Exp $"
+ * "$Id: pkg.c,v 1.23 2002/10/17 18:13:14 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -93,16 +93,16 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   curtime = time(NULL);
   curdate = gmtime(&curtime);
 
-  qprintf(fp, "PKG=%s\n", prodname);
-  qprintf(fp, "NAME=%s\n", dist->product);
-  qprintf(fp, "VERSION=%s\n", dist->version);
-  qprintf(fp, "VENDOR=%s\n", dist->vendor);
-  qprintf(fp, "PSTAMP=epm%04d%02d%02d%02d%02d%02d\n",
+  fprintf(fp, "PKG=%s\n", prodname);
+  fprintf(fp, "NAME=%s\n", dist->product);
+  fprintf(fp, "VERSION=%s\n", dist->version);
+  fprintf(fp, "VENDOR=%s\n", dist->vendor);
+  fprintf(fp, "PSTAMP=epm%04d%02d%02d%02d%02d%02d\n",
           curdate->tm_year + 1900, curdate->tm_mon + 1, curdate->tm_mday,
 	  curdate->tm_hour, curdate->tm_min, curdate->tm_sec);
 
   if (dist->num_descriptions > 0)
-    qprintf(fp, "DESC=%s\n", dist->descriptions[0]);
+    fprintf(fp, "DESC=%s\n", dist->descriptions[0]);
 
   fputs("CATEGORY=application\n", fp);
   fputs("CLASSES=none\n", fp);
@@ -132,9 +132,9 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
     if (d->type == DEPEND_REQUIRES)
-      qprintf(fp, "P %s\n", d->product);
+      fprintf(fp, "P %s\n", d->product);
     else
-      qprintf(fp, "I %s\n", d->product);
+      fprintf(fp, "I %s\n", d->product);
 
   fclose(fp);
 
@@ -172,7 +172,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_INSTALL)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -218,7 +218,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_INSTALL)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
@@ -271,7 +271,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_REMOVE)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -312,7 +312,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_REMOVE)
-        qprintf(fp, "%s\n", c->command);
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -378,25 +378,25 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   }
 
   if (dist->license[0] == '/')
-    qprintf(fp, "i copyright=%s\n", dist->license);
+    fprintf(fp, "i copyright=%s\n", dist->license);
   else
-    qprintf(fp, "i copyright=%s/%s\n", current, dist->license);
+    fprintf(fp, "i copyright=%s/%s\n", current, dist->license);
 
-  qprintf(fp, "i depend=%s/%s/%s.depend\n", current, directory, prodname);
-  qprintf(fp, "i pkginfo=%s/%s/%s.pkginfo\n", current, directory, prodname);
+  fprintf(fp, "i depend=%s/%s/%s.depend\n", current, directory, prodname);
+  fprintf(fp, "i pkginfo=%s/%s/%s.pkginfo\n", current, directory, prodname);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
       break;
 
   if (preinstall[0])
-    qprintf(fp, "i preinstall=%s/%s\n", current, preinstall);
+    fprintf(fp, "i preinstall=%s/%s\n", current, preinstall);
   if (postinstall[0])
-    qprintf(fp, "i postinstall=%s/%s\n", current, postinstall);
+    fprintf(fp, "i postinstall=%s/%s\n", current, postinstall);
   if (preremove[0])
-    qprintf(fp, "i preremove=%s/%s\n", current, preremove);
+    fprintf(fp, "i preremove=%s/%s\n", current, preremove);
   if (postremove[0])
-    qprintf(fp, "i postremove=%s/%s\n", current, postremove);
+    fprintf(fp, "i postremove=%s/%s\n", current, postremove);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     switch (tolower(file->type))
@@ -503,5 +503,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.22 2002/08/30 02:00:42 mike Exp $".
+ * End of "$Id: pkg.c,v 1.23 2002/10/17 18:13:14 mike Exp $".
  */
