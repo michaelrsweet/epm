@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.54 2004/08/26 18:42:41 mike Exp $"
+ * "$Id: dist.c,v 1.55 2004/09/08 21:04:06 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -519,6 +519,8 @@ get_platform(struct utsname *platform)	/* O - Platform info */
 
       for (temp = platform->release; temp[2]; temp ++)
         *temp = temp[2];
+
+      *temp = '\0';
     }
   }
   else if (strcmp(platform->sysname, "osf1") == 0)
@@ -2050,5 +2052,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.54 2004/08/26 18:42:41 mike Exp $".
+ * End of "$Id: dist.c,v 1.55 2004/09/08 21:04:06 mike Exp $".
  */
