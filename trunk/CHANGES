@@ -27,6 +27,9 @@ WHAT'S NEW IN EPM 3.1?
 	- HP-UX swinstall packages now use the prerequisites
 	  rule instead of corequisites to ensure that the
 	  %requires dependency is enforced.
+	- Dependencies for Debian packages are now listed on a
+	  single line per type rather than one line per
+	  dependency.
 
 
 WHAT'S NEW IN EPM 3.0?
