@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.3 1999/12/02 22:27:41 mike Exp $"
+ * "$Id: portable.c,v 1.4 1999/12/29 16:18:02 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -773,9 +773,9 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
-  fprintf(scriptfile, "	echo This installation script will install the %s\n",
+  fprintf(scriptfile, "	echo This installation script will install the \"%s\"\n",
           dist->product);
-  fprintf(scriptfile, "	echo software version %s on your system.\n",
+  fprintf(scriptfile, "	echo software version \"%s\" on your system.\n",
           dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
@@ -1035,7 +1035,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc0.d ; then\n", scriptfile);
+    fputs("	if test -d $dir/rc2.d -o " SYMLINK " $dir/rc2.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1126,9 +1126,9 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
-  fprintf(scriptfile, "	echo This installation script will patch the %s\n",
+  fprintf(scriptfile, "	echo This installation script will patch the \"%s\"\n",
           dist->product);
-  fprintf(scriptfile, "	echo software to version %s on your system.\n", dist->version);
+  fprintf(scriptfile, "	echo software to version \"%s\" on your system.\n", dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
 #ifdef HAVE_BROKEN_ECHO
@@ -1330,7 +1330,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc0.d -o " SYMLINK " $dir/rc0.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc2.d -o " SYMLINK " $dir/rc2.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1415,9 +1415,9 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
-  fprintf(scriptfile, "	echo This removal script will remove the %s\n",
+  fprintf(scriptfile, "	echo This removal script will remove the \"%s\"\n",
           dist->product);
-  fprintf(scriptfile, "	echo software version %s from your system.\n",
+  fprintf(scriptfile, "	echo software version \"%s\" from your system.\n",
           dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
@@ -1471,7 +1471,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc0.d ; then\n", scriptfile);
+    fputs("	if test -d $dir/rc2.d -o " SYMLINK " $dir/rc2.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1557,5 +1557,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.3 1999/12/02 22:27:41 mike Exp $".
+ * End of "$Id: portable.c,v 1.4 1999/12/29 16:18:02 mike Exp $".
  */
