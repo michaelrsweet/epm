@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.58 2005/01/11 21:36:57 mike Exp $"
+ * "$Id: dist.c,v 1.59 2005/02/08 16:42:45 swdev Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -1463,7 +1463,7 @@ expand_name(char   *buffer,		/* O - Output string */
         * Unbracketed variable name...
 	*/
 
-	for (varptr = var; strchr("/ \t-", *name) == NULL && *name != '\0';)
+	for (varptr = var; strchr("/ \t\r\n-", *name) == NULL && *name != '\0';)
           *varptr++ = *name++;
       }
 
@@ -2326,5 +2326,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.58 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id: dist.c,v 1.59 2005/02/08 16:42:45 swdev Exp $".
  */
