@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.62 2002/02/19 13:19:41 mike Exp $"
+ * "$Id: portable.c,v 1.63 2002/03/14 20:37:39 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -666,7 +666,9 @@ write_common(dist_t     *dist,		/* I - Distribution */
           title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
   fputs("	exit 1\n", fp);
   fputs("fi\n", fp);
-  fprintf(fp, "echo Copyright %s\n", dist->copyright);
+  fprintf(fp, "echo \'Copyright %s\'\n", dist->copyright);
+  fprintf(fp, "# Reset umask for %s...\n",
+          title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
   fputs("umask 002\n", fp);
 
   write_confcheck(fp);
@@ -1955,5 +1957,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.62 2002/02/19 13:19:41 mike Exp $".
+ * End of "$Id: portable.c,v 1.63 2002/03/14 20:37:39 mike Exp $".
  */

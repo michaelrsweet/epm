@@ -24,6 +24,26 @@ EPM software.</P>
 	<LI>New C implementation of mkepmlist, based on a
 	contribution from Andreas Voegele.
 
+	<LI>The portable install and patch scripts now change the
+	permissions of the installed "remove" script to 544.
+
+	<LI>The wildcard character * did not match 0 characters if
+	the pattern and the filename string differed only by
+	the trailing * (e.g. "Courier" and "Courier*").
+
+	<LI>IRIX pre/postremove scripts are now copied after
+	installation so that they can be executed when removing
+	the inst/tardist package.
+
+	<LI>HP-UX postinstall/preremove scripts would execute init
+	scripts from /sbin/init.d/sbin/init.d.
+
+	<LI>The copyright string wasn't being quoted in portable
+	installation scripts.
+
+	<LI>EPM now checks to see if an executable file is a
+	shell script before running the "strip" command.
+
 </UL>
 
 <H2>Changes in EPM v3.2.1</H2>

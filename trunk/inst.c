@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.20 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: inst.c,v 1.21 2002/03/14 20:37:39 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -356,6 +356,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
       if (c->type == COMMAND_PRE_REMOVE)
         fprintf(fp, "%s\n", c->command);
 
+    fprintf(fp, "/bin/rm -f %s.copy\n", file->dst);
+
     fclose(fp);
   }
   else
@@ -410,6 +412,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
       if (c->type == COMMAND_POST_REMOVE)
         fprintf(fp, "%s\n", c->command);
 
+    fprintf(fp, "/bin/rm -f %s.copy\n", file->dst);
+
     fclose(fp);
   }
   else
@@ -460,8 +464,11 @@ make_inst(const char     *prodname,	/* I - Product short name */
           break;
       case '3' :
       case '4' :
-          fprintf(fp, "f %04o %s %s %s %s %s removeop($rbase/%s)\n", file->mode,
-	          file->user, file->group, file->dst + 1, file->src, subsys,
+          fprintf(fp, "f %04o %s %s %s %s %s "
+	              "postop(cp $rbase/%s $rbase/%s.copy) "
+		      "removeop($rbase/%s.copy)\n",
+                  file->mode, file->user, file->group, file->dst + 1,
+		  file->src, subsys, file->dst + 1, file->dst + 1,
 		  file->dst + 1);
           break;
       case 'c' :
@@ -591,5 +598,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.20 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: inst.c,v 1.21 2002/03/14 20:37:39 mike Exp $".
  */
