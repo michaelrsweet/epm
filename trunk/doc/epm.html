@@ -6,10 +6,11 @@
 
 <H3>Synopsis</H3>
 
-<P><B>epm</B> [ -f <I>format</I> ] [ -g ] [ -k ] [ -n[mrs] ] [
--s <I>setup.xpm</I> ] [ --setup-image <I>setup.xpm</I> ] [
---setup-program <I>/foo/bar/setup</I> ] [ -v ] [ <I>name=value
-name=value</I> ] product [ <I>listfile</I> ]</P>
+<P><B>epm</B> [ -a <I>architecture</I> ] [ -f <I>format</I> ] [
+-g ] [ -k ] [ -n[mrs] ] [ -s <I>setup.xpm</I> ] [ --setup-image
+<I>setup.xpm</I> ] [ --setup-program <I>/foo/bar/setup</I> ] [
+-v ] [ <I>name=value name=value</I> ] product [ <I>listfile</I>
+]</P>
 
 <H3>Description</H3>
 
@@ -17,6 +18,10 @@ name=value</I> ] product [ <I>listfile</I> ]</P>
 installation, removal, and (if necessary) patch scripts. Unless
 otherwise specified, the files required for <I>product</I> are
 read from a file named "<I>product</I>.list".</P>
+
+<P>The <I>-a</I> option ("architecture") specifies the actual
+architecture for the software. Without this option the generic
+processor architecture is used ("intel", "sparc", "mips", etc.)</P>
 
 <P>The <I>-f</I> option ("format") specifies the distribution
 format:</P>
