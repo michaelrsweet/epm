@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.27 2002/12/17 18:57:54 swdev Exp $"
+ * "$Id: config.h.in,v 1.28 2003/02/13 16:52:28 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -35,6 +35,7 @@
  */
 
 #define EPM_BINDIR	"/usr/bin"
+#define EPM_DATADIR	"/usr/share/epm"
 #define EPM_LIBDIR	"/usr/lib/epm"
 
 
@@ -126,5 +127,5 @@
 
 
 /*
- * End of "$Id: config.h.in,v 1.27 2002/12/17 18:57:54 swdev Exp $".
+ * End of "$Id: config.h.in,v 1.28 2003/02/13 16:52:28 mike Exp $".
  */

@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.64 2003/01/30 04:27:45 mike Exp $"
+dnl "$Id: configure.in,v 1.65 2003/02/13 16:52:29 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -126,6 +126,7 @@ if test "x$FLTKCONFIG" = x; then
 	GUIS=""
 	GUILIBS=""
 	INSTALL_GUIS=""
+	INSTALL_OSX=""
 
 	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x.])
 else
@@ -136,10 +137,14 @@ else
 
 	if test "$uname" = Darwin; then
 		GUILIBS="$GUILIBS -framework Security"
+		INSTALL_OSX="install-osx"
+	else
+		INSTALL_OSX=""
 	fi
 fi
 
 AC_SUBST(INSTALL_GUIS)
+AC_SUBST(INSTALL_OSX)
 AC_SUBST(GUIS)
 AC_SUBST(GUILIBS)
 
@@ -273,6 +278,11 @@ if test "$libdir" = "\${exec_prefix}/lib"; then
 	libdir="$exec_prefix/lib"
 fi
 
+dnl Fix "datadir" variable if it hasn't been specified...
+if test "$datadir" = "\${prefix}/share"; then
+	datadir="$prefix/share"
+fi
+
 dnl Fix "mandir" variable if it hasn't been specified...
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
@@ -340,6 +350,9 @@ AC_SUBST(EPM_BINDIR)
 AC_DEFINE_UNQUOTED(EPM_LIBDIR, "$libdir/epm")
 AC_SUBST(EPM_LIBDIR)
 
+AC_DEFINE_UNQUOTED(EPM_DATADIR, "$datadir/epm")
+AC_SUBST(EPM_DATADIR)
+
 dnl Figure out the right option to use for the RPM build architecture...
 if test "x$RPM" != x; then
 	# It would be nice if Red Hat could make up its mind...
@@ -368,8 +381,8 @@ else
 fi
 
 dnl Output the makefile, list file, and config header...
-AC_OUTPUT(Makefile epm.list doc/Makefile)
+AC_OUTPUT(Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist)
 
 dnl
-dnl End of "$Id: configure.in,v 1.64 2003/01/30 04:27:45 mike Exp $".
+dnl End of "$Id: configure.in,v 1.65 2003/02/13 16:52:29 mike Exp $".
 dnl
