@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.8 1999/07/26 20:43:38 mike Exp $"
+ * "$Id: epm.c,v 1.9 1999/07/30 13:40:19 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -83,19 +83,64 @@ typedef union				/**** TAR record format ****/
 } tar_t;
 
 
+typedef struct				/**** File to install ****/
+{
+  char	type;				/* Type of file */
+  int	mode;				/* Permissions of file */
+  char	user[32],			/* Owner of file */
+	group[32],			/* Group of file */
+	src[512],			/* Source path */
+	dst[512];			/* Destination path */
+} file_t;
+
+typedef struct				/**** Distribution Structure ****/
+{
+  char		product[256],		/* Product description */
+		version[256],		/* Product version string */
+		copyright[256],		/* Product copyright */
+		vendor[256],		/* Vendor name */
+		license[256],		/* License file to copy */
+		readme[256];		/* README file to copy */
+  int		vernumber;		/* Version number */
+  int		num_installs;		/* Number of installation commands */
+  char		**installs;		/* Installation commands */
+  int		num_removes;		/* Number of removal commands */
+  char		**removes;		/* Removal commands */
+  int		num_patches;		/* Number of patch commands */
+  char		**patches;		/* Patch commands */
+  int		num_incompats;		/* Number of incompatible products */
+  char		**incompats;		/* Incompatible products */
+  int		num_requires;		/* Number of requires products */
+  char		**requires;		/* Required products */
+  int		num_files;		/* Number of files */
+  file_t	*files;			/* Files */
+} dist_t;
+
+
 /*
  * Local functions...
  */
 
+static int	add_string(int num_strings, char ***strings, char *string);
+static int	copy_file(char *dst, char *src);
+static void	free_strings(int num_strings, char **strings);
+static void	free_dist(dist_t *dist);
 static char	*get_line(char *buffer, int size, FILE *fp,
 		          struct utsname *platform, int *skip);
 static void	get_platform(struct utsname *platform);
 static void	expand_name(char *buffer, char *name);
+static dist_t	*read_dist(char *filename, struct utsname *platform);
 static void	usage(void);
+static int	write_dist(char *title, char *directory, char *prodname,
+		           char *platname, dist_t *dist, char **files);
 static int	write_file(FILE *fp, char *filename);
 static int	write_header(FILE *fp, char type, int mode, int size,
 		             time_t mtime, char *user, char *group,
 			     char *pathname, char *linkname);
+static int	write_install(dist_t *dist, char *prodname, char *directory);
+static int	write_padding(FILE *fp, int blocks);
+static int	write_patch(dist_t *dist, char *prodname, char *directory);
+static int	write_remove(dist_t *dist, char *prodname, char *directory);
 
 
 /*
@@ -108,46 +153,56 @@ main(int  argc,			/* I - Number of command-line arguments */
 {
   int		i;		/* Looping var */
   int		strip;		/* 1 if we should strip executables */
+  int		test;		/* 1 if we should not make archives (test scripts) */
   int		havepatchfiles;	/* 1 if we have patch files, 0 otherwise */
-  int		vernumber;	/* Version number */
-  int		listlevel;	/* Level in file list */
-  FILE		*listfiles[10],	/* File lists */
-		*installfile,	/* Install script */
-		*removefile,	/* Remove script */
-		*swfile,	/* Distribution tar file */
-		*pswfile,	/* Patch distribution tar file */
-		*patchfile;	/* Patch script */
+  FILE		*tarfile;	/* Distribution tar file */
   char		prodname[256],	/* Product name */
 		listname[256],	/* List file name */
 		swname[255],	/* Name of distribution tar file */
 		pswname[255],	/* Name of patch tar file */
 		platname[255],	/* Base platform name */
 		directory[255],	/* Name of install directory */
-		product[256],	/* Product description */
-		version[256],	/* Product version string */
-		copyright[256],	/* Product copyright */
-		vendor[256],	/* Vendor name */
-		license[256],	/* License file to copy */
-		readme[256],	/* README file to copy */
-		line[10240],	/* Line from list file */
-		type,		/* File type */
-		dst[255],	/* Destination path */
-		src[255],	/* Source path */
-		tempdst[255],	/* Temporary destination before expansion */
-		tempsrc[255],	/* Temporary source before expansion */
-		user[32],	/* User */
-		group[32],	/* Group */
-		*temp;		/* Temporary pointer */
-  char		command[1024];	/* Command to run */
-  int		mode,		/* File permissions */
-		tblocks,	/* Total number of blocks */
-		skip;		/* 1 = skip files, 0 = archive files */
+		filename[1024],	/* Name of temporary file */
+		command[1024],	/* Command to run */
+		*temp;		/* Temporary string pointer */
+  int		blocks,		/* Blocks in this file */
+		tblocks;	/* Total number of blocks */
   time_t	deftime;	/* File creation time */
   struct stat	srcstat;	/* Source file information */
-  char		padding[TAR_BLOCKS * TAR_BLOCK];
-				/* Padding for tar blocks */
   struct utsname platform;	/* UNIX name info */
+  dist_t	*dist;		/* Software distribution */
+  file_t	*file;		/* Software file */
+  static char	*distfiles[] =	/* Distribution files */
+		{
+		  "install",
+		  "license",
+		  "readme",
+		  "remove",
+		  "sw",
+		  NULL
+		};
+  static char	*patchfiles[] =	/* Patch files */
+		{
+		  "license",
+		  "patch",
+		  "psw",
+		  "readme",
+		  "remove",
+		  NULL
+		};
 
+
+ /*
+  * Show program info...
+  */
+
+  puts(EPM_VERSION);
+  puts("Copyright 1999 by Easy Software Products.");
+  puts("");
+  puts("EPM is free software and comes with ABSOLUTELY NO WARRANTY; for details");
+  puts("see the GNU General Public License in the file COPYING or at");
+  puts("\"http://www.fsf.org/gpl.html\".  Report all problems to \"epm@easysw.com\".");
+  puts("");
 
  /*
   * Get platform information...
@@ -162,19 +217,14 @@ main(int  argc,			/* I - Number of command-line arguments */
   if (argc < 2)
     usage();
 
-  prodname[0]  = '\0';
-  listname[0]  = '\0';
-  product[0]   = '\0';
-  copyright[0] = '\0';
-  vendor[0]    = '\0';
-  license[0]   = '\0';
-  readme[0]    = '\0';
-  version[0]   = '\0';
-  vernumber    = 0;
-  strip        = 1;
+  deftime = time(NULL);
+  strip   = 1;
+  test    = 0;
 
   sprintf(platname, "%s-%s-%s", platform.sysname, platform.release,
           platform.machine);
+  prodname[0] = '\0';
+  listname[0] = '\0';
 
   for (i = 1; i < argc; i ++)
     if (argv[i][0] == '-')
@@ -185,22 +235,6 @@ main(int  argc,			/* I - Number of command-line arguments */
 
       switch (argv[i][1])
       {
-        case 'c' : /* Copyright */
-	    i ++;
-	    if (i >= argc)
-	      usage();
-
-            strcpy(copyright, argv[i]);
-	    break;
-
-        case 'l' : /* License */
-	    i ++;
-	    if (i >= argc)
-	      usage();
-
-            strcpy(license, argv[i]);
-	    break;
-
         case 'g' : /* Don't strip */
 	    strip = 0;
 	    break;
@@ -224,44 +258,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    }
 	    break;
 
-        case 'p' : /* Product name */
-	    i ++;
-	    if (i >= argc)
-	      usage();
-
-            strcpy(product, argv[i]);
-	    break;
-
-        case 'r' : /* Readme */
-	    i ++;
-	    if (i >= argc)
-	      usage();
-
-            strcpy(readme, argv[i]);
-	    break;
-
-        case 'v' : /* Version string */
-	    i ++;
-	    if (i >= argc)
-	      usage();
-
-            strcpy(version, argv[i]);
-	    break;
-
-        case 'V' : /* Version number */
-	    i ++;
-	    if (i >= argc)
-	      usage();
-
-            vernumber = atoi(argv[i]);
-	    break;
-
-        case 'e' : /* Vendor */
-	    i ++;
-	    if (i >= argc)
-	      usage();
-
-            strcpy(vendor, argv[i]);
+        case 't' : /* Test scripts */
+	    test = 1;
 	    break;
 
         default :
@@ -283,171 +281,56 @@ main(int  argc,			/* I - Number of command-line arguments */
     sprintf(listname, "%s.list", prodname);
 
  /*
-  * Open the list file...
+  * Read the distribution...
   */
 
-  if ((listfiles[0] = fopen(listname, "r")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to open list file \"%s\" -\n          %s\n",
-            listname, strerror(errno));
+  if ((dist = read_dist(listname, &platform)) == NULL)
     return (1);
-  }
 
  /*
-  * Find any product descriptions, etc. in the list file...
+  * Check that all requires info is present!
   */
 
-  puts("Searching for product information...");
-
-  skip = 0;
-  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
-    if (line[0] == '%')
-    {
-      if (strncmp(line, "%product ", 9) == 0)
-      {
-        if (!product[0])
-          strcpy(product, line + 9);
-	else
-	  fputs("epm: Ignoring %product line in list file.\n", stderr);
-      }
-      else if (strncmp(line, "%copyright ", 11) == 0)
-      {
-        if (!copyright[0])
-          strcpy(copyright, line + 11);
-	else
-	  fputs("epm: Ignoring %copyright line in list file.\n", stderr);
-      }
-      else if (strncmp(line, "%vendor ", 8) == 0)
-      {
-        if (!vendor[0])
-          strcpy(vendor, line + 8);
-	else
-	  fputs("epm: Ignoring %vendor line in list file.\n", stderr);
-      }
-      else if (strncmp(line, "%license ", 9) == 0)
-      {
-        if (!license[0])
-          strcpy(license, line + 9);
-	else
-	  fputs("epm: Ignoring %license line in list file.\n", stderr);
-      }
-      else if (strncmp(line, "%readme ", 8) == 0)
-      {
-        if (!readme[0])
-          strcpy(readme, line + 8);
-	else
-	  fputs("epm: Ignoring %readme line in list file.\n", stderr);
-      }
-      else if (strncmp(line, "%version ", 9) == 0)
-      {
-        if (!version[0])
-	{
-          strcpy(version, line + 9);
-	  if ((temp = strchr(version, ' ')) != NULL)
-	  {
-	    *temp++ = '\0';
-	    vernumber = atoi(temp);
-	  }
-	  else
-	  {
-	    vernumber = 0;
-	    for (temp = version; *temp; temp ++)
-	      if (isdigit(*temp))
-	        vernumber = vernumber * 10 + *temp - '0';
-          }
-	}
-	else
-	  fputs("epm: Ignoring %version line in list file.\n", stderr);
-      }
-    }
-
-  rewind(listfiles[0]);
-
-  if (!product[0] ||
-      !copyright[0] ||
-      !vendor[0] ||
-      !license[0] ||
-      !readme[0] ||
-      !version[0])
+  if (!dist->product[0] ||
+      !dist->copyright[0] ||
+      !dist->vendor[0] ||
+      !dist->license[0] ||
+      !dist->readme[0] ||
+      !dist->version[0])
   {
     fputs("epm: Error - missing %product, %copyright, %vendor, %license,\n", stderr);
-    fputs("          %readme, or %version attributes in list file!\n", stderr);
+    fputs("     %readme, or %version attributes in list file!\n", stderr);
 
-    fclose(listfiles[0]);
+    free_dist(dist);
+
+    return (1);
+  }
+
+  if (dist->num_files == 0)
+  {
+    fputs("epm: Error - no files for installation in list file!\n", stderr);
+
+    free_dist(dist);
 
     return (1);
   }
 
  /*
-  * Create the output files...
+  * See if we need to make a patch distribution...
   */
 
-  puts("Creating product files...");
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (isupper(file->type))
+      break;
+
+  havepatchfiles = i > 0;
+
+ /*
+  * Make build directory...
+  */
 
   strcpy(directory, platname);
   mkdir(directory, 0777);
-
-  sprintf(swname, "%s.sw", prodname);
-  sprintf(line, "%s/%s", directory, swname);
-
-  unlink(line);
-  if ((swfile = fopen(line, "wb")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
-            line, strerror(errno));
-    return (1);
-  }
-
-  fchmod(fileno(swfile), 0444);
-
-  sprintf(pswname, "%s.psw", prodname);
-  sprintf(line, "%s/%s", directory, pswname);
-
-  unlink(line);
-  if ((pswfile = fopen(line, "wb")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
-            line, strerror(errno));
-    return (1);
-  }
-
-  fchmod(fileno(pswfile), 0444);
-
-  sprintf(line, "%s/%s.install", directory, prodname);
-
-  unlink(line);
-  if ((installfile = fopen(line, "w")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
-            line, strerror(errno));
-    return (1);
-  }
-
-  fchmod(fileno(installfile), 0555);
-
-  sprintf(line, "%s/%s.remove", directory, prodname);
-
-  unlink(line);
-  if ((removefile = fopen(line, "w")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
-            line, strerror(errno));
-    return (1);
-  }
-
-  fchmod(fileno(removefile), 0555);
-
-  sprintf(line, "%s/%s.patch", directory, prodname);
-
-  unlink(line);
-  if ((patchfile = fopen(line, "w")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
-            line, strerror(errno));
-    return (1);
-  }
-
-  fchmod(fileno(patchfile), 0555);
 
  /*
   * Copy the license and readme files...
@@ -455,358 +338,158 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   puts("Copying license and readme files...");
 
-  sprintf(command, "/bin/cp %s %s/%s.license", license, directory, prodname);
-  system(command);
-  sprintf(command, "/bin/cp %s %s/%s.readme", readme, directory, prodname);
-  system(command);
+  sprintf(filename, "%s/%s.license", directory, prodname);
+  if (copy_file(filename, dist->license))
+    return (1);
+
+  sprintf(filename, "%s/%s.readme", directory, prodname);
+  if (copy_file(filename, dist->readme))
+    return (1);
 
  /*
-  * Write the installation script header...
+  * Create the scripts...
   */
 
-  puts("Writing installation script preamble...");
+  if (write_install(dist, prodname, directory))
+    return (1);
 
-  fputs("#!/bin/sh\n", installfile);
-  fprintf(installfile, "# Installation script for %s version %s.\n", product,
-          version);
-  fputs("# Produced using " EPM_VERSION "; report problems to mike@easysw.com.\n",
-        installfile);
-  fprintf(installfile, "#%%product %s\n", product);
-  fprintf(installfile, "#%%copyright %s\n", copyright);
-  fprintf(installfile, "#%%version %s %d\n", version, vernumber);
-  fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", installfile);
-  fputs("	tar=\"/bin/tar xf\"\n", installfile);
-  fputs("else\n", installfile);
-  fputs("	tar=\"/bin/tar xPf\"\n", installfile);
-  fputs("fi\n", installfile);
-  fputs("if test \"`whoami`\" != \"root\"; then\n", installfile);
-  fputs("	echo \"Sorry, you must be root to install this software.\"\n", installfile);
-  fputs("	exit 1\n", installfile);
-  fputs("fi\n", installfile);
-  fputs("if test ! \"$*\" = \"now\"; then\n", installfile);
-  fprintf(installfile, "	echo \"Copyright %s\"\n", copyright);
-  fputs("	echo \"\"\n", installfile);
-  fprintf(installfile, "	echo \"This installation script will install the %s\"\n",
-          product);
-  fprintf(installfile, "	echo \"software version %s on your system.\"\n", version);
-  fputs("	echo \"\"\n", installfile);
-  fputs("	while true ; do\n", installfile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you wish to continue? \"\n", installfile);
-#else
-  fputs("		echo \"Do you wish to continue? \\c\"\n", installfile);
-#endif /* HAVE_BROKEN_ECHO */
-  fputs("		read yesno\n", installfile);
-  fputs("		case \"$yesno\" in\n", installfile);
-  fputs("			y | yes | Y | Yes | YES)\n", installfile);
-  fputs("			break\n", installfile);
-  fputs("			;;\n", installfile);
-  fputs("			n | no | N | No | NO)\n", installfile);
-  fputs("			exit 0\n", installfile);
-  fputs("			;;\n", installfile);
-  fputs("			*)\n", installfile);
-  fputs("			echo \"Please enter yes or no.\"\n", installfile);
-  fputs("			;;\n", installfile);
-  fputs("		esac\n", installfile);
-  fputs("	done\n", installfile);
-  fprintf(installfile, "	more %s.license\n", prodname);
-  fputs("	echo \"\"\n", installfile);
-  fputs("	while true ; do\n", installfile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you agree with the terms of this license? \"\n", installfile);
-#else
-  fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", installfile);
-#endif /* HAVE_BROKEN_ECHO */
-  fputs("		read yesno\n", installfile);
-  fputs("		case \"$yesno\" in\n", installfile);
-  fputs("			y | yes | Y | Yes | YES)\n", installfile);
-  fputs("			break\n", installfile);
-  fputs("			;;\n", installfile);
-  fputs("			n | no | N | No | NO)\n", installfile);
-  fputs("			exit 0\n", installfile);
-  fputs("			;;\n", installfile);
-  fputs("			*)\n", installfile);
-  fputs("			echo \"Please enter yes or no.\"\n", installfile);
-  fputs("			;;\n", installfile);
-  fputs("		esac\n", installfile);
-  fputs("	done\n", installfile);
-  fputs("fi\n", installfile);
-  fprintf(installfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n", prodname);
-  fprintf(installfile, "	echo \"Removing old versions of %s software...\"\n",
-          prodname);
-  fprintf(installfile, "	" EPM_SOFTWARE "/%s.remove now\n", prodname);
-  fputs("fi\n", installfile);
+  if (havepatchfiles)
+    if (write_patch(dist, prodname, directory))
+      return (1);
 
-  skip = 0;
-  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
-    if (strncmp(line, "%requires ", 10) == 0)
-    {
-      sscanf(line + 10, "%s", src);
-
-      fprintf(installfile, "#%s\n", line);
-      fprintf(installfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n", src);
-      fprintf(installfile, "	echo Sorry, you must first install \\'%s\\'!\n",
-	      src);
-      fputs("	exit 1\n", installfile);
-      fputs("fi\n", installfile);
-    }
-    else if (strncmp(line, "%incompat ", 10) == 0)
-    {
-      sscanf(line + 10, "%s", src);
-
-      fprintf(installfile, "#%s\n", line);
-      fprintf(installfile, "if test -f " EPM_SOFTWARE "/%s.remove; then\n", src);
-      fprintf(installfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	      src);
-      fprintf(installfile, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
-	      src);
-      fputs("	exit 1\n", installfile);
-      fputs("fi\n", installfile);
-    }
-
-  rewind(listfiles[0]);
-
-  fputs("echo \"Installing software...\"\n", installfile);
-  fprintf(installfile, "$tar %s.sw\n", prodname);
-
-  fputs("if test -d " EPM_SOFTWARE "; then\n", installfile);
-  fprintf(installfile, "	/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
-  fputs("else\n", installfile);
-  fputs("	/bin/mkdir -p " EPM_SOFTWARE "\n", installfile);
-  fputs("fi\n", installfile);
-  fprintf(installfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
-  fputs("echo \"Running post-installation commands...\"\n", installfile);
+  if (write_remove(dist, prodname, directory))
+    return (1);
 
  /*
-  * Write the patch script header...
+  * Create the software distribution file...
   */
 
-  puts("Writing patch script preamble...");
+  puts("Creating software distribution file...");
 
-  fputs("#!/bin/sh\n", patchfile);
-  fprintf(patchfile, "# Patch script for %s version %s.\n", product, version);
-  fputs("# Produced using " EPM_VERSION "; report problems to mike@easysw.com.\n",
-        patchfile);
-  fprintf(patchfile, "#%%product %s\n", product);
-  fprintf(patchfile, "#%%copyright %s\n", copyright);
-  fprintf(patchfile, "#%%version %s %d\n", version, vernumber);
-  fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", patchfile);
-  fputs("	tar=\"/bin/tar xf\"\n", patchfile);
-  fputs("else\n", patchfile);
-  fputs("	tar=\"/bin/tar xPf\"\n", patchfile);
-  fputs("fi\n", patchfile);
-  fputs("if test \"`whoami`\" != \"root\"; then\n", patchfile);
-  fputs("	echo \"Sorry, you must be root to install this software.\"\n", patchfile);
-  fputs("	exit 1\n", patchfile);
-  fputs("fi\n", patchfile);
-  fputs("if test ! \"$*\" = \"now\"; then\n", patchfile);
-  fprintf(patchfile, "	echo \"Copyright %s\"\n", copyright);
-  fputs("	echo \"\"\n", patchfile);
-  fprintf(patchfile, "	echo \"This installation script will patch the %s\"\n",
-          product);
-  fprintf(patchfile, "	echo \"software to version %s on your system.\"\n", version);
-  fputs("	echo \"\"\n", patchfile);
-  fputs("	while true ; do\n", patchfile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you wish to continue? \"\n", patchfile);
-#else
-  fputs("		echo \"Do you wish to continue? \\c\"\n", patchfile);
-#endif /* HAVE_BROKEN_ECHO */
-  fputs("		read yesno\n", patchfile);
-  fputs("		case \"$yesno\" in\n", patchfile);
-  fputs("			y | yes | Y | Yes | YES)\n", patchfile);
-  fputs("			break\n", patchfile);
-  fputs("			;;\n", patchfile);
-  fputs("			n | no | N | No | NO)\n", patchfile);
-  fputs("			exit 0\n", patchfile);
-  fputs("			;;\n", patchfile);
-  fputs("			*)\n", patchfile);
-  fputs("			echo \"Please enter yes or no.\"\n", patchfile);
-  fputs("			;;\n", patchfile);
-  fputs("		esac\n", patchfile);
-  fputs("	done\n", patchfile);
-  fprintf(patchfile, "	more %s.license\n", prodname);
-  fputs("	echo \"\"\n", patchfile);
-  fputs("	while true ; do\n", patchfile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you agree with the terms of this license? \"\n", patchfile);
-#else
-  fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", patchfile);
-#endif /* HAVE_BROKEN_ECHO */
-  fputs("		read yesno\n", patchfile);
-  fputs("		case \"$yesno\" in\n", patchfile);
-  fputs("			y | yes | Y | Yes | YES)\n", patchfile);
-  fputs("			break\n", patchfile);
-  fputs("			;;\n", patchfile);
-  fputs("			n | no | N | No | NO)\n", patchfile);
-  fputs("			exit 0\n", patchfile);
-  fputs("			;;\n", patchfile);
-  fputs("			*)\n", patchfile);
-  fputs("			echo \"Please enter yes or no.\"\n", patchfile);
-  fputs("			;;\n", patchfile);
-  fputs("		esac\n", patchfile);
-  fputs("	done\n", patchfile);
-  fputs("fi\n", patchfile);
+  sprintf(swname, "%s.sw", prodname);
+  sprintf(filename, "%s/%s", directory, swname);
 
-  fprintf(patchfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n", prodname);
-  fputs("	echo \"You do not appear to have the base software installed!\"\n",
-        patchfile);
-  fputs("	echo \"Please install the full distribution instead.\"\n", patchfile);
-  fputs("	exit 1\n", patchfile);
-  fputs("fi\n", patchfile);
-
- /*
-  * Find any patch commands in the list file...
-  */
-
-  fputs("echo \"Running pre-patch commands...\"\n", patchfile);
-
-  skip = 0;
-  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
-    if (strncmp(line, "%patch ", 7) == 0)
-      fprintf(patchfile, "%s\n", line + 7);
-    else if (strncmp(line, "%requires ", 10) == 0)
-    {
-      sscanf(line + 10, "%s", src);
-
-      fprintf(patchfile, "#%s\n", line);
-      fprintf(patchfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n", src);
-      fprintf(patchfile, "	echo Sorry, you must first install \\'%s\\'!\n",
-	      src);
-      fputs("	exit 1\n", patchfile);
-      fputs("fi\n", patchfile);
-    }
-    else if (strncmp(line, "%incompat ", 10) == 0)
-    {
-      sscanf(line + 10, "%s", src);
-
-      fprintf(patchfile, "#%s\n", line);
-      fprintf(patchfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n",
-	      line + 10);
-      fprintf(patchfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	      line + 10);
-      fprintf(patchfile, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
-	      src);
-      fputs("	exit 1\n", patchfile);
-      fputs("fi\n", patchfile);
-    }
-
-  rewind(listfiles[0]);
-
-  fputs("echo \"Patching software...\"\n", patchfile);
-  fprintf(patchfile, "$tar %s.psw\n", prodname);
-
-  fprintf(patchfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
-  fprintf(patchfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
-  fputs("echo \"Running post-installation commands...\"\n", patchfile);
-
- /*
-  * Write the removal script header...
-  */
-
-  puts("Writing removal script preamble...");
-
-  fputs("#!/bin/sh\n", removefile);
-  fprintf(removefile, "# Removal script for %s version %s.\n", product,
-          version);
-  fputs("# Produced using " EPM_VERSION "; report problems to mike@easysw.com.\n",
-        removefile);
-  fprintf(removefile, "#%%product %s\n", product);
-  fprintf(removefile, "#%%copyright %s\n", copyright);
-  fprintf(removefile, "#%%version %s %d\n", version, vernumber);
-  fputs("if test \"`whoami`\" != \"root\"; then\n", removefile);
-  fputs("	echo \"Sorry, you must be root to remove this software.\"\n", removefile);
-  fputs("	exit 1\n", removefile);
-  fputs("fi\n", removefile);
-  fputs("if test ! \"$*\" = \"now\"; then\n", removefile);
-  fprintf(removefile, "	echo \"Copyright %s\"\n", copyright);
-  fputs("	echo \"\"\n", removefile);
-  fprintf(removefile, "	echo \"This removal script will remove the %s\"\n",
-          product);
-  fprintf(removefile, "	echo \"software version %s from your system.\"\n", version);
-  fputs("	echo \"\"\n", removefile);
-  fputs("	while true ; do\n", removefile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you wish to continue? \"\n", removefile);
-#else
-  fputs("		echo \"Do you wish to continue? \\c\"\n", removefile);
-#endif /* HAVE_BROKEN_ECHO */
-  fputs("		read yesno\n", removefile);
-  fputs("		case \"$yesno\" in\n", removefile);
-  fputs("			y | yes | Y | Yes | YES)\n", removefile);
-  fputs("			break\n", removefile);
-  fputs("			;;\n", removefile);
-  fputs("			n | no | N | No | NO)\n", removefile);
-  fputs("			exit 0\n", removefile);
-  fputs("			;;\n", removefile);
-  fputs("			*)\n", removefile);
-  fputs("			echo \"Please enter yes or no.\"\n", removefile);
-  fputs("			;;\n", removefile);
-  fputs("		esac\n", removefile);
-  fputs("	done\n", removefile);
-  fputs("fi\n", removefile);
-
- /*
-  * Find any removal commands in the list file...
-  */
-
-  fputs("echo \"Running pre-removal commands...\"\n", removefile);
-
-  skip = 0;
-  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
-    if (strncmp(line, "%remove ", 8) == 0)
-      fprintf(removefile, "%s\n", line + 8);
-
-  rewind(listfiles[0]);
-
-  fputs("echo \"Removing installed files...\"\n", removefile);
-
- /*
-  * Loop through the list file and add files...
-  */
-
-  puts("Adding product files...");
-
-  deftime   = time(NULL);
-  skip      = 0;
-  listlevel = 0;
-
-  do
+  unlink(filename);
+  if ((tarfile = fopen(filename, "wb")) == NULL)
   {
-    while (get_line(line, sizeof(line), listfiles[listlevel], &platform, &skip) != NULL)
+    fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
+            filename, strerror(errno));
+    return (1);
+  }
+
+  fchmod(fileno(tarfile), 0444);
+  tblocks = 0;
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    switch (tolower(file->type))
     {
-      if (line[0] == '%')
-      {
-	if (strncmp(line, "%include ", 9) == 0)
-	{
-          sscanf(line + 9, "%s", src);
-	  listlevel ++;
-
-	  if ((listfiles[listlevel] = fopen(src, "r")) == NULL)
+      case 'c' : /* Config file */
+      case 'f' : /* Regular file */
+          if ((file->mode & 0111) && strip)
 	  {
-	    fprintf(stderr, "epm: Unable to include \"%s\"...\n", src);
-	    listlevel --;
+	   /*
+	    * Strip executables...
+	    */
+
+            sprintf(command, EPM_STRIP " %s 2>&1 >/dev/null", file->src);
+	    system(command);
 	  }
-	}
 
-	continue;
-      }
+          if (stat(file->src, &srcstat))
+	  {
+	    fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
+	            strerror(errno));
+	    continue;
+	  }
 
-      if (sscanf(line, "%c%o%s%s%s%s", &type, &mode, user, group,
-        	 tempdst, tempsrc) < 5)
+         /*
+	  * Configuration files are extracted to the config file name with
+	  * .N appended; add a bit of script magic to check if the config
+	  * file already exists, and if not we move the .N to the config
+	  * file location...
+	  */
+
+          strcpy(filename, file->dst);
+	  if (tolower(file->type) == 'c')
+            strcat(filename, ".N");
+
+	  printf("%s -> %s...\n", file->src, filename);
+
+	  if (write_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
+	                   srcstat.st_mtime, file->user, file->group,
+			   filename, NULL) < 0)
+	  {
+	    fprintf(stderr, "epm: Error writing file header - %s\n",
+	            strerror(errno));
+	    return (1);
+	  }
+
+	  if ((blocks = write_file(tarfile, file->src)) < 0)
+	  {
+	    fprintf(stderr, "epm: Error writing file data - %s\n",
+	            strerror(errno));
+	    return (1);
+	  }
+
+	  tblocks += blocks + 1;
+	  break;
+
+      case 'd' : /* Create directory */
+	  printf("%s...\n", file->dst);
+	  break;
+
+      case 'l' : /* Link file */
+	  printf("%s -> %s...\n", file->src, file->dst);
+
+	  if (write_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
+	                   file->user, file->group, file->dst, file->src) < 0)
+	  {
+	    fprintf(stderr, "epm: Error writing link header - %s\n",
+	            strerror(errno));
+	    return (1);
+	  }
+
+	  tblocks ++;
+	  break;
+    }
+
+  write_padding(tarfile, tblocks);
+  fclose(tarfile);
+
+ /*
+  * Create the patch distribution file...
+  */
+
+  if (havepatchfiles)
+  {
+    puts("Creating software distribution file...");
+
+    sprintf(pswname, "%s.psw", prodname);
+    sprintf(filename, "%s/%s", directory, pswname);
+
+    unlink(filename);
+    if ((tarfile = fopen(filename, "wb")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
+              filename, strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(tarfile), 0444);
+    tblocks = 0;
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      switch (file->type)
       {
-	fprintf(stderr, "epm: Bad line - %s\n", line);
-	continue;
-      }
+	case 'C' : /* Config file */
+	case 'F' : /* Regular file */
+            if (stat(file->src, &srcstat))
+	    {
+	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
+	              strerror(errno));
+	      continue;
+	    }
 
-      expand_name(dst, tempdst);
-      if (tolower(type) != 'd' && type != 'R')
-	expand_name(src, tempsrc);
-
-      switch (type)
-      {
-	case 'c' : /* Config file */
-	case 'C' :
            /*
 	    * Configuration files are extracted to the config file name with
 	    * .N appended; add a bit of script magic to check if the config
@@ -814,291 +497,198 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    * file location...
 	    */
 
-            fprintf(installfile, "if test ! -f %s; then\n", dst);
-	    fprintf(installfile, "	/bin/mv %s.N %s\n", dst, dst);
-	    fputs("fi\n", installfile);
+            strcpy(filename, file->dst);
+	    if (file->type == 'C')
+              strcat(filename, ".N");
 
-            if (type == 'C')
-	    {
-              fprintf(patchfile, "if test ! -f %s; then\n", dst);
-	      fprintf(patchfile, "	/bin/mv %s.N %s\n", dst, dst);
-	      fputs("fi\n", patchfile);
-	    }
+	    printf("%s -> %s...\n", file->src, filename);
 
-            strcat(dst, ".N");
-
-	case 'f' : /* Regular file */
-	case 'F' :
-            if ((mode & 0111) && strip)
-	    {
-	     /*
-	      * Strip executables...
-	      */
-
-              sprintf(command, EPM_STRIP " %s 2>&1 >/dev/null", src);
-	      system(command);
-	    }
-
-            if (stat(src, &srcstat))
-	    {
-	      fprintf(stderr, "epm: Cannot stat %s - %s\n", src,
-	              strerror(errno));
-	      continue;
-	    }
-
-            fprintf(removefile, "/bin/rm -f %s\n", dst);
-
-	    printf("%s -> %s...\n", src, dst);
-
-	    if (write_header(swfile, TAR_NORMAL, mode, srcstat.st_size,
-	                     srcstat.st_mtime, user, group, dst, NULL) < 0)
+	    if (write_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
+	                     srcstat.st_mtime, file->user, file->group,
+			     filename, NULL) < 0)
 	    {
 	      fprintf(stderr, "epm: Error writing file header - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
 
-	    if (write_file(swfile, src) < 0)
+	    if ((blocks = write_file(tarfile, file->src)) < 0)
 	    {
 	      fprintf(stderr, "epm: Error writing file data - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
 
-            if (isupper(type))
-	    {
-	      if (write_header(pswfile, TAR_NORMAL, mode, srcstat.st_size,
-	                       srcstat.st_mtime, user, group, dst, NULL) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing file header - %s\n",
-	        	strerror(errno));
-		return (1);
-	      }
-
-	      if (write_file(pswfile, src) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing file data - %s\n",
-	        	strerror(errno));
-		return (1);
-	      }
-	    }
+	    tblocks += blocks + 1;
 	    break;
 
 	case 'd' : /* Create directory */
-	case 'D' :
-	    printf("%s...\n", dst);
-
-	    if (write_header(swfile, TAR_DIR, mode, 0, deftime, user, group,
-	                     dst, NULL) < 0)
-	    {
-	      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	              strerror(errno));
-	      return (1);
-	    }
-
-	    if (type == 'D')
-	    {
-	      if (write_header(pswfile, TAR_DIR, mode, 0, deftime, user, group,
-	                       dst, NULL) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing directory header - %s\n",
-	        	strerror(errno));
-		return (1);
-	      }
-	    }
+	    printf("%s...\n", file->dst);
 	    break;
 
 	case 'l' : /* Link file */
-	case 'L' :
-            fprintf(removefile, "/bin/rm -f %s\n", dst);
+	    printf("%s -> %s...\n", file->src, file->dst);
 
-	    printf("%s -> %s...\n", src, dst);
-
-	    if (write_header(swfile, TAR_SYMLINK, mode, 0, deftime, user, group,
-	                     dst, src) < 0)
+	    if (write_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
+	                     file->user, file->group, file->dst, file->src) < 0)
 	    {
 	      fprintf(stderr, "epm: Error writing link header - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
 
-	    if (type == 'L')
-	    {
-	      if (write_header(pswfile, TAR_SYMLINK, mode, 0, deftime, user, group,
-	                       dst, src) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing link header - %s\n",
-	        	strerror(errno));
-		return (1);
-	      }
-            }
-	    break;
-
-	case 'R' : /* Remove file (patch) */
-            fprintf(patchfile, "/bin/rm -f %s\n", dst);
+	    tblocks ++;
 	    break;
       }
-    }
 
-    if (listlevel > 0)
-    {
-      fclose(listfiles[listlevel]);
-      listlevel --;
-    }
+    write_padding(tarfile, tblocks);
+    fclose(tarfile);
   }
-  while (listlevel > 0);
-
-  rewind(listfiles[0]);
-
- /*
-  * Output the final zeroed record to indicate the end of file.
-  */
-
-  memset(padding, 0, sizeof(padding));
-
-  fwrite(padding, 1, TAR_BLOCK, swfile);
-
-  if (ftell(pswfile) > 0)
-  {
-    fwrite(padding, 1, TAR_BLOCK, pswfile);
-    havepatchfiles = 1;
-  }
-  else
-    havepatchfiles = 0;
-
- /*
-  * Pad the tar files to TAR_BLOCKS blocks...  This is bullshit of course,
-  * but old versions of tar need it...
-  */
-
-  tblocks = ftell(swfile) / TAR_BLOCK;
-  tblocks = TAR_BLOCKS - (tblocks % TAR_BLOCKS);
-
-  if (tblocks != TAR_BLOCKS)
-    fwrite(padding, 1, tblocks * TAR_BLOCK, swfile);
-
-  tblocks = ftell(pswfile) / TAR_BLOCK;
-  tblocks = TAR_BLOCKS - (tblocks % TAR_BLOCKS);
-
-  if (tblocks != TAR_BLOCKS)
-    fwrite(padding, 1, tblocks * TAR_BLOCK, pswfile);
-
- /*
-  * Add the "remove self" command to the removal script...
-  */
-
-  puts("Finishing removal script...");
-
-  fprintf(removefile, "rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
-
- /*
-  * Find any installation commands in the list file...
-  */
-
-  puts("Finishing installation and patch scripts...");
-
-  skip = 0;
-  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
-    if (strncmp(line, "%install ", 9) == 0)
-    {
-      fprintf(installfile, "%s\n", line + 9);
-      fprintf(patchfile, "%s\n", line + 9);
-    }
-
- /*
-  * Close files...
-  */
-
-  fclose(listfiles[0]);
-  fclose(swfile);
-  fclose(pswfile);
-  fclose(installfile);
-  fclose(removefile);
-  fclose(patchfile);
 
  /*
   * Create the distribution archives...
   */
 
-  printf("Creating distribution archive...");
-  fflush(stdout);
-
-  chdir(directory);
-
-  sprintf(command, "/bin/tar cf %s-%s.tar %s.install %s.license "
-		   "%s.readme %s.remove %s.sw", prodname, version,
-		   prodname, prodname, prodname, prodname, prodname);
-  system(command);
-
-  sprintf(line, "%s-%s.tar", prodname, version);
-  stat(line, &srcstat);
-  if (srcstat.st_size > (1024 * 1024))
-    printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
-  else
-    printf(" %.0fk\n", srcstat.st_size / 1024.0);
-
-  printf("Gzipping distribution archive...");
-  fflush(stdout);
-  sprintf(command, "gzip -f9 %s", line);
-  system(command);
-
-  strcat(line, ".gz");
-  stat(line, &srcstat);
-  if (srcstat.st_size > (1024 * 1024))
-    printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
-  else
-    printf(" %.0fk\n", srcstat.st_size / 1024.0);
-
- /*
-  * Create the patch archives...
-  */
-
-  if (havepatchfiles)
-  {
-    printf("Creating patch archive...");
-    fflush(stdout);
-    sprintf(command, "tar cf %s-patch-%s.tar %s.patch "
-		     "%s.license %s.readme %s.remove %s.psw", prodname,
-		     version, prodname, prodname, prodname, prodname,
-		     prodname);
-    system(command);
-
-    sprintf(line, "%s-patch-%s.tar", prodname, version);
-    stat(line, &srcstat);
-    if (srcstat.st_size > (1024 * 1024))
-      printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
-    else
-      printf(" %.0fk\n", srcstat.st_size / 1024.0);
-
-    printf("Gzipping patch archive...");
-    fflush(stdout);
-    sprintf(command, "gzip -f9 %s", line);
-    system(command);
-
-    strcat(line, ".gz");
-    stat(line, &srcstat);
-    if (srcstat.st_size > (1024 * 1024))
-      printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
-    else
-      printf(" %.0fk\n", srcstat.st_size / 1024.0);
-  }
+  if (test)
+    puts("Skipping archive generation because \"-t\" option was used.");
   else
   {
-    puts("No patch files to bundle - removing patch stuff.");
+    write_dist("distribution", directory, prodname, platname, dist, distfiles);
 
-    sprintf(line, "%s.patch", prodname);
-    unlink(line);
-    sprintf(line, "%s.psw", prodname);
-    unlink(line);
+    if (havepatchfiles)
+      write_dist("patch", directory, prodname, platname, dist, patchfiles);
   }
 
  /*
   * All done!
   */
 
+  free_dist(dist);
+
   puts("Done!");
 
   return (0);
+}
+
+
+/*
+ * 'add_string()' - Add a command to an array of commands...
+ */
+
+static int
+add_string(int  num_strings,
+           char ***strings,
+           char *string)
+{
+  if (num_strings == 0)
+    *strings = (char **)malloc(sizeof(char *));
+  else
+    *strings = (char **)realloc(*strings, (num_strings + 1) * sizeof(char *));
+
+  (*strings)[num_strings] = strdup(string);
+  return (num_strings + 1);
+}
+
+
+/*
+ * 'copy_file()' - Copy a file...
+ */
+
+static int		/* O - 0 on success, -1 on failure */
+copy_file(char *dst,	/* I - Destination file */
+          char *src)	/* I - Source file */
+{
+  FILE	*dstfile,	/* Destination file */
+	*srcfile;	/* Source file */
+  char	buffer[8192];	/* Copy buffer */
+  int	bytes;		/* Number of bytes read/written */
+
+
+ /*
+  * Open files...
+  */
+
+  if ((dstfile = fopen(dst, "wb")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create \"%s\" -\n     %s\n", dst,
+            strerror(errno));
+    return (-1);
+  }
+
+  if ((srcfile = fopen(src, "rb")) == NULL)
+  {
+    fclose(dstfile);
+    unlink(dst);
+
+    fprintf(stderr, "epm: Unable to open \"%s\" -\n     %s\n", src,
+            strerror(errno));
+    return (-1);
+  }
+
+ /*
+  * Copy from src to dst...
+  */
+
+  while ((bytes = fread(buffer, 1, sizeof(buffer), srcfile)) > 0)
+    if (fwrite(buffer, 1, bytes, dstfile) < bytes)
+    {
+      fprintf(stderr, "epm: Unable to write to \"%s\" -\n     %s\n", src,
+              strerror(errno));
+
+      fclose(srcfile);
+      fclose(dstfile);
+      unlink(dst);
+
+      return (-1);
+    }
+
+ /*
+  * Close files and return...
+  */
+
+  fclose(srcfile);
+  fclose(dstfile);
+
+  return (0);
+}
+
+
+/*
+ * 'free_dist()' - Free memory used by a distribution.
+ */
+
+static void
+free_dist(dist_t *dist)		/* I - Distribution to free */
+{
+  if (dist->num_files > 0)
+    free(dist->files);
+
+  free_strings(dist->num_installs, dist->installs);
+  free_strings(dist->num_removes, dist->removes);
+  free_strings(dist->num_patches, dist->patches);
+  free_strings(dist->num_incompats, dist->incompats);
+  free_strings(dist->num_requires, dist->requires);
+
+  free(dist);
+}
+
+
+/*
+ * 'free_strings()' - Free memory used by the array of strings.
+ */
+
+static void
+free_strings(int  num_strings,
+             char **strings)
+{
+  int	i;
+
+
+  for (i = 0; i < num_strings; i ++)
+    free(strings[i]);
+
+  if (num_strings)
+    free(strings);
 }
 
 
@@ -1118,6 +708,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	len,				/* Length of string */
 	match;				/* 1 = match, 0 = not */
   char	*ptr,				/* Pointer into value */
+	*bufptr,			/* Pointer into buffer */
 	namever[255],			/* Name + version */
 	value[255];			/* Value string */
 
@@ -1146,28 +737,28 @@ get_line(char           *buffer,	/* I - Buffer to read into */
       if (strcmp(buffer + 8, "all\n") != 0)
       {
 	namelen = strlen(platform->sysname);
-        buffer  += 8;
+        bufptr  = buffer + 8;
 	sprintf(namever, "%s-%s", platform->sysname, platform->release);
 
-        skip = *buffer != '!';
+        *skip = *bufptr != '!';
 
-        while (*buffer)
+        while (*bufptr)
 	{
-          if (*buffer == '!')
+          if (*bufptr == '!')
 	  {
 	    op = 1;
-	    buffer ++;
+	    bufptr ++;
 	  }
 	  else
 	    op = 0;
 
-	  for (ptr = value; *buffer && !isspace(*buffer) &&
+	  for (ptr = value; *bufptr && !isspace(*bufptr) &&
 	                        (ptr - value) < (sizeof(value) - 1);)
-	    *ptr++ = *buffer++;
+	    *ptr++ = *bufptr++;
 
 	  *ptr = '\0';
-	  while (isspace(*buffer))
-	    buffer ++;
+	  while (isspace(*bufptr))
+	    bufptr ++;
 
           if ((ptr = strchr(value, '-')) != NULL)
 	    len = ptr - value;
@@ -1326,15 +917,284 @@ expand_name(char *buffer,	/* O - Output string */
 
 
 /*
+ * 'read_dist()' - Read a software distribution.
+ */
+
+static dist_t *				/* O - New distribution */
+read_dist(char           *filename,	/* I - Main distribution list file */
+          struct utsname *platform)	/* I - Platform information */
+{
+  FILE		*listfiles[10];	/* File lists */
+  int		listlevel;	/* Level in file list */
+  char		line[10240],	/* Line from list file */
+		type,		/* File type */
+		dst[255],	/* Destination path */
+		src[255],	/* Source path */
+		tempdst[255],	/* Temporary destination before expansion */
+		tempsrc[255],	/* Temporary source before expansion */
+		user[32],	/* User */
+		group[32],	/* Group */
+		*temp;		/* Temporary pointer */
+  int		mode,		/* File permissions */
+		skip;		/* 1 = skip files, 0 = archive files */
+  dist_t	*dist;		/* Distribution data */
+  file_t	*file;		/* Distribution file */
+
+
+ /*
+  * Create a new, blank distribution...
+  */
+
+  dist = (dist_t *)calloc(sizeof(dist_t), 1);
+
+ /*
+  * Open the main list file...
+  */
+
+  if ((listfiles[0] = fopen(filename, "r")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to open list file \"%s\" -\n     %s\n",
+            filename, strerror(errno));
+    return (NULL);
+  }
+
+ /*
+  * Find any product descriptions, etc. in the list file...
+  */
+
+  puts("Searching for product information...");
+
+  skip      = 0;
+  listlevel = 0;
+
+  do
+  {
+    while (get_line(line, sizeof(line), listfiles[listlevel], platform, &skip) != NULL)
+      if (line[0] == '%')
+      {
+       /*
+        * Find whitespace...
+	*/
+
+        for (temp = line; !isspace(*temp) && *temp; temp ++);
+	for (; isspace(*temp); *temp++ = '\0');
+
+       /*
+        * Process directive...
+        */
+
+	if (strcmp(line, "%include") == 0)
+	{
+	  listlevel ++;
+
+	  if ((listfiles[listlevel] = fopen(temp, "r")) == NULL)
+	  {
+	    fprintf(stderr, "epm: Unable to include \"%s\" -\n     %s\n", temp,
+	            strerror(errno));
+	    listlevel --;
+	  }
+	}
+	else if (strcmp(line, "%install") == 0)
+	  dist->num_installs = add_string(dist->num_installs, &(dist->installs),
+	                                  temp);
+	else if (strcmp(line, "%remove") == 0)
+	  dist->num_removes = add_string(dist->num_removes, &(dist->removes),
+	                                 temp);
+	else if (strcmp(line, "%patch") == 0)
+	  dist->num_patches = add_string(dist->num_patches, &(dist->patches),
+	                                 temp);
+        else if (strcmp(line, "%product") == 0)
+	{
+          if (!dist->product[0])
+            strcpy(dist->product, temp);
+	  else
+	    fputs("epm: Ignoring %product line in list file.\n", stderr);
+	}
+	else if (strcmp(line, "%copyright") == 0)
+	{
+          if (!dist->copyright[0])
+            strcpy(dist->copyright, temp);
+	  else
+	    fputs("epm: Ignoring %copyright line in list file.\n", stderr);
+	}
+	else if (strcmp(line, "%vendor") == 0)
+	{
+          if (!dist->vendor[0])
+            strcpy(dist->vendor, temp);
+	  else
+	    fputs("epm: Ignoring %vendor line in list file.\n", stderr);
+	}
+	else if (strcmp(line, "%license") == 0)
+	{
+          if (!dist->license[0])
+            strcpy(dist->license, temp);
+	  else
+	    fputs("epm: Ignoring %license line in list file.\n", stderr);
+	}
+	else if (strcmp(line, "%readme") == 0)
+	{
+          if (!dist->readme[0])
+            strcpy(dist->readme, temp);
+	  else
+	    fputs("epm: Ignoring %readme line in list file.\n", stderr);
+	}
+	else if (strcmp(line, "%version") == 0)
+	{
+          if (!dist->version[0])
+	  {
+            strcpy(dist->version, temp);
+	    if ((temp = strchr(dist->version, ' ')) != NULL)
+	    {
+	      *temp++ = '\0';
+	      dist->vernumber = atoi(temp);
+	    }
+	    else
+	    {
+	      dist->vernumber = 0;
+	      for (temp = dist->version; *temp; temp ++)
+		if (isdigit(*temp))
+	          dist->vernumber = dist->vernumber * 10 + *temp - '0';
+            }
+	  }
+	}
+	else if (strcmp(line, "%incompat") == 0)
+	  dist->num_incompats = add_string(dist->num_incompats,
+	                                   &(dist->incompats), temp);
+	else if (strcmp(line, "%requires") == 0)
+	  dist->num_requires = add_string(dist->num_requires, &(dist->requires),
+	                                  temp);
+	else
+	{
+	  fprintf(stderr, "epm: Unknown directive \"%s\" ignored!\n", line);
+	  fprintf(stderr, "     %s %s\n", line, temp);
+	}
+      }
+      else if (sscanf(line, "%c%o%s%s%s%s", &type, &mode, user, group,
+        	      tempdst, tempsrc) < 5)
+	fprintf(stderr, "epm: Bad line - %s\n", line);
+      else
+      {
+	expand_name(dst, tempdst);
+	if (tolower(type) != 'd' && type != 'R')
+	  expand_name(src, tempsrc);
+	else
+	  src[0] = '\0';
+
+        if (dist->num_files == 0)
+	  dist->files = (file_t *)malloc(sizeof(file_t));
+	else
+	  dist->files = (file_t *)realloc(dist->files, sizeof(file_t) *
+					               (dist->num_files + 1));
+
+        file = dist->files + dist->num_files;
+	dist->num_files ++;
+
+        file->type = type;
+	file->mode = mode;
+        strcpy(file->src, src);
+	strcpy(file->dst, dst);
+	strcpy(file->user, user);
+	strcpy(file->group, group);
+      }
+
+    fclose(listfiles[listlevel]);
+    listlevel --;
+  }
+  while (listlevel >= 0);
+
+  return (dist);
+}
+
+
+/*
  * 'usage()' - Show command-line usage instructions.
  */
 
 static void
 usage(void)
 {
-  puts("Usage: epm [-n[mrs]] [-g] [-p product-name] [-c copyright] [-l license]");
-  puts("           [-r readme] [-v version] [-V vendor] product [list-file]");
+  puts("Usage: epm [-g] [-n[mrs]] [-t] product [list-file]");
   exit(1);
+}
+
+
+/*
+ * 'write_dist()' - Write a software distribution...
+ */
+
+static int			/* O - -1 on error, 0 on success */
+write_dist(char   *title,	/* I - Title to show */
+           char   *directory,	/* I - Directory */
+	   char   *prodname,	/* I - Product name */
+           char   *platname,	/* I - Platform name */
+	   dist_t *dist,	/* I - Distribution */
+	   char   **files)	/* I - Filenames */
+{
+  int		i;		/* Looping var */
+  FILE		*tarfile;	/* Distribution tar file */
+  char		filename[1024],	/* Name of temporary file */
+		srcname[1024],	/* Name of source file in distribution */
+		dstname[1024],	/* Name of destination file in distribution */
+		command[1024];	/* Command to run */
+  int		blocks,		/* Blocks in this file */
+		tblocks;	/* Total number of blocks */
+  struct stat	srcstat;	/* Source file information */
+
+
+  printf("Writing %s archive:", title);
+  fflush(stdout);
+
+  sprintf(filename, "%s/%s-%s-%s.tar.gz", directory, prodname, dist->version,
+          platname);
+  sprintf(command, EPM_GZIP " -9 >%s", filename);
+  if ((tarfile = popen(command, "w")) == NULL)
+  {
+    puts("");
+    fprintf(stderr, "epm: Unable to create output pipe to gzip -\n     %s\n",
+            strerror(errno));
+    return (-1);
+  }
+
+  tblocks = 0;
+  for (i = 0; files[i] != NULL; i ++)
+  {
+    sprintf(srcname, "%s/%s.%s", directory, prodname, files[i]);
+    sprintf(dstname, "%s.%s", prodname, files[i]);
+
+    stat(srcname, &srcstat);
+    if (write_header(tarfile, TAR_NORMAL, srcstat.st_mode, srcstat.st_size,
+	             srcstat.st_mtime, "root", "root", dstname, NULL) < 0)
+    {
+      puts("");
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if ((blocks = write_file(tarfile, srcname)) < 0)
+    {
+      puts("");
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    printf(" %s", files[i]);
+    fflush(stdout);
+
+    tblocks += blocks + 1;
+  }
+
+  write_padding(tarfile, tblocks);
+  pclose(tarfile);
+
+  stat(filename, &srcstat);
+  if (srcstat.st_size > (1024 * 1024))
+    printf(" size=%.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
+  else
+    printf(" size=%.0fk\n", srcstat.st_size / 1024.0);
+
+  return (0);
 }
 
 
@@ -1473,5 +1333,601 @@ write_header(FILE   *fp,	/* I - Tar file to write to */
 
 
 /*
- * End of "$Id: epm.c,v 1.8 1999/07/26 20:43:38 mike Exp $".
+ * 'write_install()' - Write the installation script.
+ */
+
+static int			/* O - -1 on error, 0 on success */
+write_install(dist_t *dist,	/* I - Software distribution */
+              char   *prodname,	/* I - Product name */
+	      char   *directory)/* I - Directory */
+{
+  int		i;		/* Looping var */
+  FILE		*scriptfile;	/* Install script */
+  char		filename[1024];	/* Name of temporary file */
+  file_t	*file;		/* Software file */
+
+
+  puts("Writing installation script...");
+
+  sprintf(filename, "%s/%s.install", directory, prodname);
+
+  unlink(filename);
+  if ((scriptfile = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create installation script \"%s\" -\n"
+                    "     %s\n", filename, strerror(errno));
+    return (-1);
+  }
+
+  fchmod(fileno(scriptfile), 0555);
+
+  fputs("#!/bin/sh\n", scriptfile);
+  fprintf(scriptfile, "# Installation script for %s version %s.\n",
+          dist->product, dist->version);
+  fputs("# Produced using " EPM_VERSION "; report problems to epm@easysw.com.\n",
+        scriptfile);
+  fprintf(scriptfile, "#%%product %s\n", dist->product);
+  fprintf(scriptfile, "#%%copyright %s\n", dist->copyright);
+  fprintf(scriptfile, "#%%version %s %d\n", dist->version, dist->vernumber);
+  fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", scriptfile);
+  fputs("	tar=\"/bin/tar xf\"\n", scriptfile);
+  fputs("else\n", scriptfile);
+  fputs("	tar=\"/bin/tar xPf\"\n", scriptfile);
+  fputs("fi\n", scriptfile);
+  fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", scriptfile);
+  fputs("	echo Sorry, you must be root to install this software.\n", scriptfile);
+  fputs("	exit 1\n", scriptfile);
+  fputs("fi\n", scriptfile);
+  fprintf(scriptfile, "echo Copyright %s\n", dist->copyright);
+  fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
+  fputs("	echo \"\"\n", scriptfile);
+  fprintf(scriptfile, "	echo This installation script will install the %s\n",
+          dist->product);
+  fprintf(scriptfile, "	echo software version %s on your system.\n",
+          dist->version);
+  fputs("	echo \"\"\n", scriptfile);
+  fputs("	while true ; do\n", scriptfile);
+#ifdef HAVE_BROKEN_ECHO
+  fputs("		echo -n \"Do you wish to continue? \"\n", scriptfile);
+#else
+  fputs("		echo \"Do you wish to continue? \\c\"\n", scriptfile);
+#endif /* HAVE_BROKEN_ECHO */
+  fputs("		read yesno\n", scriptfile);
+  fputs("		case \"$yesno\" in\n", scriptfile);
+  fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
+  fputs("			break\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			n | no | N | No | NO)\n", scriptfile);
+  fputs("			exit 0\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			*)\n", scriptfile);
+  fputs("			echo Please enter yes or no.\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("		esac\n", scriptfile);
+  fputs("	done\n", scriptfile);
+  fprintf(scriptfile, "	more %s.license\n", prodname);
+  fputs("	echo \"\"\n", scriptfile);
+  fputs("	while true ; do\n", scriptfile);
+#ifdef HAVE_BROKEN_ECHO
+  fputs("		echo -n \"Do you agree with the terms of this license? \"\n", scriptfile);
+#else
+  fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", scriptfile);
+#endif /* HAVE_BROKEN_ECHO */
+  fputs("		read yesno\n", scriptfile);
+  fputs("		case \"$yesno\" in\n", scriptfile);
+  fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
+  fputs("			break\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			n | no | N | No | NO)\n", scriptfile);
+  fputs("			exit 0\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			*)\n", scriptfile);
+  fputs("			echo Please enter yes or no.\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("		esac\n", scriptfile);
+  fputs("	done\n", scriptfile);
+  fputs("fi\n", scriptfile);
+  fprintf(scriptfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n", prodname);
+  fprintf(scriptfile, "	echo Removing old versions of %s software...\n",
+          prodname);
+  fprintf(scriptfile, "	" EPM_SOFTWARE "/%s.remove now\n", prodname);
+  fputs("fi\n", scriptfile);
+
+  for (i = 0; i < dist->num_requires; i ++)
+  {
+    fprintf(scriptfile, "#%%requires: %s\n", dist->requires[i]);
+    fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
+            dist->requires[i]);
+    fprintf(scriptfile, "	if test -x %d.install; then\n",
+            dist->requires[i]);
+    fprintf(scriptfile, "		echo Installing required %s software...\n",
+            dist->requires[i]);
+    fprintf(scriptfile, "		./%s.install now\n", dist->requires[i]);
+    fputs("	else\n", scriptfile);
+    fprintf(scriptfile, "		echo Sorry, you must first install \\'%s\\'!\n",
+	    dist->requires[i]);
+    fputs("		exit 1\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("fi\n", scriptfile);
+  }
+
+  for (i = 0; i < dist->num_incompats; i ++)
+  {
+    fprintf(scriptfile, "#%%incompats: %s\n", dist->incompats[i]);
+    fprintf(scriptfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
+            dist->incompats[i]);
+    fprintf(scriptfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	    dist->incompats[i]);
+    fprintf(scriptfile, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
+	    dist->incompats[i]);
+    fputs("	exit 1\n", scriptfile);
+    fputs("fi\n", scriptfile);
+  }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'f' || tolower(file->type) == 'l')
+      break;
+
+  if (i)
+  {
+    fputs("echo Backing up old versions of files to be installed...\n", scriptfile);
+
+    fputs("for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'f' || tolower(file->type) == 'l')
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("	if test -d $file -o -f $file -o -h $file; then\n", scriptfile);
+    fputs("		/bin/mv $file $file.O\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("done\n", scriptfile);
+  }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'd')
+      break;
+
+  if (i)
+  {
+    fputs("echo Creating installation directories...\n", scriptfile);
+
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'd')
+      {
+	fprintf(scriptfile, "if test ! -d %s -a ! -f %s -a ! -h %s; then\n",
+        	file->dst, file->dst, file->dst);
+	fprintf(scriptfile, "	/bin/mkdir -p %s\n", file->dst);
+	fputs("else\n", scriptfile);
+	fprintf(scriptfile, "	if test -f %s; then\n", file->dst);
+	fprintf(scriptfile, "		echo Error: %s already exists as a regular file!\n",
+	        file->dst);
+	fputs("		exit 1\n", scriptfile);
+	fputs("	fi\n", scriptfile);
+	fputs("fi\n", scriptfile);
+	fprintf(scriptfile, "/bin/chown %s %s\n", file->user, file->dst);
+	fprintf(scriptfile, "/bin/chgrp %s %s\n", file->group, file->dst);
+	fprintf(scriptfile, "/bin/chmod %o %s\n", file->mode, file->dst);
+      }
+  }
+
+  fputs("echo Installing software...\n", scriptfile);
+  fprintf(scriptfile, "$tar %s.sw\n", prodname);
+
+  fputs("if test -d " EPM_SOFTWARE "; then\n", scriptfile);
+  fprintf(scriptfile, "	/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  fputs("else\n", scriptfile);
+  fputs("	/bin/mkdir -p " EPM_SOFTWARE "\n", scriptfile);
+  fputs("fi\n", scriptfile);
+  fprintf(scriptfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'c')
+      break;
+
+  if (i)
+  {
+    fputs("echo Checking configuration files...\n", scriptfile);
+
+    fputs("for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'c')
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("	if test ! -f $file; then\n", scriptfile);
+    fputs("		/bin/mv $file.N $file\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("done\n", scriptfile);
+  }
+
+  if (dist->num_installs)
+  {
+    fputs("echo Running post-installation commands...\n", scriptfile);
+
+    for (i = 0; i < dist->num_installs; i ++)
+      fprintf(scriptfile, "%s\n", dist->installs[i]);
+  }
+
+  fputs("echo Installation is complete.\n", scriptfile);
+
+  fclose(scriptfile);
+
+  return (0);
+}
+
+
+/*
+ * 'write_padding()' - Write the padding block(s) to the end of the
+ *                     tar file.
+ */
+
+static int			/* O - -1 on error, 0 on success */
+write_padding(FILE *fp,		/* I - File to write to */
+              int  blocks)	/* I - Number of blocks written */
+{
+  char	padding[TAR_BLOCKS * TAR_BLOCK];
+				/* Padding for tar blocks */
+
+
+ /*
+  * Zero the padding record...
+  */
+
+  memset(padding, 0, sizeof(padding));
+
+ /*
+  * Write a single 0 block to signal the end of the archive...
+  */
+
+  if (fwrite(padding, 1, TAR_BLOCK, fp) < 1)
+    return (-1);
+
+  blocks ++;
+
+ /*
+  * Pad the tar files to TAR_BLOCKS blocks...  This is bullshit of course,
+  * but old versions of tar need it...
+  */
+
+  blocks = TAR_BLOCKS - (blocks % TAR_BLOCKS);
+
+  if (blocks < TAR_BLOCKS)
+    if (fwrite(padding, 1, blocks * TAR_BLOCK, fp) < 1)
+      return (-1);
+
+  return (0);
+}
+
+
+/*
+ * 'write_patch()' - Write the patch script.
+ */
+
+static int			/* O - -1 on error, 0 on success */
+write_patch(dist_t *dist,	/* I - Software distribution */
+            char   *prodname,	/* I - Product name */
+	    char   *directory)	/* I - Directory */
+{
+  int		i;		/* Looping var */
+  FILE		*scriptfile;	/* Patch script */
+  char		filename[1024];	/* Name of temporary file */
+  file_t	*file;		/* Software file */
+
+
+  puts("Writing patch script...");
+
+  sprintf(filename, "%s/%s.patch", directory, prodname);
+
+  unlink(filename);
+  if ((scriptfile = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create patch script \"%s\" -\n"
+                    "     %s\n", filename, strerror(errno));
+    return (-1);
+  }
+
+  fchmod(fileno(scriptfile), 0555);
+
+  fputs("#!/bin/sh\n", scriptfile);
+  fprintf(scriptfile, "# Patch script for %s version %s.\n", dist->product,
+          dist->version);
+  fputs("# Produced using " EPM_VERSION "; report problems to epm@easysw.com.\n",
+        scriptfile);
+  fprintf(scriptfile, "#%%product %s\n", dist->product);
+  fprintf(scriptfile, "#%%copyright %s\n", dist->copyright);
+  fprintf(scriptfile, "#%%version %s %d\n", dist->version, dist->vernumber);
+  fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", scriptfile);
+  fputs("	tar=\"/bin/tar xf\"\n", scriptfile);
+  fputs("else\n", scriptfile);
+  fputs("	tar=\"/bin/tar xPf\"\n", scriptfile);
+  fputs("fi\n", scriptfile);
+  fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", scriptfile);
+  fputs("	echo Sorry, you must be root to install this software.\n",
+        scriptfile);
+  fputs("	exit 1\n", scriptfile);
+  fputs("fi\n", scriptfile);
+  fprintf(scriptfile, "echo Copyright %s\n", dist->copyright);
+  fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
+  fputs("	echo \"\"\n", scriptfile);
+  fprintf(scriptfile, "	echo This installation script will patch the %s\n",
+          dist->product);
+  fprintf(scriptfile, "	echo software to version %s on your system.\n", dist->version);
+  fputs("	echo \"\"\n", scriptfile);
+  fputs("	while true ; do\n", scriptfile);
+#ifdef HAVE_BROKEN_ECHO
+  fputs("		echo -n \"Do you wish to continue? \"\n", scriptfile);
+#else
+  fputs("		echo \"Do you wish to continue? \\c\"\n", scriptfile);
+#endif /* HAVE_BROKEN_ECHO */
+  fputs("		read yesno\n", scriptfile);
+  fputs("		case \"$yesno\" in\n", scriptfile);
+  fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
+  fputs("			break\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			n | no | N | No | NO)\n", scriptfile);
+  fputs("			exit 0\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			*)\n", scriptfile);
+  fputs("			echo Please enter yes or no.\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("		esac\n", scriptfile);
+  fputs("	done\n", scriptfile);
+  fprintf(scriptfile, "	more %s.license\n", prodname);
+  fputs("	echo \"\"\n", scriptfile);
+  fputs("	while true ; do\n", scriptfile);
+#ifdef HAVE_BROKEN_ECHO
+  fputs("		echo -n \"Do you agree with the terms of this license? \"\n", scriptfile);
+#else
+  fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", scriptfile);
+#endif /* HAVE_BROKEN_ECHO */
+  fputs("		read yesno\n", scriptfile);
+  fputs("		case \"$yesno\" in\n", scriptfile);
+  fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
+  fputs("			break\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			n | no | N | No | NO)\n", scriptfile);
+  fputs("			exit 0\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			*)\n", scriptfile);
+  fputs("			echo Please enter yes or no.\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("		esac\n", scriptfile);
+  fputs("	done\n", scriptfile);
+  fputs("fi\n", scriptfile);
+
+  fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
+          prodname);
+  fputs("	echo You do not appear to have the base software installed!\n",
+        scriptfile);
+  fputs("	echo Please install the full distribution instead.\n", scriptfile);
+  fputs("	exit 1\n", scriptfile);
+  fputs("fi\n", scriptfile);
+
+  if (dist->num_removes)
+  {
+    fputs("echo Running pre-patch commands...\n", scriptfile);
+
+    for (i = 0; i < dist->num_removes; i ++)
+      fprintf(scriptfile, "%s\n", dist->removes[i]);
+  }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (file->type == 'F' || file->type == 'L')
+      break;
+
+  if (i)
+  {
+    fputs("echo Backing up old versions of files to be installed...\n", scriptfile);
+
+    fputs("for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (file->type == 'F' || file->type == 'L')
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("	if test -d $file -o -f $file -o -h $file; then\n", scriptfile);
+    fputs("		/bin/mv $file $file.O\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("done\n", scriptfile);
+  }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (file->type == 'D')
+      break;
+
+  if (i)
+  {
+    fputs("echo Creating new installation directories...\n", scriptfile);
+
+    for (; i > 0; i --, file ++)
+      if (file->type == 'D')
+      {
+	fprintf(scriptfile, "if test ! -d %s -a ! -f %s -a ! -h %s; then\n",
+        	file->dst, file->dst, file->dst);
+	fprintf(scriptfile, "	/bin/mkdir -p %s\n", file->dst);
+	fputs("else\n", scriptfile);
+	fprintf(scriptfile, "	if test -f %s; then\n", file->dst);
+	fprintf(scriptfile, "		echo Error: %s already exists as a regular file!\n",
+	        file->dst);
+	fputs("		exit 1\n", scriptfile);
+	fputs("	fi\n", scriptfile);
+	fputs("fi\n", scriptfile);
+	fprintf(scriptfile, "/bin/chown %s %s\n", file->user, file->dst);
+	fprintf(scriptfile, "/bin/chgrp %s %s\n", file->group, file->dst);
+	fprintf(scriptfile, "/bin/chmod %o %s\n", file->mode, file->dst);
+      }
+  }
+
+  fputs("echo Patching software...\n", scriptfile);
+  fprintf(scriptfile, "$tar %s.psw\n", prodname);
+
+  fprintf(scriptfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  fprintf(scriptfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (file->type == 'C')
+      break;
+
+  if (i)
+  {
+    fputs("echo Checking configuration files...\n", scriptfile);
+
+    fputs("for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (file->type == 'C')
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("	if test ! -f $file; then\n", scriptfile);
+    fputs("		/bin/mv $file.N $file\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("done\n", scriptfile);
+  }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (file->type == 'R')
+      break;
+
+  if (i)
+  {
+    fputs("echo Removing files that are no longer used...\n", scriptfile);
+
+    fputs("for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (file->type == 'R')
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("	rm -f $file\n", scriptfile);
+    fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
+    fputs("		/bin/mv $file.O $file\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("done\n", scriptfile);
+  }
+
+  if (dist->num_patches)
+  {
+    fputs("echo Running post-installation commands...\n", scriptfile);
+
+    for (i = 0; i < dist->num_patches; i ++)
+      fprintf(scriptfile, "%s\n", dist->patches[i]);
+  }
+
+  fputs("echo Patching is complete.\n", scriptfile);
+
+  fclose(scriptfile);
+
+  return (0);
+}
+
+
+/*
+ * 'write_remove()' - Write the removal script.
+ */
+
+static int			/* O - -1 on error, 0 on success */
+write_remove(dist_t *dist,	/* I - Software distribution */
+             char   *prodname,	/* I - Product name */
+	     char   *directory)	/* I - Directory */
+{
+  int		i;		/* Looping var */
+  FILE		*scriptfile;	/* Remove script */
+  char		filename[1024];	/* Name of temporary file */
+  file_t	*file;		/* Software file */
+
+
+  puts("Writing removal script...");
+
+  sprintf(filename, "%s/%s.remove", directory, prodname);
+
+  unlink(filename);
+  if ((scriptfile = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create removal script \"%s\" -\n"
+                    "     %s\n", filename, strerror(errno));
+    return (-1);
+  }
+
+  fchmod(fileno(scriptfile), 0555);
+
+  fputs("#!/bin/sh\n", scriptfile);
+  fprintf(scriptfile, "# Removal script for %s version %s.\n", dist->product,
+          dist->version);
+  fputs("# Produced using " EPM_VERSION "; report problems to epm@easysw.com.\n",
+        scriptfile);
+  fprintf(scriptfile, "#%%product %s\n", dist->product);
+  fprintf(scriptfile, "#%%copyright %s\n", dist->copyright);
+  fprintf(scriptfile, "#%%version %s %d\n", dist->version, dist->vernumber);
+  fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", scriptfile);
+  fputs("	echo Sorry, you must be root to remove this software.\n", scriptfile);
+  fputs("	exit 1\n", scriptfile);
+  fputs("fi\n", scriptfile);
+  fprintf(scriptfile, "echo Copyright %s\n", dist->copyright);
+  fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
+  fputs("	echo \"\"\n", scriptfile);
+  fprintf(scriptfile, "	echo This removal script will remove the %s\n",
+          dist->product);
+  fprintf(scriptfile, "	echo software version %s from your system.\n",
+          dist->version);
+  fputs("	echo \"\"\n", scriptfile);
+  fputs("	while true ; do\n", scriptfile);
+#ifdef HAVE_BROKEN_ECHO
+  fputs("		echo -n \"Do you wish to continue? \"\n", scriptfile);
+#else
+  fputs("		echo \"Do you wish to continue? \\c\"\n", scriptfile);
+#endif /* HAVE_BROKEN_ECHO */
+  fputs("		read yesno\n", scriptfile);
+  fputs("		case \"$yesno\" in\n", scriptfile);
+  fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
+  fputs("			break\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			n | no | N | No | NO)\n", scriptfile);
+  fputs("			exit 0\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("			*)\n", scriptfile);
+  fputs("			echo Please enter yes or no.\n", scriptfile);
+  fputs("			;;\n", scriptfile);
+  fputs("		esac\n", scriptfile);
+  fputs("	done\n", scriptfile);
+  fputs("fi\n", scriptfile);
+
+ /*
+  * Find any removal commands in the list file...
+  */
+
+  if (dist->num_removes)
+  {
+    fputs("echo Running pre-removal commands...\n", scriptfile);
+
+    for (i = 0; i < dist->num_removes; i ++)
+      fprintf(scriptfile, "%s\n", dist->removes[i]);
+  }
+
+  fputs("echo Removing/restoring installed files...\n", scriptfile);
+
+  fputs("for file in", scriptfile);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'f' || tolower(file->type) == 'l')
+      fprintf(scriptfile, " %s", file->dst);
+
+  fputs("; do\n", scriptfile);
+  fputs("	rm -f $file\n", scriptfile);
+  fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
+  fputs("		/bin/mv $file.O $file\n", scriptfile);
+  fputs("	fi\n", scriptfile);
+  fputs("done\n", scriptfile);
+
+  fprintf(scriptfile, "rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+
+  fputs("echo Removal is complete.\n", scriptfile);
+
+  fclose(scriptfile);
+
+  return (0);
+}
+
+
+/*
+ * End of "$Id: epm.c,v 1.9 1999/07/30 13:40:19 mike Exp $".
  */

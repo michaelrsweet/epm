@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.1 1999/06/21 14:25:15 mike Exp $"
+ * "$Id: config.h.in,v 1.2 1999/07/30 13:40:17 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -20,7 +20,7 @@
  * Version of software...
  */
 
-#define EPM_VERSION	"ESP Package Manager 1.0"
+#define EPM_VERSION	"ESP Package Manager v1.1"
 
 /*
  * Where are files stored?
@@ -57,5 +57,17 @@
 #undef HAVE_BROKEN_ECHO
 
 /*
- * End of "$Id: config.h.in,v 1.1 1999/06/21 14:25:15 mike Exp $".
+ * Where is the "whoami" executable?
+ */
+
+#define EPM_WHOAMI	"whoami"
+
+/*
+ * Where is the "gzip" executable?
+ */
+
+#define EPM_GZIP	"gzip"
+
+/*
+ * End of "$Id: config.h.in,v 1.2 1999/07/30 13:40:17 mike Exp $".
  */
