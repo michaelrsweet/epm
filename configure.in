@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.29 2001/05/03 20:03:20 mike Exp $"
+dnl "$Id: configure.in,v 1.30 2001/05/11 14:42:12 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -59,7 +59,7 @@ AC_ARG_WITH(fltk-libs, [  --with-fltk-libs        set directory for FLTK library
 	fltklibs="$withval",
 	fltklibs="")
 
-AC_ARG_WITH(fltk-libs, [  --with-fltk-includes    set directory for FLTK includes],
+AC_ARG_WITH(fltk-includes, [  --with-fltk-includes    set directory for FLTK includes],
 	CFLAGS="-I$withval $CFLAGS"
 	CXXFLAGS="-I$withval $CXXFLAGS",)
 
@@ -335,5 +335,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.29 2001/05/03 20:03:20 mike Exp $".
+dnl End of "$Id: configure.in,v 1.30 2001/05/11 14:42:12 mike Exp $".
 dnl

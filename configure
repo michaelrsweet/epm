@@ -580,9 +580,9 @@ else
 fi
 
 
-# Check whether --with-fltk-libs or --without-fltk-libs was given.
-if test "${with_fltk_libs+set}" = set; then
-  withval="$with_fltk_libs"
+# Check whether --with-fltk-includes or --without-fltk-includes was given.
+if test "${with_fltk_includes+set}" = set; then
+  withval="$with_fltk_includes"
   CFLAGS="-I$withval $CFLAGS"
 	CXXFLAGS="-I$withval $CXXFLAGS"
 fi
