@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.29 2001/03/27 14:41:09 mike Exp $"
+ * "$Id: dist.c,v 1.30 2001/04/25 20:27:48 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -17,17 +17,19 @@
  *
  * Contents:
  *
- *   add_command()   - Add a command to the distribution...
- *   add_depend()    - Add a dependency to the distribution...
- *   add_file()      - Add a file to the distribution.
- *   free_dist()     - Free memory used by a distribution.
- *   read_dist()     - Read a software distribution.
- *   add_string()    - Add a command to an array of commands...
- *   free_strings()  - Free memory used by the array of strings.
- *   expand_name()   - Expand a filename with environment variables.
- *   get_line()      - Get a line from a file, filtering for uname lines...
- *   get_vernumber() - Convert a version string to a number...
- *   patmatch()      - Pattern matching...
+ *   add_command()     - Add a command to the distribution...
+ *   add_depend()      - Add a dependency to the distribution...
+ *   add_file()        - Add a file to the distribution.
+ *   free_dist()       - Free memory used by a distribution.
+ *   read_dist()       - Read a software distribution.
+ *   sort_dist_files() - Sort the files in the distribution.
+ *   add_string()      - Add a command to an array of commands...
+ *   compare_files()   - Compare the destination filenames.
+ *   free_strings()    - Free memory used by the array of strings.
+ *   expand_name()     - Expand a filename with environment variables.
+ *   get_line()        - Get a line from a file, filtering for uname lines...
+ *   get_vernumber()   - Convert a version string to a number...
+ *   patmatch()        - Pattern matching...
  */
 
 /*
@@ -43,6 +45,7 @@
  */
 
 static int	add_string(int num_strings, char ***strings, char *string);
+static int	compare_files(const file_t *f0, const file_t *f1);
 static void	expand_name(char *buffer, char *name);
 static void	free_strings(int num_strings, char **strings);
 static char	*get_line(char *buffer, int size, FILE *fp,
@@ -630,6 +633,19 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
 
 /*
+ * 'sort_dist_files()' - Sort the files in the distribution.
+ */
+
+void
+sort_dist_files(dist_t *dist)	/* I - Distribution to sort */
+{
+  if (dist->num_files > 1)
+    qsort(dist->files, dist->num_files, sizeof(file_t),
+          (int (*)(const void *, const void *))compare_files);
+}
+
+
+/*
  * 'add_string()' - Add a command to an array of commands...
  */
 
@@ -645,6 +661,18 @@ add_string(int  num_strings,	/* I - Number of strings */
 
   (*strings)[num_strings] = strdup(string);
   return (num_strings + 1);
+}
+
+
+/*
+ * 'compare_files()' - Compare the destination filenames.
+ */
+
+static int			/* O - Result of comparison */
+compare_files(const file_t *f0,	/* I - First file */
+              const file_t *f1)	/* I - Second file */
+{
+  return (strcmp(f0->dst, f1->dst));
 }
 
 
@@ -1060,5 +1088,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.29 2001/03/27 14:41:09 mike Exp $".
+ * End of "$Id: dist.c,v 1.30 2001/04/25 20:27:48 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.48 2001/04/25 13:35:02 mike Exp $"
+ * "$Id: epm.c,v 1.49 2001/04/25 20:27:48 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -336,6 +336,10 @@ main(int  argc,			/* I - Number of command-line arguments */
         i = make_rpm(prodname, directory, platname, dist, &platform);
 	break;
     case PACKAGE_SETLD :
+        if (geteuid())
+	  fputs("epm: Warning - file permissions and ownership may not be correct\n"
+	        "     in Tru64 packages unless you run EPM as root!\n", stderr);
+
         i = make_setld(prodname, directory, platname, dist, &platform);
 	break;
     case PACKAGE_SWINSTALL :
@@ -510,5 +514,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.48 2001/04/25 13:35:02 mike Exp $".
+ * End of "$Id: epm.c,v 1.49 2001/04/25 20:27:48 mike Exp $".
  */
