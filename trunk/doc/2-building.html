@@ -1,0 +1,334 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="BUILDING">2 - Building EPM</A></H1>
+
+<P>This chapter shows how to configure, build, and install the
+ESP Package Manager.</P>
+
+<H2>Requirements</H2>
+
+<P>EPM requires very little pre-installed software to work. Most
+items will likely be provided as part of your OS. Your
+development system will need a C compiler, the
+<CODE>make(1)</CODE> program (GNU, BSD, and most vendor
+<CODE>make</CODE> programs should work), the Bourne (or Korn or
+Bash) shell (<CODE>sh(1)</CODE>), and <CODE>gzip(1)</CODE>.</P>
+
+<P>The optional graphical setup program requires a C++ compiler,
+the X11 libraries, and the FLTK library. FLTK is available at
+the following URL:</P>
+
+<UL><PRE>
+<A HREF="http://www.fltk.org/">http://www.fltk.org/</A>
+</PRE></UL>
+
+<P>Your end-user systems will require the Bourne (or Korn or
+Bash) shell (<CODE>sh</CODE>), the <CODE>df(1)</CODE> program,
+the <CODE>tar(1)</CODE> program, and the <CODE>gzip(1)</CODE>
+program to install portable distributions. All but the last are
+standard items, and most vendors include <CODE>gzip</CODE> as
+well.</P>
+
+<BLOCKQUOTE><B>Note:</B><BR><BR> The <CODE>gzip</CODE> program
+is only required to uncompress the software distribution
+<VAR>.tar.gz</VAR> file.  If you supply the uncompressed
+<VAR>.tar</VAR> file or its contents, then <CODE>gzip</CODE> is
+not required on the end-user system.</BLOCKQUOTE>
+
+<P>EPM can also generate vendor-specific distributions.  These
+require the particular vendor tool, such as <CODE>rpm(8)</CODE>
+and <CODE>dpkg(8)</CODE>, to generate the software distribution
+on the development system and load the software distribution on
+the end-user system.</P>
+
+<H2>Configuring the Software</H2>
+
+<P>EPM uses GNU <CODE>autoconf(1)</CODE> to configure itself for
+your system. The <CODE>configure</CODE> script is used to
+configure the EPM software, as follows:</P>
+
+<UL><PRE>
+<KBD>./configure ENTER</KBD>
+</PRE></UL>
+
+<H3>Choosing Compilers</H3>
+
+<P>If the <CODE>configure</CODE> script is unable to determine
+the name of your C or C++ compiler, set the <CODE>CC</CODE> and
+<CODE>CXX</CODE> environment variables to point to the C and C++
+compiler programs, respectively. You can set these variables
+using the following commands in the Bourne, Korn, or Bash
+shells:</P>
+
+<UL><PRE>
+<KBD>export CC=/foo/bar/gcc ENTER
+export CXX=/foo/bar/gcc ENTER</KBD>
+</PRE></UL>
+
+<P>If you are using C shell or TCsh, use the following commands
+instead:</P>
+
+<UL><PRE>
+<KBD>setenv CC /foo/bar/gcc ENTER
+setenv CXX /foo/bar/gcc ENTER</KBD>
+</PRE></UL>
+
+<P>Run the <CODE>configure</CODE> script again to use the new
+commands.</P>
+
+<H3>Choosing Installation Directories</H3>
+
+<P>The default installation prefix is <VAR>/usr</VAR>, which
+will place the EPM programs in <VAR>/usr/bin</VAR>, the setup
+GUI in <VAR>/usr/lib/epm</VAR>, and the man pages in
+<VAR>/usr/man</VAR>. Use the <CODE>--prefix</CODE> option to
+relocate these files to another directory:</P>
+
+<UL><PRE>
+<KBD>./configure --prefix=/usr/local ENTER</KBD>
+</PRE></UL>
+
+<P>The <CODE>configure</CODE> script also accepts the
+<CODE>--bindir</CODE>, <CODE>--libdir</CODE>, and
+<CODE>--mandir</CODE> options to relocate each directory
+separately, as follows:
+
+<UL><PRE>
+<KBD>./configure --bindir=/usr/local/bin --libdir=/usr/local/lib \
+    --mandir=/usr/local/share/man ENTER</KBD>
+</PRE></UL>
+
+<H3>Options for the Setup GUI</H3>
+
+<P>The setup GUI requires the X11 and FLTK libraries. If these
+libraries are not provided in standard locations, then the
+<CODE>--with-x-includes</CODE>, <CODE>--with-x-libs</CODE>,
+<CODE>--with-fltk-includes</CODE>, and
+<CODE>--with-fltk-libs</CODE> options can be used to tell the
+<CODE>configure</CODE> script where to find them, as
+follows:</P>
+
+<UL><PRE>
+<KBD>./configure --with-x-includes=/usr/X11R6/include \
+    --with-x-libs=/usr/X11R6/lib \
+    --with-fltk-includes=/usr/local/include \
+    --with-fltk-libs=/usr/local/lib ENTER</KBD>
+</PRE></UL>
+
+<H2>Building the Software</H2>
+
+<P>Once you have configured the software, type the following
+command to compile it:</P>
+
+<UL><PRE>
+<KBD>make ENTER</KBD>
+</PRE></UL>
+
+<P>Compilation should take a few minutes at most. Then type the
+following command to determine if the software compiled
+successfully:</P>
+
+<UL><PRE>
+<KBD>make test ENTER</KBD>
+</PRE></UL>
+
+<P>The <CODE>test</CODE> target builds a portable and native
+distribution of EPM and reports if the two distributions were
+generated successfully.</P>
+
+<H2>Installing the Software</H2>
+
+<P>Now that you have compiled and tested the software, you can
+install it using the <CODE>make</CODE> command or one of the
+distributions that was created. You should be logged in as the
+super-user unless you specified installation directories for
+which you have write permission. The <CODE>su(8)</CODE> command
+is usually sufficient to install software:</CODE>
+
+<UL><PRE>
+<KBD>su ENTER</KBD>
+</PRE></UL>
+
+<H3>Installing Using the <CODE>make</CODE> Command</H3>
+
+<P>Type the following command to install the EPM software using the
+<CODE>make</CODE> command:</P>
+
+<UL><PRE>
+<KBD>make install ENTER</KBD>
+Installing EPM setup in /usr/lib/epm
+Installing EPM programs in /usr/bin
+Installing EPM manpages in /usr/man/cat1 and /usr/man/man1
+Installing EPM documentation in /usr/share/doc/epm
+</PRE></UL>
+
+<!-- NEW PAGE -->
+<H3>Installing Using the Portable Distribution</H3>
+
+<P>The portable distribution can be found in a subdirectory
+named using the operating system, version, and architecture. For
+example, the subdirectory for a Linux 2.4.x system on an
+Intel-based system would be <VAR>linux-2.4-intel</VAR>. The
+subdirectory name is built from the following template:</P>
+
+<UL><PRE>
+<I>os-major.minor-architecture</I>
+</PRE></UL>
+
+<P>The <CODE>os</CODE> name is the common name for the operating
+system. Table 2.1 lists the abbreviations for most operating
+systems:</P>
+
+<CENTER><TABLE BORDER>
+<CAPTION><A NAME="TABLE_2_1">Table 2.1: Operating System Name Abbreviations</A></CAPTION>
+<TR>
+	<TH>Operating System</TH>
+	<TH>Name</TH>
+</TR>
+<TR>
+	<TD>AIX</TD>
+	<TD><CODE>aix</CODE></TD>
+</TR>
+<TR>
+	<TD>Compaq Tru64 UNIX<BR>
+	Digital UNIX<BR>
+	OSF/1</TD>
+	<TD><CODE>tru64</CODE></TD>
+</TR>
+<TR>
+	<TD>FreeBSD</TD>
+	<TD><CODE>freebsd</CODE></TD>
+</TR>
+<TR>
+	<TD>HP-UX</TD>
+	<TD><CODE>hpux</CODE></TD>
+</TR>
+<TR>
+	<TD>IRIX</TD>
+	<TD><CODE>irix</CODE></TD>
+</TR>
+<TR>
+	<TD>Linux</TD>
+	<TD><CODE>linux</CODE></TD>
+</TR>
+<TR>
+	<TD>NetBSD</TD>
+	<TD><CODE>netbsd</CODE></TD>
+</TR>
+<TR>
+	<TD>OpenBSD</TD>
+	<TD><CODE>openbsd</CODE></TD>
+</TR>
+<TR>
+	<TD>Solaris</TD>
+	<TD><CODE>solaris</CODE></TD>
+</TR>
+</TABLE></CENTER>
+
+<P>The <CODE>major.minor</CODE> string is the operating system
+version number. Any patch revision information is stripped from
+the version number, as are leading characters before the major
+version number. For example, HP-UX version B.11.11 will result
+in a version number string of <CODE>11.11</CODE>.</P>
+
+<P>The <CODE>architecture</CODE> string identifies the target
+processor. Table 2.2 lists the supported processors:</P>
+
+<CENTER><TABLE BORDER>
+<CAPTION><A NAME="TABLE_2_2">Table 2.2: Processor Architecture Abbreviations</A></CAPTION>
+<TR>
+	<TH>Processor(s)</TH>
+	<TH>Abbreviation</TH>
+</TR>
+<TR>
+	<TD>Compaq Alpha</TD>
+	<TD><CODE>alpha</CODE></TD>
+</TR>
+<TR>
+	<TD>HP Precision Architecture</TD>
+	<TD><CODE>hppa</CODE></TD>
+</TR>
+<TR>
+	<TD>INTEL 80x86</TD>
+	<TD><CODE>intel</CODE></TD>
+</TR>
+<TR>
+	<TD>MIPS RISC</TD>
+	<TD><CODE>mips</CODE></TD>
+</TR>
+<TR>
+	<TD>IBM Power PC</TD>
+	<TD><CODE>powerpc</CODE></TD>
+</TR>
+<TR>
+	<TD>SPARC<BR>
+	MicroSPARC<BR>
+	UltraSPARC</TD>
+	<TD><CODE>sparc</CODE></TD>
+</TR>
+</TABLE></CENTER>
+
+<P>Once you have determined the subdirectory containing the
+distribution, type the following commands to install EPM from
+the portable distribution:</P>
+
+<UL><PRE>
+<KBD>cd <I>os-major.minor-architecture<I> ENTER
+./epm.install ENTER</KBD>
+</PRE></UL>
+
+<P>The software will be installed after answering a few yes/no
+questions.</P>
+
+<!-- NEW PAGE -->
+<H3>Installing Using the Native Distribution</H3>
+
+<P>The <CODE>test</CODE> target also builds a distribution in the
+native operating system format, if supported. Table 2.3 lists the
+native formats for each supported operating system and the command
+to run to install the software.</P>
+
+<CENTER><TABLE BORDER>
+<CAPTION><A NAME="TABLE_2_3">Table 2.3: Native Operating System Formats</A></CAPTION>
+<TR>
+	<TH>Operating System</TH>
+	<TH>Format</TH>
+	<TH>Command</TH>
+</TR>
+<TR>
+	<TD>AIX</TD>
+	<TD><CODE>???</CODE></TD>
+	<TD NOWRAP><CODE>???</CODE></TD>
+</TR>
+<TR>
+	<TD>Compaq Tru64 UNIX<BR>
+	Digital UNIX<BR>
+	OSF/1</TD>
+	<TD><CODE>setld</CODE></TD>
+	<TD NOWRAP><CODE>setld -a <I>directory</I>???</CODE></TD>
+</TR>
+<TR>
+	<TD>HP-UX</TD>
+	<TD><CODE>depot</CODE></TD>
+	<TD NOWRAP><CODE>swinstall -f <I>directory</I></CODE></TD>
+</TR>
+<TR>
+	<TD>IRIX</TD>
+	<TD><CODE>inst</CODE></TD>
+	<TD NOWRAP><CODE>swmgr -f <I>directory</I></CODE></TD>
+</TR>
+<TR>
+	<TD>Linux</TD>
+	<TD><CODE>rpm</CODE></TD>
+	<TD NOWRAP><CODE>rpm -i <I>directory</I>/epm-3.0.rpm</CODE></TD>
+</TR>
+<TR>
+	<TD>Solaris</TD>
+	<TD><CODE>pkgadd</CODE></TD>
+	<TD NOWRAP><CODE>pkgadd -d <I>directory</I> epm</CODE></TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

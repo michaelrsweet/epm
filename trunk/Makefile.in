@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.16 2001/04/25 13:35:02 mike Exp $"
+# "$Id: Makefile.in,v 1.17 2001/06/19 15:27:46 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -115,7 +115,8 @@ clean:
 
 distclean:
 	rm -f $(OBJS) $(TARGETS) \
-		config.cache config.h config.log config.status Makefile
+		config.cache config.h config.log config.status \
+		mkepmlist Makefile
 
 
 #
@@ -152,7 +153,7 @@ install: epm @INSTALL_SETUP@
 	$(CP) $(srcdir)/*.html $(datadir)/doc/epm
 
 install-setup:	setup
-	echo Installing EPM setup in $(libdir)/setup
+	echo Installing EPM setup in $(libdir)/epm
 	-$(MKDIR) $(libdir)/epm
 	$(RM) $(libdir)/epm/setup
 	$(CP) setup $(libdir)/epm
@@ -212,5 +213,5 @@ Fl_Check_Browser.o:	Fl_Check_Browser.h
 $(OBJS):	Makefile config.h
 
 #
-# End of "$Id: Makefile.in,v 1.16 2001/04/25 13:35:02 mike Exp $".
+# End of "$Id: Makefile.in,v 1.17 2001/06/19 15:27:46 mike Exp $".
 #

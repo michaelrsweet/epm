@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.27 2001/05/28 13:44:36 mike Exp $"
+.\" "$Id: epm.man,v 1.1 2001/06/19 15:27:47 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -343,5 +343,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.27 2001/05/28 13:44:36 mike Exp $".
+.\" End of "$Id: epm.man,v 1.1 2001/06/19 15:27:47 mike Exp $".
 .\"
