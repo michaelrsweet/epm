@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.20 2001/06/21 16:05:57 mike Exp $"
+# "$Id: Makefile.in,v 1.21 2001/06/25 17:27:17 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -91,7 +91,7 @@ VPATH		=	$(srcdir)
 #
 
 TARGETS	=	epm epminstall @SETUP@
-EPM_OBJS =	deb.o dist.o epm.o file.o inst.o pkg.o portable.o rpm.o \
+EPM_OBJS =	bsd.o deb.o dist.o epm.o file.o inst.o pkg.o portable.o rpm.o \
 		setld.o string.o swinstall.o tar.o
 SETUP_OBJS =	setup.o setup2.o Fl_Check_Browser.o Fl_Wizard.o
 OBJS	=	$(EPM_OBJS) epminstall.o $(SETUP_OBJS)
@@ -189,26 +189,29 @@ test:	$(TARGETS)
 # Make distributions using EPM...
 #
 
-portable: $(TARGETS)
-	./epm -v epm
-
-native: $(TARGETS)
-	./epm -f native -v epm
-
-rpm: $(TARGETS)
-	./epm -f rpm -v epm
+bsd: $(TARGETS)
+	./epm -f bsd -v epm
 
 deb: $(TARGETS)
 	./epm -f deb -v epm
 
+inst tardist: $(TARGETS)
+	./epm -f tardist -v epm
+
 pkg: $(TARGETS)
 	./epm -f pkg -v epm
 
-depot: $(TARGETS)
-	./epm -f depot -v epm
+native: $(TARGETS)
+	./epm -f native -v epm
 
-tardist: $(TARGETS)
-	./epm -f tardist -v epm
+portable: $(TARGETS)
+	./epm -v epm
+
+rpm: $(TARGETS)
+	./epm -f rpm -v epm
+
+swinstall depot: $(TARGETS)
+	./epm -f depot -v epm
 
 
 #
@@ -248,6 +251,7 @@ Fl_Check_Browser.o:	Fl_Check_Browser.h
 
 $(OBJS):	Makefile config.h
 
+
 #
-# End of "$Id: Makefile.in,v 1.20 2001/06/21 16:05:57 mike Exp $".
+# End of "$Id: Makefile.in,v 1.21 2001/06/25 17:27:17 mike Exp $".
 #

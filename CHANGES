@@ -9,6 +9,8 @@ WHAT'S NEW IN EPM 3.0?
 	- Added new documentation.
 	- Added new "-a arch" option to support specific
 	  architectures (e.g. i586, i686, ultrasparc, etc.)
+	- Added support for the *BSD package format using
+	  pkg_create.
 	- Added new epminstall utility to build list files
 	  from "make install" targets.
 	- The mkepmlist utility had a bad regular expression

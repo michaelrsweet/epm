@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.51 2001/06/22 19:09:25 mike Exp $"
+ * "$Id: epm.c,v 1.52 2001/06/25 17:27:17 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -139,6 +139,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 
 	    if (strcasecmp(temp, "portable") == 0)
 	      format = PACKAGE_PORTABLE;
+	    else if (strcasecmp(temp, "bsd") == 0)
+	      format = PACKAGE_BSD;
 	    else if (strcasecmp(temp, "deb") == 0)
 	      format = PACKAGE_DEB;
 	    else if (strcasecmp(temp, "inst") == 0 ||
@@ -164,6 +166,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      format = PACKAGE_SETLD;
 #elif defined(__hpux)
 	      format = PACKAGE_SWINSTALL;
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+	      format = PACKAGE_BSD;
 #else
 	      format = PACKAGE_PORTABLE;
 #endif
@@ -355,6 +359,9 @@ main(int  argc,			/* I - Number of command-line arguments */
     case PACKAGE_PORTABLE :
         i = make_portable(prodname, directory, platname, dist, &platform,
 	                  setup);
+	break;
+    case PACKAGE_BSD :
+        i = make_bsd(prodname, directory, platname, dist, &platform);
 	break;
     case PACKAGE_DEB :
         if (geteuid())
@@ -563,5 +570,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.51 2001/06/22 19:09:25 mike Exp $".
+ * End of "$Id: epm.c,v 1.52 2001/06/25 17:27:17 mike Exp $".
  */
