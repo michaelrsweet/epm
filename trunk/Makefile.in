@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.43 2003/02/13 19:24:39 mike Exp $"
+# "$Id: Makefile.in,v 1.44 2003/04/08 14:34:14 swdev Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -134,10 +134,10 @@ install: epm @INSTALL_GUIS@ @INSTALL_OSX@
 	-$(MKDIR) $(bindir)
 	$(RM) $(bindir)/epm
 	$(CP) epm $(bindir)
-	$(STRIP) $(bindir)/epm
+	-$(STRIP) $(bindir)/epm
 	$(RM) $(bindir)/epminstall
 	$(CP) epminstall $(bindir)
-	$(STRIP) $(bindir)/epminstall
+	-$(STRIP) $(bindir)/epminstall
 	$(RM) $(bindir)/mkepmlist
 	$(CP) mkepmlist $(bindir)
 	echo Installing EPM manpages in $(mandir)/cat1 and $(mandir)/man1
@@ -186,9 +186,9 @@ install-guis:	setup uninst
 	$(RM) -r $(libdir)/epm
 	-$(MKDIR) $(libdir)/epm
 	$(CP) setup $(libdir)/epm
-	$(STRIP) $(libdir)/epm/setup
+	-$(STRIP) $(libdir)/epm/setup
 	$(CP) uninst $(libdir)/epm
-	$(STRIP) $(libdir)/epm/uninst
+	-$(STRIP) $(libdir)/epm/uninst
 
 install-osx:
 	echo Installing EPM OSX data files in $(datadir)/epm
@@ -372,5 +372,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.43 2003/02/13 19:24:39 mike Exp $".
+# End of "$Id: Makefile.in,v 1.44 2003/04/08 14:34:14 swdev Exp $".
 #
