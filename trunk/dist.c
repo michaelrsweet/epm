@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.11 2000/12/11 16:56:00 mike Exp $"
+ * "$Id: dist.c,v 1.12 2000/12/13 00:41:20 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -30,6 +30,7 @@
  */
 
 #include "epm.h"
+#include <pwd.h>
 
 
 /*
@@ -116,6 +117,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
   struct stat	fileinfo;	/* File information */
   DIR		*dir;		/* Directory */
   DIRENT	*dent;		/* Directory entry */
+  struct passwd	*pwd;		/* Password entry */
 
 
  /*
@@ -387,7 +389,12 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
     */
 
     gethostname(buf, sizeof(buf));
-    sprintf(dist->packager, "%s@%s", getlogin(), buf);
+
+    setpwent();
+    if ((pwd = getpwuid(getuid())) != NULL)
+      sprintf(dist->packager, "%s@%s", pwd->pw_name, buf);
+    else
+      sprintf(dist->packager, "unknown@%s", buf);
   }
 
   return (dist);
@@ -716,5 +723,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.11 2000/12/11 16:56:00 mike Exp $".
+ * End of "$Id: dist.c,v 1.12 2000/12/13 00:41:20 mike Exp $".
  */
