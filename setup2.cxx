@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.20 2001/07/06 14:49:31 mike Exp $"
+// "$Id: setup2.cxx,v 1.21 2001/07/24 11:57:58 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -42,6 +42,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
+
+#ifdef HAVE_SYS_PARAM_H
+#  include <sys/param.h>
+#endif // HAVE_SYS_PARAM_H
 
 #ifdef HAVE_SYS_MOUNT_H
 #  include <sys/mount.h>
@@ -1078,5 +1082,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.20 2001/07/06 14:49:31 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.21 2001/07/24 11:57:58 mike Exp $".
 //
