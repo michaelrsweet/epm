@@ -2089,14 +2089,16 @@ fi
 
 if test "$ac_cv_lib_fltk_numericsort" = yes -a "$ac_cv_prog_CXX" != ""; then
 	SETUP="setup"
+	INSTALL_SETUP="install-setup"
 	LIBS="$LIBS -lXext -lX11 -lm"
 else
 	SETUP=""
+	INSTALL_SETUP=""
 	echo "configure: warning: C++ compiler or FLTK not available so setup GUI will not be built." 1>&2
 fi
 
 echo $ac_n "checking for socket in -lsocket""... $ac_c" 1>&6
-echo "configure:2100: checking for socket in -lsocket" >&5
+echo "configure:2102: checking for socket in -lsocket" >&5
 ac_lib_var=`echo socket'_'socket | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -2104,7 +2106,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2108 "configure"
+#line 2110 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -2115,7 +2117,7 @@ int main() {
 socket()
 ; return 0; }
 EOF
-if { (eval echo configure:2119: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2121: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -2140,7 +2142,7 @@ else
 fi
 
 echo $ac_n "checking for gethostbyaddr in -lnsl""... $ac_c" 1>&6
-echo "configure:2144: checking for gethostbyaddr in -lnsl" >&5
+echo "configure:2146: checking for gethostbyaddr in -lnsl" >&5
 ac_lib_var=`echo nsl'_'gethostbyaddr | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -2148,7 +2150,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2152 "configure"
+#line 2154 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -2159,7 +2161,7 @@ int main() {
 gethostbyaddr()
 ; return 0; }
 EOF
-if { (eval echo configure:2163: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2165: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -2186,11 +2188,80 @@ fi
 
 
 
+
 if test "$ac_c" = ""; then
 	cat >> confdefs.h <<\EOF
 #define HAVE_BROKEN_ECHO 1
 EOF
 
+fi
+
+if test -n "$GCC"; then
+	if test -z "$OPTIM"; then
+		if test "$uname" = "HP-UX"; then
+			OPTIM="-O1"
+		else
+	        	OPTIM="-O2"
+		fi
+	fi
+	if test $PICFLAG = 1; then
+    		OPTIM="-fPIC $OPTIM"
+	fi
+
+	OPTIM="-Wall -Wno-return-type -fno-rtti -fomit-frame-pointer $OPTIM"
+
+	# See if GCC supports -fno-exceptions...
+	echo "Testing if GCC supports -fno-exceptions..."
+	OLDCFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -fno-exceptions"
+	cat > conftest.$ac_ext <<EOF
+#line 2219 "configure"
+#include "confdefs.h"
+
+int main() {
+
+; return 0; }
+EOF
+if { (eval echo configure:2226: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+  rm -rf conftest*
+  OPTIM="$OPTIM -fno-exceptions"
+		echo "Congratulations - your GCC supports exceptions; disabling them..."
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -rf conftest*
+  echo "GCC does not support exceptions..."
+fi
+rm -f conftest*
+	CFLAGS="$OLDCFLAGS"
+
+	# See if we are running Solaris; if so, try the -fpermissive option...
+	if test $uname = SunOS; then
+		echo "Testing if GCC supports -fpermissive..."
+
+		OLDCFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS -fpermissive"
+		cat > conftest.$ac_ext <<EOF
+#line 2246 "configure"
+#include "confdefs.h"
+
+int main() {
+
+; return 0; }
+EOF
+if { (eval echo configure:2253: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+  rm -rf conftest*
+  OPTIM="$OPTIM -fpermissive"
+			echo "Enabling -fpermissive to work around X header bugs..."
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -rf conftest*
+  echo "The -fpermissive option is not required by your GCC..."
+fi
+rm -f conftest*
+		CFLAGS="$OLDCFLAGS"
+	fi
 fi
 
 if test "$prefix" = "NONE"; then
@@ -2223,6 +2294,12 @@ EOF
 
 cat >> confdefs.h <<EOF
 #define EPM_BINDIR "$prefix/bin"
+EOF
+
+
+
+cat >> confdefs.h <<EOF
+#define EPM_LIBDIR "$prefix/lib/epm"
 EOF
 
 
@@ -2377,10 +2454,12 @@ s%@STRIP@%$STRIP%g
 s%@WHOAMI@%$WHOAMI%g
 s%@CPP@%$CPP%g
 s%@SETUP@%$SETUP%g
+s%@INSTALL_SETUP@%$INSTALL_SETUP%g
 s%@EPM_SOFTWARE@%$EPM_SOFTWARE%g
 s%@EPM_GZIP@%$EPM_GZIP%g
 s%@EPM_STRIP@%$EPM_STRIP%g
 s%@EPM_BINDIR@%$EPM_BINDIR%g
+s%@EPM_LIBDIR@%$EPM_LIBDIR%g
 s%@EPM_WHOAMI@%$EPM_WHOAMI%g
 
 CEOF

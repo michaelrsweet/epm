@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.8 2000/01/05 16:58:01 mike Exp $"
+dnl "$Id: configure.in,v 1.9 2000/04/26 14:27:06 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -99,9 +99,11 @@ AC_CHECK_LIB(fltk,numericsort)
 
 if test "$ac_cv_lib_fltk_numericsort" = yes -a "$ac_cv_prog_CXX" != ""; then
 	SETUP="setup"
+	INSTALL_SETUP="install-setup"
 	LIBS="$LIBS -lXext -lX11 -lm"
 else
 	SETUP=""
+	INSTALL_SETUP=""
 	AC_MSG_WARN(C++ compiler or FLTK not available so setup GUI will not be built.)
 fi
 
@@ -119,10 +121,50 @@ else
 fi)
 
 AC_SUBST(SETUP)
+AC_SUBST(INSTALL_SETUP)
 
 dnl See if the echo command supports the \c escape; if not, then it's broken!
 if test "$ac_c" = ""; then
 	AC_DEFINE(HAVE_BROKEN_ECHO)
+fi
+
+dnl Update compiler options...
+if test -n "$GCC"; then
+	if test -z "$OPTIM"; then
+		if test "$uname" = "HP-UX"; then
+			OPTIM="-O1"
+		else
+	        	OPTIM="-O2"
+		fi
+	fi
+	if test $PICFLAG = 1; then
+    		OPTIM="-fPIC $OPTIM"
+	fi
+
+	OPTIM="-Wall -Wno-return-type -fno-rtti -fomit-frame-pointer $OPTIM"
+
+	# See if GCC supports -fno-exceptions...
+	echo "Testing if GCC supports -fno-exceptions..."
+	OLDCFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -fno-exceptions"
+	AC_TRY_COMPILE(,,
+		OPTIM="$OPTIM -fno-exceptions"
+		echo "Congratulations - your GCC supports exceptions; disabling them...",
+		echo "GCC does not support exceptions...")
+	CFLAGS="$OLDCFLAGS"
+
+	# See if we are running Solaris; if so, try the -fpermissive option...
+	if test $uname = SunOS; then
+		echo "Testing if GCC supports -fpermissive..."
+
+		OLDCFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS -fpermissive"
+		AC_TRY_COMPILE(,,
+			OPTIM="$OPTIM -fpermissive"
+			echo "Enabling -fpermissive to work around X header bugs...",
+			echo "The -fpermissive option is not required by your GCC...")
+		CFLAGS="$OLDCFLAGS"
+	fi
 fi
 
 dnl Fix "prefix" variable if it hasn't been specified...
@@ -149,11 +191,14 @@ AC_SUBST(EPM_STRIP)
 AC_DEFINE_UNQUOTED(EPM_BINDIR, "$prefix/bin")
 AC_SUBST(EPM_BINDIR)
 
+AC_DEFINE_UNQUOTED(EPM_LIBDIR, "$prefix/lib/epm")
+AC_SUBST(EPM_LIBDIR)
+
 AC_DEFINE_UNQUOTED(EPM_WHOAMI, "$WHOAMI")
 AC_SUBST(EPM_WHOAMI)
 
 AC_OUTPUT(Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.8 2000/01/05 16:58:01 mike Exp $".
+dnl End of "$Id: configure.in,v 1.9 2000/04/26 14:27:06 mike Exp $".
 dnl

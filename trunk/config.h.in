@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.11 2000/01/05 16:58:00 mike Exp $"
+ * "$Id: config.h.in,v 1.12 2000/04/26 14:27:06 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -33,6 +33,7 @@
  */
 
 #define EPM_BINDIR	"/usr/bin"
+#define EPM_LIBDIR	"/usr/lib/epm"
 
 /*
  * What options does the strip command take?
@@ -84,5 +85,5 @@
 #define EPM_GZIP	"gzip"
 
 /*
- * End of "$Id: config.h.in,v 1.11 2000/01/05 16:58:00 mike Exp $".
+ * End of "$Id: config.h.in,v 1.12 2000/04/26 14:27:06 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.7 2000/01/05 16:58:01 mike Exp $"
+ * "$Id: portable.c,v 1.8 2000/04/26 14:27:06 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -663,7 +663,17 @@ write_dist(const char *title,		/* I - Title to show */
     * Include the ESP Software Wizard (setup)...
     */
 
-    stat(EPM_BINDIR "/setup", &srcstat);
+    if (stat(EPM_LIBDIR "/setup", &srcstat))
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Unable to stat GUI setup program "
+                      EPM_LIBDIR "/setup - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
     if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
 	           srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
     {
@@ -675,7 +685,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_file(tarfile, EPM_BINDIR "/setup") < 0)
+    if (tar_file(tarfile, EPM_LIBDIR "/setup") < 0)
     {
       if (Verbosity)
         puts("");
@@ -1558,5 +1568,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.7 2000/01/05 16:58:01 mike Exp $".
+ * End of "$Id: portable.c,v 1.8 2000/04/26 14:27:06 mike Exp $".
  */
