@@ -1,0 +1,209 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="ADVANCED">Advanced Packaging with EPM</A></H1>
+
+<P>This chapter describes the advanced packaging features of EPM.</P>
+
+<H2>Including Other List Files</H2>
+
+<P>The <CODE>%include</CODE> directive includes another list file:</P>
+
+<UL><PRE>
+%include filename
+</PRE></UL>
+
+<P>Includes can be nested, usually up to 250 levels (depends on the
+host operating system and libraries.)</P>
+
+<H2>Conflicts, Replaces, and Requires</H2>
+
+<P>Software conflicts and requirements are specified using the
+<CODE>%incompat</CODE> and <CODE>%requires</CODE> directives. If
+your software replaces another package, you can specify that
+using the <CODE>%replaces</CODE> directive (<CODE>%replaces</CODE>
+is silently mapped to <CODE>%conflicts</CODE> when the distribution
+format does not support package replacement.)
+
+<P>Dependencies are specified using the package name and optionally the
+lower and upper version numbers:
+
+<UL><PRE>
+%requires foobar
+%requires foobar 1.0
+%incompat foobar
+%incompat foobar 0.9
+%replaces foobar
+%replaces foobar 1.2 3.4
+</PRE></UL>
+
+<P>or the filename:
+
+<UL><PRE>
+%requires /usr/lib/libfoobar.so
+%incompat /usr/lib/libfoobar.so.1.2
+</PRE></UL>
+
+<P>Package dependencies are currently enforced only for the same
+package format, so a portable distribution that requires package
+"foobar" will only look for an installed "foobar" package in
+portable format.
+
+<P>Filename dependencies are only supported by the Debian,
+portable, and RPM distribution formats.
+
+<H2>Scripts</H2>
+
+<P>Bourne shell script commands can be executed before or after
+installation, patching, or removal of the software. The
+<CODE>%preinstall</CODE> and <CODE>%postinstall</CODE>
+directives specify commands to be run before and after
+installation, respectively:</P>
+
+<UL><PRE>
+%preinstall echo Command before installing
+%postinstall echo Command after installing
+</PRE></UL>
+
+<P>Similarly, the <CODE>%prepatch</CODE> and <CODE>%postpatch</CODE>
+directives specify commands to be executed before and after patching
+the software:</P>
+
+<UL><PRE>
+%prepatch echo Command before patching
+%postpatch echo Command after patching
+</PRE></UL>
+
+<P>Finally, the <CODE>%preremove</CODE> and <CODE>%postremove</CODE>
+directives specify commands that are run before and after removal
+of the software:</P>
+
+<UL><PRE>
+%preremove echo Command before removing
+%postremove echo Command after removing
+</PRE></UL>
+
+<H2>Conditional Directives</H2>
+
+<P>The <CODE>%system</CODE> directive can match or not match
+specific operating system names or versions. The operating
+system name is the name reported by <CODE>uname</CODE> in
+lowercase, while the operating system version is the major and
+minor version number reported by <CODE>uname -r</CODE>:
+
+<DL>
+
+	<DT><CODE>%system irix</CODE>
+	<DD>Only include the following files when building a distribution
+	for the IRIX operating system.
+
+	<DT><CODE>%system linux-2.0</CODE>
+	<DD>Only include the following files when building a distribution
+	for Linux 2.0.x.
+
+	<DT><CODE>%system !irix !linux-2.0</CODE>
+	<DD>Only include the following files when building a distribution
+	for operating systems other than IRIX and Linux 2.0.x.
+
+</DL>
+
+<P>The special name <CODE>all</CODE> is used to match all operating systems:
+
+<UL><PRE>
+%system all
+</PRE></UL>
+
+<P>For format-specific files, the <CODE>%format</CODE> directive can be
+used:
+
+<DL>
+
+	<DT><CODE>%format rpm</CODE>
+	<DD>Only include the following files when building an RPM distribution.
+
+	<DT><CODE>%format !rpm</CODE>
+	<DD>Only include the following files when not building an RPM
+	distribution.x.
+
+	<DT><CODE>%format all</CODE>
+	<DD>Include the following files for all types of distributions.
+
+</DL>
+
+<H2>Software Patches</H2>
+
+<P>EPM supports portable software patch distributions which
+contain only the differences between the original and patch
+release.  Patch files are specified using uppercase letters for
+the affected files. In the following example, the files
+<VAR>/usr/bin/bar</VAR> and <VAR>/etc/foo.conf</VAR> are marked
+as changed since the original release:</P>
+
+<UL><PRE>
+f 755 root sys /usr/bin/foo foo
+F 755 root sys /usr/bin/bar bar
+f 755 root sys /usr/share/man/man1/foo.1 foo.man
+f 755 root sys /usr/share/man/man1/bar.1 bar.man
+C 644 root sys /etc/foo.conf foo.conf
+</PRE></UL>
+
+<H2>Variables</H2>
+
+<P>EPM imports the current environment variables for use in your
+list file. You can also define new variable in the list file or
+on the command-line when running EPM.
+
+<P>Variables are defined by starting the line with the dollar
+sign (<CODE>$</CODE>) followed by the name and value:
+
+<UL><PRE>
+$name=value
+$prefix=/usr
+$exec_prefix=${prefix}
+$bindir=$exec_prefix/bin
+</PRE></UL>
+
+<P>Variable substitution is performed when the variable is
+defined, so be careful with the ordering of your variable
+definitions.
+
+<P>Also, any variables you specify in your list file will be
+overridden by variables defined on the command-line or in your
+environment, just like with <CODE>make</CODE>. This can be a
+useful feature or a curse, depending on your choice of variable
+names.
+
+<P>As you can see, variables are referenced using the dollar
+sign (<CODE>$</CODE>). As with most shells, variable names can
+be surrounded by curly braces (<CODE>${variable}</CODE>) to
+explicitly delimit the name.
+
+<P>If you need to insert a <CODE>$</CODE> in a filename or a
+script, use <CODE>$$</CODE>:
+
+<UL><PRE>
+%install echo Enter your name:
+%install read $$name
+%install echo Your name is $$name.
+</PRE></UL>
+
+<H2>Init Scripts</H2>
+
+<P>Initialization scripts are generally portable between platforms,
+however the location of initialization scripts varies greatly.
+
+<P>The <CODE>i</CODE> file type can be used to specify and init
+script that is to be installed on the system. EPM will then
+determine the appropriate init file directories to use and create
+any required symbolic links to support the init script:</P>
+
+<UL><PRE>
+i 755 root sys foo foo.sh
+</PRE></UL>
+
+<P>The previous example creates an init script named
+<VAR>foo</VAR> on the end-user system and will create symbolic
+links to run levels 0, 2, 3, and 5 as needed.</P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,330 @@
+
+
+
+epm.list(5)           Easy Software Products          epm.list(5)
+
+
+NNAAMMEE
+       epm.list - epm list file format.
+
+DDEESSCCRRIIPPTTIIOONN
+       Each   _E_P_M  product  has  an  associated  list  file  that
+       describes the files to include with the  product.  Comment
+       lines  begin  with  the "#" character and are ignored. All
+       other non-blank lines must begin  with  a  letter,  dollar
+       sign ("$"), or the percent sign ("%") as follows:
+
+       $name=value
+            Sets the named variable to _v_a_l_u_e. NNoottee:: Variables set
+            in the list file are overridden by  variables  speci-
+            fied  on  the command-line or in the current environ-
+            ment.
+
+       %copyright _c_o_p_y_r_i_g_h_t _n_o_t_i_c_e
+            Sets the copyright notice for the file.
+
+       %description _d_e_s_c_r_i_p_t_i_o_n _t_e_x_t
+            Adds a line of descriptive text to the  distribution.
+            Multiple lines are supported.
+
+       %format _f_o_r_m_a_t _[_._._. _f_o_r_m_a_t_]
+            Uses  following files and directives only if the dis-
+            tribution format is the same as _f_o_r_m_a_t.
+
+       %format !_f_o_r_m_a_t _[_._._. _f_o_r_m_a_t_]
+            Uses following files and directives only if the  dis-
+            tribution format is not the same as _f_o_r_m_a_t.
+
+       %include _f_i_l_e_n_a_m_e
+            Includes files listed in _f_i_l_e_n_a_m_e.
+
+       %incompat _p_r_o_d_u_c_t
+
+       %incompat _f_i_l_e_n_a_m_e
+            Indicates  that this product is incompatible with the
+            named product or file.
+
+       %install _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies a script or program to  be  run  after  all
+            files are installed.  (This has been obsoleted by the
+            %postinstall directive)
+
+       %license _l_i_c_e_n_s_e _f_i_l_e
+            Specifies  the  file  to  display  as  the   software
+            license.
+
+       %packager _n_a_m_e _o_f _p_a_c_k_a_g_e_r
+            Specifies the name of the packager.
+
+       %patch _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies  a  script  or  program to be run after all
+
+
+
+20 June 2001           ESP Package Manager                      1
+
+
+
+
+
+epm.list(5)           Easy Software Products          epm.list(5)
+
+
+            files are patched.  (This has been obsoleted  by  the
+            %postpatch directive)
+
+       %postinstall _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies  a  script  or  program to be run after all
+            files are installed.
+
+       %postpatch _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies a script or program to  be  run  after  all
+            files are patched.
+
+       %postremove _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies  a script or program to be run after remov-
+            ing files.
+
+       %preinstall _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies a script or program to be  run  before  all
+            files are installed.
+
+       %prepatch _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies  a  script  or program to be run before all
+            files are patched.
+
+       %preremove _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies a script or program to be run before remov-
+            ing files.
+
+       %product _p_r_o_d_u_c_t _n_a_m_e
+            Specifies the product name.
+
+       %readme _r_e_a_d_m_e _f_i_l_e
+            Specifies a README file to be included in the distri-
+            bution.
+
+       %remove _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies a script or program to be run before remov-
+            ing  files.   (This has been obsoleted by the %prere-
+            move directive)
+
+       %release _n_u_m_b_e_r
+            Specifies the release or build number  of  a  product
+            (defaults to 0).
+
+       %replaces _p_r_o_d_u_c_t
+            Indicates  that this product replaces the named prod-
+            uct.
+
+       %requires _p_r_o_d_u_c_t
+
+       %requires _f_i_l_e_n_a_m_e
+            Indicates that this product requires the named  prod-
+            uct or file.
+
+
+
+
+
+20 June 2001           ESP Package Manager                      2
+
+
+
+
+
+epm.list(5)           Easy Software Products          epm.list(5)
+
+
+       %vendor _v_e_n_d_o_r _o_r _a_u_t_h_o_r _n_a_m_e
+            Specifies the vendor or author of the product.
+
+       %version _v_e_r_s_i_o_n _n_u_m_b_e_r
+            Specifies the version number of the product.
+
+       %system _s_y_s_t_e_m_[_-_r_e_l_e_a_s_e_] _[_._._. _s_y_s_t_e_m_[_-_r_e_l_e_a_s_e_]_]
+            Specifies  that  the  following  files should only be
+            used  for  the  specified   operating   systems   and
+            releases.
+
+       %system !_s_y_s_t_e_m_[_-_r_e_l_e_a_s_e_] _[_._._. _s_y_s_t_e_m_[_-_r_e_l_e_a_s_e_]_]
+            Specifies that the following files should not be used
+            for the specified operating systems and releases.
+
+       %system all
+            Specifies that the following files are applicable  to
+            all operating systems.
+
+       c _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+
+       C _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+            Specifies  a configuration file for installation. The
+            second form specifies that the file has changed or is
+            new  and  should be included as part of a patch. Con-
+            figuration files are installed as "destination.N"  if
+            the destination already exists.
+
+       d _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
+
+       D _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
+            Specifies   a   directory   should  be  created  when
+            installing the software. The  second  form  specifies
+            that  the  directory is new and should be included as
+            part of a patch.
+
+       f _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+
+       F _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+            Specifies a file for installation.  The  second  form
+            specifies  that  the  file  has changed or is new and
+            should be included as part of a patch.
+
+       f _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e_/_p_a_t_t_e_r_n
+
+       F _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e_/_p_a_t_t_e_r_n
+            Specifies one or more files  for  installation  using
+            shell  wildcard  patterns.  The second form specifies
+            that the files have changed or are new and should  be
+            included as part of a patch.
+
+       i _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
+
+
+
+
+
+20 June 2001           ESP Package Manager                      3
+
+
+
+
+
+epm.list(5)           Easy Software Products          epm.list(5)
+
+
+       I _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
+            Specifies  an initialization script for installation.
+            The second form specifies that the file  has  changed
+            or  is new and should be included as part of a patch.
+            Initialization  scripts  are  stored  in   /etc/soft-
+            ware/init.d and are linked to the appropriate system-
+            specific directories for run levels 0, 2, 3,  and  5.
+            Initialization scripts mmuusstt accept at least the _s_t_a_r_t
+            and _s_t_o_p commands.
+
+       l _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+
+       L _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+            Specifies a symbolic link in  the  installation.  The
+            second form specifies that the link has changed or is
+            new and should be included as part of a patch.
+
+       R _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n
+            Specifies that the file is to be removed upon  patch-
+            ing.   The  _u_s_e_r  and  _g_r_o_u_p fields are ignored.  The
+            _m_o_d_e field is only  used  to  determine  if  a  check
+            should be made for a previous version of the file.
+
+LLIISSTT VVAARRIIAABBLLEESS
+       _E_P_M  maintains  a list of variables and their values which
+       can be used to substitute values in the list  file.  These
+       variables  are  imported  from the current environment and
+       taken from the command-line and  list  file  as  provided.
+       Substitutions  occur  when the variable name is referenced
+       with the dollar sign ($):
+
+           %install echo What is your name:
+           %install read $$name
+           %install echo Your name is $$name
+
+           f 0555 root sys ${bindir}/foo foo
+           f 0555 root sys $datadir/foo/foo.dat foo.dat
+
+       Variable  names  can  be  surrounded  by  curley  brackets
+       (${name})  or  alone ($name); without brackets the name is
+       terminated by the first slash (/), dash  (-),  or  whites-
+       pace. The dollar sign can be inserted using $$.
+
+SSEEEE AALLSSOO
+       epm(1) - create software packages
+       epminstall(1)  -  add  a  directory, file, or symlink to a
+       list file
+       mkepmlist(1) - make an epm list file from a directory
+
+CCOOPPYYRRIIGGHHTT
+       Copyright 1999-2001 by Easy Software Products, All  Rights
+       Reserved.
+
+       This  program  is  free  software; you can redistribute it
+
+
+
+20 June 2001           ESP Package Manager                      4
+
+
+
+
+
+epm.list(5)           Easy Software Products          epm.list(5)
+
+
+       and/or modify it under the terms of the GNU General Public
+       License  as  published  by  the  Free Software Foundation;
+       either version 2, or (at your option) any later version.
+
+       This program is distributed in the hope that  it  will  be
+       useful, but WITHOUT ANY WARRANTY; without even the implied
+       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
+       PURPOSE.   See  the  GNU  General  Public License for more
+       details.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+20 June 2001           ESP Package Manager                      5
+
+
