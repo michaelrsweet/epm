@@ -2,6 +2,7 @@
 epm
 epm.list
 setup
+epmeditor
 epminstall
 mkepmlist
 Makefile
