@@ -2,7 +2,9 @@
 
 #include "uninst.h"
 
-static void cb_ESP(Fl_Window*, void*) {
+Fl_Window *UninstallWindow=(Fl_Window *)0;
+
+static void cb_UninstallWindow(Fl_Window*, void*) {
   if (CancelButton->active())
   exit(0);
 }
@@ -59,9 +61,9 @@ static void cb_CancelButton(Fl_Button*, void*) {
 
 Fl_Window* make_window() {
   Fl_Window* w;
-  { Fl_Window* o = new Fl_Window(580, 345, "ESP Software Removal Wizard");
+  { Fl_Window* o = UninstallWindow = new Fl_Window(580, 345, "ESP Software Removal Wizard");
     w = o;
-    o->callback((Fl_Callback*)cb_ESP);
+    o->callback((Fl_Callback*)cb_UninstallWindow);
     { Fl_Wizard* o = Wizard = new Fl_Wizard(10, 10, 560, 290);
       { Fl_Group* o = WelcomePane = new Fl_Group(10, 10, 560, 290);
         o->hide();

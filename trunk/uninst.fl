@@ -4,10 +4,10 @@ header_name {.h}
 code_name {.cxx}
 Function {make_window()} {open
 } {
-  Fl_Window {} {
+  Fl_Window UninstallWindow {
     label {ESP Software Removal Wizard}
     callback {if (CancelButton->active())
-  exit(0);} open
+  exit(0);} open selected
     xywh {438 75 580 345}
     code0 {\#include "gui-common.h"} visible
   } {
@@ -90,7 +90,7 @@ list_cb(0,0);}
           label {Progress Label...}
           xywh {20 75 540 15} selection_color 63 labelfont 2 align 5
         }
-        Fl_Browser RemoveLog {selected
+        Fl_Browser RemoveLog {
           xywh {20 100 540 190}
         }
       }

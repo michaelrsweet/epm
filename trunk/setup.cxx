@@ -2,7 +2,9 @@
 
 #include "setup.h"
 
-static void cb_ESP(Fl_Window*, void*) {
+Fl_Window *SetupWindow=(Fl_Window *)0;
+
+static void cb_SetupWindow(Fl_Window*, void*) {
   if (CancelButton->active())
   exit(0);
 }
@@ -81,9 +83,9 @@ static void cb_CancelButton(Fl_Button*, void*) {
 
 Fl_Window* make_window() {
   Fl_Window* w;
-  { Fl_Window* o = new Fl_Window(580, 345, "ESP Software Installation Wizard");
+  { Fl_Window* o = SetupWindow = new Fl_Window(580, 345, "ESP Software Installation Wizard");
     w = o;
-    o->callback((Fl_Callback*)cb_ESP);
+    o->callback((Fl_Callback*)cb_SetupWindow);
     { Fl_Wizard* o = Wizard = new Fl_Wizard(10, 10, 560, 290);
       { Fl_Group* o = WelcomePane = new Fl_Group(10, 10, 560, 280);
         o->hide();
