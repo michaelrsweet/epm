@@ -4,7 +4,7 @@
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
 <META NAME="copyright" CONTENT="Copyright 1999-2002 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20021230">
+<META NAME="docnumber" CONTENT="ESP-004-20020112">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: serif }
@@ -22,7 +22,7 @@ PRE { font-family: monospace }
 <BODY>
 <CENTER><A HREF="#CONTENTS"><IMG SRC="epmlogo.gif" BORDER="0" WIDTH="256" HEIGHT="256"><BR>
 <H1>Software Distribution Using the ESP Package Manager</H1></A><BR>
-ESP-004-20021230<BR>
+ESP-004-20020112<BR>
 Michael Sweet<BR>
 Copyright 1999-2002 by Easy Software Products<BR>
 </CENTER>
@@ -84,7 +84,7 @@ Copyright 1999-2002 by Easy Software Products<BR>
 </UL>
 <B><A HREF="#RELNOTES">D - Release Notes</A></B>
 <UL>
-<LI><A HREF="#9_1">Changes in EPM v3.2.2</A></LI>
+<LI><A HREF="#9_1">Changes in EPM v3.3</A></LI>
 <LI><A HREF="#9_2">Changes in EPM v3.2.1</A></LI>
 <LI><A HREF="#9_3">Changes in EPM v3.2</A></LI>
 <LI><A HREF="#9_4">Changes in EPM v3.1</A></LI>
@@ -109,7 +109,7 @@ Copyright 1999-2002 by Easy Software Products<BR>
 <HR>
 <H1 ALIGN="RIGHT"><A NAME="1">Preface</A></H1>
 <P>This document provides a tutorial and reference for the ESP Package
- Manager (&quot;EPM&quot;) software, version 3.2.2.</P>
+ Manager (&quot;EPM&quot;) software, version 3.3.</P>
 <H2><A NAME="1_1">Organization of this Manual</A></H2>
 <P>This document is organized into the following chapters and
  appendices:</P>
@@ -251,8 +251,10 @@ Requires?</SMALL></TH><TH><SMALL>Replaces?</SMALL></TH><TH><SMALL>Config
  Files?</SMALL></TH><TH><SMALL>Map Files?</SMALL></TH></TR>
 <TR><TD>installp</TD><TD>AIX</TD><TD>Yes</TD><TD>No</TD><TD>No</TD><TD>
 No</TD><TD>Yes</TD><TD>Yes</TD><TD>No</TD><TD>No</TD><TD>No</TD></TR>
-<TR><TD>pkg_add</TD><TD>FreeBSD
-<BR> NetBSD
+<TR><TD>pkg_add</TD><TD>FreeBSD</TD><TD>Yes</TD><TD>Yes<SUP>2</SUP></TD><TD>
+No</TD><TD>No</TD><TD>No</TD><TD>No</TD><TD>No</TD><TD>No</TD><TD>No</TD>
+</TR>
+<TR><TD>pkg_add</TD><TD>NetBSD
 <BR> OpenBSD</TD><TD>Yes</TD><TD>Yes<SUP>2</SUP></TD><TD>No</TD><TD>No</TD><TD>
 Yes</TD><TD>Yes</TD><TD>No</TD><TD>No</TD><TD>No</TD></TR>
 <TR><TD>dpkg</TD><TD>Corel Linux
@@ -289,8 +291,9 @@ No</TD><TD>Yes</TD><TD>Yes</TD><TD>No</TD><TD>No</TD><TD>No</TD></TR>
  Debian formats also support source distributions that specifically
  allow for recompilation and installation. Only the commercial UNIX
  formats support patch distributions - you have to completely upgrade a
- software package with RPM and Debian. All but the Solaris pkg format
- allow you to upgrade a package without removing the old version first.</P>
+ software package with RPM and Debian. All but the Solaris <CODE>pkg</CODE>
+ format allow you to upgrade a package without removing the old version
+ first.</P>
 <P>When building the software packages, RPM and Debian force you to
  create the actual directories, copy the files to those directories, and
  set the ownerships and permissions. You essentially are creating a
@@ -1621,9 +1624,9 @@ TYPE Custom Configuration
 <H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
 <P>This appendix lists the change log for each release of the EPM
  software.</P>
-<H2><A NAME="9_1">Changes in EPM v3.2.2</A></H2>
+<H2><A NAME="9_1">Changes in EPM v3.3</A></H2>
 <UL>
-<LI>UnixWare 7 needs the absolute path when transferring an ATTpackage
+<LI>UnixWare 7 needs the absolute path when transferring an AT&amp;T package
  directory to a .pkg file.</LI>
 <LI>Now use the &quot;id&quot; command (POSIX) instead of &quot;whoami&quot; (BSD) to check
  that the installing user is root.</LI>

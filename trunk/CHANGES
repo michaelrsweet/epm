@@ -1,9 +1,9 @@
-CHANGES - ESP Package Manager (EPM) 3.2.2
------------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.3
+---------------------------------------
 
-WHAT'S NEW IN EPM 3.2.2?
+WHAT'S NEW IN EPM 3.3?
 
-    EPM 3.2.2 adds the following features, fixes, and changes to
+    EPM 3.3 adds the following features, fixes, and changes to
     EPM 3.2.1:
 
 	- UnixWare 7 needs the absolute path when transferring

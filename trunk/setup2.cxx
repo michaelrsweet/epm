@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.26 2002/01/02 20:43:05 mike Exp $"
+// "$Id: setup2.cxx,v 1.27 2002/02/13 03:26:46 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -1003,21 +1003,21 @@ update_sizes(void)
     }
 
   // Get the sizes of the root and /usr partition...
-#if defined(__sgi) || defined(__sun) || defined(M_XENIX)
+#if defined(__sgi) || defined(__svr4__)
   if (statfs("/", &rootpart, sizeof(rootpart), 0))
 #else
   if (statfs("/", &rootpart))
-#endif // __sgi || __sun
+#endif // __sgi || __svr4__
     rootfree = 1024;
   else
     rootfree = (int)((double)rootpart.f_bfree * (double)rootpart.f_bsize /
                      1024.0 / 1024.0 + 0.5);
 
-#if defined(__sgi) || defined(__sun) || defined(M_XENIX)
+#if defined(__sgi) || defined(__svr4__)
   if (statfs("/usr", &usrpart, sizeof(usrpart), 0))
 #else
   if (statfs("/usr", &usrpart))
-#endif // __sgi || __sun
+#endif // __sgi || __svr4__
     usrfree = 1024;
   else
     usrfree = (int)((double)usrpart.f_bfree * (double)usrpart.f_bsize /
@@ -1064,5 +1064,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.26 2002/01/02 20:43:05 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.27 2002/02/13 03:26:46 mike Exp $".
 //
