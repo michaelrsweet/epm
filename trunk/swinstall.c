@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.28 2005/01/11 21:36:57 mike Exp $"
+ * "$Id: swinstall.c,v 1.29 2005/02/08 20:24:59 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -532,9 +532,9 @@ make_swinstall(const char     *prodname,/* I - Product short name */
   */
 
   if (Verbosity)
-    puts("Creating tar.gz file for distribution...");
+    puts("Creating depot.tgz file for distribution...");
 
-  snprintf(filename, sizeof(filename), "%s/%s.tar.gz", directory, name);
+  snprintf(filename, sizeof(filename), "%s/%s.depot.tgz", directory, name);
 
   if ((tarfile = tar_open(filename, 1)) == NULL)
     return (1);
@@ -743,5 +743,5 @@ write_fileset(FILE       *fp,		/* I - File to write to */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.28 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.29 2005/02/08 20:24:59 mike Exp $".
  */
