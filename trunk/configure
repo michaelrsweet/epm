@@ -534,8 +534,8 @@ fi
 
 
 
-VERSION=2.6
-VERNUMBER=260
+VERSION=2.7
+VERNUMBER=270
 
 
 cat >> confdefs.h <<EOF
@@ -840,7 +840,7 @@ else
   fi
 fi
 
-for ac_prog in $CCC c++ g++ gcc CC cxx cc++ cl xlC aCC
+for ac_prog in $CCC c++ g++ gcc CC cxx cc++ cl xlC
 do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -2317,9 +2317,9 @@ else
 	SETUPLIBS=""
 
 	if test x$ac_cv_prog_CXX = x; then
-		echo "configure: warning: C++ compiler not available so setup GUI will not be built." 1>&2
+		echo "configure: warning: Setup GUI requires C++ compiler." 1>&2
 	else
-		echo "configure: warning: Static FLTK library not available so setup GUI will not be built." 1>&2
+		echo "configure: warning: Setup GUI requires static FLTK library." 1>&2
 	fi
 fi
 
@@ -2394,6 +2394,17 @@ rm -f conftest*
 	fi
 else
 	case $uname in
+		AIX*)
+			if test -z "$OPTIM"; then
+				OPTIM="-O2"
+			fi
+			;;
+		HP-UX*)
+			if test -z "$OPTIM"; then
+				OPTIM="+O2"
+			fi
+			OPTIM="$OPTIM +DAportable"
+			;;
         	IRIX*)
 			if test -z "$OPTIM"; then
         			OPTIM="-O2"
@@ -2405,12 +2416,6 @@ else
 			else
 				OPTIM="-fullwarn $OPTIM"
 			fi
-			;;
-		HP-UX*)
-			if test -z "$OPTIM"; then
-				OPTIM="+O2"
-			fi
-			OPTIM="$OPTIM +DAportable"
 			;;
 		SunOS*)
 			# Solaris
