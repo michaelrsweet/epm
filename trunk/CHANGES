@@ -20,6 +20,8 @@ WHAT'S NEW IN EPM 3.4?
 	- Portable installation scripts now issue chown and
 	  chgrp commands for all installed files that are not
 	  owned by user root.
+	- No longer use or pad empty tar files, which saves 5k
+	  of disk space per distribution.
 
 
 WHAT'S NEW IN EPM 3.3?
