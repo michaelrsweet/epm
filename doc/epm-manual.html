@@ -4,7 +4,7 @@
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
 <META NAME="copyright" CONTENT="Copyright 1999-2003 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20030723">
+<META NAME="docnumber" CONTENT="ESP-004-20031028">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: serif }
@@ -22,7 +22,7 @@ PRE { font-family: monospace }
 <BODY>
 <CENTER><A HREF="#CONTENTS"><IMG SRC="epmlogo.gif" BORDER="0" WIDTH="256" HEIGHT="256"><BR>
 <H1>Software Distribution Using the ESP Package Manager</H1></A><BR>
-ESP-004-20030723<BR>
+ESP-004-20031028<BR>
 Michael Sweet<BR>
 Copyright 1999-2003 by Easy Software Products<BR>
 </CENTER>
@@ -1706,6 +1706,10 @@ TYPE Custom Configuration
  software.</P>
 <H2><A NAME="9_1">Changes in EPM v3.7</A></H2>
 <UL>
+<LI>The Slackware packaging code swapped the output directory and
+ product name when generating the post-install script.</LI>
+<LI>RPM dependencies of the form &quot;%requires package &gt;= version&quot; are now
+ correctly written in the spec file.</LI>
 <LI>AIX output now correctly lists file sizes by directory and handles
  /opt properly.</LI>
 <LI>RPM output now correctly handles installing, upgrading, and removing

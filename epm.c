@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.75 2003/07/24 01:20:54 mike Exp $"
+ * "$Id: epm.c,v 1.76 2003/10/28 14:48:30 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -566,6 +566,8 @@ usage(void)
 
   puts("Usage: epm [options] [name=value ... name=value] product [list-file]");
   puts("Options:");
+  puts("-a arch");
+  puts("    Use the named architecture instead of the local one.");
   puts("-g");
   puts("    Don't strip executables in distributions.");
   puts("-f {aix,bsd,deb,depot,inst,native,pkg,portable,rpm,setld,slackware,swinstall,tardist}");
@@ -601,5 +603,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.75 2003/07/24 01:20:54 mike Exp $".
+ * End of "$Id: epm.c,v 1.76 2003/10/28 14:48:30 mike Exp $".
  */
