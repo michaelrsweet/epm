@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.10 2000/01/04 13:45:40 mike Exp $"
+.\" "$Id: epm.man,v 1.11 2000/01/12 21:11:48 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "15 December 1999" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "12 January 2000" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -39,10 +39,14 @@ deb
 Generate a Debian distribution suitable for installation on a Debian Linux
 system.
 .TP 5
-inst
+inst, tardist
 .br
 Generate an IRIX distribution suitable for installation on an system running
 IRIX.
+.TP 5
+pkg
+.br
+Generate an AT&T software package. These are used primarily under Solaris.
 .TP 5
 portable
 .br
@@ -54,6 +58,10 @@ rpm
 .br
 Generate a Red Hat Package Manager ("RPM") distribution suitable
 for installation on a Red Hat Linux system.
+.TP 5
+swinstall, depot
+.br
+Generate a HP-UX software distribution.
 .LP
 Executable files in the distribution are normally stripped of debugging
 information when packaged. To disable this functionality use the
@@ -231,5 +239,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.10 2000/01/04 13:45:40 mike Exp $".
+.\" End of "$Id: epm.man,v 1.11 2000/01/12 21:11:48 mike Exp $".
 .\"
