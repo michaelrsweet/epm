@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.12 2001/03/03 21:29:48 mike Exp $"
+ * "$Id: epm.h,v 1.13 2001/03/20 14:06:50 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <limits.h>
 #include "epmstring.h"
 #include <ctype.h>
 #include <errno.h>
@@ -175,8 +176,8 @@ typedef struct				/**** Dependencies ****/
 {
   char	type;				/* Dependency type */
   char	product[256];			/* Product name */
-  char	version[256];			/* Product version string */
-  int	vernumber;			/* Product version number */
+  char	version[2][256];		/* Product version string */
+  int	vernumber[2];			/* Product version number */
 } depend_t;
 
 typedef struct				/**** Distribution Structure ****/
@@ -213,8 +214,7 @@ extern const char	*SetupProgram;	/* Setup program */
  */
 
 extern void	add_command(dist_t *dist, char type, const char *command);
-extern void	add_depend(dist_t *dist, char type, const char *product,
-		           const char *version, int vernumber);
+extern void	add_depend(dist_t *dist, char type, const char *line);
 extern file_t	*add_file(dist_t *dist);
 extern int	copy_file(const char *dst, const char *src,
 		          int mode, int owner, int group);
@@ -254,5 +254,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.12 2001/03/03 21:29:48 mike Exp $".
+ * End of "$Id: epm.h,v 1.13 2001/03/20 14:06:50 mike Exp $".
  */

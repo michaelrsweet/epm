@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.25 2001/03/03 21:48:34 mike Exp $"
+ * "$Id: dist.c,v 1.26 2001/03/20 14:06:50 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -17,16 +17,17 @@
  *
  * Contents:
  *
- *   add_command()  - Add a command to the distribution...
- *   add_depend()   - Add a dependency to the distribution...
- *   add_file()     - Add a file to the distribution.
- *   free_dist()    - Free memory used by a distribution.
- *   read_dist()    - Read a software distribution.
- *   add_string()   - Add a command to an array of commands...
- *   free_strings() - Free memory used by the array of strings.
- *   get_line()     - Get a line from a file, filtering for uname lines...
- *   expand_name()  - Expand a filename with environment variables.
- *   patmatch()     - Pattern matching...
+ *   add_command()   - Add a command to the distribution...
+ *   add_depend()    - Add a dependency to the distribution...
+ *   add_file()      - Add a file to the distribution.
+ *   free_dist()     - Free memory used by a distribution.
+ *   read_dist()     - Read a software distribution.
+ *   add_string()    - Add a command to an array of commands...
+ *   free_strings()  - Free memory used by the array of strings.
+ *   expand_name()   - Expand a filename with environment variables.
+ *   get_line()      - Get a line from a file, filtering for uname lines...
+ *   get_vernumber() - Convert a version string to a number...
+ *   patmatch()      - Pattern matching...
  */
 
 /*
@@ -47,6 +48,7 @@ static void	free_strings(int num_strings, char **strings);
 static char	*get_line(char *buffer, int size, FILE *fp,
 		          struct utsname *platform, const char *format,
 			  int *skip);
+static int	get_vernumber(const char *version);
 static int	patmatch(const char *, const char *);
 
 
@@ -96,12 +98,17 @@ add_command(dist_t     *dist,		/* I - Distribution */
 void
 add_depend(dist_t     *dist,		/* I - Distribution */
            char       type,		/* I - Type of dependency */
-	   const char *product,		/* I - Product name */
-	   const char *version,		/* I - Product version */
-           int        vernumber)	/* I - Version number */
+	   const char *line)		/* I - Line from file */
 {
-  depend_t	*temp;			/* New depend */
+  int		i;			/* Looping var */
+  depend_t	*temp;			/* New dependency */
+  char		*ptr;			/* Pointer into string */
+  const char	*lineptr;		/* Temporary pointer into line */
 
+
+ /*
+  * Allocate memory for the dependency...
+  */
 
   if (dist->num_depends == 0)
     temp = malloc(sizeof(depend_t));
@@ -116,23 +123,104 @@ add_depend(dist_t     *dist,		/* I - Distribution */
 
   dist->depends = temp;
   temp          += dist->num_depends;
+  dist->num_depends ++;
+
+ /*
+  * Initialize the dependency record...
+  */
+
+  memset(temp, 0, sizeof(depend_t));
 
   temp->type = type;
 
-  strncpy(temp->product, product, sizeof(temp->product) - 1);
-  temp->product[sizeof(temp->product) - 1] = '\0';
+ /*
+  * Get the product name string...
+  */
 
-  if (version)
+  for (ptr = temp->product; *line && !isspace(*line); line ++)
+    if (ptr < (temp->product + sizeof(temp->product) - 1))
+      *ptr++ = *line;
+
+  while (isspace(*line))
+    line ++;
+
+ /*
+  * Get the version strings, if any...
+  */
+
+  for (i = 0; *line && i < 2; i ++)
   {
-    strncpy(temp->version, version, sizeof(temp->version) - 1);
-    temp->version[sizeof(temp->version) - 1] = '\0';
+   /*
+    * Handle <version, >version, etc.
+    */
+
+    if (!isdigit(*line))
+    {
+      if (*line == '<' && i == 0)
+      {
+        strcpy(temp->version[0], "0.0");
+	i ++;
+      }
+
+      while (!isdigit(*line) && *line)
+        line ++;
+    }
+
+    if (!*line)
+      break;
+
+   /*
+    * Grab the version string...
+    */
+
+    for (ptr = temp->version[i]; *line && !isspace(*line); line ++)
+      if (ptr < (temp->version[i] + sizeof(temp->version[i]) - 1))
+	*ptr++ = *line;
+
+    while (isspace(*line))
+      line ++;
+
+   /*
+    * Get the version number, if any...
+    */
+
+    for (lineptr = line; isdigit(*lineptr); lineptr ++);
+
+    if (!*line || (!isspace(*lineptr) && *lineptr))
+    {
+     /*
+      * No version number specified, or the next number is a version
+      * string...
+      */
+
+      temp->vernumber[i] = get_vernumber(temp->version[i]);
+    }
+    else
+    {
+     /*
+      * Grab the version number directly from the line...
+      */
+
+      temp->vernumber[i] = atoi(line);
+
+      for (line = lineptr; isspace(*line); line ++);
+    }
   }
-  else
-    temp->version[0] = '\0';
 
-  temp->vernumber = vernumber;
+ /*
+  * Handle assigning default values based on the number of version numbers...
+  */
 
-  dist->num_depends ++;
+  switch (i)
+  {
+    case 0 :
+        strcpy(temp->version[0], "0.0");
+	/* fall through to set max version number */
+    case 1 :
+        strcpy(temp->version[1], "999.99.99p99");
+	temp->vernumber[1] = INT_MAX;
+	break;
+  }
 }
 
 
@@ -206,10 +294,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 		pattern[256],	/* Pattern for source files */
 		user[32],	/* User */
 		group[32],	/* Group */
-		*temp,		/* Temporary pointer */
-		*product,	/* Pointer to product name */
-		*version;	/* Pointer to version string */
-  int		vernumber;	/* Version number */
+		*temp;		/* Temporary pointer */
   int		mode,		/* File permissions */
 		skip;		/* 1 = skip files, 0 = archive files */
   dist_t	*dist;		/* Distribution data */
@@ -358,69 +443,15 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	      dist->vernumber = atoi(temp);
 	    }
 	    else
-	    {
-	      dist->vernumber = 0;
-	      for (temp = dist->version; *temp; temp ++)
-		if (isdigit(*temp))
-	          dist->vernumber = dist->vernumber * 10 + *temp - '0';
-            }
+	      dist->vernumber = get_vernumber(dist->version);
 	  }
 	}
-	else if (strcmp(line, "%incompat") == 0 ||
-	         strcmp(line, "%replaces") == 0 ||
-	         strcmp(line, "%requires") == 0)
-	{
-	 /*
-	  * Grab the product name...
-	  */
-
-	  product = temp;
-
-         /*
-	  * Find the product version...
-	  */
-
-	  if ((temp = strchr(temp, ' ')) != NULL)
-	  {
-	    while (isspace(*temp))
-	      *temp++ = '\0';
-
-            if (*temp)
-	    {
-	      version = temp;
-
-	      if ((temp = strchr(temp, ' ')) != NULL)
-	      {
-	        *temp++ = '\0';
-	        vernumber = atoi(temp);
-	      }
-	      else
-	      {
-	        vernumber = 0;
-	        for (temp = version; *temp; temp ++)
-		  if (isdigit(*temp))
-	            vernumber = vernumber * 10 + *temp - '0';
-              }
-	    }
-	    else
-	    {
-	      version   = NULL;
-	      vernumber = 0;
-	    }
-	  }
-	  else
-	  {
-	    version   = NULL;
-	    vernumber = 0;
-	  }
-
-	  if (strcmp(line, "%incompat") == 0)
-	    add_depend(dist, DEPEND_INCOMPAT, product, version, vernumber);
-	  else if (strcmp(line, "%replaces") == 0)
-	    add_depend(dist, DEPEND_REPLACES, product, version, vernumber);
-	  else
-	    add_depend(dist, DEPEND_REQUIRES, product, version, vernumber);
-	}
+	else if (strcmp(line, "%incompat") == 0)
+	  add_depend(dist, DEPEND_INCOMPAT, temp);
+	else if (strcmp(line, "%replaces") == 0)
+	  add_depend(dist, DEPEND_REPLACES, temp);
+	else if (strcmp(line, "%requires") == 0)
+	  add_depend(dist, DEPEND_REQUIRES, temp);
 	else
 	{
 	  fprintf(stderr, "epm: Unknown directive \"%s\" ignored!\n", line);
@@ -833,6 +864,68 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 
 
 /*
+ * 'get_vernumber()' - Convert a version string to a number...
+ */
+
+static int				/* O - Version number */
+get_vernumber(const char *version)	/* I - Version string */
+{
+  const char	*ptr;			/* Pointer into string */
+  int		tempnumber,		/* Temporary version number */
+		vernumber,		/* Version number */
+		veroffset,		/* Offset for last version number */
+		vermult;		/* Multiplier for last number */
+
+
+ /*
+  * Loop through the version number string and construct a version number.
+  */
+
+  for (ptr = version, vernumber = 0, veroffset = 0, vermult = 10000, tempnumber = 0;
+       *ptr && !isspace(*ptr);
+       ptr ++)
+    if (isdigit(*ptr))
+      tempnumber = tempnumber * 10 + *ptr - '0';
+    else
+    {
+     /*
+      * Add each mini version number (m.n.p) as hundreds...
+      */
+
+      if (*ptr == '.')
+	veroffset = 0;
+      else if (*ptr == 'p')
+      {
+	if (strncmp(ptr, "pre", 3) == 0)
+	{
+	  ptr += 2;
+	  veroffset = -50;
+	}
+	else
+	  veroffset = 0;
+
+        vermult = 100;
+      }
+      else
+      {
+	veroffset = -100;
+	vermult   = 100;
+      }
+
+      vernumber  = vernumber * 100 + tempnumber;
+      tempnumber = 0;
+    }
+
+ /*
+  * The final portion of the version number is offset by
+  * veroffset to handle patch and pre/beta releases...
+  */
+
+  return (vernumber * vermult + tempnumber + veroffset);
+}
+
+
+/*
  * 'patmatch()' - Pattern matching...
  */
 
@@ -941,5 +1034,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.25 2001/03/03 21:48:34 mike Exp $".
+ * End of "$Id: dist.c,v 1.26 2001/03/20 14:06:50 mike Exp $".
  */
