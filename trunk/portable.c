@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.44 2001/06/07 13:21:10 mike Exp $"
+ * "$Id: portable.c,v 1.45 2001/06/21 16:05:57 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -176,7 +176,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    {
 	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
 	              strerror(errno));
-	      continue;
+	      tar_close(tarfile);
+	      return (1);
 	    }
 
            /*
@@ -202,6 +203,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    {
 	      fprintf(stderr, "epm: Error writing file header - %s\n",
 	              strerror(errno));
+	      tar_close(tarfile);
 	      return (1);
 	    }
 
@@ -209,6 +211,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    {
 	      fprintf(stderr, "epm: Error writing file data - %s\n",
 	              strerror(errno));
+	      tar_close(tarfile);
 	      return (1);
 	    }
 	    break;
@@ -227,6 +230,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    {
 	      fprintf(stderr, "epm: Error writing link header - %s\n",
 	              strerror(errno));
+	      tar_close(tarfile);
 	      return (1);
 	    }
 	    break;
@@ -263,7 +267,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    {
 	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
 	              strerror(errno));
-	      continue;
+	      tar_close(tarfile);
+	      return (1);
 	    }
 
            /*
@@ -289,6 +294,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    {
 	      fprintf(stderr, "epm: Error writing file header - %s\n",
 	              strerror(errno));
+	      tar_close(tarfile);
 	      return (1);
 	    }
 
@@ -296,6 +302,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    {
 	      fprintf(stderr, "epm: Error writing file data - %s\n",
 	              strerror(errno));
+	      tar_close(tarfile);
 	      return (1);
 	    }
 	    break;
@@ -314,6 +321,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    {
 	      fprintf(stderr, "epm: Error writing link header - %s\n",
 	              strerror(errno));
+	      tar_close(tarfile);
 	      return (1);
 	    }
 	    break;
@@ -352,7 +360,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      {
 		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
 	        	strerror(errno));
-		continue;
+		tar_close(tarfile);
+		return (1);
 	      }
 
              /*
@@ -378,6 +387,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      {
 		fprintf(stderr, "epm: Error writing file header - %s\n",
 	        	strerror(errno));
+		tar_close(tarfile);
 		return (1);
 	      }
 
@@ -385,6 +395,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      {
 		fprintf(stderr, "epm: Error writing file data - %s\n",
 	        	strerror(errno));
+		tar_close(tarfile);
 		return (1);
 	      }
 	      break;
@@ -403,6 +414,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      {
 		fprintf(stderr, "epm: Error writing link header - %s\n",
 	        	strerror(errno));
+		tar_close(tarfile);
 		return (1);
 	      }
 	      break;
@@ -435,7 +447,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      {
 		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
 	        	strerror(errno));
-		continue;
+		tar_close(tarfile);
+		return (1);
 	      }
 
              /*
@@ -461,6 +474,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      {
 		fprintf(stderr, "epm: Error writing file header - %s\n",
 	        	strerror(errno));
+		tar_close(tarfile);
 		return (1);
 	      }
 
@@ -468,6 +482,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      {
 		fprintf(stderr, "epm: Error writing file data - %s\n",
 	        	strerror(errno));
+		tar_close(tarfile);
 		return (1);
 	      }
 	      break;
@@ -486,6 +501,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      {
 		fprintf(stderr, "epm: Error writing link header - %s\n",
 	        	strerror(errno));
+		tar_close(tarfile);
 		return (1);
 	      }
 	      break;
@@ -498,15 +514,18 @@ make_portable(const char     *prodname,	/* I - Product short name */
   * Create the distribution archives...
   */
 
-  write_dist("distribution", directory, prodname, platname, dist, distfiles,
-             setup);
+  if (write_dist("distribution", directory, prodname, platname, dist,
+                 distfiles, setup))
+    return (1);
 
   if (havepatchfiles)
   {
     sprintf(filename, "%s-patch", dist->version);
     strcpy(dist->version, filename);
 
-    write_dist("patch", directory, prodname, platname, dist, patchfiles, setup);
+    if (write_dist("patch", directory, prodname, platname, dist, patchfiles,
+                   setup))
+      return (1);
   }
 
  /*
@@ -1806,5 +1825,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.44 2001/06/07 13:21:10 mike Exp $".
+ * End of "$Id: portable.c,v 1.45 2001/06/21 16:05:57 mike Exp $".
  */
