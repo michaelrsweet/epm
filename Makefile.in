@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.1 1999/06/21 14:25:15 mike Exp $"
+# "$Id: Makefile.in,v 1.2 1999/06/21 14:47:18 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -88,7 +88,7 @@ install: epm
 	$(CHMOD) 755 $(bindir)/epm
 	-$(MKDIR) $(mandir)/man1
 	$(RM) $(mandir)/man1/epm.1
-	$(CP) epm.1 $(mandir)/man1
+	$(CP) epm.man $(mandir)/man1/epm.1
 	$(CHMOD) 644 $(mandir)/man1/epm.1
 
 #
@@ -102,5 +102,5 @@ epm:	$(OBJS)
 $(OBJS):	Makefile config.h string.h
 
 #
-# End of "$Id: Makefile.in,v 1.1 1999/06/21 14:25:15 mike Exp $".
+# End of "$Id: Makefile.in,v 1.2 1999/06/21 14:47:18 mike Exp $".
 #
