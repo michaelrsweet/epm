@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.6 2000/06/28 20:25:21 mike Exp $"
+ * "$Id: inst.c,v 1.7 2000/06/28 20:46:01 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -45,7 +45,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
           dist_t         *dist,		/* I - Distribution information */
 	  struct utsname *platform)	/* I - Platform information */
 {
-  int		i, j;			/* Looping vars */
+  int		i;			/* Looping var */
   FILE		*fp;			/* Spec/IDB/script file */
   tarf_t	*tarfile;		/* .tardist file */
   char		name[1024];		/* Full product name */
@@ -446,5 +446,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.6 2000/06/28 20:25:21 mike Exp $".
+ * End of "$Id: inst.c,v 1.7 2000/06/28 20:46:01 mike Exp $".
  */
