@@ -104,7 +104,8 @@ WHAT'S NEW IN EPM 2.1?
 	- Added support for variables on the command line
 	  (name=value); insert into project filenames using
 	  $name.
-	- Now only specify run levels 0 and 3 for init scripts.
+	- Now only specify run levels 0 and 3 for init scripts
+	  (0, 3, and 5 for Linux.)
 	- Now support init scripts in /sbin/init.d and
 	  /sbin/init.d/rcN.d (SuSE.)
 	- RPM distributions should now work OK for non-Red Hat
