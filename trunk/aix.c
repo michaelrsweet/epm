@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.4 2001/06/26 19:47:36 mike Exp $"
+ * "$Id: aix.c,v 1.5 2001/08/08 14:26:24 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -352,7 +352,7 @@ aix_version(const char *version)	/* I - EPM version number */
  * 'write_liblpp()' - Create the liblpp.a file for the root or /usr parts.
  */
 
-int					/* O - 0 = success, 1 = fail */
+static int				/* O - 0 = success, 1 = fail */
 write_liblpp(const char     *prodname,	/* I - Product short name */
              const char     *directory,	/* I - Directory for distribution files */
              dist_t         *dist,	/* I - Distribution information */
@@ -650,5 +650,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 }
 
 /*
- * End of "$Id: aix.c,v 1.4 2001/06/26 19:47:36 mike Exp $".
+ * End of "$Id: aix.c,v 1.5 2001/08/08 14:26:24 mike Exp $".
  */
