@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.25 2001/12/28 21:51:38 mike Exp $"
+// "$Id: setup2.cxx,v 1.26 2002/01/02 20:43:05 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -94,6 +94,8 @@ main(int  argc,		// I - Number of command-line arguments
 {
   Fl_Window	*w;	// Main window...
 
+
+  Fl::scheme(NULL);
 
   if (getuid() != 0)
   {
@@ -1062,5 +1064,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.25 2001/12/28 21:51:38 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.26 2002/01/02 20:43:05 mike Exp $".
 //
