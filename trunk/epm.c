@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.23 1999/09/03 15:46:50 mike Exp $"
+ * "$Id: epm.c,v 1.24 1999/09/03 21:02:13 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -57,11 +57,11 @@
  * "test" command symlink option...
  */
 
-#ifdef __hpux
+#if defined(__hpux) || defined(__sun)
 #  define SYMLINK "-h"
 #else
 #  define SYMLINK "-L"
-#endif /* __hpux */
+#endif /* __hpux || __sun */
 
 
 /*
@@ -2138,5 +2138,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.23 1999/09/03 15:46:50 mike Exp $".
+ * End of "$Id: epm.c,v 1.24 1999/09/03 21:02:13 mike Exp $".
  */
