@@ -15,3 +15,4 @@ TODO for EPM:
 	  dependencies against portable, RPM, Debian, etc.
 	  packages, rather than just packages of the same format.
 	- Support filenames with spaces.
+	- Support run levels for init scripts.
