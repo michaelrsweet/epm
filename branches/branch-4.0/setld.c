@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.11.2.9 2004/12/05 06:08:23 mike Exp $"
+ * "$Id: setld.c,v 1.11.2.10 2004/12/06 04:08:52 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -71,9 +71,9 @@ make_setld(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  if (strlen(prodname) != 3)
+  if (strlen(prodname) < 3)
   {
-    fprintf(stderr, "epm: Need a product name consisting of 3 uppercase characters.\n"
+    fprintf(stderr, "epm: Need a product name of at least 3 uppercase characters.\n"
                     "     The current product name (%s) is not acceptable.\n",
             prodname);
     return (1);
@@ -82,7 +82,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   for (i = 0; prodname[i]; i ++)
     if (!isupper(prodname[i] & 255))
     {
-      fprintf(stderr, "epm: Need a product name consisting of 3 uppercase characters.\n"
+      fprintf(stderr, "epm: Need a product name of at least 3 uppercase characters.\n"
                       "     The current product name (%s) is not acceptable.\n",
               prodname);
       return (1);
@@ -90,9 +90,9 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
   for (i = 0; i < dist->num_subpackages; i ++)
   {
-    if (strlen(dist->subpackages[i]) > 74)
+    if ((strlen(dist->subpackages[i]) + strlen(prodname)) > 77)
     {
-      fprintf(stderr, "epm: Subpackage names must be less than 75 characters.\n"
+      fprintf(stderr, "epm: Product + subpackage names must be less than 77 characters.\n"
                       "     The current subpackage name (%s) is not acceptable.\n",
               dist->subpackages[i]);
       return (1);
@@ -127,8 +127,6 @@ make_setld(const char     *prodname,	/* I - Product short name */
     snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
   getcwd(current, sizeof(current));
-
-  snprintf(subset, sizeof(subset), "%sALL%03d", prodname, dist->vernumber);
 
  /*
   * Add symlinks for init scripts...
@@ -206,7 +204,8 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating subset control program...");
 
-  snprintf(scpname, sizeof(scpname), "%s/src/scps/%s.scp", directory, subset);
+  snprintf(scpname, sizeof(scpname), "%s/src/scps/%sALL%03d.scp", directory,
+           prodname, dist->vernumber);
 
   if ((fp = fopen(scpname, "w")) == NULL)
   {
@@ -293,6 +292,10 @@ make_setld(const char     *prodname,	/* I - Product short name */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+  {
+    snprintf(subset, sizeof(subset), "%s%s%03d", prodname,
+             file->subpackage ? file->subpackage : "ALL", dist->vernumber);
+
     switch (tolower(file->type))
     {
       case 'c' :
@@ -305,6 +308,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
           fprintf(fp, "0\t.%s\t%s\n", file->dst, subset);
 	  break;
     }
+  }
 
   fclose(fp);
 
@@ -315,7 +319,8 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating key file...");
 
-  snprintf(keyname, sizeof(keyname), "%s/src/%s%03d.k", directory, prodname, dist->vernumber);
+  snprintf(keyname, sizeof(keyname), "%s/src/%s%03d.k", directory, prodname,
+           dist->vernumber);
 
   if ((fp = fopen(keyname, "w")) == NULL)
   {
@@ -330,7 +335,11 @@ make_setld(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "MI=%s%03d.mi\n", prodname, dist->vernumber);
   fputs("COMPRESS=0\n", fp);
   fputs("%%\n", fp);
-  qprintf(fp, "%s\t.\t0\t'%s, %s'\n", subset, dist->product, dist->version);
+  qprintf(fp, "%sALL%03d\t.\t0\t'%s, %s'\n", prodname, dist->vernumber,
+          dist->product, dist->version);
+  for (i = 0; i < dist->num_subpackages; i ++)
+    qprintf(fp, "%s%s%03d\t.\t0\t'%s, %s'\n", prodname, dist->subpackages[i],
+            dist->vernumber, dist->product, dist->version);
   fclose(fp);
 
  /*
@@ -448,5 +457,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.11.2.9 2004/12/05 06:08:23 mike Exp $".
+ * End of "$Id: setld.c,v 1.11.2.10 2004/12/06 04:08:52 mike Exp $".
  */
