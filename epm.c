@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.30 1999/10/20 14:50:20 mike Exp $"
+ * "$Id: epm.c,v 1.31 1999/10/22 20:36:48 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -137,9 +137,9 @@ typedef struct				/**** Distribution Structure ****/
   int		num_patches;		/* Number of patch commands */
   char		**patches;		/* Patch commands */
   int		num_incompats;		/* Number of incompatible products */
-  char		**incompats;		/* Incompatible products */
+  char		**incompats;		/* Incompatible products/files */
   int		num_requires;		/* Number of requires products */
-  char		**requires;		/* Required products */
+  char		**requires;		/* Required products/files */
   int		num_files;		/* Number of files */
   file_t	*files;			/* Files */
 } dist_t;
@@ -1682,32 +1682,73 @@ write_install(dist_t *dist,	/* I - Software distribution */
   for (i = 0; i < dist->num_requires; i ++)
   {
     fprintf(scriptfile, "#%%requires: %s\n", dist->requires[i]);
-    fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
-            dist->requires[i]);
-    fprintf(scriptfile, "	if test -x %d.install; then\n",
-            dist->requires[i]);
-    fprintf(scriptfile, "		echo Installing required %s software...\n",
-            dist->requires[i]);
-    fprintf(scriptfile, "		./%s.install now\n", dist->requires[i]);
-    fputs("	else\n", scriptfile);
-    fprintf(scriptfile, "		echo Sorry, you must first install \\'%s\\'!\n",
-	    dist->requires[i]);
-    fputs("		exit 1\n", scriptfile);
-    fputs("	fi\n", scriptfile);
-    fputs("fi\n", scriptfile);
+
+    if (dist->requires[i][0] == '/')
+    {
+     /*
+      * Require a file...
+      */
+
+      fprintf(scriptfile, "if test ! -r %s; then\n", dist->requires[i]);
+      fprintf(scriptfile, "	echo Sorry, you must first install \\'%s\\'!\n",
+	      dist->requires[i]);
+      fputs("	exit 1\n", scriptfile);
+      fputs("fi\n", scriptfile);
+    }
+    else
+    {
+     /*
+      * Require a product...
+      */
+
+      fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
+              dist->requires[i]);
+      fprintf(scriptfile, "	if test -x %d.install; then\n",
+              dist->requires[i]);
+      fprintf(scriptfile, "		echo Installing required %s software...\n",
+              dist->requires[i]);
+      fprintf(scriptfile, "		./%s.install now\n", dist->requires[i]);
+      fputs("	else\n", scriptfile);
+      fprintf(scriptfile, "		echo Sorry, you must first install \\'%s\\'!\n",
+	      dist->requires[i]);
+      fputs("		exit 1\n", scriptfile);
+      fputs("	fi\n", scriptfile);
+      fputs("fi\n", scriptfile);
+    }
   }
 
   for (i = 0; i < dist->num_incompats; i ++)
   {
     fprintf(scriptfile, "#%%incompats: %s\n", dist->incompats[i]);
-    fprintf(scriptfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
-            dist->incompats[i]);
-    fprintf(scriptfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	    dist->incompats[i]);
-    fprintf(scriptfile, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
-	    dist->incompats[i]);
-    fputs("	exit 1\n", scriptfile);
-    fputs("fi\n", scriptfile);
+
+    if (dist->requires[i][0] == '/')
+    {
+     /*
+      * Incompatible with a file...
+      */
+
+      fprintf(scriptfile, "if test -r %s; then\n", dist->incompats[i]);
+      fprintf(scriptfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	      dist->incompats[i]);
+      fputs("	echo Please remove it first.\n", scriptfile);
+      fputs("	exit 1\n", scriptfile);
+      fputs("fi\n", scriptfile);
+    }
+    else
+    {
+     /*
+      * Incompatible with a product...
+      */
+
+      fprintf(scriptfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
+              dist->incompats[i]);
+      fprintf(scriptfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	      dist->incompats[i]);
+      fprintf(scriptfile, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
+	      dist->incompats[i]);
+      fputs("	exit 1\n", scriptfile);
+      fputs("fi\n", scriptfile);
+    }
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
@@ -1843,6 +1884,8 @@ write_install(dist_t *dist,	/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
@@ -2193,6 +2236,8 @@ write_patch(dist_t *dist,	/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
@@ -2347,6 +2392,7 @@ write_remove(dist_t *dist,	/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
@@ -2419,5 +2465,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.30 1999/10/20 14:50:20 mike Exp $".
+ * End of "$Id: epm.c,v 1.31 1999/10/22 20:36:48 mike Exp $".
  */

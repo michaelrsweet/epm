@@ -77,8 +77,13 @@ WHAT'S NEW IN EPM 1.7?
 
     EPM 1.7 adds the following features and fixes to EPM 1.6:
 
-        - The progress messages for shared and non-shared software
-	  were the same.
+	- The %requires and %incompat directives now support
+	  specification of files as well as products.
+	- The init script installation code now creates a link in the
+	  init.d subdirectory to avoid frustrating well-trained
+	  fingers.
+	- The progress messages for shared and non-shared software were
+	  the same.
 
 
 WHAT'S NEW IN EPM 1.6?

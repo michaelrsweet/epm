@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.3 1999/08/19 16:10:04 mike Exp $"
+.\" "$Id: epm.man,v 1.4 1999/10/22 20:36:48 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "19 August 1999" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "22 October 1999" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -57,8 +57,11 @@ Sets the copyright notice for the file.
 Includes files listed in \fIfilename\fR.
 .TP 5
 %incompat \fIproduct\fR
+.TP 5
+%incompat \fIfilename\fR
 .br
-Indicates that this product is incompatible with the named product.
+Indicates that this product is incompatible with the named product or
+file.
 .TP 5
 %install \fIscript or program\fR
 .br
@@ -85,8 +88,10 @@ Specifies a README file to be included in the distribution.
 Specifies a script or program to be run before removing or patching files.
 .TP 5
 %requires \fIproduct\fR
+.TP 5
+%requires \fIfilename\fR
 .br
-Indicates that this product requires the named product.
+Indicates that this product requires the named product or file.
 .TP 5
 %vendor \fIvendor or author name\fR
 .br
@@ -170,5 +175,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.3 1999/08/19 16:10:04 mike Exp $".
+.\" End of "$Id: epm.man,v 1.4 1999/10/22 20:36:48 mike Exp $".
 .\"
