@@ -1,5 +1,15 @@
-CHANGES - ESP Package Manager (EPM) 3.1
+CHANGES - ESP Package Manager (EPM) 3.2
 ---------------------------------------
+
+WHAT'S NEW IN EPM 3.2?
+
+    EPM 3.2 adds the following features, fixes, and changes to
+    EPM 3.1:
+
+	- Added "SHELL=/bin/sh" line to portable installation,
+	  patch, and remove scripts in case the root shell is
+	  not /bin/sh or a compatible shell.
+
 
 WHAT'S NEW IN EPM 3.1?
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.52 2001/07/23 17:54:21 mike Exp $"
+ * "$Id: portable.c,v 1.53 2001/09/27 20:13:37 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -660,6 +660,7 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fputs("#\n", fp);
 
   fputs("PATH=${PATH}:/bin:/usr/bin:/usr/ucb\n", fp);
+  fputs("SHELL=/bin/sh\n", fp);
   fputs("if test \"`whoami`\" != \"root\"; then\n", fp);
   fprintf(fp, "	echo Sorry, you must be root to %s this software.\n",
           title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
@@ -1921,5 +1922,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.52 2001/07/23 17:54:21 mike Exp $".
+ * End of "$Id: portable.c,v 1.53 2001/09/27 20:13:37 mike Exp $".
  */
