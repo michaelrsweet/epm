@@ -51,17 +51,17 @@ DDEESSCCRRIIPPTTIIOONN
             tion suitable for installation on  a  Red  Hat  Linux
             system.
 
+       setld
+            Generate a Tru64 (setld) software distribution.
+
        swinstall, depot
             Generate a HP-UX software distribution.
 
        Executable files in the distribution are normally stripped
-       of debugging information when packaged.  To  disable  this
-       functionality use the _-_g option.
 
 
 
-
-26 March 2001          ESP Package Manager                      1
+25 April 2001          ESP Package Manager                      1
 
 
 
@@ -69,6 +69,9 @@ DDEESSCCRRIIPPTTIIOONN
 
 epm(1)                Easy Software Products               epm(1)
 
+
+       of debugging information when packaged.  To  disable  this
+       functionality use the _-_g option.
 
        Intermediate (spec, etc.) files used to create the distri-
        bution are normally removed after the distribution is cre-
@@ -120,14 +123,11 @@ LLIISSTT FFIILLEESS
             Adds a line of descriptive text to the  distribution.
             Multiple lines are supported.
 
-       %format _f_o_r_m_a_t _[_._._. _f_o_r_m_a_t_]
-            Uses  following files and directives only if the dis-
-            tribution format is the same as _f_o_r_m_a_t.
 
 
 
 
-26 March 2001          ESP Package Manager                      2
+25 April 2001          ESP Package Manager                      2
 
 
 
@@ -135,6 +135,10 @@ LLIISSTT FFIILLEESS
 
 epm(1)                Easy Software Products               epm(1)
 
+
+       %format _f_o_r_m_a_t _[_._._. _f_o_r_m_a_t_]
+            Uses  following files and directives only if the dis-
+            tribution format is the same as _f_o_r_m_a_t.
 
        %format !_f_o_r_m_a_t _[_._._. _f_o_r_m_a_t_]
             Uses following files and directives only if the  dis-
@@ -185,15 +189,11 @@ epm(1)                Easy Software Products               epm(1)
 
        %requires _p_r_o_d_u_c_t
 
-       %requires _f_i_l_e_n_a_m_e
-            Indicates  that this product requires the named prod-
-            uct or file.
 
 
 
 
-
-26 March 2001          ESP Package Manager                      3
+25 April 2001          ESP Package Manager                      3
 
 
 
@@ -201,6 +201,10 @@ epm(1)                Easy Software Products               epm(1)
 
 epm(1)                Easy Software Products               epm(1)
 
+
+       %requires _f_i_l_e_n_a_m_e
+            Indicates  that this product requires the named prod-
+            uct or file.
 
        %vendor _v_e_n_d_o_r _o_r _a_u_t_h_o_r _n_a_m_e
             Specifies the vendor or author of the product.
@@ -253,13 +257,9 @@ epm(1)                Easy Software Products               epm(1)
             that  the files have changed or are new and should be
             included as part of a patch.
 
-       i _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
 
 
-
-
-
-26 March 2001          ESP Package Manager                      4
+25 April 2001          ESP Package Manager                      4
 
 
 
@@ -267,6 +267,8 @@ epm(1)                Easy Software Products               epm(1)
 
 epm(1)                Easy Software Products               epm(1)
 
+
+       i _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
 
        I _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
             Specifies an initialization script for  installation.
@@ -323,9 +325,7 @@ KKNNOOWWNN BBUUGGSS
 
 
 
-
-
-26 March 2001          ESP Package Manager                      5
+25 April 2001          ESP Package Manager                      5
 
 
 
@@ -391,6 +391,6 @@ CCOOPPYYRRIIGGHHTT
 
 
 
-26 March 2001          ESP Package Manager                      6
+25 April 2001          ESP Package Manager                      6
 
 
