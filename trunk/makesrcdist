@@ -38,6 +38,7 @@ echo "Removing CVS directories..."
 rm -rf CVS */CVS
 rm -f makesrcdist
 rm -f ANNOUCEMENT
+rm -rf autom4te*
 
 echo "Making .tar.gz distribution..."
 
