@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.8 2002/01/02 20:39:42 mike Exp $"
+.\" "$Id: epm.man,v 1.9 2002/07/03 18:58:56 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "26 June 2001" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "3 July 2002" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -26,6 +26,8 @@ epm \- create software packages.
 .I format
 ] [ \-g ] [ \-k ] [ \-n[mrs] ] [ \-s
 .I setup.xpm
+] [ \--output-dir
+.I directory
 ] [ \--setup-image
 .I setup.xpm
 ] [ \--setup-program
@@ -120,6 +122,10 @@ The \fI--setup-types\fR option specifies the \fIsetup.types\fR
 file to include with the distribution. This option is currently
 only supported by portable distributions.
 .LP
+The \fI--output-dir\fR option specifies the directory to
+place output file into. The default directory is based on the
+operating system, version, and architecture.
+.LP
 The \fI-v\fR option ("verbose") increases the amount of information that is
 reported. Use multiple v's for more verbose output.
 .LP
@@ -165,5 +171,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.8 2002/01/02 20:39:42 mike Exp $".
+.\" End of "$Id: epm.man,v 1.9 2002/07/03 18:58:56 mike Exp $".
 .\"

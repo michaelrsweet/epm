@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.67 2002/02/13 18:01:44 mike Exp $"
+ * "$Id: epm.c,v 1.68 2002/07/03 18:58:56 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -98,13 +98,14 @@ main(int  argc,			/* I - Number of command-line arguments */
     usage();
   }
 
-  strip       = 1;
-  format      = PACKAGE_PORTABLE;
-  setup       = NULL;
-  types       = NULL;
-  namefmt     = "srm";
-  prodname[0] = '\0';
-  listname[0] = '\0';
+  strip        = 1;
+  format       = PACKAGE_PORTABLE;
+  setup        = NULL;
+  types        = NULL;
+  namefmt      = "srm";
+  prodname[0]  = '\0';
+  listname[0]  = '\0';
+  directory[0] = '\0';
 
   for (i = 1; i < argc; i ++)
     if (argv[i][0] == '-')
@@ -287,6 +288,20 @@ main(int  argc,			/* I - Number of command-line arguments */
 	        usage();
               }
             }
+            else if (strcmp(argv[i], "--output-dir") == 0)
+            {
+              i ++;
+              if (i < argc)
+	      {
+                strncpy(directory, argv[i], sizeof(directory) - 1);
+		directory[sizeof(directory) - 1] = '\0';
+	      }
+              else
+              {
+                puts("epm: Expected output directory.");
+                usage();
+              }
+            }
 	    else
             {
               printf("epm: Unknown option \"%s\".\n", argv[i]);
@@ -329,8 +344,15 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Format the build directory and platform name strings...
   */
 
-  snprintf(directory, sizeof(directory), "%s-%s-%s", platform.sysname,
-           platform.release, platform.machine);
+  if (!directory[0]) 
+  {
+   /*
+    * User did not specify an output directory, so use our default...
+    */
+
+    snprintf(directory, sizeof(directory), "%s-%s-%s", platform.sysname,
+             platform.release, platform.machine);
+  }
 
   platname[0] = '\0';
 
@@ -530,5 +552,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.67 2002/02/13 18:01:44 mike Exp $".
+ * End of "$Id: epm.c,v 1.68 2002/07/03 18:58:56 mike Exp $".
  */
