@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.14 2001/06/29 19:14:56 mike Exp $"
+// "$Id: setup2.cxx,v 1.15 2001/06/29 20:56:53 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -800,7 +800,15 @@ next_cb(Fl_Button *, void *)
       Wizard->next();
   }
 
-  if (Wizard->value() == LicensePane)
+  if (Wizard->value() == ConfirmPane)
+  {
+    ConfirmList->clear();
+
+    for (i = 0; i < NumDists; i ++)
+      if (SoftwareList->checked(i + 1))
+        ConfirmList->add(SoftwareList->text(i + 1));
+  }
+  else if (Wizard->value() == LicensePane)
   {
     PrevButton->deactivate();
     Wizard->next();
@@ -993,17 +1001,23 @@ update_sizes(void)
     }
 
   // Get the sizes of the root and /usr partition...
+#if defined(__sgi) || defined(__sun)
   if (statfs("/", &rootpart, sizeof(rootpart), 0))
+#else
+  if (statfs("/", &rootpart))
+#endif // __sgi || __sun
     rootfree = 1024;
   else
     rootfree = (double)rootpart.f_bfree * (double)rootpart.f_bsize / 1024.0 / 1024.0;
 
+#if defined(__sgi) || defined(__sun)
   if (statfs("/usr", &usrpart, sizeof(usrpart), 0))
+#else
+  if (statfs("/usr", &usrpart))
+#endif // __sgi || __sun
     usrfree = 1024;
   else
     usrfree = (double)usrpart.f_bfree * (double)usrpart.f_bsize / 1024.0 / 1024.0;
-
-  usrfree --;
 
   // Display the results to the user...
   if (rootfree == usrfree)
@@ -1046,5 +1060,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.14 2001/06/29 19:14:56 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.15 2001/06/29 20:56:53 mike Exp $".
 //

@@ -26,9 +26,11 @@ extern Fl_Check_Browser *SoftwareList;
 extern Fl_Button *InstallAllButton;
 extern Fl_Button *InstallNoneButton;
 extern Fl_Box *SoftwareSize;
+extern Fl_Group *ConfirmPane;
+#include <FL/Fl_Browser.H>
+extern Fl_Browser *ConfirmList;
 extern Fl_Group *LicensePane;
 extern Fl_Box *LicenseLabel;
-#include <FL/Fl_Browser.H>
 extern Fl_Browser *LicenseBrowser;
 extern CheckButton *LicenseAccept;
 extern CheckButton *LicenseDecline;

@@ -52,6 +52,10 @@ list_cb(0,0);
 
 Fl_Box *SoftwareSize=(Fl_Box *)0;
 
+Fl_Group *ConfirmPane=(Fl_Group *)0;
+
+Fl_Browser *ConfirmList=(Fl_Browser *)0;
+
 Fl_Group *LicensePane=(Fl_Group *)0;
 
 Fl_Box *LicenseLabel=(Fl_Box *)0;
@@ -179,6 +183,7 @@ ton below.");
       }
       { Fl_Group* o = SoftwarePane = new Fl_Group(10, 10, 560, 285);
         o->box(FL_FLAT_BOX);
+        o->hide();
         { Fl_Box* o = new Fl_Box(10, 10, 560, 25, "Software Selection");
           o->labelfont(1);
           o->labelsize(18);
@@ -207,6 +212,22 @@ ton below.");
           o->box(FL_FLAT_BOX);
           o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
         }
+        o->end();
+      }
+      { Fl_Group* o = ConfirmPane = new Fl_Group(10, 10, 560, 280);
+        o->box(FL_FLAT_BOX);
+        { Fl_Box* o = new Fl_Box(10, 10, 560, 25, "Confirm Installation");
+          o->labelfont(1);
+          o->labelsize(18);
+          o->labelcolor(4);
+          o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        }
+        { Fl_Box* o = new Fl_Box(40, 55, 500, 50, "You have selected the software below for installation. Click on the \"Next\" \
+button to start the software installation. Click on the \"Back\" button to cha\
+nge your selections.");
+          o->align(133|FL_ALIGN_INSIDE);
+        }
+        ConfirmList = new Fl_Browser(40, 110, 500, 180);
         o->end();
       }
       { Fl_Group* o = LicensePane = new Fl_Group(10, 10, 560, 280);
