@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.69 2004/05/26 19:39:05 mike Exp $"
+dnl "$Id: configure.in,v 1.70 2004/06/12 16:03:17 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -132,7 +132,7 @@ if test "x$FLTKCONFIG" = x; then
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
 	GUIS="setup uninst"
-	GUILIBS="`$FLTKCONFIG --ldstaticflags` -lfltk_images"
+	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
 
 	if test "$uname" = Darwin; then
@@ -384,5 +384,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist)
 
 dnl
-dnl End of "$Id: configure.in,v 1.69 2004/05/26 19:39:05 mike Exp $".
+dnl End of "$Id: configure.in,v 1.70 2004/06/12 16:03:17 mike Exp $".
 dnl
