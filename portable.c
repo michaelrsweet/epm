@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.31 2001/03/27 14:41:09 mike Exp $"
+ * "$Id: portable.c,v 1.32 2001/03/27 19:17:15 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -847,15 +847,17 @@ write_dist(const char *title,		/* I - Title to show */
   if (dist->relnumber)
   {
     if (platname[0])
-      sprintf(filename, "%s-%s-%d-%s.tar.gz", prodname, dist->version, dist->relnumber,
-              platname);
+      sprintf(filename, "%s/%s-%s-%d-%s.tar.gz", directory, prodname,
+              dist->version, dist->relnumber, platname);
     else
-      sprintf(filename, "%s-%s-%d.tar.gz", prodname, dist->version, dist->relnumber);
+      sprintf(filename, "%s/%s-%s-%d.tar.gz", directory, prodname,
+              dist->version, dist->relnumber);
   }
   else if (platname[0])
-    sprintf(filename, "%s-%s-%s.tar.gz", prodname, dist->version, platname);
+    sprintf(filename, "%s/%s-%s-%s.tar.gz", directory, prodname,
+            dist->version, platname);
   else
-    sprintf(filename, "%s-%s.tar.gz", prodname, dist->version);
+    sprintf(filename, "%s/%s-%s.tar.gz", directory, prodname, dist->version);
 
   if ((tarfile = tar_open(filename, 1)) == NULL)
   {
@@ -1774,5 +1776,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.31 2001/03/27 14:41:09 mike Exp $".
+ * End of "$Id: portable.c,v 1.32 2001/03/27 19:17:15 mike Exp $".
  */
