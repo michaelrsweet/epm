@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.16 2000/12/10 15:40:20 mike Exp $"
+.\" "$Id: epm.man,v 1.17 2000/12/10 16:45:05 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -200,13 +200,6 @@ operating systems and releases.
 .br
 Specifies that the following files are applicable to all operating systems.
 .TP 5
-f \fImode user group destination source\fR
-.TP 5
-F \fImode user group destination source\fR
-.br
-Specifies a file for installation. The second form specifies that the file
-has changed or is new and should be included as part of a patch.
-.TP 5
 c \fImode user group destination source\fR
 .TP 5
 C \fImode user group destination source\fR
@@ -223,6 +216,21 @@ D \fImode user group destination -\fR
 Specifies a directory should be created when installing the software. The
 second form specifies that the directory is new and should be included as part
 of a patch.
+.TP 5
+f \fImode user group destination source\fR
+.TP 5
+F \fImode user group destination source\fR
+.br
+Specifies a file for installation. The second form specifies that the file
+has changed or is new and should be included as part of a patch.
+.TP 5
+f \fImode user group destination source/pattern\fR
+.TP 5
+F \fImode user group destination source/pattern\fR
+.br
+Specifies one or more files for installation using shell
+wildcard patterns. The second form specifies that the files have
+changed or are new and should be included as part of a patch.
 .TP 5
 i \fImode user group service-name source\fR
 .TP 5
@@ -266,5 +274,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.16 2000/12/10 15:40:20 mike Exp $".
+.\" End of "$Id: epm.man,v 1.17 2000/12/10 16:45:05 mike Exp $".
 .\"
