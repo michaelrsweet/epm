@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.1.2.2 2002/10/17 16:42:46 mike Exp $"
+ * "$Id: osx.c,v 1.1.2.3 2002/10/17 17:32:24 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -46,10 +46,13 @@ make_osx(const char     *prodname,	/* I - Product short name */
   command_t	*c;			/* Current command */
   struct passwd	*pwd;			/* Pointer to user record */
   struct group	*grp;			/* Pointer to group record */
+  char		current[1024];		/* Current directory */
 
 
   if (Verbosity)
     puts("Creating MacOS X distribution...");
+
+  getcwd(current, sizeof(current));
 
   if (dist->relnumber)
   {
@@ -64,162 +67,6 @@ make_osx(const char     *prodname,	/* I - Product short name */
   else
     snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
-#if 0
-  fputs("%pre\n", fp);
-  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_PRE_INSTALL)
-      qprintf(fp, "%s\n", c->command);
-
-  fputs("%post\n", fp);
-  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_POST_INSTALL)
-      qprintf(fp, "%s\n", c->command);
-
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
-      break;
-
-  if (i)
-  {
-    fputs("echo Setting up init scripts...\n", fp);
-
-   /*
-    * Find where the frigging init scripts go...
-    */
-
-    fputs("rcdir=\"\"\n", fp);
-    fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
-    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", fp);
-    fputs("		rcdir=\"$dir\"\n", fp);
-    fputs("	fi\n", fp);
-    fputs("done\n", fp);
-    fputs("if test \"$rcdir\" = \"\" ; then\n", fp);
-    fputs("	echo Unable to determine location of startup scripts!\n", fp);
-    fputs("else\n", fp);
-    for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
-      {
-	fputs("	if test -d $rcdir/init.d; then\n", fp);
-	qprintf(fp, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
-	qprintf(fp, "		/bin/ln -s %s/init.d/%s "
-                    "$rcdir/init.d/%s\n", SoftwareDir, file->dst, file->dst);
-	fputs("	else\n", fp);
-	fputs("		if test -d /etc/init.d; then\n", fp);
-	qprintf(fp, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
-	qprintf(fp, "			/bin/ln -s %s/init.d/%s "
-                    "/etc/init.d/%s\n", SoftwareDir, file->dst, file->dst);
-	fputs("		fi\n", fp);
-	fputs("	fi\n", fp);
-
-	for (runlevels = get_runlevels(dist->files + i, "0235");
-             isdigit(*runlevels);
-	     runlevels ++)
-	{
-	  if (*runlevels == '0')
-            number = get_stop(file, 0);
-	  else
-	    number = get_start(file, 99);
-
-	  qprintf(fp, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
-	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
-	  qprintf(fp, "	/bin/ln -s %s/init.d/%s "
-                      "$rcdir/rc%c.d/%c%02d%s\n", SoftwareDir, file->dst,
-		  *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
-        }
-
-        qprintf(fp, "	%s/init.d/%s start\n", SoftwareDir, file->dst);
-      }
-
-    fputs("fi\n", fp);
-  }
-
-  fputs("%preun\n", fp);
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
-      break;
-
-  if (i)
-  {
-    fputs("echo Cleaning up init scripts...\n", fp);
-
-   /*
-    * Find where the frigging init scripts go...
-    */
-
-    fputs("rcdir=\"\"\n", fp);
-    fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
-    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", fp);
-    fputs("		rcdir=\"$dir\"\n", fp);
-    fputs("	fi\n", fp);
-    fputs("done\n", fp);
-    fputs("if test \"$rcdir\" = \"\" ; then\n", fp);
-    fputs("	echo Unable to determine location of startup scripts!\n", fp);
-    fputs("else\n", fp);
-    for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
-      {
-        qprintf(fp, "	%s/init.d/%s stop\n", SoftwareDir, file->dst);
-
-	fputs("	if test -d $rcdir/init.d; then\n", fp);
-	qprintf(fp, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
-	fputs("	else\n", fp);
-	fputs("		if test -d /etc/init.d; then\n", fp);
-	qprintf(fp, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
-	fputs("		fi\n", fp);
-	fputs("	fi\n", fp);
-
-	for (runlevels = get_runlevels(dist->files + i, "0235");
-             isdigit(*runlevels);
-	     runlevels ++)
-	{
-	  if (*runlevels == '0')
-            number = get_stop(file, 0);
-	  else
-	    number = get_start(file, 99);
-
-	  qprintf(fp, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
-	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
-        }
-      }
-
-    fputs("fi\n", fp);
-  }
-
-  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_PRE_REMOVE)
-      qprintf(fp, "%s\n", c->command);
-
-  fputs("%postun\n", fp);
-  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_POST_REMOVE)
-      qprintf(fp, "%s\n", c->command);
-
-  fputs("%files\n", fp);
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    switch (tolower(file->type))
-    {
-      case 'c' :
-          qprintf(fp, "%%attr(%04o,%s,%s) %%config(noreplace) %s\n", file->mode,
-	          file->user, file->group, file->dst);
-          break;
-      case 'd' :
-          qprintf(fp, "%%attr(%04o,%s,%s) %%dir %s\n", file->mode, file->user,
-	          file->group, file->dst);
-          break;
-      case 'f' :
-      case 'l' :
-          qprintf(fp, "%%attr(%04o,%s,%s) %s\n", file->mode, file->user,
-	          file->group, file->dst);
-          break;
-      case 'i' :
-          qprintf(fp, "%%attr(0555,root,root) %s/init.d/%s\n", SoftwareDir,
-	          file->dst);
-          break;
-    }
-
-  fclose(fp);
-#endif /* 0 */
-
  /*
   * Copy the resources for the license, readme, and welcome (description)
   * stuff...
@@ -232,10 +79,10 @@ make_osx(const char     *prodname,	/* I - Product short name */
   make_directory(filename, 0777, 0, 0);
 
   snprintf(filename, sizeof(filename), "%s/Resources/License.txt", directory);
-  copy_file(dist->license, filename, 0644, 0, 0);
+  copy_file(filename, dist->license, 0644, 0, 0);
 
   snprintf(filename, sizeof(filename), "%s/Resources/ReadMe.txt", directory);
-  copy_file(dist->readme, filename, 0644, 0, 0);
+  copy_file(filename, dist->readme, 0644, 0, 0);
 
   snprintf(filename, sizeof(filename), "%s/Resources/Welcome.txt", directory);
   if ((fp = fopen(filename, "w")) == NULL)
@@ -249,7 +96,35 @@ make_osx(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "Copyright %s\n", dist->copyright);
 
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(fp, "%s\n", dist->descriptions[i]);
+    fprintf(fp, "%s\n", dist->descriptions[i].description);
+
+  fclose(fp);
+
+  snprintf(filename, sizeof(filename), "%s/Resources/Description.plist", directory);
+  if ((fp = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
+            filename, strerror(errno));
+    return (1);
+  }
+
+  fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", fp);
+  fputs("<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n", fp);
+  fputs("<plist version=\"1.0\">\n", fp);
+  fputs("<dict>\n", fp);
+  fputs("        <key>IFPkgDescriptionDeleteWarning</key>\n", fp);
+  fputs("        <string></string>\n", fp);
+  fputs("        <key>IFPkgDescriptionDescription</key>\n", fp);
+  fputs("        <string>", fp);
+  for (i = 0; i < dist->num_descriptions; i ++)
+    fprintf(fp, "%s\n", dist->descriptions[i].description);
+  fputs("</string>\n", fp);
+  fputs("        <key>IFPkgDescriptionTitle</key>\n", fp);
+  fprintf(fp, "        <string>%s</string>\n", dist->product);
+  fputs("        <key>IFPkgDescriptionVersion</key>\n", fp);
+  fprintf(fp, "        <string>%s</string>\n", dist->version);
+  fputs("</dict>\n", fp);
+  fputs("</plist>\n", fp);
 
   fclose(fp);
 
@@ -451,10 +326,21 @@ make_osx(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building OSX package...");
 
-  if (run_command(NULL, "/Developer/Applications/PackageMaker.app/"
-                        "Contents/MacOS/PackageMaker -build "
-			"-p %s/%s.pkg -f %s/Package -r %s/Resources",
-		  directory, prodname, directory, directory))
+  if (directory[0] == '/')
+  {
+    strncpy(filename, directory, sizeof(filename) - 1);
+    filename[sizeof(filename) - 1] = '\0';
+  }
+  else
+    snprintf(filename, sizeof(filename), "%s/%s", current, directory);
+
+  run_command(NULL, "/Developer/Applications/PackageMaker.app/"
+                    "Contents/MacOS/PackageMaker -build "
+		    "-p %s/%s.pkg -f %s/Package -r %s/Resources",
+	      filename, prodname, filename, filename);
+
+  snprintf(filename, sizeof(filename), "%s/%s.pkg", directory, prodname);
+  if (access(filename, 0))
     return (1);
 
  /*
@@ -475,5 +361,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.1.2.2 2002/10/17 16:42:46 mike Exp $".
+ * End of "$Id: osx.c,v 1.1.2.3 2002/10/17 17:32:24 mike Exp $".
  */
