@@ -4,7 +4,7 @@
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
 <META NAME="copyright" CONTENT="Copyright 1999-2002 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20020829">
+<META NAME="docnumber" CONTENT="ESP-004-20021017">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: serif }
@@ -22,7 +22,7 @@ PRE { font-family: monospace }
 <BODY>
 <CENTER><A HREF="#CONTENTS"><IMG SRC="epmlogo.gif" BORDER="0" WIDTH="256" HEIGHT="256"><BR>
 <H1>Software Distribution Using the ESP Package Manager</H1></A><BR>
-ESP-004-20020829<BR>
+ESP-004-20021017<BR>
 Michael Sweet<BR>
 Copyright 1999-2002 by Easy Software Products<BR>
 </CENTER>
@@ -1221,9 +1221,11 @@ product</I>.list&quot;.</P>
  running IRIX.</DD>
 <DT>native</DT>
 <DD>Generate an native distribution. This uses<I> rpm</I> for Linux,<I>
- inst</I> for IRIX,<I> pkg</I> for Solaris,<I> swinstall</I> for HP-UX,
- and<I> bsd</I> for FreeBSD, NetBSD, and OpenBSD. All other operating
- systems default to the<I> portable</I> format.</DD>
+ inst</I> for IRIX,<I> pkg</I> for Solaris,<I> swinstall</I> for HP-UX,<I>
+ bsd</I> for FreeBSD, NetBSD, and OpenBSD, and<I> osx</I> for MacOS X.
+ All other operating systems default to the<I> portable</I> format.</DD>
+<DT>osx</DT>
+<DD>Generate a MacOS X software package.</DD>
 <DT>pkg</DT>
 <DD>Generate an ATTsoftware package. These are used primarily under
  Solaris.</DD>
@@ -1293,11 +1295,6 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
  alone ($name); without brackets the name is terminated by the first
  slash (/), dash (-), or whitespace. The dollar sign can be inserted
  using $$.</P>
-<H3>Environment Variables</H3>
-<P>The<I> RPMDIR</I> environment variable will override where EPM looks
- for RPM distributions you generate. The default locations are<VAR>
- /usr/src/redhat/RPMS, /usr/src/RPM/RPMS, /usr/src/packages/RPMS</VAR>,
- and<VAR> /usr/local/src/RPMS</VAR>.</P>
 <H3>Known Bugs</H3>
 <P><I>EPM</I> does not currently support generation of IRIX software
  patches.</P>
@@ -1666,6 +1663,9 @@ TYPE Custom Configuration
  software.</P>
 <H2><A NAME="9_1">Changes in EPM v3.5</A></H2>
 <UL>
+<LI>Added support for MacOS X package generation.</LI>
+<LI>No longer need/use RPMDIR when building RPMs, just set the &quot;topdir_&quot;
+ variable in the spec file.</LI>
 <LI>The portable removal scripts didn't correctly write the list of init
  scripts to remove.</LI>
 <LI>Added a new --output-dir option contributed by Geoffrey Wossum.</LI>
@@ -1678,6 +1678,9 @@ TYPE Custom Configuration
 <LI>Filenames can now contain spaces, either by putting the full name in
  quotes (&quot;file&nbsp;with&nbsp;spaces&quot;) or using the backslash character
  (file\&nbsp;with\&nbsp;spaces).</LI>
+<LI>The mkepmlist utility didn't handle symlinks properly.</LI>
+<LI>BSD packages needed to list the directories to remove separately and
+ in reverse order.</LI>
 </UL>
 <H2><A NAME="9_2">Changes in EPM v3.4</A></H2>
 <UL>

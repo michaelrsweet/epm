@@ -14,21 +14,21 @@ SSYYNNOOPPSSIISS
        _l_i_s_t_f_i_l_e ]
 
 DDEESSCCRRIIPPTTIIOONN
-       eeppmm generates software packages  complete  with  installa-
+       eeppmm generates software packages  complete  with  installa­
        tion,  removal,  and  (if necessary) patch scripts. Unless
        otherwise specified, the files required  for  _p_r_o_d_u_c_t  are
        read from a file named "_p_r_o_d_u_c_t.list".
 
-       The _-_a option ("architecture") specifies the actual archi-
+       The _-_a option ("architecture") specifies the actual archi­
        tecture for the software. Without this option the  generic
        processor  architecture is used ("intel", "sparc", "mips",
        etc.)
 
-       The _-_f option ("format") specifies the  distribution  for-
+       The _-_f option ("format") specifies the  distribution  for­
        mat:
 
        aix
-            Generate  an  AIX distribution suitable for installa-
+            Generate  an  AIX distribution suitable for installa­
             tion on an AIX system.
 
        bsd
@@ -36,33 +36,37 @@ DDEESSCCRRIIPPTTIIOONN
             on a FreeBSD, NetBSD, or OpenBSD system.
 
        deb
-            Generate a Debian distribution suitable for installa-
+            Generate a Debian distribution suitable for installa­
             tion on a Debian Linux system.
 
        inst, tardist
-            Generate an IRIX distribution suitable for  installa-
+            Generate an IRIX distribution suitable for  installa­
             tion on an system running IRIX.
 
        native
             Generate  an  native  distribution. This uses _r_p_m for
             Linux, _i_n_s_t for IRIX, _p_k_g for Solaris, _s_w_i_n_s_t_a_l_l  for
-            HP-UX,  and _b_s_d for FreeBSD, NetBSD, and OpenBSD. All
-            other operating systems default to the _p_o_r_t_a_b_l_e  for-
-            mat.
+            HP-UX,  _b_s_d for FreeBSD, NetBSD, and OpenBSD, and _o_s_x
+            for MacOS X. All other operating systems  default  to
+            the _p_o_r_t_a_b_l_e format.
+
+       osx
+            Generate  a  MacOS X software package. These are used
+            primarily under Solaris.
 
        pkg
-            Generate  an  AT&T  software  package. These are used
+            Generate an AT&T software  package.  These  are  used
             primarily under Solaris.
 
        portable
             Generate  a  portable  distribution  based  on  shell
             scripts and tar files.  The resulting distribution is
-            installed and removed the same way on  all  operating
+            installed  and  removed the same way on all operating
             systems. [default]
 
        rpm
-            Generate  a Red Hat Package Manager ("RPM") distribu-
-            tion suitable for installation on  a  Red  Hat  Linux
+            Generate a Red Hat Package Manager ("RPM")  distribu­
+            tion  suitable  for  installation  on a Red Hat Linux
             system.
 
        setld
@@ -72,56 +76,50 @@ DDEESSCCRRIIPPTTIIOONN
             Generate a HP-UX software distribution.
 
        Executable files in the distribution are normally stripped
-       of debugging information when packaged.  To  disable  this
+       of  debugging  information  when packaged. To disable this
        functionality use the _-_g option.
 
-       Intermediate (spec, etc.) files used to create the distri-
-       bution are normally removed after the distribution is cre-
-       ated.  The _-_k option keeps these files in the distribution
+       Intermediate (spec, etc.) files used to create the distri­
+       bution are normally removed after the distribution is cre­
+       ated. The _-_k option keeps these files in the  distribution
        directory.
 
        The _-_s and _-_-_s_e_t_u_p_-_i_m_a_g_e options ("setup") include the ESP
        Software Wizard with the specified XPM image file with the
-       distribution. This option is currently only  supported  by
+       distribution.  This  option is currently only supported by
        portable distributions.
 
-       The  _-_-_s_e_t_u_p_-_p_r_o_g_r_a_m option specifies the setup executable
-       to use with the distribution.  This  option  is  currently
+       The _-_-_s_e_t_u_p_-_p_r_o_g_r_a_m option specifies the setup  executable
+       to  use  with  the  distribution. This option is currently
        only supported by portable distributions.
 
        The _-_-_s_e_t_u_p_-_t_y_p_e_s option specifies the _s_e_t_u_p_._t_y_p_e_s file to
-       include with the distribution. This  option  is  currently
+       include  with  the  distribution. This option is currently
        only supported by portable distributions.
 
-       The  _-_-_o_u_t_p_u_t_-_d_i_r  option specifies the directory to place
-       output file into. The default directory is  based  on  the
+       The _-_-_o_u_t_p_u_t_-_d_i_r option specifies the directory  to  place
+       output  file  into.  The default directory is based on the
        operating system, version, and architecture.
 
-       The _-_v option ("verbose") increases the amount of informa-
-       tion that is reported. Use multiple v's for  more  verbose
+       The _-_v option ("verbose") increases the amount of informa­
+       tion  that  is reported. Use multiple v's for more verbose
        output.
 
-       Distributions  normally are named "product-version-system-
-       release-machine.ext" and  "product-version-system-release-
+       Distributions normally are named  "product-version-system-
+       release-machine.ext"  and "product-version-system-release-
        machine-patch.ext" (for patch distributions.) The "system-
-       release-machine" information can be customized  or  elimi-
-       nated  using  the  _-_n option with the appropriate trailing
-       letters. Using _-_n  by  itself  will  remove  the  "system-
+       release-machine"  information  can be customized or elimi­
+       nated using the _-_n option with  the  appropriate  trailing
+       letters.  Using  _-_n  by  itself  will  remove the "system-
        release-machine" string from the filename entirely.
 
-       Debian,  IRIX, portable, and Red Hat distributions use the
-       extensions  ".deb",  ".tardist",  "tar.gz",   and   ".rpm"
+       Debian, IRIX, portable, and Red Hat distributions use  the
+       extensions   ".deb",   ".tardist",  "tar.gz",  and  ".rpm"
        respectively.
 
 LLIISSTT FFIILLEESS
-       The   EPM  list  file  format  is  now  described  in  the
+       The  EPM  list  file  format  is  now  described  in   the
        _e_p_m_._l_i_s_t_(_5_) man page.
-
-EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
-       The _R_P_M_D_I_R environment variable will  override  where  EPM
-       looks  for  RPM  distributions  you  generate. The default
-       locations  are  /usr/src/redhat/RPMS,   /usr/src/RPM/RPMS,
-       /usr/src/packages/RPMS, and /usr/local/src/RPMS.
 
 KKNNOOWWNN BBUUGGSS
        EPM does not currently support generation of IRIX software
@@ -152,4 +150,4 @@ CCOOPPYYRRIIGGHHTT
 
 
 
-31 July 2002           ESP Package Manager                 epm(1)
+17 October 2002        ESP Package Manager                 epm(1)
