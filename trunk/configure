@@ -2340,8 +2340,7 @@ if test -n "$GCC"; then
 		fi
 	fi
 
-	GXX="$GCC"
-	CXX="$GCC"
+	CXX="$CC"
 	OPTIM="-Wall -Wno-return-type -fno-rtti $OPTIM"
 
 	# See if GCC supports -fno-exceptions...
@@ -2349,14 +2348,14 @@ if test -n "$GCC"; then
 	OLDCFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -fno-exceptions"
 	cat > conftest.$ac_ext <<EOF
-#line 2353 "configure"
+#line 2352 "configure"
 #include "confdefs.h"
 
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:2360: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2359: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   OPTIM="$OPTIM -fno-exceptions"
 		echo "Congratulations - your GCC supports exceptions; disabling them..."
@@ -2376,14 +2375,14 @@ rm -f conftest*
 		OLDCFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS -fpermissive"
 		cat > conftest.$ac_ext <<EOF
-#line 2380 "configure"
+#line 2379 "configure"
 #include "confdefs.h"
 
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:2387: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2386: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   OPTIM="$OPTIM -fpermissive"
 			echo "Enabling -fpermissive to work around X header bugs..."
