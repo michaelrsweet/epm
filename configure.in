@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.12 2000/06/28 20:46:01 mike Exp $"
+dnl "$Id: configure.in,v 1.13 2000/08/01 17:50:19 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -52,6 +52,7 @@ AC_PATH_PROG(CP,cp)
 AC_PATH_PROG(GZIP,gzip)
 AC_PATH_PROG(MKDIR,mkdir)
 AC_PATH_PROG(RM,rm)
+AC_PATH_PROG(RPM,rpm)
 AC_PATH_PROG(STRIP,strip)
 AC_PATH_PROG(WHOAMI,whoami)
 
@@ -139,6 +140,7 @@ if test -n "$GCC"; then
 		fi
 	fi
 
+	CXX="gcc"
 	OPTIM="-Wall -Wno-return-type -fno-rtti $OPTIM"
 
 	# See if GCC supports -fno-exceptions...
@@ -196,17 +198,19 @@ AC_DEFINE_UNQUOTED(EPM_WHOAMI, "$WHOAMI")
 AC_SUBST(EPM_WHOAMI)
 
 dnl Figure out the right option to use for the RPM build architecture...
-build="`rpm -v | grep buildarch`"
+if test "x$RPM" != "x"; then
+	build="`$RPM -v | grep buildarch`"
 
-if test "x$build" = "x"; then
-	AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--target")
-else
-	AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--buildarch")
+	if test "x$build" = "x"; then
+		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--target")
+	else
+		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--buildarch")
+	fi
 fi
 
 dnl Output the makefile and config header...
 AC_OUTPUT(Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.12 2000/06/28 20:46:01 mike Exp $".
+dnl End of "$Id: configure.in,v 1.13 2000/08/01 17:50:19 mike Exp $".
 dnl
