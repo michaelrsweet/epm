@@ -20,6 +20,15 @@ WHAT'S NEW IN EPM 3.3?
 	- The wildcard character * did not match 0 characters if
 	  the pattern and the filename string differed only by
 	  the trailing * (e.g. "Courier" and "Courier*").
+	- IRIX pre/postremove scripts are now copied after
+	  installation so that they can be executed when
+	  removing the inst/tardist package.
+	- HP-UX postinstall/preremove scripts would execute init
+	  scripts from /sbin/init.d/sbin/init.d.
+	- The copyright string wasn't being quoted in portable
+	  installation scripts.
+	- EPM now checks to see if an executable file is a shell
+	  script before running the "strip" command.
 
 
 WHAT'S NEW IN EPM 3.2.1?

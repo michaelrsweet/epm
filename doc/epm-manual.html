@@ -1635,6 +1635,19 @@ TYPE Custom Configuration
  distribution files in portable distributions.</LI>
 <LI>New C implementation of mkepmlist, based on a contribution from
  Andreas Voegele.</LI>
+<LI>The portable install and patch scripts now change the permissions of
+ the installed &quot;remove&quot; script to 544.</LI>
+<LI>The wildcard character * did not match 0 characters if the pattern
+ and the filename string differed only by the trailing * (e.g. &quot;Courier&quot;
+ and &quot;Courier*&quot;).</LI>
+<LI>IRIX pre/postremove scripts are now copied after installation so
+ that they can be executed when removing the inst/tardist package.</LI>
+<LI>HP-UX postinstall/preremove scripts would execute init scripts from
+ /sbin/init.d/sbin/init.d.</LI>
+<LI>The copyright string wasn't being quoted in portable installation
+ scripts.</LI>
+<LI>EPM now checks to see if an executable file is a shell script before
+ running the &quot;strip&quot; command.</LI>
 </UL>
 <H2><A NAME="9_2">Changes in EPM v3.2.1</A></H2>
 <UL>

@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.8 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: file.c,v 1.9 2002/03/14 20:37:39 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -198,6 +198,8 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 {
   int		i;		/* Looping var */
   file_t	*file;		/* Software file */
+  FILE		*fp;		/* File pointer */
+  char		header[4];	/* File header... */
 
 
  /*
@@ -209,6 +211,41 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
     if (tolower(file->type) == 'f' && (file->mode & 0111))
     {
      /*
+      * OK, this file has executable permissions; see if it is a
+      * script...
+      */
+
+      if ((fp = fopen(file->src, "rb")) != NULL)
+      {
+       /*
+        * Read the first 128 bytes of the file...
+	*/
+
+        fread(header, 1, sizeof(header) - 1, fp);
+	header[sizeof(header) - 1] = '\0';
+
+	fclose(fp);
+
+       /*
+        * Check for "#!/" at the beginning of the file...
+	*/
+
+        if (strcmp(header, "#!/") == 0)
+	  continue;
+      }
+      else
+      {
+       /*
+        * File could not be opened; error out...
+	*/
+
+        fprintf(stderr, "epm: Unable to open file \"%s\" -\n     %s\n",
+	        file->src, strerror(errno));
+
+        exit(1);
+      }
+
+     /*
       * Strip executables...
       */
 
@@ -218,5 +255,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.8 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: file.c,v 1.9 2002/03/14 20:37:39 mike Exp $".
  */
