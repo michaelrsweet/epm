@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.30 2005/02/10 20:54:55 mike Exp $"
+ * "$Id$"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -17,8 +17,8 @@
  *
  * Contents:
  *
- *   make_inst() - Make an IRIX software distribution package.
- * 'inst_subsys()' - Write a subsystem definition for the product.
+ *   make_inst()   - Make an IRIX software distribution package.
+ *   inst_subsys() - Write a subsystem definition for the product.
  */
 
 /*
@@ -659,11 +659,19 @@ inst_subsys(FILE       *fp,		/* I - File to write to */
         product = d->product;
 
       if (strchr(product, '.') != NULL)
+      {
         fprintf(fp, "			replaces %s %d %d\n",
          	product, d->vernumber[0], d->vernumber[1]);
+        fprintf(fp, "			updates %s %d %d\n",
+         	product, d->vernumber[0], d->vernumber[1]);
+      }
       else if (product[0] != '/')
+      {
         fprintf(fp, "			replaces %s.sw.eoe %d %d\n",
          	product, d->vernumber[0], d->vernumber[1]);
+        fprintf(fp, "			updates %s.sw.eoe %d %d\n",
+         	product, d->vernumber[0], d->vernumber[1]);
+      }
     }
     else if (d->type == DEPEND_INCOMPAT && d->subpackage == subpackage)
     {
@@ -685,5 +693,5 @@ inst_subsys(FILE       *fp,		/* I - File to write to */
 
 
 /*
- * End of "$Id: inst.c,v 1.30 2005/02/10 20:54:55 mike Exp $".
+ * End of "$Id$".
  */
