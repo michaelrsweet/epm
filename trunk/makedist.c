@@ -1,5 +1,5 @@
 /*
- * "$Id: makedist.c,v 1.6 1999/05/21 20:54:40 mike Exp $"
+ * "$Id: makedist.c,v 1.7 1999/05/21 21:02:07 mike Exp $"
  *
  *   Makedist, a simple binary distribution generator for UNIX.
  *
@@ -550,15 +550,19 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("		;;\n", installfile);
   fputs("	esac\n", installfile);
   fputs("done\n", installfile);
-  fprintf(installfile, "if test -x /usr/sbin/%s.remove; then\n", prodname);
-  fprintf(installfile, "	echo \"Please run /usr/sbin/%s.remove before installing the software.\"\n",
+  fprintf(installfile, "if test -x /etc/software/%s.remove; then\n", prodname);
+  fprintf(installfile, "	echo \"Please run /etc/software/%s.remove before installing the software.\"\n",
           prodname);
   fputs("	exit 1\n", installfile);
   fputs("fi\n", installfile);
   fputs("echo \"Installing software...\"\n", installfile);
   fprintf(installfile, "$tar %s.sw\n", prodname);
-  fprintf(installfile, "/bin/rm -f /usr/sbin/%s.remove\n", prodname);
-  fprintf(installfile, "/bin/cp %s.remove /usr/sbin\n", prodname);
+  fputs("if test -d /etc/software; then\n", installfile);
+  fprintf(installfile, "	/bin/rm -f /etc/software/%s.remove\n", prodname);
+  fputs("else\n", installfile);
+  fputs("	/bin/mkdir -p /etc/software\n", installfile);
+  fputs("fi\n", installfile);
+  fprintf(installfile, "/bin/cp %s.remove /etc/software\n", prodname);
 
  /*
   * Write the patch script header...
@@ -626,7 +630,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("	esac\n", patchfile);
   fputs("done\n", patchfile);
 
-  fprintf(patchfile, "if test ! -x /usr/sbin/%s.remove; then\n", prodname);
+  fprintf(patchfile, "if test ! -x /etc/software/%s.remove; then\n", prodname);
   fputs("	echo \"You do not appear to have the base software installed!\"\n",
         patchfile);
   fputs("	echo \"Please install the full distribution instead.\"\n", patchfile);
@@ -648,8 +652,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   fputs("echo \"Patching software...\"\n", patchfile);
   fprintf(patchfile, "$tar %s.psw\n", prodname);
-  fprintf(patchfile, "/bin/rm -f /usr/sbin/%s.remove\n", prodname);
-  fprintf(patchfile, "/bin/cp %s.remove /usr/sbin\n", prodname);
+  fprintf(patchfile, "/bin/rm -f /etc/software/%s.remove\n", prodname);
+  fprintf(patchfile, "/bin/cp %s.remove /etc/software\n", prodname);
 
  /*
   * Write the removal script header...
@@ -902,7 +906,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   puts("Finishing removal script...");
 
-  fprintf(removefile, "rm -f /usr/sbin/%s.remove\n", prodname);
+  fprintf(removefile, "rm -f /etc/software/%s.remove\n", prodname);
 
  /*
   * Find any installation commands in the list file...
@@ -1250,5 +1254,5 @@ usage(void)
 
 
 /*
- * End of "$Id: makedist.c,v 1.6 1999/05/21 20:54:40 mike Exp $".
+ * End of "$Id: makedist.c,v 1.7 1999/05/21 21:02:07 mike Exp $".
  */
