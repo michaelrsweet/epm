@@ -1,9 +1,9 @@
 /*
- * "$Id: string.c,v 1.1 1999/06/21 14:25:19 mike Exp $"
+ * "$Id: string.c,v 1.2 2000/01/04 13:45:41 mike Exp $"
  *
  *   String functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999 by Easy Software Products.
+ *   Copyright 1999-2000 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -115,5 +115,5 @@ strncasecmp(const char *s,	/* I - First string */
 
 
 /*
- * End of "$Id: string.c,v 1.1 1999/06/21 14:25:19 mike Exp $".
+ * End of "$Id: string.c,v 1.2 2000/01/04 13:45:41 mike Exp $".
  */
