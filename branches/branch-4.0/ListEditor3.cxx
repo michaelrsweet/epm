@@ -1,5 +1,5 @@
 //
-// "$Id: ListEditor3.cxx,v 1.1.2.3 2002/05/10 00:19:46 mike Exp $"
+// "$Id: ListEditor3.cxx,v 1.1.2.4 2002/05/20 00:47:56 mike Exp $"
 //
 //   ESP List Editor callback methods for the ESP Package Manager (EPM).
 //
@@ -24,11 +24,21 @@
 
 
 //
+// 'ListEditor::add_subpkg_cb()' - Add a subpackage to the project.
+//
+
+void
+ListEditor::add_subpkg_cb()			// I - List editor window
+{
+}
+
+
+//
 // 'ListEditor::build_cb()' - Build callback handler.
 //
 
 void
-ListEditor::build_cb(ListEditor *le)		// I - List editor window
+ListEditor::build_cb()				// I - List editor window
 {
 }
 
@@ -38,26 +48,26 @@ ListEditor::build_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::close_cb(ListEditor *le)		// I - List editor window
+ListEditor::close_cb()				// I - List editor window
 {
-  if (!le->check_save())
+  if (!check_save())
     return;
 
-  if (le->next_ || first_)
+  if (next_ || first_)
   {
     // This isn't the only window open; just destroy it...
-    delete le;
+    delete this;
   }
   else
   {
     // This is the last window open; initialize things...
-    if (le->dist_)
-      free_dist(le->dist_);
+    if (dist_)
+      free_dist(dist_);
 
-    le->dist_ = (dist_t *)0;
-    le->filename_[0] = '\0';
-    le->list->clear();
-    le->modified(0);
+    dist_ = (dist_t *)0;
+    filename_[0] = '\0';
+    list->clear();
+    modified(0);
   }
 }
 
@@ -67,7 +77,7 @@ ListEditor::close_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::copy_cb(ListEditor *le)		// I - List editor window
+ListEditor::copy_cb()				// I - List editor window
 {
 }
 
@@ -77,7 +87,7 @@ ListEditor::copy_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::cut_cb(ListEditor *le)		// I - List editor window
+ListEditor::cut_cb()				// I - List editor window
 {
 }
 
@@ -87,7 +97,17 @@ ListEditor::cut_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::delete_cb(ListEditor *le)		// I - List editor window
+ListEditor::delete_cb()				// I - List editor window
+{
+}
+
+
+//
+// 'ListEditor::delete_subpkg_cb()' - Remove a subpackage from the project.
+//
+
+void
+ListEditor::delete_subpkg_cb()			// I - List editor window
 {
 }
 
@@ -97,10 +117,9 @@ ListEditor::delete_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::file_settings_cb(ListEditor *le,	// I - List editor window
-                             int        save)	// I - 1 = save, 0 = load
+ListEditor::file_settings_cb(int save)		// I - 1 = save, 0 = load
 {
-  int			i;			// Looping var
+  int			i, j;			// Looping vars
   int			count;			// Number of selected files
   char			type;			// Type of file
   file_t		*file;			// Current file
@@ -116,8 +135,8 @@ ListEditor::file_settings_cb(ListEditor *le,	// I - List editor window
     // First figure out how many files are selected...
     type = '\0';
 
-    for (i = 1, count = 0, file = le->dist_->files; i <= le->list->size(); i ++, file ++)
-      if (le->list->selected(i))
+    for (i = 1, count = 0, file = dist_->files; i <= list->size(); i ++, file ++)
+      if (list->selected(i))
       {
 	count ++;
 
@@ -131,51 +150,51 @@ ListEditor::file_settings_cb(ListEditor *le,	// I - List editor window
     }
 
     // Get new file permissions...
-    if (le->perm_group->active())
+    if (perm_group->active())
     {
       newmode = 0;
 
-      if (le->user_read_button->value())
+      if (user_read_button->value())
 	newmode |= 00400;
-      if (le->user_write_button->value())
+      if (user_write_button->value())
 	newmode |= 00200;
-      if (le->user_exec_button->value())
+      if (user_exec_button->value())
 	newmode |= 00100;
-      if (le->user_set_button->value())
+      if (user_set_button->value())
 	newmode |= 04000;
 
-      if (le->group_read_button->value())
+      if (group_read_button->value())
 	newmode |= 00040;
-      if (le->group_write_button->value())
+      if (group_write_button->value())
 	newmode |= 00020;
-      if (le->group_exec_button->value())
+      if (group_exec_button->value())
 	newmode |= 00010;
-      if (le->group_set_button->value())
+      if (group_set_button->value())
 	newmode |= 02000;
 
-      if (le->other_read_button->value())
+      if (other_read_button->value())
 	newmode |= 00004;
-      if (le->other_write_button->value())
+      if (other_write_button->value())
 	newmode |= 00002;
-      if (le->other_exec_button->value())
+      if (other_exec_button->value())
 	newmode |= 00001;
-      if (le->other_temp_button->value())
+      if (other_temp_button->value())
 	newmode |= 01000;
     }
     else
       newmode = 0;
 
     // Then apply any changes...
-    for (i = 1, file = le->dist_->files; i <= le->list->size(); i ++, file ++)
-      if (le->list->selected(i))
+    for (i = 1, file = dist_->files; i <= list->size(); i ++, file ++)
+      if (list->selected(i))
       {
 	if (count > 1)
 	{
 	  if (type)
-	    file->type = types[le->type_chooser->value()];
+	    file->type = types[type_chooser->value()];
 
-          if (le->dst_path_field->value() &&
-	      le->dst_path_field->value()[0])
+          if (dst_path_field->value() &&
+	      dst_path_field->value()[0])
 	  {
 	    // Remap destination directory...
 	    if ((slash = strrchr(file->dst, '/')) != NULL)
@@ -184,22 +203,22 @@ ListEditor::file_settings_cb(ListEditor *le,	// I - List editor window
 	      slash = file->dst;
 
             snprintf(newdst, sizeof(newdst), "%s/%s",
-	             le->dst_path_field->value(), slash);
+	             dst_path_field->value(), slash);
 
             strncpy(file->dst, newdst, sizeof(file->dst) - 1);
 	  }
 	}
 	else
 	{
-	  file->type = types[le->type_chooser->value()];
+	  file->type = types[type_chooser->value()];
 
-	  strncpy(file->dst, le->dst_path_field->value(),
+	  strncpy(file->dst, dst_path_field->value(),
 	          sizeof(file->dst) - 1);
-	  strncpy(file->src, le->src_path_field->value(),
+	  strncpy(file->src, src_path_field->value(),
 	          sizeof(file->src) - 1);
 	}
 
-	if (le->upgrade_button->value())
+	if (upgrade_button->value())
 	  file->type = toupper(file->type);
 	else
 	  file->type = tolower(file->type);
@@ -207,24 +226,27 @@ ListEditor::file_settings_cb(ListEditor *le,	// I - List editor window
         if (newmode)
 	  file->mode = newmode;
 
-	strncpy(file->user, le->user_field->value(), sizeof(file->user) - 1);
-	strncpy(file->group, le->group_field->value(), sizeof(file->group) - 1);
+	strncpy(file->user, user_field->value(), sizeof(file->user) - 1);
+	strncpy(file->group, group_field->value(), sizeof(file->group) - 1);
 
-        file->subpackage = find_subpackage(le->dist_, 
-	                                   le->subpackage_field->value());
+        if (subpackage_chooser->value())
+          file->subpackage = dist_->subpackages[
+	                         subpackage_chooser->value() - 1];
+        else
+	  file->subpackage = NULL;
       }
 
-    le->file_window->hide();
-    le->modified(1);
-    le->update_list();
+    file_window->hide();
+    modified(1);
+    update_list();
   }
   else
   {
     // Look through the selected files...
     type = '\0';
 
-    for (i = 1, count = 0, file = le->dist_->files; i <= le->list->size(); i ++, file ++)
-      if (le->list->selected(i))
+    for (i = 1, count = 0, file = dist_->files; i <= list->size(); i ++, file ++)
+      if (list->selected(i))
       {
 	count ++;
 
@@ -232,118 +254,130 @@ ListEditor::file_settings_cb(ListEditor *le,	// I - List editor window
 	{
           if (type != tolower(file->type))
 	  {
-	    le->type_chooser->deactivate();
-	    le->perm_group->deactivate();
+	    type_chooser->deactivate();
+	    perm_group->deactivate();
 	  }
 
-	  le->src_path_field->deactivate();
-	  le->src_path_field->value("");
-	  le->dst_path_field->value("");
+	  src_path_field->deactivate();
+	  src_path_field->value("");
+	  dst_path_field->value("");
 	}
 	else
 	{
 	  type = tolower(file->type);
 
-	  le->type_chooser->activate();
+	  type_chooser->activate();
 
 	  switch (type)
 	  {
 	    case 'f' :
-		le->type_chooser->value(0);
+		type_chooser->value(0);
 		break;
 	    case 'c' :
-		le->type_chooser->value(1);
+		type_chooser->value(1);
 		break;
 	    case 'm' :
-		le->type_chooser->value(2);
+		type_chooser->value(2);
 		break;
 	    case 'i' :
-		le->type_chooser->value(3);
+		type_chooser->value(3);
 		break;
 	    case 'd' :
-		le->type_chooser->value(4);
+		type_chooser->value(4);
 		break;
 	    case 'l' :
-		le->type_chooser->value(5);
+		type_chooser->value(5);
 		break;
 	    case 'r' :
-		le->type_chooser->value(6);
+		type_chooser->value(6);
 		break;
 	  }
 
           if (isupper(file->type))
-	    le->upgrade_button->set();
+	    upgrade_button->set();
 	  else
-	    le->upgrade_button->clear();
+	    upgrade_button->clear();
 
-	  le->perm_group->activate();
+	  perm_group->activate();
 
           if (file->mode & 00400)
-	    le->user_read_button->set();
+	    user_read_button->set();
 	  else
-	    le->user_read_button->clear();
+	    user_read_button->clear();
           if (file->mode & 00200)
-	    le->user_write_button->set();
+	    user_write_button->set();
 	  else
-	    le->user_write_button->clear();
+	    user_write_button->clear();
           if (file->mode & 00100)
-	    le->user_exec_button->set();
+	    user_exec_button->set();
 	  else
-	    le->user_exec_button->clear();
+	    user_exec_button->clear();
           if (file->mode & 04000)
-	    le->user_set_button->set();
+	    user_set_button->set();
 	  else
-	    le->user_set_button->clear();
+	    user_set_button->clear();
 
           if (file->mode & 00040)
-	    le->group_read_button->set();
+	    group_read_button->set();
 	  else
-	    le->group_read_button->clear();
+	    group_read_button->clear();
           if (file->mode & 00020)
-	    le->group_write_button->set();
+	    group_write_button->set();
 	  else
-	    le->group_write_button->clear();
+	    group_write_button->clear();
           if (file->mode & 00010)
-	    le->group_exec_button->set();
+	    group_exec_button->set();
 	  else
-	    le->group_exec_button->clear();
+	    group_exec_button->clear();
           if (file->mode & 02000)
-	    le->group_set_button->set();
+	    group_set_button->set();
 	  else
-	    le->group_set_button->clear();
+	    group_set_button->clear();
 
           if (file->mode & 00004)
-	    le->other_read_button->set();
+	    other_read_button->set();
 	  else
-	    le->other_read_button->clear();
+	    other_read_button->clear();
           if (file->mode & 00002)
-	    le->other_write_button->set();
+	    other_write_button->set();
 	  else
-	    le->other_write_button->clear();
+	    other_write_button->clear();
           if (file->mode & 00001)
-	    le->other_exec_button->set();
+	    other_exec_button->set();
 	  else
-	    le->other_exec_button->clear();
+	    other_exec_button->clear();
           if (file->mode & 01000)
-	    le->other_temp_button->set();
+	    other_temp_button->set();
 	  else
-	    le->other_temp_button->clear();
+	    other_temp_button->clear();
 
-	  le->user_field->value(file->user);
-	  le->group_field->value(file->group);
+	  user_field->value(file->user);
+	  group_field->value(file->group);
 
-	  le->src_path_field->activate();
-	  le->src_path_field->value(file->src);
-	  le->dst_path_field->value(file->dst);
+	  src_path_field->activate();
+	  src_path_field->value(file->src);
+	  dst_path_field->value(file->dst);
 
-          le->subpackage_field->value(file->subpackage ? file->subpackage : "");
+          if (file->subpackage)
+	  {
+            for (j = 0; j < dist_->num_subpackages; j ++)
+	      if (file->subpackage == dist_->subpackages[j])
+	      {
+	        subpackage_chooser->value(j + 1);
+		break;
+	      }
+	  }
+	  else
+	    subpackage_chooser->value(0);
 	}
       }
 
-    le->file_ok_button->deactivate();
-    le->file_window->hotspot(le->file_window);
-    le->file_window->show();
+    file_ok_button->deactivate();
+    file_window->hotspot(file_window);
+    file_window->show();
   }
+
+  printf("count = %d\n", count);
 }
 
 
@@ -352,8 +386,7 @@ ListEditor::file_settings_cb(ListEditor *le,	// I - List editor window
 //
 
 void
-ListEditor::help_cb(ListEditor *le,		// I - List editor window
-                    const char *html)		// I - HTML file to show
+ListEditor::help_cb(const char *html)		// I - HTML file to show
 {
 }
 
@@ -363,24 +396,34 @@ ListEditor::help_cb(ListEditor *le,		// I - List editor window
 //
 
 void
-ListEditor::list_cb(ListEditor *le)		// I - List editor window
+ListEditor::list_cb()				// I - List editor window
 {
   int	i;					// Looping var
 
 
   if (Fl::event_clicks())
-    file_settings_cb(le, 0);
+    file_settings_cb(0);
   else
   {
-    le->file_settings_item->deactivate();
+    file_settings_item->deactivate();
 
-    for (i = 1; i <= le->list->size(); i ++)
-      if (le->list->selected(i))
+    for (i = 1; i <= list->size(); i ++)
+      if (list->selected(i))
       {
-        le->file_settings_item->activate();
+        file_settings_item->activate();
         break;
       }
   }
+}
+
+
+//
+// 'ListEditor::list_subpkg_cb()' - Chooser a subpackage in the project.
+//
+
+void
+ListEditor::list_subpkg_cb()			// I - List editor window
+{
 }
 
 
@@ -389,7 +432,7 @@ ListEditor::list_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::margins_cb(ListEditor *le)		// I - List editor window
+ListEditor::margins_cb()			// I - List editor window
 {
   int		i, j;				// Looping vars
   int		update;				// Update the list?
@@ -397,21 +440,21 @@ ListEditor::margins_cb(ListEditor *le)		// I - List editor window
   ListColumn	*c;				// Current column
 
 
-  for (i = 0, j = 0, update = 0, c = le->margin_manager->columns();
-       i < le->margin_manager->num_columns();
+  for (i = 0, j = 0, update = 0, c = margin_manager->columns();
+       i < margin_manager->num_columns();
        i ++, c ++)
   {
-    if (le->margin_items[i].value())
+    if (margin_items[i].value())
     {
       if (!c->width)
       {
 	update   = 1;
 	c->width = c->min_width;
 
-	le->margin_manager->redraw();
+	margin_manager->redraw();
       }
 
-      le->margins_[j] = c->width;
+      margins_[j] = c->width;
       j ++;
     }
     else if (c->width)
@@ -419,21 +462,21 @@ ListEditor::margins_cb(ListEditor *le)		// I - List editor window
       update   = 1;
       c->width = 0;
 
-      le->margin_manager->redraw();
+      margin_manager->redraw();
     }
 
     sprintf(name, "margin%d", i);
-    le->prefs_.set(name, c->width);
+    prefs_.set(name, c->width);
   }
 
-  le->margins_[0] -= le->list->iconsize() + 9;
-  le->margins_[j] = 0;
-  le->list->column_widths(le->margins_);
+  margins_[0] -= list->iconsize() + 9;
+  margins_[j] = 0;
+  list->column_widths(margins_);
 
   if (update)
-    le->update_list();
+    update_list();
   else
-    le->list->redraw();
+    list->redraw();
 }
 
 
@@ -442,12 +485,12 @@ ListEditor::margins_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::new_cb(ListEditor *le)		// I - List editor window
+ListEditor::new_cb()				// I - List editor window
 {
   ListEditor	*temp;				// New list editor window
 
 
-  if (le->dist_)
+  if (dist_)
   {
     // Open the file in a new window...
     temp = new ListEditor(NULL);
@@ -456,7 +499,7 @@ ListEditor::new_cb(ListEditor *le)		// I - List editor window
   else
   {
     // Open it in this window...
-    le->open(NULL);
+    open(NULL);
   }
 }
 
@@ -466,15 +509,15 @@ ListEditor::new_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::open_cb(ListEditor *le)		// I - List editor window
+ListEditor::open_cb()				// I - List editor window
 {
   const char	*listfile;			// New list file...
   ListEditor	*temp;				// New list editor window
 
 
-  if ((listfile = fl_file_chooser("List File?", "*.list", le->filename_)) != NULL)
+  if ((listfile = fl_file_chooser("List File?", "*.list", filename_)) != NULL)
   {
-    if (le->dist_)
+    if (dist_)
     {
       // Open the file in a new window...
       temp = new ListEditor(listfile);
@@ -483,7 +526,7 @@ ListEditor::open_cb(ListEditor *le)		// I - List editor window
     else
     {
       // Open it in this window...
-      le->open(listfile);
+      open(listfile);
     }
   }
 }
@@ -494,13 +537,12 @@ ListEditor::open_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::open_history_cb(ListEditor *le,	// I - List editor window
-                            const char *listfile)// I - List file to load
+ListEditor::open_history_cb(const char *listfile)// I - List file to load
 {
   ListEditor	*temp;				// New list editor window
 
 
-  if (le->dist_)
+  if (dist_)
   {
     // Open the file in a new window...
     temp = new ListEditor(listfile);
@@ -509,7 +551,7 @@ ListEditor::open_history_cb(ListEditor *le,	// I - List editor window
   else
   {
     // Open it in this window...
-    le->open(listfile);
+    open(listfile);
   }
 }
 
@@ -519,7 +561,17 @@ ListEditor::open_history_cb(ListEditor *le,	// I - List editor window
 //
 
 void
-ListEditor::paste_cb(ListEditor *le)		// I - List editor window
+ListEditor::paste_cb()				// I - List editor window
+{
+}
+
+
+//
+// 'ListEditor::project_ok_cb()' - Save the project settings.
+//
+
+void
+ListEditor::project_ok_cb()			// I - List editor window
 {
 }
 
@@ -529,8 +581,94 @@ ListEditor::paste_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::project_settings_cb(ListEditor *le)	// I - List editor window
+ListEditor::project_settings_cb()		// I - List editor window
 {
+  int	i;					// Looping var
+  int	type;					// Dependency type
+
+
+  if (dist_)
+  {
+    // General tab...
+    name_field->value(dist_->product);
+    version_field->value(dist_->version);
+    version_counter->value(dist_->vernumber);
+    copyright_field->value(dist_->copyright);
+    vendor_field->value(dist_->vendor);
+    packager_field->value(dist_->packager);
+    license_field->value(dist_->license);
+    readme_field->value(dist_->readme);
+
+    // Packages tab...
+    subpackage_list->clear();
+    subpackage_list->add("(default)");
+
+    for (i = 0; i < dist_->num_subpackages; i ++)
+      subpackage_list->add(dist_->subpackages[i]);
+
+    description_field->value("");
+    for (i = 0; i < dist_->num_descriptions; i ++)
+      if (dist_->descriptions[i].subpackage == NULL)
+      {
+        if (description_field->size())
+	{
+	  description_field->position(description_field->size());
+	  description_field->insert("\n");
+	}
+
+	description_field->position(description_field->size());
+	description_field->insert(dist_->descriptions[i].description);
+      }
+
+    for (type = 0; type < 4; type ++)
+      depends_field[type]->value("");
+
+    for (i = 0; i < dist_->num_depends; i ++)
+      if (dist_->depends[i].subpackage == NULL)
+      {
+        type = dist_->depends[i].type;
+
+        if (depends_field[type]->size())
+	{
+	  depends_field[type]->position(depends_field[type]->size());
+	  depends_field[type]->insert(", ");
+	}
+
+	depends_field[type]->position(depends_field[type]->size());
+	depends_field[type]->insert(dist_->depends[i].product);
+      }
+
+    // GUI Setup tab...
+    setup_image_field->value("");
+    setup_types_field->value("");
+  }
+  else
+  {
+    // General tab...
+    name_field->value("");
+    version_field->value("");
+    version_counter->value(0);
+    copyright_field->value("");
+    vendor_field->value("");
+    packager_field->value("");
+    license_field->value("");
+    readme_field->value("");
+
+    // Packages tab...
+    subpackage_list->clear();
+    subpackage_list->add("(default)");
+
+    description_field->value("");
+
+    for (type = 0; type < 4; type ++)
+      depends_field[type]->value("");
+
+    // GUI Setup tab...
+    setup_image_field->value("");
+    setup_types_field->value("");
+  }
+
+  project_window->show();
 }
 
 
@@ -539,7 +677,7 @@ ListEditor::project_settings_cb(ListEditor *le)	// I - List editor window
 //
 
 void
-ListEditor::quit_cb(ListEditor *le)		// I - List editor window
+ListEditor::quit_cb()				// I - List editor window
 {
   ListEditor	*temp;				// Current window
 
@@ -563,12 +701,12 @@ ListEditor::quit_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::save_cb(ListEditor *le)		// I - List editor window
+ListEditor::save_cb()				// I - List editor window
 {
-  if (write_dist(le->filename_, le->dist_))
-    fl_alert("Unable to save \"%s\":\n\n%s", le->filename_, strerror(errno));
+  if (write_dist(filename_, dist_))
+    fl_alert("Unable to save \"%s\":\n\n%s", filename_, strerror(errno));
   else
-    le->modified(0);
+    modified(0);
 }
 
 
@@ -577,11 +715,11 @@ ListEditor::save_cb(ListEditor *le)		// I - List editor window
 //
 
 void
-ListEditor::save_as_cb(ListEditor *le)		// I - List editor window
-{
+ListEditor::save_as_cb()			// I - List editor window
+{	
 }
 
 
 //
-// End of "$Id: ListEditor3.cxx,v 1.1.2.3 2002/05/10 00:19:46 mike Exp $".
+// End of "$Id: ListEditor3.cxx,v 1.1.2.4 2002/05/20 00:47:56 mike Exp $".
 //

@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.4 2002/05/12 21:57:12 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.5 2002/05/20 00:47:56 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -560,6 +560,21 @@ get_platform(struct utsname *platform)	/* O - Platform info */
 
 
 /*
+ * 'new_dist()' - Create a new, empty software distribution.
+ */
+
+dist_t *				/* O - New distribution */
+new_dist(void)
+{
+ /*
+  * Create a new, blank distribution...
+  */
+
+  return ((dist_t *)calloc(sizeof(dist_t), 1));
+}
+
+
+/*
  * 'read_dist()' - Read a software distribution.
  */
 
@@ -594,7 +609,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
   * Create a new, blank distribution...
   */
 
-  dist = (dist_t *)calloc(sizeof(dist_t), 1);
+  dist = new_dist();
 
  /*
   * Open the main list file...
@@ -1896,5 +1911,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.4 2002/05/12 21:57:12 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.5 2002/05/20 00:47:56 mike Exp $".
  */

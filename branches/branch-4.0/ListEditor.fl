@@ -14,38 +14,43 @@ class ListEditor {open
   decl {int modified_;} {}
   decl {ListEditor *next_;} {}
   decl {char title_[1024];} {}
-  decl {static void build_cb(ListEditor *le);} {}
+  decl {void add_subpkg_cb();} {}
+  decl {void build_cb();} {}
   decl {int check_save();} {}
-  decl {static void close_cb(ListEditor *le);} {}
-  decl {static void copy_cb(ListEditor *le);} {}
-  decl {static void cut_cb(ListEditor *le);} {}
-  decl {static void delete_cb(ListEditor *le);} {}
-  decl {static void file_settings_cb(ListEditor *le, int save);} {}
-  decl {static void help_cb(ListEditor *le, const char *html);} {}
-  decl {static void list_cb(ListEditor *le);} {}
-  decl {static void margins_cb(ListEditor *le);} {}
+  decl {void close_cb();} {}
+  decl {void copy_cb();} {}
+  decl {void cut_cb();} {}
+  decl {void delete_cb();} {}
+  decl {void delete_subpkg_cb();} {}
+  decl {void file_settings_cb(int save);} {}
+  decl {void help_cb(const char *html);} {}
+  decl {void list_cb();} {}
+  decl {void list_subpkg_cb();} {}
+  decl {void margins_cb();} {}
   Function {modified(int m)} {private return_type void
   } {
     code {modified_ = m;
 set_title();} {}
   }
-  decl {static void new_cb(ListEditor *le);} {}
-  decl {static void open_cb(ListEditor *le);} {}
-  decl {static void open_history_cb(ListEditor *le, const char *listfile);} {}
-  decl {static void paste_cb(ListEditor *le);} {}
-  decl {static void project_settings_cb(ListEditor *le);} {}
-  decl {static void quit_cb(ListEditor *le);} {}
-  decl {static void save_cb(ListEditor *le);} {}
-  decl {static void save_as_cb(ListEditor *le);} {}
+  decl {void new_cb();} {}
+  decl {void open_cb();} {}
+  decl {void open_history_cb(const char *listfile);} {}
+  decl {void paste_cb();} {}
+  decl {void project_ok_cb();} {}
+  decl {void project_settings_cb();} {}
+  decl {void quit_cb();} {}
+  decl {void save_cb();} {}
+  decl {void save_as_cb();} {}
   decl {void set_title();} {}
   decl {void update_history(const char *listfile);} {}
   decl {void update_list();} {}
   decl {void update_margins();} {}
+  decl {void update_subpkgs();} {}
   Function {ListEditor(const char *listfile)} {open
   } {
     Fl_Window window {
       label {EPM List Editor 4.0}
-      callback {close_cb(this);} open
+      callback {close_cb();}
       private xywh {265 20 720 495} hide resizable
       code0 {\#include "epm.h"}
       code1 {\#include <FL/Fl_Preferences.H>}
@@ -59,12 +64,12 @@ set_title();} {}
         } {
           menuitem {} {
             label {&New}
-            callback {new_cb(this);}
+            callback {new_cb();}
             private xywh {0 0 100 20} shortcut 0x4006e
           }
           menuitem {} {
             label {&Open...}
-            callback {open_cb(this);}
+            callback {open_cb();}
             private xywh {10 10 100 20} shortcut 0x4006f
           }
           submenu {} {
@@ -73,78 +78,78 @@ set_title();} {}
           } {
             menuitem history_items {
               label filename
-              callback {open_history_cb(this, history_items[0].label());}
+              callback {open_history_cb(history_items[0].label());}
               private xywh {0 0 100 20} shortcut 0x40030 hide
             }
             menuitem {} {
               label filename
-              callback {open_history_cb(this, history_items[1].label());}
+              callback {open_history_cb(history_items[1].label());}
               private xywh {10 10 100 20} shortcut 0x40031 hide
             }
             menuitem {} {
               label filename
-              callback {open_history_cb(this, history_items[2].label());}
+              callback {open_history_cb(history_items[2].label());}
               private xywh {20 20 100 20} shortcut 0x40032 hide
             }
             menuitem {} {
               label filename
-              callback {open_history_cb(this, history_items[3].label());}
+              callback {open_history_cb(history_items[3].label());}
               private xywh {30 30 100 20} shortcut 0x40033 hide
             }
             menuitem {} {
               label filename
-              callback {open_history_cb(this, history_items[4].label());}
+              callback {open_history_cb(history_items[4].label());}
               private xywh {40 40 100 20} shortcut 0x40034 hide
             }
             menuitem {} {
               label filename
-              callback {open_history_cb(this, history_items[5].label());}
+              callback {open_history_cb(history_items[5].label());}
               private xywh {50 50 100 20} shortcut 0x40035 hide
             }
             menuitem {} {
               label filename
-              callback {open_history_cb(this, history_items[6].label());}
+              callback {open_history_cb(history_items[6].label());}
               private xywh {60 60 100 20} shortcut 0x40036 hide
             }
             menuitem {} {
               label filename
-              callback {open_history_cb(this, history_items[7].label());}
+              callback {open_history_cb(history_items[7].label());}
               private xywh {70 70 100 20} shortcut 0x40037 hide
             }
             menuitem {} {
               label filename
-              callback {open_history_cb(this, history_items[8].label());}
+              callback {open_history_cb(history_items[8].label());}
               private xywh {80 80 100 20} shortcut 0x40038 hide
             }
             menuitem {} {
               label filename
-              callback {open_history_cb(this, history_items[9].label());}
+              callback {open_history_cb(history_items[9].label());}
               private xywh {90 90 100 20} shortcut 0x40039 hide
             }
           }
           menuitem {} {
             label {&Close}
-            callback {close_cb(this);}
+            callback {close_cb();}
             private xywh {20 20 100 20} shortcut 0x40077 divider
           }
           menuitem {} {
             label {&Save}
-            callback {save_cb(this);}
+            callback {save_cb();}
             private xywh {30 30 100 20} shortcut 0x40073
           }
           menuitem {} {
             label {Save &As...}
-            callback {save_as_cb(this);}
+            callback {save_as_cb();}
             private xywh {40 40 100 20} shortcut 0x50073 divider
           }
           menuitem {} {
             label {&Build Package...}
-            callback {build_cb(this);}
+            callback {build_cb();}
             private xywh {50 50 100 20} shortcut 0x40062 divider
           }
           menuitem {} {
             label {&Quit}
-            callback {quit_cb(this);}
+            callback {quit_cb();}
             private xywh {60 60 100 20} shortcut 0x40071
           }
         }
@@ -154,47 +159,47 @@ set_title();} {}
         } {
           menuitem {} {
             label {&Copy}
-            callback {copy_cb(this);}
+            callback {copy_cb();}
             private xywh {0 0 100 20} shortcut 0x40063
           }
           menuitem {} {
             label {Cu&t}
-            callback {cut_cb(this);}
+            callback {cut_cb();}
             private xywh {10 10 100 20} shortcut 0x40078
           }
           menuitem {} {
             label {&Delete}
-            callback {delete_cb(this);}
+            callback {delete_cb();}
             private xywh {40 40 100 20} shortcut 0xffff
           }
           menuitem {} {
             label {&Paste}
-            callback {paste_cb(this);}
+            callback {paste_cb();}
             private xywh {20 20 100 20} shortcut 0x40076 divider
           }
           menuitem {} {
             label {&Select All}
-            callback {copy_cb(this);}
+            callback {copy_cb();}
             private xywh {20 20 100 20} shortcut 0x40061
           }
           menuitem {} {
             label {Select &None}
-            callback {copy_cb(this);}
+            callback {copy_cb();}
             private xywh {30 30 100 20} shortcut 0x50061 divider
           }
           menuitem {} {
             label {&Add File(s)...}
-            callback {copy_cb(this);}
+            callback {copy_cb();}
             private xywh {10 10 100 20} shortcut 0x40069
           }
           menuitem file_settings_item {
             label {&File Settings...}
-            callback {file_settings_cb(this, 0);}
+            callback {file_settings_cb(0);}
             private xywh {30 30 100 20} shortcut 0x40066
           }
           menuitem {} {
             label {P&roject Settings...}
-            callback {project_settings_cb(this);}
+            callback {project_settings_cb();}
             private xywh {40 40 100 20} shortcut 0x40070
           }
         }
@@ -204,34 +209,34 @@ set_title();} {}
         } {
           menuitem {} {
             label {&Contents...}
-            callback {help_cb(this, "index.html");}
+            callback {help_cb("index.html");}
             private xywh {0 0 100 20} shortcut 0xffbe divider
           }
           menuitem {} {
             label {&Introduction...}
-            callback {help_cb(this, "index.html");}
+            callback {help_cb("index.html");}
             private xywh {40 40 100 20}
           }
           menuitem {} {
             label {&Basic...}
-            callback {help_cb(this, "index.html");}
+            callback {help_cb("index.html");}
             private xywh {20 20 100 20}
           }
           menuitem {} {
             label {&Advanced...}
-            callback {help_cb(this, "index.html");}
+            callback {help_cb("index.html");}
             private xywh {30 30 100 20} divider
           }
           menuitem {} {
             label {&Version...}
-            callback {help_cb(this, "index.html");}
+            callback {help_cb("index.html");}
             private xywh {10 10 100 20}
           }
         }
       }
       Fl_Box margin_manager {
         label ListManager
-        callback {margins_cb(this);}
+        callback {margins_cb();}
         private xywh {0 25 720 20} box FLAT_BOX color 52
         code0 {\#include "ListManager.h"}
         class ListManager
@@ -241,44 +246,44 @@ set_title();} {}
       } {
         menuitem margin_items {
           label Mode
-          callback {margins_cb(this);}
+          callback {margins_cb();}
           private xywh {0 0 100 20} type Toggle value 1
         }
         menuitem {} {
           label User
-          callback {margins_cb(this);}
+          callback {margins_cb();}
           private xywh {10 10 100 20} type Toggle value 1
         }
         menuitem {} {
           label Group
-          callback {margins_cb(this);}
+          callback {margins_cb();}
           private xywh {20 20 100 20} type Toggle value 1
         }
         menuitem {} {
           label {Destination Path}
-          callback {margins_cb(this);}
+          callback {margins_cb();}
           private xywh {30 30 100 20} type Toggle value 1
         }
         menuitem {} {
           label {Source Path}
-          callback {margins_cb(this);}
+          callback {margins_cb();}
           private xywh {40 40 100 20} type Toggle value 1
         }
         menuitem {} {
           label Package
-          callback {margins_cb(this);}
+          callback {margins_cb();}
           private xywh {20 20 100 20} type Toggle value 1
         }
       }
       Fl_File_Browser list {
-        callback {list_cb(this);}
+        callback {list_cb();}
         private xywh {0 45 720 450} type Multi resizable
         code0 {list->has_scrollbar(Fl_Browser_::VERTICAL);}
       }
     }
     Fl_Window file_window {
-      label {File Settings} open
-      private xywh {716 221 435 360} hide modal
+      label {File Settings}
+      private xywh {57 496 435 360} hide modal
     } {
       Fl_Group {} {open
         private xywh {10 10 415 305} box THIN_UP_BOX
@@ -434,43 +439,33 @@ set_title();} {}
           callback {file_ok_button->activate();}
           private xywh {150 245 260 25} when 1
         }
-        Fl_Input subpackage_field {
+        Fl_Choice subpackage_chooser {
           label {Subpackage:}
-          callback {file_ok_button->activate();}
-          private xywh {150 280 115 25} when 1
-        }
+          callback {file_ok_button->activate();} open
+          private xywh {150 280 170 25} down_box BORDER_BOX
+        } {}
       }
       Fl_Return_Button file_ok_button {
         label OK
-        callback {file_settings_cb(this, 1);}
+        callback {file_settings_cb(1);}
         private xywh {235 325 95 25}
       }
       Fl_Button file_cancel_button {
         label Cancel
         callback {file_window->hide();}
-        private xywh {335 325 85 25}
+        private xywh {340 325 85 25}
       }
     }
-    code {dist_        = (dist_t *)0;
-filename_[0] = '\\0';
-modified_    = 0;
-title_[0]    = '\\0';
-
-update_margins();
-open(listfile);
-
-next_  = first_;
-first_ = this;} {}
     Fl_Window project_window {
-      label {Project Settings} open
-      private xywh {4 20 535 540} visible
+      label {Project Settings}
+      private xywh {4 20 500 411} visible
     } {
       Fl_Tabs {} {open
-        private xywh {10 10 480 410}
+        private xywh {10 10 480 350}
       } {
         Fl_Group {} {
-          label Information open
-          private xywh {10 35 480 385} hide
+          label General open
+          private xywh {10 35 480 325} hide
         } {
           Fl_Input name_field {
             label {Project:}
@@ -511,45 +506,99 @@ first_ = this;} {}
             label {Browse...}
             private xywh {385 255 95 25}
           }
-          Fl_Input setup_image_field {
-            label {Setup Image:}
-            private xywh {145 290 240 25}
-          }
-          Fl_Button setup_image_browse_button {
-            label {Browse...}
-            private xywh {385 290 95 25}
-          }
-          Fl_Input setup_types_field {
-            label {Setup Types:}
-            private xywh {145 325 240 25}
-          }
-          Fl_Button setup_types_browse_button {
-            label {Browse...}
-            private xywh {385 325 95 25}
-          }
         }
         Fl_Group {} {
-          label Subpackages open selected
-          private xywh {10 35 480 385}
+          label Packages open selected
+          private xywh {10 35 480 325}
         } {
           Fl_Browser subpackage_list {
-            private xywh {20 50 350 95} type Hold align 5
+            label {Subpackages:}
+            callback {list_subpkg_cb();}
+            private xywh {20 60 355 60} type Hold align 5
           }
           Fl_Button {} {
             label {Add...}
-            private xywh {380 50 95 25}
+            callback {add_subpkg_cb();}
+            private xywh {385 60 95 25}
           }
-          Fl_Button {} {
-            label Delete
-            private xywh {380 85 95 25}
+          Fl_Button delete_subpkg_button {
+            label {Delete...}
+            callback {delete_subpkg_cb();}
+            private xywh {385 95 95 25} deactivate
           }
-          Fl_Button {} {
-            label {Edit...}
-            private xywh {380 120 95 25}
+          Fl_Input description_field {
+            label {Description:}
+            private xywh {20 145 460 65} type Multiline align 5 when 0
+          }
+          Fl_Input {depends_field[0]} {
+            label {Requires:}
+            private xywh {130 220 350 25} when 0
+          }
+          Fl_Input {depends_field[1]} {
+            label {Incompatable:}
+            private xywh {130 255 350 25} when 0
+          }
+          Fl_Input {depends_field[2]} {
+            label {Replaces:}
+            private xywh {130 290 350 25} when 0
+          }
+          Fl_Input {depends_field[3]} {
+            label {Provides:}
+            private xywh {130 325 350 25} when 0
+          }
+        }
+        Fl_Group {} {
+          label {GUI Setup} open
+          private xywh {10 35 480 325} hide
+        } {
+          Fl_Input setup_image_field {
+            label {Setup Image:}
+            private xywh {145 45 240 25}
+          }
+          Fl_Button setup_image_browse_button {
+            label {Browse...}
+            callback {const char *fn;
+
+if ((fn = fl_file_chooser("Setup Image?", "*.xpm",setup_image_field->value())) != NULL)
+  setup_image_field->value(fn);}
+            private xywh {385 45 95 25}
+            code0 {\#include <FL/Fl_File_Chooser.H>}
+          }
+          Fl_Input setup_types_field {
+            label {Setup Types:}
+            private xywh {145 80 240 25}
+          }
+          Fl_Button setup_types_browse_button {
+            label {Browse...}
+            callback {const char *fn;
+
+if ((fn = fl_file_chooser("Setup Types?", "*.types",setup_types_field->value())) != NULL)
+  setup_types_field->value(fn);}
+            private xywh {385 80 95 25}
           }
         }
       }
+      Fl_Return_Button {} {
+        label OK
+        callback {project_ok_cb();}
+        private xywh {300 375 95 25}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {project_window->hide();}
+        private xywh {405 375 85 25}
+      }
     }
+    code {dist_        = (dist_t *)0;
+filename_[0] = '\\0';
+modified_    = 0;
+title_[0]    = '\\0';
+
+update_margins();
+open(listfile);
+
+next_  = first_;
+first_ = this;} {}
   }
   decl {~ListEditor();} {public
   }

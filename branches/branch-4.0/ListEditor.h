@@ -3,7 +3,7 @@
 #ifndef ListEditor_h
 #define ListEditor_h
 #include <FL/Fl.H>
-#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Window.H>
 #include "epm.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Bar.H>
@@ -18,6 +18,10 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Tabs.H>
+#include <FL/Fl_Counter.H>
+#include <FL/Fl_Browser.H>
+#include <FL/Fl_File_Chooser.H>
 
 class ListEditor {
   static ListEditor *first_;
@@ -30,35 +34,40 @@ class ListEditor {
   int modified_;
   ListEditor *next_;
   char title_[1024];
-  static void build_cb(ListEditor *le);
+  void add_subpkg_cb();
+  void build_cb();
   int check_save();
-  static void close_cb(ListEditor *le);
-  static void copy_cb(ListEditor *le);
-  static void cut_cb(ListEditor *le);
-  static void delete_cb(ListEditor *le);
-  static void file_settings_cb(ListEditor *le, int save);
-  static void help_cb(ListEditor *le, const char *html);
-  static void list_cb(ListEditor *le);
-  static void margins_cb(ListEditor *le);
+  void close_cb();
+  void copy_cb();
+  void cut_cb();
+  void delete_cb();
+  void delete_subpkg_cb();
+  void file_settings_cb(int save);
+  void help_cb(const char *html);
+  void list_cb();
+  void list_subpkg_cb();
+  void margins_cb();
   void modified(int m);
-  static void new_cb(ListEditor *le);
-  static void open_cb(ListEditor *le);
-  static void open_history_cb(ListEditor *le, const char *listfile);
-  static void paste_cb(ListEditor *le);
-  static void project_settings_cb(ListEditor *le);
-  static void quit_cb(ListEditor *le);
-  static void save_cb(ListEditor *le);
-  static void save_as_cb(ListEditor *le);
+  void new_cb();
+  void open_cb();
+  void open_history_cb(const char *listfile);
+  void paste_cb();
+  void project_ok_cb();
+  void project_settings_cb();
+  void quit_cb();
+  void save_cb();
+  void save_as_cb();
   void set_title();
   void update_history(const char *listfile);
   void update_list();
   void update_margins();
+  void update_subpkgs();
 public:
   ListEditor(const char *listfile);
 private:
-  Fl_Double_Window *window;
-  inline void cb_window_i(Fl_Double_Window*, void*);
-  static void cb_window(Fl_Double_Window*, void*);
+  Fl_Window *window;
+  inline void cb_window_i(Fl_Window*, void*);
+  static void cb_window(Fl_Window*, void*);
   Fl_Menu_Bar *menubar;
   static Fl_Menu_Item menu_menubar[];
   inline void cb_New_i(Fl_Menu_*, void*);
@@ -146,7 +155,7 @@ private:
   Fl_File_Browser *list;
   inline void cb_list_i(Fl_File_Browser*, void*);
   static void cb_list(Fl_File_Browser*, void*);
-  Fl_Double_Window *file_window;
+  Fl_Window *file_window;
   Fl_Choice *type_chooser;
   inline void cb_type_chooser_i(Fl_Choice*, void*);
   static void cb_type_chooser(Fl_Choice*, void*);
@@ -227,15 +236,48 @@ private:
   Fl_Input *dst_path_field;
   inline void cb_dst_path_field_i(Fl_Input*, void*);
   static void cb_dst_path_field(Fl_Input*, void*);
-  Fl_Input *subpackage_field;
-  inline void cb_subpackage_field_i(Fl_Input*, void*);
-  static void cb_subpackage_field(Fl_Input*, void*);
+  Fl_Choice *subpackage_chooser;
+  inline void cb_subpackage_chooser_i(Fl_Choice*, void*);
+  static void cb_subpackage_chooser(Fl_Choice*, void*);
   Fl_Return_Button *file_ok_button;
   inline void cb_file_ok_button_i(Fl_Return_Button*, void*);
   static void cb_file_ok_button(Fl_Return_Button*, void*);
   Fl_Button *file_cancel_button;
   inline void cb_file_cancel_button_i(Fl_Button*, void*);
   static void cb_file_cancel_button(Fl_Button*, void*);
+  Fl_Window *project_window;
+  Fl_Input *name_field;
+  Fl_Input *version_field;
+  Fl_Counter *version_counter;
+  Fl_Input *copyright_field;
+  Fl_Input *vendor_field;
+  Fl_Input *packager_field;
+  Fl_Input *license_field;
+  Fl_Input *readme_field;
+  Fl_Button *license_browse_button;
+  Fl_Button *readme_browse_button;
+  Fl_Browser *subpackage_list;
+  inline void cb_subpackage_list_i(Fl_Browser*, void*);
+  static void cb_subpackage_list(Fl_Browser*, void*);
+  inline void cb_Add1_i(Fl_Button*, void*);
+  static void cb_Add1(Fl_Button*, void*);
+  Fl_Button *delete_subpkg_button;
+  inline void cb_delete_subpkg_button_i(Fl_Button*, void*);
+  static void cb_delete_subpkg_button(Fl_Button*, void*);
+  Fl_Input *description_field;
+  Fl_Input *depends_field[4];
+  Fl_Input *setup_image_field;
+  Fl_Button *setup_image_browse_button;
+  inline void cb_setup_image_browse_button_i(Fl_Button*, void*);
+  static void cb_setup_image_browse_button(Fl_Button*, void*);
+  Fl_Input *setup_types_field;
+  Fl_Button *setup_types_browse_button;
+  inline void cb_setup_types_browse_button_i(Fl_Button*, void*);
+  static void cb_setup_types_browse_button(Fl_Button*, void*);
+  inline void cb_OK_i(Fl_Return_Button*, void*);
+  static void cb_OK(Fl_Return_Button*, void*);
+  inline void cb_Cancel_i(Fl_Button*, void*);
+  static void cb_Cancel(Fl_Button*, void*);
 public:
   ~ListEditor();
   void hide();

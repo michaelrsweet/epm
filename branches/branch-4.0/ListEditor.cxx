@@ -2,225 +2,225 @@
 
 #include "ListEditor.h"
 
-inline void ListEditor::cb_window_i(Fl_Double_Window*, void*) {
-  close_cb(this);
+inline void ListEditor::cb_window_i(Fl_Window*, void*) {
+  close_cb();
 }
-void ListEditor::cb_window(Fl_Double_Window* o, void* v) {
+void ListEditor::cb_window(Fl_Window* o, void* v) {
   ((ListEditor*)(o->user_data()))->cb_window_i(o,v);
 }
 
 inline void ListEditor::cb_New_i(Fl_Menu_*, void*) {
-  new_cb(this);
+  new_cb();
 }
 void ListEditor::cb_New(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_New_i(o,v);
 }
 
 inline void ListEditor::cb_Open_i(Fl_Menu_*, void*) {
-  open_cb(this);
+  open_cb();
 }
 void ListEditor::cb_Open(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Open_i(o,v);
 }
 
 inline void ListEditor::cb_history_items_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[0].label());
+  open_history_cb(history_items[0].label());
 }
 void ListEditor::cb_history_items(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_history_items_i(o,v);
 }
 
 inline void ListEditor::cb_filename_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[1].label());
+  open_history_cb(history_items[1].label());
 }
 void ListEditor::cb_filename(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_filename_i(o,v);
 }
 
 inline void ListEditor::cb_filename1_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[2].label());
+  open_history_cb(history_items[2].label());
 }
 void ListEditor::cb_filename1(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_filename1_i(o,v);
 }
 
 inline void ListEditor::cb_filename2_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[3].label());
+  open_history_cb(history_items[3].label());
 }
 void ListEditor::cb_filename2(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_filename2_i(o,v);
 }
 
 inline void ListEditor::cb_filename3_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[4].label());
+  open_history_cb(history_items[4].label());
 }
 void ListEditor::cb_filename3(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_filename3_i(o,v);
 }
 
 inline void ListEditor::cb_filename4_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[5].label());
+  open_history_cb(history_items[5].label());
 }
 void ListEditor::cb_filename4(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_filename4_i(o,v);
 }
 
 inline void ListEditor::cb_filename5_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[6].label());
+  open_history_cb(history_items[6].label());
 }
 void ListEditor::cb_filename5(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_filename5_i(o,v);
 }
 
 inline void ListEditor::cb_filename6_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[7].label());
+  open_history_cb(history_items[7].label());
 }
 void ListEditor::cb_filename6(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_filename6_i(o,v);
 }
 
 inline void ListEditor::cb_filename7_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[8].label());
+  open_history_cb(history_items[8].label());
 }
 void ListEditor::cb_filename7(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_filename7_i(o,v);
 }
 
 inline void ListEditor::cb_filename8_i(Fl_Menu_*, void*) {
-  open_history_cb(this, history_items[9].label());
+  open_history_cb(history_items[9].label());
 }
 void ListEditor::cb_filename8(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_filename8_i(o,v);
 }
 
 inline void ListEditor::cb_Close_i(Fl_Menu_*, void*) {
-  close_cb(this);
+  close_cb();
 }
 void ListEditor::cb_Close(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Close_i(o,v);
 }
 
 inline void ListEditor::cb_Save_i(Fl_Menu_*, void*) {
-  save_cb(this);
+  save_cb();
 }
 void ListEditor::cb_Save(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Save_i(o,v);
 }
 
 inline void ListEditor::cb_Save1_i(Fl_Menu_*, void*) {
-  save_as_cb(this);
+  save_as_cb();
 }
 void ListEditor::cb_Save1(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Save1_i(o,v);
 }
 
 inline void ListEditor::cb_Build_i(Fl_Menu_*, void*) {
-  build_cb(this);
+  build_cb();
 }
 void ListEditor::cb_Build(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Build_i(o,v);
 }
 
 inline void ListEditor::cb_Quit_i(Fl_Menu_*, void*) {
-  quit_cb(this);
+  quit_cb();
 }
 void ListEditor::cb_Quit(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Quit_i(o,v);
 }
 
 inline void ListEditor::cb_Copy_i(Fl_Menu_*, void*) {
-  copy_cb(this);
+  copy_cb();
 }
 void ListEditor::cb_Copy(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Copy_i(o,v);
 }
 
 inline void ListEditor::cb_Cu_i(Fl_Menu_*, void*) {
-  cut_cb(this);
+  cut_cb();
 }
 void ListEditor::cb_Cu(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Cu_i(o,v);
 }
 
 inline void ListEditor::cb_Delete_i(Fl_Menu_*, void*) {
-  delete_cb(this);
+  delete_cb();
 }
 void ListEditor::cb_Delete(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Delete_i(o,v);
 }
 
 inline void ListEditor::cb_Paste_i(Fl_Menu_*, void*) {
-  paste_cb(this);
+  paste_cb();
 }
 void ListEditor::cb_Paste(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Paste_i(o,v);
 }
 
 inline void ListEditor::cb_Select_i(Fl_Menu_*, void*) {
-  copy_cb(this);
+  copy_cb();
 }
 void ListEditor::cb_Select(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Select_i(o,v);
 }
 
 inline void ListEditor::cb_Select1_i(Fl_Menu_*, void*) {
-  copy_cb(this);
+  copy_cb();
 }
 void ListEditor::cb_Select1(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Select1_i(o,v);
 }
 
 inline void ListEditor::cb_Add_i(Fl_Menu_*, void*) {
-  copy_cb(this);
+  copy_cb();
 }
 void ListEditor::cb_Add(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Add_i(o,v);
 }
 
 inline void ListEditor::cb_file_settings_item_i(Fl_Menu_*, void*) {
-  file_settings_cb(this, 0);
+  file_settings_cb(0);
 }
 void ListEditor::cb_file_settings_item(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_file_settings_item_i(o,v);
 }
 
 inline void ListEditor::cb_P_i(Fl_Menu_*, void*) {
-  project_settings_cb(this);
+  project_settings_cb();
 }
 void ListEditor::cb_P(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_P_i(o,v);
 }
 
 inline void ListEditor::cb_Contents_i(Fl_Menu_*, void*) {
-  help_cb(this, "index.html");
+  help_cb("index.html");
 }
 void ListEditor::cb_Contents(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Contents_i(o,v);
 }
 
 inline void ListEditor::cb_Introduction_i(Fl_Menu_*, void*) {
-  help_cb(this, "index.html");
+  help_cb("index.html");
 }
 void ListEditor::cb_Introduction(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Introduction_i(o,v);
 }
 
 inline void ListEditor::cb_Basic_i(Fl_Menu_*, void*) {
-  help_cb(this, "index.html");
+  help_cb("index.html");
 }
 void ListEditor::cb_Basic(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Basic_i(o,v);
 }
 
 inline void ListEditor::cb_Advanced_i(Fl_Menu_*, void*) {
-  help_cb(this, "index.html");
+  help_cb("index.html");
 }
 void ListEditor::cb_Advanced(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Advanced_i(o,v);
 }
 
 inline void ListEditor::cb_Version_i(Fl_Menu_*, void*) {
-  help_cb(this, "index.html");
+  help_cb("index.html");
 }
 void ListEditor::cb_Version(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Version_i(o,v);
@@ -272,49 +272,49 @@ Fl_Menu_Item* ListEditor::history_items = ListEditor::menu_menubar + 4;
 Fl_Menu_Item* ListEditor::file_settings_item = ListEditor::menu_menubar + 29;
 
 inline void ListEditor::cb_margin_manager_i(ListManager*, void*) {
-  margins_cb(this);
+  margins_cb();
 }
 void ListEditor::cb_margin_manager(ListManager* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_margin_manager_i(o,v);
 }
 
 inline void ListEditor::cb_margin_items_i(Fl_Menu_*, void*) {
-  margins_cb(this);
+  margins_cb();
 }
 void ListEditor::cb_margin_items(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_margin_items_i(o,v);
 }
 
 inline void ListEditor::cb_User_i(Fl_Menu_*, void*) {
-  margins_cb(this);
+  margins_cb();
 }
 void ListEditor::cb_User(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_User_i(o,v);
 }
 
 inline void ListEditor::cb_Group_i(Fl_Menu_*, void*) {
-  margins_cb(this);
+  margins_cb();
 }
 void ListEditor::cb_Group(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Group_i(o,v);
 }
 
 inline void ListEditor::cb_Destination_i(Fl_Menu_*, void*) {
-  margins_cb(this);
+  margins_cb();
 }
 void ListEditor::cb_Destination(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Destination_i(o,v);
 }
 
 inline void ListEditor::cb_Source_i(Fl_Menu_*, void*) {
-  margins_cb(this);
+  margins_cb();
 }
 void ListEditor::cb_Source(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Source_i(o,v);
 }
 
 inline void ListEditor::cb_Package_i(Fl_Menu_*, void*) {
-  margins_cb(this);
+  margins_cb();
 }
 void ListEditor::cb_Package(Fl_Menu_* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_Package_i(o,v);
@@ -332,7 +332,7 @@ Fl_Menu_Item ListEditor::menu_margin_menu[] = {
 Fl_Menu_Item* ListEditor::margin_items = ListEditor::menu_margin_menu + 0;
 
 inline void ListEditor::cb_list_i(Fl_File_Browser*, void*) {
-  list_cb(this);
+  list_cb();
 }
 void ListEditor::cb_list(Fl_File_Browser* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_list_i(o,v);
@@ -559,15 +559,15 @@ void ListEditor::cb_dst_path_field(Fl_Input* o, void* v) {
   ((ListEditor*)(o->parent()->parent()->user_data()))->cb_dst_path_field_i(o,v);
 }
 
-inline void ListEditor::cb_subpackage_field_i(Fl_Input*, void*) {
+inline void ListEditor::cb_subpackage_chooser_i(Fl_Choice*, void*) {
   file_ok_button->activate();
 }
-void ListEditor::cb_subpackage_field(Fl_Input* o, void* v) {
-  ((ListEditor*)(o->parent()->parent()->user_data()))->cb_subpackage_field_i(o,v);
+void ListEditor::cb_subpackage_chooser(Fl_Choice* o, void* v) {
+  ((ListEditor*)(o->parent()->parent()->user_data()))->cb_subpackage_chooser_i(o,v);
 }
 
 inline void ListEditor::cb_file_ok_button_i(Fl_Return_Button*, void*) {
-  file_settings_cb(this, 1);
+  file_settings_cb(1);
 }
 void ListEditor::cb_file_ok_button(Fl_Return_Button* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_file_ok_button_i(o,v);
@@ -580,14 +580,69 @@ void ListEditor::cb_file_cancel_button(Fl_Button* o, void* v) {
   ((ListEditor*)(o->parent()->user_data()))->cb_file_cancel_button_i(o,v);
 }
 
+inline void ListEditor::cb_subpackage_list_i(Fl_Browser*, void*) {
+  list_subpkg_cb();
+}
+void ListEditor::cb_subpackage_list(Fl_Browser* o, void* v) {
+  ((ListEditor*)(o->parent()->parent()->parent()->user_data()))->cb_subpackage_list_i(o,v);
+}
+
+inline void ListEditor::cb_Add1_i(Fl_Button*, void*) {
+  add_subpkg_cb();
+}
+void ListEditor::cb_Add1(Fl_Button* o, void* v) {
+  ((ListEditor*)(o->parent()->parent()->parent()->user_data()))->cb_Add1_i(o,v);
+}
+
+inline void ListEditor::cb_delete_subpkg_button_i(Fl_Button*, void*) {
+  delete_subpkg_cb();
+}
+void ListEditor::cb_delete_subpkg_button(Fl_Button* o, void* v) {
+  ((ListEditor*)(o->parent()->parent()->parent()->user_data()))->cb_delete_subpkg_button_i(o,v);
+}
+
+inline void ListEditor::cb_setup_image_browse_button_i(Fl_Button*, void*) {
+  const char *fn;
+
+if ((fn = fl_file_chooser("Setup Image?", "*.xpm",setup_image_field->value())) != NULL)
+  setup_image_field->value(fn);
+}
+void ListEditor::cb_setup_image_browse_button(Fl_Button* o, void* v) {
+  ((ListEditor*)(o->parent()->parent()->parent()->user_data()))->cb_setup_image_browse_button_i(o,v);
+}
+
+inline void ListEditor::cb_setup_types_browse_button_i(Fl_Button*, void*) {
+  const char *fn;
+
+if ((fn = fl_file_chooser("Setup Types?", "*.types",setup_types_field->value())) != NULL)
+  setup_types_field->value(fn);
+}
+void ListEditor::cb_setup_types_browse_button(Fl_Button* o, void* v) {
+  ((ListEditor*)(o->parent()->parent()->parent()->user_data()))->cb_setup_types_browse_button_i(o,v);
+}
+
+inline void ListEditor::cb_OK_i(Fl_Return_Button*, void*) {
+  project_ok_cb();
+}
+void ListEditor::cb_OK(Fl_Return_Button* o, void* v) {
+  ((ListEditor*)(o->parent()->user_data()))->cb_OK_i(o,v);
+}
+
+inline void ListEditor::cb_Cancel_i(Fl_Button*, void*) {
+  project_window->hide();
+}
+void ListEditor::cb_Cancel(Fl_Button* o, void* v) {
+  ((ListEditor*)(o->parent()->user_data()))->cb_Cancel_i(o,v);
+}
+
 void ListEditor::modified(int m) {
   modified_ = m;
 set_title();
 }
 
 ListEditor::ListEditor(const char *listfile) {
-  Fl_Double_Window* w;
-  { Fl_Double_Window* o = window = new Fl_Double_Window(720, 495, "EPM List Editor 4.0");
+  Fl_Window* w;
+  { Fl_Window* o = window = new Fl_Window(720, 495, "EPM List Editor 4.0");
     w = o;
     o->callback((Fl_Callback*)cb_window, (void*)(this));
     { Fl_Menu_Bar* o = menubar = new Fl_Menu_Bar(0, 0, 720, 25);
@@ -610,7 +665,7 @@ ListEditor::ListEditor(const char *listfile) {
     }
     o->end();
   }
-  { Fl_Double_Window* o = file_window = new Fl_Double_Window(435, 360, "File Settings");
+  { Fl_Window* o = file_window = new Fl_Window(435, 360, "File Settings");
     w = o;
     o->user_data((void*)(this));
     { Fl_Group* o = new Fl_Group(10, 10, 415, 305);
@@ -696,9 +751,9 @@ ListEditor::ListEditor(const char *listfile) {
         o->callback((Fl_Callback*)cb_dst_path_field);
         o->when(FL_WHEN_CHANGED);
       }
-      { Fl_Input* o = subpackage_field = new Fl_Input(150, 280, 115, 25, "Subpackage:");
-        o->callback((Fl_Callback*)cb_subpackage_field);
-        o->when(FL_WHEN_CHANGED);
+      { Fl_Choice* o = subpackage_chooser = new Fl_Choice(150, 280, 170, 25, "Subpackage:");
+        o->down_box(FL_BORDER_BOX);
+        o->callback((Fl_Callback*)cb_subpackage_chooser);
       }
       o->end();
     }
@@ -709,6 +764,83 @@ ListEditor::ListEditor(const char *listfile) {
       o->callback((Fl_Callback*)cb_file_cancel_button);
     }
     o->set_modal();
+    o->end();
+  }
+  { Fl_Window* o = project_window = new Fl_Window(500, 411, "Project Settings");
+    w = o;
+    o->user_data((void*)(this));
+    { Fl_Tabs* o = new Fl_Tabs(10, 10, 480, 350);
+      { Fl_Group* o = new Fl_Group(10, 35, 480, 325, "General");
+        o->hide();
+        name_field = new Fl_Input(145, 45, 335, 25, "Project:");
+        version_field = new Fl_Input(145, 80, 165, 25, "Version:");
+        { Fl_Counter* o = version_counter = new Fl_Counter(310, 80, 170, 25);
+          o->minimum(0);
+          o->maximum(1e+08);
+          o->step(10);
+          o->value(1e+06);
+        }
+        copyright_field = new Fl_Input(145, 115, 335, 25, "Copyright:");
+        vendor_field = new Fl_Input(145, 150, 335, 25, "Vendor:");
+        packager_field = new Fl_Input(145, 185, 335, 25, "Packager:");
+        license_field = new Fl_Input(145, 220, 240, 25, "License:");
+        readme_field = new Fl_Input(145, 255, 240, 25, "README:");
+        license_browse_button = new Fl_Button(385, 220, 95, 25, "Browse...");
+        readme_browse_button = new Fl_Button(385, 255, 95, 25, "Browse...");
+        o->end();
+      }
+      { Fl_Group* o = new Fl_Group(10, 35, 480, 325, "Packages");
+        { Fl_Browser* o = subpackage_list = new Fl_Browser(20, 60, 355, 60, "Subpackages:");
+          o->type(2);
+          o->callback((Fl_Callback*)cb_subpackage_list);
+          o->align(FL_ALIGN_TOP_LEFT);
+        }
+        { Fl_Button* o = new Fl_Button(385, 60, 95, 25, "Add...");
+          o->callback((Fl_Callback*)cb_Add1);
+        }
+        { Fl_Button* o = delete_subpkg_button = new Fl_Button(385, 95, 95, 25, "Delete...");
+          o->callback((Fl_Callback*)cb_delete_subpkg_button);
+          o->deactivate();
+        }
+        { Fl_Input* o = description_field = new Fl_Input(20, 145, 460, 65, "Description:");
+          o->type(4);
+          o->align(FL_ALIGN_TOP_LEFT);
+          o->when(FL_WHEN_NEVER);
+        }
+        { Fl_Input* o = depends_field[0] = new Fl_Input(130, 220, 350, 25, "Requires:");
+          o->when(FL_WHEN_NEVER);
+        }
+        { Fl_Input* o = depends_field[1] = new Fl_Input(130, 255, 350, 25, "Incompatable:");
+          o->when(FL_WHEN_NEVER);
+        }
+        { Fl_Input* o = depends_field[2] = new Fl_Input(130, 290, 350, 25, "Replaces:");
+          o->when(FL_WHEN_NEVER);
+        }
+        { Fl_Input* o = depends_field[3] = new Fl_Input(130, 325, 350, 25, "Provides:");
+          o->when(FL_WHEN_NEVER);
+        }
+        o->end();
+      }
+      { Fl_Group* o = new Fl_Group(10, 35, 480, 325, "GUI Setup");
+        o->hide();
+        setup_image_field = new Fl_Input(145, 45, 240, 25, "Setup Image:");
+        { Fl_Button* o = setup_image_browse_button = new Fl_Button(385, 45, 95, 25, "Browse...");
+          o->callback((Fl_Callback*)cb_setup_image_browse_button);
+        }
+        setup_types_field = new Fl_Input(145, 80, 240, 25, "Setup Types:");
+        { Fl_Button* o = setup_types_browse_button = new Fl_Button(385, 80, 95, 25, "Browse...");
+          o->callback((Fl_Callback*)cb_setup_types_browse_button);
+        }
+        o->end();
+      }
+      o->end();
+    }
+    { Fl_Return_Button* o = new Fl_Return_Button(300, 375, 95, 25, "OK");
+      o->callback((Fl_Callback*)cb_OK);
+    }
+    { Fl_Button* o = new Fl_Button(405, 375, 85, 25, "Cancel");
+      o->callback((Fl_Callback*)cb_Cancel);
+    }
     o->end();
   }
   dist_        = (dist_t *)0;

@@ -1,5 +1,5 @@
 //
-// "$Id: ListEditor2.cxx,v 1.1.2.3 2002/05/10 00:19:45 mike Exp $"
+// "$Id: ListEditor2.cxx,v 1.1.2.4 2002/05/20 00:47:56 mike Exp $"
 //
 //   ESP List Editor file methods for the ESP Package Manager (EPM).
 //
@@ -51,7 +51,7 @@ Fl_Preferences	ListEditor::prefs_(Fl_Preferences::USER, "easysw.com", "epmeditor
 
 ListEditor::~ListEditor()
 {
-  ListEditor	*temp;		// Current list editor window...
+  ListEditor	*temp;				// Current list editor window...
 
 
   // First remove this window from the window list...
@@ -88,9 +88,84 @@ ListEditor::~ListEditor()
 // 'ListEditor::check_save()' - See if we need to save the list file.
 //
 
-int					// O - 1 on success, 0 on failure
+int						// O - 1 on success, 0 on failure
 ListEditor::check_save()
 {
+  return (1);
+}
+
+
+//
+// 'ListEditor::open()' - Open a list file.
+//
+
+int						// O - 1 on success, 0 on failure
+ListEditor::open(const char *listfile)		// I - Name of distribution to load
+{
+  dist_t	*temp;				// Temporary distribution
+  struct utsname platform;			// Platform information
+  char		newfile[1024],			// New filename
+		*slash;				// Final slash in filename
+
+
+  if (listfile)
+  {
+    // Make a copy of the filename and chdir as necessary...
+    strncpy(newfile, listfile, sizeof(newfile) - 1);
+    newfile[sizeof(newfile) - 1] = '\0';
+
+    if ((slash = strrchr(newfile, '/')) != NULL)
+    {
+      *slash++ = '\0';
+      listfile = slash;
+      chdir(newfile);
+    }
+
+    // Get the platform ID and load the distribution...
+    get_platform(&platform);
+
+    temp = read_dist(listfile, &platform, "");
+
+    if (temp)
+    {
+      fl_filename_absolute(filename_, sizeof(filename_), listfile);
+
+      sort_dist_files(temp);
+
+      if (dist_)
+        free_dist(dist_);
+
+      dist_ = temp;
+    }
+    else
+    {
+      fl_alert("Unable to open \"%s\"!\n\n%s", listfile, strerror(errno));
+      return (0);
+    }
+  }
+  else
+  {
+    filename_[0] = '\0';
+    dist_        = (dist_t *)0;
+  }
+
+  update_list();
+  update_subpkgs();
+
+  modified(0);
+
+  return (1);
+}
+
+
+//
+// 'ListEditor::save()' - Save a list file.
+//
+
+int						// O - 1 on success, 0 on failure
+ListEditor::save(const char *filename)		// I - Name of distribution to save
+{
+  modified(0);
   return (1);
 }
 
@@ -102,8 +177,8 @@ ListEditor::check_save()
 void
 ListEditor::set_title()
 {
-  const char	*f,			// Filename to show in titlebar
-		*m;			// " (modified)" or ""
+  const char	*f,				// Filename to show in titlebar
+		*m;				// " (modified)" or ""
 
 
   // Get the filename
@@ -155,11 +230,11 @@ ListEditor::update_history(const char *listfile)// I - List file
 void
 ListEditor::update_list()
 {
-  int			i;		// Looping var
-  file_t		*file;		// Current file
-  char			text[2048],	// Text for line
-			*textptr;	// Pointer into line
-  Fl_File_Icon		*temp;		// Temporary icon
+  int			i;			// Looping var
+  file_t		*file;			// Current file
+  char			text[2048],		// Text for line
+			*textptr;		// Pointer into line
+  Fl_File_Icon		*temp;			// Temporary icon
   static Fl_File_Icon	*file_icon = (Fl_File_Icon *)0,
 			*exe_icon = (Fl_File_Icon *)0,
 			*dir_icon = (Fl_File_Icon *)0,
@@ -201,7 +276,7 @@ ListEditor::update_list()
   list->clear();
   list->topline(1);
 
-  margins_cb(this);
+  margins_cb();
 
   if (dist_)
   {
@@ -278,90 +353,16 @@ ListEditor::update_list()
 
 
 //
-// 'ListEditor::open()' - Open a list file.
-//
-
-int					// O - 1 on success, 0 on failure
-ListEditor::open(const char *listfile)	// I - Name of distribution to load
-{
-  dist_t	*temp;			// Temporary distribution
-  struct utsname platform;		// Platform information
-  char		newfile[1024],		// New filename
-		*slash;			// Final slash in filename
-
-
-  if (listfile)
-  {
-    // Make a copy of the filename and chdir as necessary...
-    strncpy(newfile, listfile, sizeof(newfile) - 1);
-    newfile[sizeof(newfile) - 1] = '\0';
-
-    if ((slash = strrchr(newfile, '/')) != NULL)
-    {
-      *slash++ = '\0';
-      listfile = slash;
-      chdir(newfile);
-    }
-
-    // Get the platform ID and load the distribution...
-    get_platform(&platform);
-
-    temp = read_dist(listfile, &platform, "");
-
-    if (temp)
-    {
-      fl_filename_absolute(filename_, sizeof(filename_), listfile);
-
-      sort_dist_files(temp);
-
-      if (dist_)
-        free_dist(dist_);
-
-      dist_ = temp;
-    }
-    else
-    {
-      fl_alert("Unable to open \"%s\"!\n\n%s", listfile, strerror(errno));
-      return (0);
-    }
-  }
-  else
-  {
-    filename_[0] = '\0';
-    dist_        = (dist_t *)0;
-  }
-
-  update_list();
-
-  modified(0);
-
-  return (1);
-}
-
-
-//
-// 'ListEditor::save()' - Save a list file.
-//
-
-int					// O - 1 on success, 0 on failure
-ListEditor::save(const char *filename)	// I - Name of distribution to save
-{
-  modified(0);
-  return (1);
-}
-
-
-//
 // 'ListEditor::update_margins()' - Update the margin settings...
 //
 
 void
 ListEditor::update_margins()
 {
-  int			i;		// Looping var
-  int			w;		// Column width
-  char			name[32];	// Attribute name
-  static const char	*labels[] =	// Labels for columns
+  int			i;			// Looping var
+  int			w;			// Column width
+  char			name[32];		// Attribute name
+  static const char	*labels[] =		// Labels for columns
 			{
 			  "Mode",
 			  "User",
@@ -392,5 +393,26 @@ ListEditor::update_margins()
 
 
 //
-// End of "$Id: ListEditor2.cxx,v 1.1.2.3 2002/05/10 00:19:45 mike Exp $".
+// 'ListEditor::update_subpkgs()' - Update subpackages...
+//
+
+void
+ListEditor::update_subpkgs()
+{
+  int	i;					// Looping var
+
+
+  subpackage_chooser->clear();
+  subpackage_chooser->add("(default)");
+
+  if (dist_)
+  {
+    for (i = 0; i < dist_->num_subpackages; i ++)
+      subpackage_chooser->add(dist_->subpackages[i]);
+  }
+}
+
+
+//
+// End of "$Id: ListEditor2.cxx,v 1.1.2.4 2002/05/20 00:47:56 mike Exp $".
 //
