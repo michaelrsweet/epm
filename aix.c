@@ -1,7 +1,11 @@
 /*
- * "$Id: aix.c,v 1.1 2001/06/25 19:48:47 mike Exp $"
+ * "$Id: aix.c,v 1.2 2001/06/25 21:40:19 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
+ *
+ *   NOTE: AIX SUPPORT IS CURRENTLY NON-FUNCTIONAL!  The backup file
+ *         is created, but installp and bffcreate will not read it
+ *         for some reason.
  *
  *   Copyright 1999-2001 by Easy Software Products.
  *
@@ -43,6 +47,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   char			name[1024];	/* Full product name */
   char			filename[1024];	/* Destination filename */
   char			command[1024];	/* Command to run */
+  char			current[1024];	/* Current directory */
   int			blocks;		/* Number of blocks needed */
   struct stat		fileinfo;	/* File information */
   command_t		*c;		/* Current command */
@@ -77,6 +82,8 @@ make_aix(const char     *prodname,	/* I - Product short name */
     sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
   else
     sprintf(name, "%s-%s", prodname, dist->version);
+
+  getcwd(current, sizeof(current));
 
  /*
   * Write the lpp_name file for bffcreate...
@@ -257,7 +264,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   fputs("#!/bin/sh\n", fp);
   fputs("# " EPM_VERSION "\n", fp);
 
-  for (; i > 0; i --, c ++)
+  for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_INSTALL)
       fprintf(fp, "%s\n", c->command);
 
@@ -284,7 +291,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   fputs("#!/bin/sh\n", fp);
   fputs("# " EPM_VERSION "\n", fp);
 
-  for (; i > 0; i --, c ++)
+  for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
     if (c->type == COMMAND_POST_INSTALL)
       fprintf(fp, "%s\n", c->command);
 
@@ -311,7 +318,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   fputs("#!/bin/sh\n", fp);
   fputs("# " EPM_VERSION "\n", fp);
 
-  for (; i > 0; i --, c ++)
+  for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_REMOVE)
       fprintf(fp, "%s\n", c->command);
 
@@ -490,8 +497,8 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building AIX binary distribution...");
 
-  sprintf(command, "bffcreate -d %s -t %s %s", directory, directory, name);
-
+  sprintf(command, "cd %s; (echo lpp_name; find usr -print) | backup -i -f %s.bff -q %s",
+          directory, prodname, Verbosity ? "-v" : "");
   if (system(command))
     return (1);
 
@@ -524,5 +531,5 @@ make_aix(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: aix.c,v 1.1 2001/06/25 19:48:47 mike Exp $".
+ * End of "$Id: aix.c,v 1.2 2001/06/25 21:40:19 mike Exp $".
  */
