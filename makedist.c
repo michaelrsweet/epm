@@ -1,5 +1,5 @@
 /*
- * "$Id: makedist.c,v 1.7 1999/05/21 21:02:07 mike Exp $"
+ * "$Id: makedist.c,v 1.8 1999/05/26 19:38:31 mike Exp $"
  *
  *   Makedist, a simple binary distribution generator for UNIX.
  *
@@ -119,6 +119,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 {
   int		i;		/* Looping var */
   int		havepatchfiles;	/* 1 if we have patch files, 0 otherwise */
+  int		vernumber;	/* Version number */
   FILE		*listfile,	/* File list */
 		*installfile,	/* Install script */
 		*removefile,	/* Remove script */
@@ -132,7 +133,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 		platname[255],	/* Base platform name */
 		directory[255],	/* Name of install directory */
 		product[256],	/* Product description */
-		version[256],	/* Product version */
+		version[256],	/* Product version string */
 		copyright[256],	/* Product copyright */
 		vendor[256],	/* Vendor name */
 		license[256],	/* License file to copy */
@@ -174,6 +175,9 @@ main(int  argc,			/* I - Number of command-line arguments */
     strcpy(platform.machine, "sparc");
 #endif /* __sgi */
 
+  while (!isdigit(platform.release[0]) && platform.release[0])
+    strcpy(platform.release, platform.release + 1);
+
   for (temp = platform.sysname; *temp != '\0'; temp ++)
     if (*temp == '-' || *temp == '_')
     {
@@ -182,6 +186,15 @@ main(int  argc,			/* I - Number of command-line arguments */
     }
     else
       *temp = tolower(*temp);
+
+  if (strcmp(platform.sysname, "sunos") == 0 &&
+      platform.release[0] >= '5')
+  {
+    strcpy(platform.sysname, "solaris");
+    platform.release[0] -= 3;
+  }
+  else if (strcmp(platform.sysname, "osf1") == 0)
+    strcpy(platform.sysname, "dunix"); /* AKA Compaq Tru64 UNIX */
 
   for (temp = platform.machine; *temp != '\0'; temp ++)
     if (*temp == '-' || *temp == '_')
@@ -213,6 +226,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   license[0]   = '\0';
   readme[0]    = '\0';
   version[0]   = '\0';
+  vernumber    = 0;
 
   sprintf(platname, "%s-%s-%s", platform.sysname, platform.release,
           platform.machine);
@@ -277,7 +291,7 @@ main(int  argc,			/* I - Number of command-line arguments */
             strcpy(readme, argv[i]);
 	    break;
 
-        case 'v' : /* Version */
+        case 'v' : /* Version string */
 	    i ++;
 	    if (i >= argc)
 	      usage();
@@ -285,7 +299,15 @@ main(int  argc,			/* I - Number of command-line arguments */
             strcpy(version, argv[i]);
 	    break;
 
-        case 'V' : /* Vendor */
+        case 'V' : /* Version number */
+	    i ++;
+	    if (i >= argc)
+	      usage();
+
+            vernumber = atoi(argv[i]);
+	    break;
+
+        case 'e' : /* Vendor */
 	    i ++;
 	    if (i >= argc)
 	      usage();
@@ -370,7 +392,21 @@ main(int  argc,			/* I - Number of command-line arguments */
       else if (strncmp(line, "%version ", 9) == 0)
       {
         if (!version[0])
+	{
           strcpy(version, line + 9);
+	  if ((temp = strchr(version, ' ')) != NULL)
+	  {
+	    *temp++ = '\0';
+	    vernumber = atoi(temp);
+	  }
+	  else
+	  {
+	    vernumber = 0;
+	    for (temp = version; *temp; temp ++)
+	      if (isdigit(*temp))
+	        vernumber = vernumber * 10 + *temp - '0';
+          }
+	}
 	else
 	  fputs("makedist: Ignoring %version line in list file.\n", stderr);
       }
@@ -493,8 +529,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("#!/bin/sh\n", installfile);
   fprintf(installfile, "# Installation script for %s version %s.\n", product,
           version);
-  fputs("# Produced using ESP makedist 1.0; report problems to mike@easysw.com.\n",
+  fputs("# Produced using ESP packager 1.0; report problems to mike@easysw.com.\n",
         installfile);
+  fprintf(installfile, "#%%product %s\n", product);
+  fprintf(installfile, "#%%copyright %s\n", copyright);
+  fprintf(installfile, "#%%version %s %d\n", version, vernumber);
   fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", installfile);
   fputs("	tar=\"/bin/tar xf\"\n", installfile);
   fputs("else\n", installfile);
@@ -555,14 +594,6 @@ main(int  argc,			/* I - Number of command-line arguments */
           prodname);
   fputs("	exit 1\n", installfile);
   fputs("fi\n", installfile);
-  fputs("echo \"Installing software...\"\n", installfile);
-  fprintf(installfile, "$tar %s.sw\n", prodname);
-  fputs("if test -d /etc/software; then\n", installfile);
-  fprintf(installfile, "	/bin/rm -f /etc/software/%s.remove\n", prodname);
-  fputs("else\n", installfile);
-  fputs("	/bin/mkdir -p /etc/software\n", installfile);
-  fputs("fi\n", installfile);
-  fprintf(installfile, "/bin/cp %s.remove /etc/software\n", prodname);
 
  /*
   * Write the patch script header...
@@ -572,8 +603,11 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   fputs("#!/bin/sh\n", patchfile);
   fprintf(patchfile, "# Patch script for %s version %s.\n", product, version);
-  fputs("# Produced using ESP makedist 1.0; report problems to mike@easysw.com.\n",
+  fputs("# Produced using ESP packager 1.0; report problems to mike@easysw.com.\n",
         patchfile);
+  fprintf(patchfile, "#%%product %s\n", product);
+  fprintf(patchfile, "#%%copyright %s\n", copyright);
+  fprintf(patchfile, "#%%version %s %d\n", version, vernumber);
   fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", patchfile);
   fputs("	tar=\"/bin/tar xf\"\n", patchfile);
   fputs("else\n", patchfile);
@@ -650,11 +684,6 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   rewind(listfile);
 
-  fputs("echo \"Patching software...\"\n", patchfile);
-  fprintf(patchfile, "$tar %s.psw\n", prodname);
-  fprintf(patchfile, "/bin/rm -f /etc/software/%s.remove\n", prodname);
-  fprintf(patchfile, "/bin/cp %s.remove /etc/software\n", prodname);
-
  /*
   * Write the removal script header...
   */
@@ -664,8 +693,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("#!/bin/sh\n", removefile);
   fprintf(removefile, "# Removal script for %s version %s.\n", product,
           version);
-  fputs("# Produced using ESP makedist 1.0; report problems to mike@easysw.com.\n",
+  fputs("# Produced using ESP packager 1.0; report problems to mike@easysw.com.\n",
         removefile);
+  fprintf(removefile, "#%%product %s\n", product);
+  fprintf(removefile, "#%%copyright %s\n", copyright);
+  fprintf(removefile, "#%%version %s %d\n", version, vernumber);
   fputs("if test \"`whoami`\" != \"root\"; then\n", removefile);
   fputs("	echo \"Sorry, you must be root to remove this software.\"\n", removefile);
   fputs("	exit 1\n", removefile);
@@ -723,7 +755,43 @@ main(int  argc,			/* I - Number of command-line arguments */
   while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
   {
     if (line[0] == '%')
+    {
+      if (strncmp(line, "%requires ", 10) == 0)
+      {
+        sscanf(line + 10, "%s", src);
+
+        fprintf(installfile, "if test ! -f /etc/software/%s.remove; then\n", src);
+	fprintf(installfile, "	echo Sorry, you must first install \\'%s\\'!\n",
+	        src);
+	fputs("	exit 1\n", installfile);
+	fputs("fi\n", installfile);
+
+        fprintf(patchfile, "if test ! -f /etc/software/%s.remove; then\n", src);
+	fprintf(patchfile, "	echo Sorry, you must first install \\'%s\\'!\n",
+	        src);
+	fputs("	exit 1\n", patchfile);
+	fputs("fi\n", patchfile);
+      }
+      else if (strncmp(line, "%incompat ", 10) == 0)
+      {
+        sscanf(line + 10, "%s", src);
+
+        fprintf(installfile, "if test -f /etc/software/%s.remove; then\n", src);
+	fprintf(installfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	        src);
+	fputs("	exit 1\n", installfile);
+	fputs("fi\n", installfile);
+
+        fprintf(patchfile, "if test ! -f /etc/software/%s.remove; then\n",
+	        line + 10);
+	fprintf(patchfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	        line + 10);
+	fputs("	exit 1\n", patchfile);
+	fputs("fi\n", patchfile);
+      }
+
       continue;
+    }
 
     if (sscanf(line, "%c%o%s%s%s%s", &type, &mode, user, group,
                tempdst, tempsrc) < 5)
@@ -733,12 +801,13 @@ main(int  argc,			/* I - Number of command-line arguments */
     }
 
     expand_name(dst, tempdst);
-    if (tolower(type) != 'd')
+    if (tolower(type) != 'd' && type != 'R')
       expand_name(src, tempsrc);
 
-    switch (tolower(type))
+    switch (type)
     {
-      case 'c' :
+      case 'c' : /* Config file */
+      case 'C' :
          /*
 	  * Configuration files are extracted to the config file name with
 	  * .N appended; add a bit of script magic to check if the config
@@ -759,7 +828,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 
           strcat(dst, ".N");
 
-      case 'f' :
+      case 'f' : /* Regular file */
+      case 'F' :
           if (mode & 0111)
 	  {
 	   /*
@@ -815,7 +885,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	  }
 	  break;
 
-      case 'd' :
+      case 'd' : /* Create directory */
+      case 'D' :
 	  printf("%s...\n", dst);
 
 	  if (write_header(swfile, TAR_DIR, mode, 0, deftime, user, group,
@@ -838,7 +909,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	  }
 	  break;
 
-      case 'l' :
+      case 'l' : /* Link file */
+      case 'L' :
           fprintf(removefile, "/bin/rm -f %s\n", dst);
 
 	  printf("%s -> %s...\n", src, dst);
@@ -861,6 +933,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      return (1);
 	    }
           }
+	  break;
+
+      case 'R' : /* Remove file (patch) */
+          fprintf(patchfile, "/bin/rm -f %s\n", dst);
 	  break;
     }
   }
@@ -914,7 +990,21 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   puts("Finishing installation and patch scripts...");
 
+  fputs("echo \"Installing software...\"\n", installfile);
+  fprintf(installfile, "$tar %s.sw\n", prodname);
+  fputs("if test -d /etc/software; then\n", installfile);
+  fprintf(installfile, "	/bin/rm -f /etc/software/%s.remove\n", prodname);
+  fputs("else\n", installfile);
+  fputs("	/bin/mkdir -p /etc/software\n", installfile);
+  fputs("fi\n", installfile);
+  fprintf(installfile, "/bin/cp %s.remove /etc/software\n", prodname);
   fputs("echo \"Running post-installation commands...\"\n", installfile);
+
+  fputs("echo \"Patching software...\"\n", patchfile);
+  fprintf(patchfile, "$tar %s.psw\n", prodname);
+  fprintf(patchfile, "/bin/rm -f /etc/software/%s.remove\n", prodname);
+  fprintf(patchfile, "/bin/cp %s.remove /etc/software\n", prodname);
+  fputs("echo \"Running post-installation commands...\"\n", patchfile);
 
   skip = 0;
   while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
@@ -1254,5 +1344,5 @@ usage(void)
 
 
 /*
- * End of "$Id: makedist.c,v 1.7 1999/05/21 21:02:07 mike Exp $".
+ * End of "$Id: makedist.c,v 1.8 1999/05/26 19:38:31 mike Exp $".
  */
