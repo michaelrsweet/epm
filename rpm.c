@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.9 2000/01/04 13:45:40 mike Exp $"
+ * "$Id: rpm.c,v 1.10 2000/02/10 01:08:46 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -100,14 +100,15 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     if (tolower(file->type) == 'i')
     {
       fprintf(fp, "/sbin/chkconfig --add %s\n", file->dst);
+      fprintf(fp, "/sbin/chkconfig %s on\n", file->dst);
       fprintf(fp, "/etc/rc.d/init.d/%s start\n", file->dst);
     }
   fputs("%preun\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
     {
-      fprintf(fp, "/sbin/chkconfig --del %s\n", file->dst);
       fprintf(fp, "/etc/rc.d/init.d/%s stop\n", file->dst);
+      fprintf(fp, "/sbin/chkconfig --del %s\n", file->dst);
     }
   for (i = 0; i < dist->num_removes; i ++)
     fprintf(fp, "%s\n", dist->removes[i]);
@@ -135,6 +136,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   fclose(fp);
 
+#if 0
  /*
   * Write the rpmrc file for RPM...
   */
@@ -154,6 +156,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "topdir: %s\n", directory);
 
   fclose(fp);
+#endif /* 0 */
 
   sprintf(filename, "%s/RPMS", directory);
   mkdir(filename, 0755);
@@ -241,8 +244,12 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building RPM binary distribution...");
 
-  sprintf(command, "rpm -bb %s --rcfile=%s/rpmrc %s",
-          Verbosity == 0 ? "--quiet" : "", directory, specname);
+  if (strcmp(platform->machine, "intel") == 0)
+    sprintf(command, "rpm -bb --buildarch i386 %s %s",
+            Verbosity == 0 ? "--quiet" : "", specname);
+  else
+    sprintf(command, "rpm -bb %s %s",
+            Verbosity == 0 ? "--quiet" : "", specname);
 
   if (system(command))
     return (1);
@@ -272,13 +279,15 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   unlink(specname);
 
+#if 0
   sprintf(filename, "%s/rpmrc", directory);
   unlink(filename);
+#endif /* 0 */
 
   return (0);
 }
 
 
 /*
- * End of "$Id: rpm.c,v 1.9 2000/01/04 13:45:40 mike Exp $".
+ * End of "$Id: rpm.c,v 1.10 2000/02/10 01:08:46 mike Exp $".
  */
