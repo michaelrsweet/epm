@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.28 1999/10/01 17:51:47 mike Exp $"
+ * "$Id: epm.c,v 1.29 1999/10/10 13:43:39 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -1302,7 +1302,7 @@ read_dist(char           *filename,	/* I - Main distribution list file */
 	  fprintf(stderr, "     %s %s\n", line, temp);
 	}
       }
-      else if (sscanf(line, "%c%o%s%s%s%s", &type, &mode, user, group,
+      else if (sscanf(line, "%c%o%15s%15s%254s%254s", &type, &mode, user, group,
         	      tempdst, tempsrc) < 5)
 	fprintf(stderr, "epm: Bad line - %s\n", line);
       else
@@ -2419,5 +2419,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.28 1999/10/01 17:51:47 mike Exp $".
+ * End of "$Id: epm.c,v 1.29 1999/10/10 13:43:39 mike Exp $".
  */
