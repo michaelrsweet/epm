@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.list.man,v 1.5 2002/01/02 20:39:42 mike Exp $"
+.\" "$Id: epm.list.man,v 1.6 2002/10/18 14:57:51 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM) list file format.
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm.list 5 "ESP Package Manager" "19 September 2001" "Easy Software Products"
+.TH epm.list 5 "ESP Package Manager" "18 October 2002" "Easy Software Products"
 .SH NAME
 epm.list \- epm list file format.
 .SH DESCRIPTION
@@ -219,31 +219,71 @@ Specifies a directory should be created when installing the software. The
 second form specifies that the directory is new and should be included as part
 of a patch.
 .TP 5
-f \fImode user group destination source\fR
+f \fImode user group destination source [nostrip()]\fR
 .TP 5
-F \fImode user group destination source\fR
+F \fImode user group destination source [nostrip()]\fR
 .br
-Specifies a file for installation. The second form specifies that the file
-has changed or is new and should be included as part of a patch.
+Specifies a file for installation. The second form specifies
+that the file has changed or is new and should be included as
+part of a patch. If the "nostrip()" option is included, the file
+will not be stripped before the installation is created.
 .TP 5
-f \fImode user group destination source/pattern\fR
+f \fImode user group destination source/pattern [nostrip()]\fR
 .TP 5
-F \fImode user group destination source/pattern\fR
+F \fImode user group destination source/pattern [nostrip()]\fR
 .br
 Specifies one or more files for installation using shell
 wildcard patterns. The second form specifies that the files have
-changed or are new and should be included as part of a patch.
+changed or are new and should be included as part of a patch. If
+the "nostrip()" option is included, the file will not be
+stripped before the installation is created.
 .TP 5
-i \fImode user group service-name source\fR
+i \fImode user group service-name source ["options"]\fR
 .TP 5
-I \fImode user group service-name source\fR
+I \fImode user group service-name source ["options"]\fR
 .br
 Specifies an initialization script for installation. The second form
 specifies that the file has changed or is new and should be included as
 part of a patch. Initialization scripts are stored in /etc/software/init.d and
 are linked to the appropriate system-specific directories for run levels 0,
 2, 3, and 5. Initialization scripts \fBmust\fR accept at least the \fIstart\fR
-and \fIstop\fR commands.
+and \fIstop\fR commands. The optional \fIoptions\fR following the source
+filename can be any of the following:
+
+.TP 10
+     order(\fIstring\fR)
+.br
+Specifies the relative startup order compared to the required
+and used system functions. Supported values include First,
+Early, None, Late, and Last (OSX only).
+.TP 10
+     provides(\fIname(s)\fR)
+.br
+Specifies names of system functions that are provided by this startup
+item (OSX only).
+.TP 10
+     requires(\fIname(s)\fR)
+.br
+Specifies names of system functions that are required by this startup
+item (OSX only).
+.TP 10
+     runlevels(\fIlevels\fR)
+.br
+Specifies the run levels to use.
+.TP 10
+     start(\fInumber\fR)
+.br
+Specifies the starting sequence number from 00 to 99.
+.TP 10
+     stop(\fInumber\fR)
+.br
+Specifies the ending sequence number from 00 to 99.
+.TP 10
+     uses(\fIname(s)\fR)
+.br
+Specifies names of system functions that are used by this startup
+item (OSX only).
+
 .TP 5
 l \fImode user group destination source\fR
 .TP 5
@@ -299,5 +339,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.list.man,v 1.5 2002/01/02 20:39:42 mike Exp $".
+.\" End of "$Id: epm.list.man,v 1.6 2002/10/18 14:57:51 mike Exp $".
 .\"

@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.6 2002/10/17 20:26:05 swdev Exp $"
+ * "$Id: osx.c,v 1.7 2002/10/18 14:57:49 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -47,6 +47,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
   struct passwd	*pwd;			/* Pointer to user record */
   struct group	*grp;			/* Pointer to group record */
   char		current[1024];		/* Current directory */
+  const char	*option;		/* Init script option */
 
 
   if (Verbosity)
@@ -266,7 +267,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
           break;
       case 'i' :
           snprintf(filename, sizeof(filename),
-	           "%s/Package/System/Library/StartupItems/%s/%s",
+	           "%s/Package/Library/StartupItems/%s/%s",
 	           directory, file->dst, file->dst);
 
 	  if (Verbosity > 1)
@@ -277,7 +278,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
 	    return (1);
 
           snprintf(filename, sizeof(filename),
-	           "%s/Package/System/Library/StartupItems/%s/StartupParameters.plist",
+	           "%s/Package/Library/StartupItems/%s/StartupParameters.plist",
 	           directory, file->dst);
 	  if ((fp = fopen(filename, "w")) == NULL)
 	  {
@@ -288,18 +289,25 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
           fputs("{\n", fp);
           fprintf(fp, "  Description = \"%s\";\n", dist->product);
-	  fprintf(fp, "  Provides = \"%s\";\n", file->dst);
+	  qprintf(fp, "  Provides = \"%s\";\n",
+	          get_option(file, "provides", file->dst));
+          if ((option = get_option(file, "requires", NULL)) != NULL)
+	    qprintf(fp, "  Requires = \"%s\";\n", option);
+          if ((option = get_option(file, "uses", NULL)) != NULL)
+	    qprintf(fp, "  Uses = \"%s\";\n", option);
+          if ((option = get_option(file, "order", NULL)) != NULL)
+	    qprintf(fp, "  OrderPreference = \"%s\";\n", option);
 	  fputs("}\n", fp);
 
 	  fclose(fp);
 
           snprintf(filename, sizeof(filename),
-	           "%s/Package/System/Library/StartupItems/%s/Resources/English.lproj",
+	           "%s/Package/Library/StartupItems/%s/Resources/English.lproj",
 	           directory, file->dst);
           make_directory(filename, 0777, 0, 0);
 
           snprintf(filename, sizeof(filename),
-	           "%s/Package/System/Library/StartupItems/%s/Resources/English.lproj/Localizable.strings",
+	           "%s/Package/Library/StartupItems/%s/Resources/English.lproj/Localizable.strings",
 	           directory, file->dst);
 	  if ((fp = fopen(filename, "w")) == NULL)
 	  {
@@ -398,5 +406,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.6 2002/10/17 20:26:05 swdev Exp $".
+ * End of "$Id: osx.c,v 1.7 2002/10/18 14:57:49 mike Exp $".
  */

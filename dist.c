@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.48 2002/08/29 20:57:18 mike Exp $"
+ * "$Id: dist.c,v 1.49 2002/10/18 14:57:48 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -21,6 +21,7 @@
  *   add_depend()      - Add a dependency to the distribution...
  *   add_file()        - Add a file to the distribution.
  *   free_dist()       - Free memory used by a distribution.
+ *   getoption()       - Get an option from a file.
  *   get_platform()    - Get the operating system information...
  *   get_runlevels()   - Get the run levels for the specified init script.
  *   get_start()       - Get the start number for an init script.
@@ -325,6 +326,48 @@ free_dist(dist_t *dist)		/* I - Distribution to free */
 
   free(dist);
 }
+
+
+
+/*
+ * 'getoption()' - Get an option from a file.
+ */
+
+const char *				/* O - Value */
+get_option(file_t     *file,		/* I - File */
+           const char *name,		/* I - Name of option */
+	   const char *defval)		/* I - Default value of option */
+{
+  char		*ptr;			/* Pointer to option */
+  static char	option[256];		/* Copy of file option */
+
+
+ /*
+  * See if the option exists...
+  */
+
+  snprintf(option, sizeof(option), "%s(", name);
+
+  if ((ptr = strstr(file->options, option)) == NULL)
+    return (defval);
+
+ /*
+  * Yes, copy the value and truncate at the first ")"...
+  */
+
+  ptr += strlen(option);
+  strcpy(option, ptr);	/* option and file->options are of equal size */
+
+  if ((ptr = strchr(option, ')')) != NULL)
+  {
+    *ptr = '\0';
+    return (option);
+  }
+  else
+    return (defval);
+}
+
+
 
 
 /*
@@ -1883,5 +1926,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.48 2002/08/29 20:57:18 mike Exp $".
+ * End of "$Id: dist.c,v 1.49 2002/10/18 14:57:48 mike Exp $".
  */

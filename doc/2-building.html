@@ -101,19 +101,20 @@ separately, as follows:
 
 <H3>Options for the Setup GUI</H3>
 
-<P>The setup GUI requires the X11 and FLTK libraries. If these
-libraries are not provided in standard locations, then the
-<CODE>--with-x-includes</CODE>, <CODE>--with-x-libs</CODE>,
-<CODE>--with-fltk-includes</CODE>, and
-<CODE>--with-fltk-libs</CODE> options can be used to tell the
-<CODE>configure</CODE> script where to find them, as
-follows:</P>
+<P>The setup GUI requires the X11 and FLTK libraries. The configure
+script will look for the <CODE>fltk-config</CODE> utility that comes
+with FLTK 1.1.x. Set the FLTKCONFIG environment variable to the full
+path of this utility if it cannot be found in the current path:</P>
 
 <UL><PRE>
-<KBD>./configure --with-x-includes=/usr/X11R6/include \
-    --with-x-libs=/usr/X11R6/lib \
-    --with-fltk-includes=/usr/local/include \
-    --with-fltk-libs=/usr/local/lib ENTER</KBD>
+<KBD>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</KBD>
+</PRE></UL>
+
+<P>or:</P>
+
+<UL><PRE>
+<KBD>FLTKCONFIG=/foo/bar/bin/fltk-config ENTER
+export FLTKCONFIG</KBD>
 </PRE></UL>
 
 <H2>Building the Software</H2>
@@ -199,6 +200,10 @@ systems:</P>
 	<TD><CODE>tru64</CODE></TD>
 </TR>
 <TR>
+	<TD>Darwin</TD>
+	<TD><CODE>darwin</CODE></TD>
+</TR>
+<TR>
 	<TD>FreeBSD</TD>
 	<TD><CODE>freebsd</CODE></TD>
 </TR>
@@ -213,6 +218,10 @@ systems:</P>
 <TR>
 	<TD>Linux</TD>
 	<TD><CODE>linux</CODE></TD>
+</TR>
+<TR>
+	<TD>MacOS X</TD>
+	<TD><CODE>darwin</CODE></TD>
 </TR>
 <TR>
 	<TD>NetBSD</TD>
@@ -271,6 +280,8 @@ processor. Table 2.2 lists the supported processors:</P>
 </TR>
 </TABLE></CENTER>
 
+<!-- NEED 3in -->
+
 <P>Once you have determined the subdirectory containing the
 distribution, type the following commands to install EPM from
 the portable distribution:</P>
@@ -283,7 +294,6 @@ the portable distribution:</P>
 <P>The software will be installed after answering a few yes/no
 questions.</P>
 
-<!-- NEW PAGE -->
 <H3>Installing Using the Native Distribution</H3>
 
 <P>The <CODE>test</CODE> target also builds a distribution in the
@@ -332,6 +342,12 @@ to run to install the software.</P>
 	<TD>Linux</TD>
 	<TD><CODE>rpm</CODE></TD>
 	<TD NOWRAP><CODE>rpm -i <I>directory</I>/epm-3.0.rpm</CODE></TD>
+</TR>
+<TR>
+	<TD>MacOS X</TD>
+	<TD><CODE>osx</CODE></TD>
+	<TD NOWRAP>Double-click on the <CODE>.pkg</CODE> folder
+	in the finder.</TD>
 </TR>
 <TR>
 	<TD>Solaris</TD>

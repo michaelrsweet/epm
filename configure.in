@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.58 2002/08/29 11:44:47 mike Exp $"
+dnl "$Id: configure.in,v 1.59 2002/10/18 14:57:48 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=3.5.0
-VERNUMBER=350
+VERSION=3.5.1
+VERNUMBER=351
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -54,22 +54,13 @@ else
 	LDFLAGS="$LDFLAGS -s"
 fi)
 
-AC_ARG_WITH(fltk-libs, [  --with-fltk-libs        set directory for FLTK library],
-	LDFLAGS="-L$withval $LDFLAGS"
-	fltklibs="$withval",
-	fltklibs="")
-
-AC_ARG_WITH(fltk-includes, [  --with-fltk-includes    set directory for FLTK includes],
-	CFLAGS="-I$withval $CFLAGS"
-	CXXFLAGS="-I$withval $CXXFLAGS",)
-
 AC_ARG_WITH(docdir, [  --with-docdir           set directory for documentation],
 	docdir="$withval",
 	docdir="\${datadir}/doc/epm")
 
 AC_SUBST(docdir)
 
-AC_ARG_WITH(softwaredir, [  --with-softwaredir        set directory for EPM uninstall files and init scripts],
+AC_ARG_WITH(softwaredir, [  --with-softwaredir      set directory for EPM uninstall files and init scripts],
 	softwaredir="$withval",
 	softwaredir="")
 
@@ -362,5 +353,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.58 2002/08/29 11:44:47 mike Exp $".
+dnl End of "$Id: configure.in,v 1.59 2002/10/18 14:57:48 mike Exp $".
 dnl

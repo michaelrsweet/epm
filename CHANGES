@@ -1,5 +1,21 @@
-CHANGES - ESP Package Manager (EPM) 3.5
----------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.5.1
+-----------------------------------------
+
+WHAT'S NEW IN EPM 3.5.1?
+
+    EPM 3.5.1 adds the following features, fixes, and changes to
+    EPM 3.5:
+
+	- OSX packages did not set the "install as root" package
+	  type, so package installation usually failed.
+	- OSX packages installed init scripts in
+	  /System/Library/StartupItems, but non-Apple packages
+	  should be installed in /Library/StartupItems.
+	- Added support for "requires(foo)", "uses(foo)",
+	  "provides(foo)", and "order(foo)" as options for init
+	  scripts. These options are currently only used when
+	  creating OSX packages.
+
 
 WHAT'S NEW IN EPM 3.5?
 

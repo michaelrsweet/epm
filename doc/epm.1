@@ -14,21 +14,21 @@ SSYYNNOOPPSSIISS
        _l_i_s_t_f_i_l_e ]
 
 DDEESSCCRRIIPPTTIIOONN
-       eeppmm generates software packages  complete  with  installa­
+       eeppmm generates software packages  complete  with  installa-
        tion,  removal,  and  (if necessary) patch scripts. Unless
        otherwise specified, the files required  for  _p_r_o_d_u_c_t  are
        read from a file named "_p_r_o_d_u_c_t.list".
 
-       The _-_a option ("architecture") specifies the actual archi­
+       The _-_a option ("architecture") specifies the actual archi-
        tecture for the software. Without this option the  generic
        processor  architecture is used ("intel", "sparc", "mips",
        etc.)
 
-       The _-_f option ("format") specifies the  distribution  for­
+       The _-_f option ("format") specifies the  distribution  for-
        mat:
 
        aix
-            Generate  an  AIX distribution suitable for installa­
+            Generate  an  AIX distribution suitable for installa-
             tion on an AIX system.
 
        bsd
@@ -36,11 +36,11 @@ DDEESSCCRRIIPPTTIIOONN
             on a FreeBSD, NetBSD, or OpenBSD system.
 
        deb
-            Generate a Debian distribution suitable for installa­
+            Generate a Debian distribution suitable for installa-
             tion on a Debian Linux system.
 
        inst, tardist
-            Generate an IRIX distribution suitable for  installa­
+            Generate an IRIX distribution suitable for  installa-
             tion on an system running IRIX.
 
        native
@@ -65,7 +65,7 @@ DDEESSCCRRIIPPTTIIOONN
             systems. [default]
 
        rpm
-            Generate a Red Hat Package Manager ("RPM")  distribu­
+            Generate a Red Hat Package Manager ("RPM")  distribu-
             tion  suitable  for  installation  on a Red Hat Linux
             system.
 
@@ -79,8 +79,8 @@ DDEESSCCRRIIPPTTIIOONN
        of  debugging  information  when packaged. To disable this
        functionality use the _-_g option.
 
-       Intermediate (spec, etc.) files used to create the distri­
-       bution are normally removed after the distribution is cre­
+       Intermediate (spec, etc.) files used to create the distri-
+       bution are normally removed after the distribution is cre-
        ated. The _-_k option keeps these files in the  distribution
        directory.
 
@@ -101,14 +101,14 @@ DDEESSCCRRIIPPTTIIOONN
        output  file  into.  The default directory is based on the
        operating system, version, and architecture.
 
-       The _-_v option ("verbose") increases the amount of informa­
+       The _-_v option ("verbose") increases the amount of informa-
        tion  that  is reported. Use multiple v's for more verbose
        output.
 
        Distributions normally are named  "product-version-system-
        release-machine.ext"  and "product-version-system-release-
        machine-patch.ext" (for patch distributions.) The "system-
-       release-machine"  information  can be customized or elimi­
+       release-machine"  information  can be customized or elimi-
        nated using the _-_n option with  the  appropriate  trailing
        letters.  Using  _-_n  by  itself  will  remove the "system-
        release-machine" string from the filename entirely.

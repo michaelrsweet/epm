@@ -836,10 +836,8 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-fltk-libs        set directory for FLTK library
-  --with-fltk-includes    set directory for FLTK includes
   --with-docdir           set directory for documentation
-  --with-softwaredir        set directory for EPM uninstall files and init scripts
+  --with-softwaredir      set directory for EPM uninstall files and init scripts
 
 Some influential environment variables:
   CC          C compiler command
@@ -1205,8 +1203,8 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-VERSION=3.5.0
-VERNUMBER=350
+VERSION=3.5.1
+VERNUMBER=351
 
 
 cat >>confdefs.h <<_ACEOF
@@ -1238,24 +1236,6 @@ if test "${enable_debug+set}" = set; then
 else
 	LDFLAGS="$LDFLAGS -s"
 fi
-fi;
-
-
-# Check whether --with-fltk-libs or --without-fltk-libs was given.
-if test "${with_fltk_libs+set}" = set; then
-  withval="$with_fltk_libs"
-  LDFLAGS="-L$withval $LDFLAGS"
-	fltklibs="$withval"
-else
-  fltklibs=""
-fi;
-
-
-# Check whether --with-fltk-includes or --without-fltk-includes was given.
-if test "${with_fltk_includes+set}" = set; then
-  withval="$with_fltk_includes"
-  CFLAGS="-I$withval $CFLAGS"
-	CXXFLAGS="-I$withval $CXXFLAGS"
 fi;
 
 
