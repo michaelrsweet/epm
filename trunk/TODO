@@ -1,6 +1,7 @@
 TODO for EPM:
 
-	- Add AIX packager support.
+	- Add support for more vendor-specific formats; specifically
+	  AIX and BSD packaging formats.
 	- Add system() replacement.
 	- Add /opt relocation hack (and maybe allow for
 	  relocatable packages in general?)
@@ -8,3 +9,15 @@ TODO for EPM:
 	- Add %pre/postinstall/remove ... %end
 	- Add epminstall command for building a list file from
 	  a "make INSTALL=epminstall install".
+	- Add support for executables and libraries created with
+	  libtool.
+	- Add a small script that can be installed with every
+	  portable software package to list and remove installed
+	  packages.
+	- Add better manpage installation support - specifically,
+	  add code to automatically locate the correct man directory
+	  for each file depending on the architecture.
+	- Add support for dependency checking against vendor
+	  packages; that is, a portable package could check its
+	  dependencies against portable, RPM, Debian, etc.
+	  packages, rather than just packages of the same format.
