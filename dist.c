@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.24 2001/03/03 21:41:49 mike Exp $"
+ * "$Id: dist.c,v 1.25 2001/03/03 21:48:34 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -179,14 +179,6 @@ free_dist(dist_t *dist)		/* I - Distribution to free */
 
   if (dist->num_commands)
     free(dist->commands);
-
-  for (i = 0; i < dist->num_depends; i ++)
-  {
-    free(dist->depends[i].product);
-
-    if (dist->depends[i].version)
-      free(dist->depends[i].version);
-  }
 
   if (dist->num_depends)
     free(dist->depends);
@@ -949,5 +941,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.24 2001/03/03 21:41:49 mike Exp $".
+ * End of "$Id: dist.c,v 1.25 2001/03/03 21:48:34 mike Exp $".
  */

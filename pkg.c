@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.12 2001/03/03 21:29:48 mike Exp $"
+ * "$Id: pkg.c,v 1.13 2001/03/03 21:48:34 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -38,7 +38,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
          dist_t         *dist,		/* I - Distribution information */
 	 struct utsname *platform)	/* I - Platform information */
 {
-  int		i, j;			/* Looping vars */
+  int		i;			/* Looping vars */
   FILE		*fp;			/* Control file */
   char		name[1024];		/* Full product name */
   char		filename[1024],		/* Destination filename */
@@ -122,17 +122,11 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  for (i = 0; i < dist->num_requires; i ++)
-    if (dist->requires[i][0] != '/')
-      fprintf(fp, "P %s\n", dist->requires[i]);
-
-  for (i = 0; i < dist->num_incompats; i ++)
-    if (dist->incompats[i][0] != '/')
-      fprintf(fp, "I %s\n", dist->incompats[i]);
-
-  for (i = 0; i < dist->num_replaces; i ++)
-    if (dist->replaces[i][0] != '/')
-      fprintf(fp, "I %s\n", dist->replaces[i]);
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REQUIRES)
+      fprintf(fp, "P %s\n", d->product);
+    else
+      fprintf(fp, "I %s\n", d->product);
 
   fclose(fp);
 
@@ -482,5 +476,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.12 2001/03/03 21:29:48 mike Exp $".
+ * End of "$Id: pkg.c,v 1.13 2001/03/03 21:48:34 mike Exp $".
  */
