@@ -79,6 +79,8 @@ WHAT'S NEW IN EPM 1.6?
 
 	- Installation archives were missing the ".ss" and ".pss"
 	  files that were added to support diskless installations.
+	- Removal scripts didn't handle removing distributions that
+	  had non non-shared components.
 
 WHAT'S NEW IN EPM 1.5?
 
