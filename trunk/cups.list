@@ -1,5 +1,5 @@
 #
-# "$Id: cups.list,v 1.3 1999/05/20 16:50:18 mike Exp $"
+# "$Id: cups.list,v 1.4 1999/05/20 18:12:26 mike Exp $"
 #
 #   Installation list for the Common UNIX Printing System (CUPS).
 #
@@ -51,15 +51,18 @@ f 0555 root sys /usr/bin/lpstat systemv/lpstat
 f 0555 root sys /usr/lib/lpadmin systemv/lpadmin
 f 0555 root sys /usr/lib/cancel systemv/cancel
 f 0555 root sys /usr/lib/accept systemv/accept
+l 0555 root sys /usr/lib/reject accept
+l 0555 root sys /usr/bin/disable /usr/lib/accept
+l 0555 root sys /usr/bin/enable /usr/lib/accept
 f 0555 root sys /usr/sbin/lpc berkeley/lpc
 f 0555 root sys /usr/bin/lpr berkeley/lpr
 f 0555 root sys /usr/bin/lprm berkeley/lprm
 
 # Directories
-d 0700 root sys /var/cups/interfaces
-d 0700 root sys /var/cups/logs
-d 0700 root sys /var/cups/ppd
-d 0700 root sys /var/cups/requests
+d 0755 root sys /var/cups/interfaces
+d 0755 root sys /var/cups/logs
+d 0755 root sys /var/cups/ppd
+d 0755 root sys /var/cups/requests
 
 # Data files
 f 0444 root sys /usr/lib/locale/C/cups_C locale/C/cups_C
@@ -81,87 +84,87 @@ f 0444 root sys /usr/share/cups/data/8859-8 data/8859-8
 f 0444 root sys /usr/share/cups/data/8859-9 data/8859-9
 f 0444 root sys /usr/share/cups/data/HPGLprolog data/HPGLprolog
 f 0444 root sys /usr/share/cups/data/psglyphs data/psglyphs
-f 0444 root sys /usr/share/cups/data/fonts/AvantGarde-Book fonts/AvantGarde-Book
-f 0444 root sys /usr/share/cups/data/fonts/AvantGarde-BookOblique fonts/AvantGarde-BookOblique
-f 0444 root sys /usr/share/cups/data/fonts/AvantGarde-Demi fonts/AvantGarde-Demi
-f 0444 root sys /usr/share/cups/data/fonts/AvantGarde-DemiOblique fonts/AvantGarde-DemiOblique
-f 0444 root sys /usr/share/cups/data/fonts/Bookman-Demi fonts/Bookman-Demi
-f 0444 root sys /usr/share/cups/data/fonts/Bookman-DemiItalic fonts/Bookman-DemiItalic
-f 0444 root sys /usr/share/cups/data/fonts/Bookman-Light fonts/Bookman-Light
-f 0444 root sys /usr/share/cups/data/fonts/Bookman-LightItalic fonts/Bookman-LightItalic
-f 0444 root sys /usr/share/cups/data/fonts/Courier fonts/Courier
-f 0444 root sys /usr/share/cups/data/fonts/Courier-Bold fonts/Courier-Bold
-f 0444 root sys /usr/share/cups/data/fonts/Courier-BoldOblique fonts/Courier-BoldOblique
-f 0444 root sys /usr/share/cups/data/fonts/Courier-Oblique fonts/Courier-Oblique
-f 0444 root sys /usr/share/cups/data/fonts/Helvetica fonts/Helvetica
-f 0444 root sys /usr/share/cups/data/fonts/Helvetica-Bold fonts/Helvetica-Bold
-f 0444 root sys /usr/share/cups/data/fonts/Helvetica-BoldOblique fonts/Helvetica-BoldOblique
-f 0444 root sys /usr/share/cups/data/fonts/Helvetica-Narrow fonts/Helvetica-Narrow
-f 0444 root sys /usr/share/cups/data/fonts/Helvetica-Narrow-Bold fonts/Helvetica-Narrow-Bold
-f 0444 root sys /usr/share/cups/data/fonts/Helvetica-Narrow-BoldOblique fonts/Helvetica-Narrow-BoldOblique
-f 0444 root sys /usr/share/cups/data/fonts/Helvetica-Narrow-Oblique fonts/Helvetica-Narrow-Oblique
-f 0444 root sys /usr/share/cups/data/fonts/Helvetica-Oblique fonts/Helvetica-Oblique
-f 0444 root sys /usr/share/cups/data/fonts/NewCenturySchlbk-Bold fonts/NewCenturySchlbk-Bold
-f 0444 root sys /usr/share/cups/data/fonts/NewCenturySchlbk-BoldItalic fonts/NewCenturySchlbk-BoldItalic
-f 0444 root sys /usr/share/cups/data/fonts/NewCenturySchlbk-Italic fonts/NewCenturySchlbk-Italic
-f 0444 root sys /usr/share/cups/data/fonts/NewCenturySchlbk-Roman fonts/NewCenturySchlbk-Roman
-f 0444 root sys /usr/share/cups/data/fonts/Palatino-Bold fonts/Palatino-Bold
-f 0444 root sys /usr/share/cups/data/fonts/Palatino-BoldItalic fonts/Palatino-BoldItalic
-f 0444 root sys /usr/share/cups/data/fonts/Palatino-Italic fonts/Palatino-Italic
-f 0444 root sys /usr/share/cups/data/fonts/Palatino-Roman fonts/Palatino-Roman
-f 0444 root sys /usr/share/cups/data/fonts/Symbol fonts/Symbol
-f 0444 root sys /usr/share/cups/data/fonts/Times-Bold fonts/Times-Bold
-f 0444 root sys /usr/share/cups/data/fonts/Times-BoldItalic fonts/Times-BoldItalic
-f 0444 root sys /usr/share/cups/data/fonts/Times-Italic fonts/Times-Italic
-f 0444 root sys /usr/share/cups/data/fonts/Times-Roman fonts/Times-Roman
-f 0444 root sys /usr/share/cups/data/fonts/Utopia-Bold fonts/Utopia-Bold
-f 0444 root sys /usr/share/cups/data/fonts/Utopia-BoldItalic fonts/Utopia-BoldItalic
-f 0444 root sys /usr/share/cups/data/fonts/Utopia-Italic fonts/Utopia-Italic
-f 0444 root sys /usr/share/cups/data/fonts/Utopia-Regular fonts/Utopia-Regular
-f 0444 root sys /usr/share/cups/data/fonts/ZapfChancery-MediumItalic fonts/ZapfChancery-MediumItalic
-f 0444 root sys /usr/share/cups/data/fonts/ZapfDingbats fonts/ZapfDingbats
-f 0444 root sys /usr/share/cups/data/pstoraster/Fontmap pstoraster/Fontmap
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_l2img.ps pstoraster/gs_l2img.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_pfile.ps pstoraster/gs_pfile.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/pfbtogs.ps pstoraster/pfbtogs.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_wl1_e.ps pstoraster/gs_wl1_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_wl2_e.ps pstoraster/gs_wl2_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_wl5_e.ps pstoraster/gs_wl5_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_wan_e.ps pstoraster/gs_wan_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_pdf_e.ps pstoraster/gs_pdf_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_sym_e.ps pstoraster/gs_sym_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_std_e.ps pstoraster/gs_std_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_dbt_e.ps pstoraster/gs_dbt_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_mex_e.ps pstoraster/gs_mex_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_mro_e.ps pstoraster/gs_mro_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_iso_e.ps pstoraster/gs_iso_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_ksb_e.ps pstoraster/gs_ksb_e.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_ttf.ps pstoraster/gs_ttf.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_pdf.ps pstoraster/gs_pdf.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_ccfnt.ps pstoraster/gs_ccfnt.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/pdf_sec.ps pstoraster/pdf_sec.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_res.ps pstoraster/gs_res.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/pdf_base.ps pstoraster/pdf_base.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_btokn.ps pstoraster/gs_btokn.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_diskf.ps pstoraster/gs_diskf.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/pdf_2ps.ps pstoraster/pdf_2ps.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_init.ps pstoraster/gs_init.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_kanji.ps pstoraster/gs_kanji.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/pdf_draw.ps pstoraster/pdf_draw.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/pdf_font.ps pstoraster/pdf_font.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_type1.ps pstoraster/gs_type1.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_fonts.ps pstoraster/gs_fonts.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_statd.ps pstoraster/gs_statd.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_lev2.ps pstoraster/gs_lev2.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_typ42.ps pstoraster/gs_typ42.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_pdfwr.ps pstoraster/gs_pdfwr.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_cidfn.ps pstoraster/gs_cidfn.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_cmdl.ps pstoraster/gs_cmdl.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_dps1.ps pstoraster/gs_dps1.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_setpd.ps pstoraster/gs_setpd.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_cmap.ps pstoraster/gs_cmap.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/gs_fform.ps pstoraster/gs_fform.ps
-f 0444 root sys /usr/share/cups/data/pstoraster/pdf_main.ps pstoraster/pdf_main.ps
+f 0444 root sys /usr/share/cups/fonts/AvantGarde-Book fonts/AvantGarde-Book
+f 0444 root sys /usr/share/cups/fonts/AvantGarde-BookOblique fonts/AvantGarde-BookOblique
+f 0444 root sys /usr/share/cups/fonts/AvantGarde-Demi fonts/AvantGarde-Demi
+f 0444 root sys /usr/share/cups/fonts/AvantGarde-DemiOblique fonts/AvantGarde-DemiOblique
+f 0444 root sys /usr/share/cups/fonts/Bookman-Demi fonts/Bookman-Demi
+f 0444 root sys /usr/share/cups/fonts/Bookman-DemiItalic fonts/Bookman-DemiItalic
+f 0444 root sys /usr/share/cups/fonts/Bookman-Light fonts/Bookman-Light
+f 0444 root sys /usr/share/cups/fonts/Bookman-LightItalic fonts/Bookman-LightItalic
+f 0444 root sys /usr/share/cups/fonts/Courier fonts/Courier
+f 0444 root sys /usr/share/cups/fonts/Courier-Bold fonts/Courier-Bold
+f 0444 root sys /usr/share/cups/fonts/Courier-BoldOblique fonts/Courier-BoldOblique
+f 0444 root sys /usr/share/cups/fonts/Courier-Oblique fonts/Courier-Oblique
+f 0444 root sys /usr/share/cups/fonts/Helvetica fonts/Helvetica
+f 0444 root sys /usr/share/cups/fonts/Helvetica-Bold fonts/Helvetica-Bold
+f 0444 root sys /usr/share/cups/fonts/Helvetica-BoldOblique fonts/Helvetica-BoldOblique
+f 0444 root sys /usr/share/cups/fonts/Helvetica-Narrow fonts/Helvetica-Narrow
+f 0444 root sys /usr/share/cups/fonts/Helvetica-Narrow-Bold fonts/Helvetica-Narrow-Bold
+f 0444 root sys /usr/share/cups/fonts/Helvetica-Narrow-BoldOblique fonts/Helvetica-Narrow-BoldOblique
+f 0444 root sys /usr/share/cups/fonts/Helvetica-Narrow-Oblique fonts/Helvetica-Narrow-Oblique
+f 0444 root sys /usr/share/cups/fonts/Helvetica-Oblique fonts/Helvetica-Oblique
+f 0444 root sys /usr/share/cups/fonts/NewCenturySchlbk-Bold fonts/NewCenturySchlbk-Bold
+f 0444 root sys /usr/share/cups/fonts/NewCenturySchlbk-BoldItalic fonts/NewCenturySchlbk-BoldItalic
+f 0444 root sys /usr/share/cups/fonts/NewCenturySchlbk-Italic fonts/NewCenturySchlbk-Italic
+f 0444 root sys /usr/share/cups/fonts/NewCenturySchlbk-Roman fonts/NewCenturySchlbk-Roman
+f 0444 root sys /usr/share/cups/fonts/Palatino-Bold fonts/Palatino-Bold
+f 0444 root sys /usr/share/cups/fonts/Palatino-BoldItalic fonts/Palatino-BoldItalic
+f 0444 root sys /usr/share/cups/fonts/Palatino-Italic fonts/Palatino-Italic
+f 0444 root sys /usr/share/cups/fonts/Palatino-Roman fonts/Palatino-Roman
+f 0444 root sys /usr/share/cups/fonts/Symbol fonts/Symbol
+f 0444 root sys /usr/share/cups/fonts/Times-Bold fonts/Times-Bold
+f 0444 root sys /usr/share/cups/fonts/Times-BoldItalic fonts/Times-BoldItalic
+f 0444 root sys /usr/share/cups/fonts/Times-Italic fonts/Times-Italic
+f 0444 root sys /usr/share/cups/fonts/Times-Roman fonts/Times-Roman
+f 0444 root sys /usr/share/cups/fonts/Utopia-Bold fonts/Utopia-Bold
+f 0444 root sys /usr/share/cups/fonts/Utopia-BoldItalic fonts/Utopia-BoldItalic
+f 0444 root sys /usr/share/cups/fonts/Utopia-Italic fonts/Utopia-Italic
+f 0444 root sys /usr/share/cups/fonts/Utopia-Regular fonts/Utopia-Regular
+f 0444 root sys /usr/share/cups/fonts/ZapfChancery-MediumItalic fonts/ZapfChancery-MediumItalic
+f 0444 root sys /usr/share/cups/fonts/ZapfDingbats fonts/ZapfDingbats
+f 0444 root sys /usr/share/cups/pstoraster/Fontmap pstoraster/Fontmap
+f 0444 root sys /usr/share/cups/pstoraster/gs_l2img.ps pstoraster/gs_l2img.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_pfile.ps pstoraster/gs_pfile.ps
+f 0444 root sys /usr/share/cups/pstoraster/pfbtogs.ps pstoraster/pfbtogs.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_wl1_e.ps pstoraster/gs_wl1_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_wl2_e.ps pstoraster/gs_wl2_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_wl5_e.ps pstoraster/gs_wl5_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_wan_e.ps pstoraster/gs_wan_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_pdf_e.ps pstoraster/gs_pdf_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_sym_e.ps pstoraster/gs_sym_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_std_e.ps pstoraster/gs_std_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_dbt_e.ps pstoraster/gs_dbt_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_mex_e.ps pstoraster/gs_mex_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_mro_e.ps pstoraster/gs_mro_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_iso_e.ps pstoraster/gs_iso_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_ksb_e.ps pstoraster/gs_ksb_e.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_ttf.ps pstoraster/gs_ttf.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_pdf.ps pstoraster/gs_pdf.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_ccfnt.ps pstoraster/gs_ccfnt.ps
+f 0444 root sys /usr/share/cups/pstoraster/pdf_sec.ps pstoraster/pdf_sec.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_res.ps pstoraster/gs_res.ps
+f 0444 root sys /usr/share/cups/pstoraster/pdf_base.ps pstoraster/pdf_base.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_btokn.ps pstoraster/gs_btokn.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_diskf.ps pstoraster/gs_diskf.ps
+f 0444 root sys /usr/share/cups/pstoraster/pdf_2ps.ps pstoraster/pdf_2ps.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_init.ps pstoraster/gs_init.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_kanji.ps pstoraster/gs_kanji.ps
+f 0444 root sys /usr/share/cups/pstoraster/pdf_draw.ps pstoraster/pdf_draw.ps
+f 0444 root sys /usr/share/cups/pstoraster/pdf_font.ps pstoraster/pdf_font.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_type1.ps pstoraster/gs_type1.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_fonts.ps pstoraster/gs_fonts.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_statd.ps pstoraster/gs_statd.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_lev2.ps pstoraster/gs_lev2.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_typ42.ps pstoraster/gs_typ42.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_pdfwr.ps pstoraster/gs_pdfwr.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_cidfn.ps pstoraster/gs_cidfn.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_cmdl.ps pstoraster/gs_cmdl.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_dps1.ps pstoraster/gs_dps1.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_setpd.ps pstoraster/gs_setpd.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_cmap.ps pstoraster/gs_cmap.ps
+f 0444 root sys /usr/share/cups/pstoraster/gs_fform.ps pstoraster/gs_fform.ps
+f 0444 root sys /usr/share/cups/pstoraster/pdf_main.ps pstoraster/pdf_main.ps
 f 0444 root sys /usr/share/cups/model/deskjet.ppd ppd/deskjet.ppd
 f 0444 root sys /usr/share/cups/model/laserjet.ppd ppd/laserjet.ppd
 
@@ -287,5 +290,5 @@ l 0555 root sys /etc/rc0.d/K20lp ../init.d/cups
 l 0555 root sys /etc/rc2.d/S80lp ../init.d/cups
 
 #
-# End of "$Id: cups.list,v 1.3 1999/05/20 16:50:18 mike Exp $".
+# End of "$Id: cups.list,v 1.4 1999/05/20 18:12:26 mike Exp $".
 #
