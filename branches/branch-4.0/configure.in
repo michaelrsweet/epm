@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.52.2.15 2004/10/26 20:29:24 mike Exp $"
+dnl "$Id: configure.in,v 1.52.2.16 2004/10/31 17:22:53 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -180,7 +180,8 @@ if test -n "$GCC"; then
 	fi
 
 	CXX="$CC"
-	OPTIM="-Wall -Wno-return-type $OPTIM"
+	OPTIM="-Wall -Wformat -Wunused -Wconversion $OPTIM"
+	OPTIM="-Wno-shadow -Wno-return-type -Wno-format-y2k $OPTIM"
 
 	# See if GCC supports -fno-rtti...
 	AC_MSG_CHECKING(if GCC supports -fno-rtti)
@@ -395,5 +396,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52.2.15 2004/10/26 20:29:24 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52.2.16 2004/10/31 17:22:53 mike Exp $".
 dnl

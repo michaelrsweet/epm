@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.21.2.7 2004/10/26 20:29:24 mike Exp $"
+ * "$Id: inst.c,v 1.21.2.8 2004/10/31 17:22:53 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -199,7 +199,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
       */
 
       for (runlevels = get_runlevels(dist->files + i, "02");
-           isdigit(*runlevels);
+           isdigit(*runlevels & 255);
 	   runlevels ++)
       {
 	file = add_file(dist, dist->files[i].subpackage);
@@ -630,5 +630,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.21.2.7 2004/10/26 20:29:24 mike Exp $".
+ * End of "$Id: inst.c,v 1.21.2.8 2004/10/31 17:22:53 mike Exp $".
  */

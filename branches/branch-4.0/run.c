@@ -1,5 +1,5 @@
 /*
- * "$Id: run.c,v 1.2.2.4 2004/10/26 20:29:24 mike Exp $"
+ * "$Id: run.c,v 1.2.2.5 2004/10/31 17:22:54 mike Exp $"
  *
  *   External program function for the ESP Package Manager (EPM).
  *
@@ -67,11 +67,11 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
   argv[0] = argbuf;
 
   for (argptr = argbuf, argc = 1; *argptr != '\0' && argc < 99; argptr ++)
-    if (isspace(*argptr))
+    if (isspace(*argptr & 255))
     {
       *argptr++ = '\0';
 
-      while (isspace(*argptr))
+      while (isspace(*argptr & 255))
         argptr ++;
 
       if (*argptr != '\0')
@@ -178,5 +178,5 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
 
 
 /*
- * End of "$Id: run.c,v 1.2.2.4 2004/10/26 20:29:24 mike Exp $".
+ * End of "$Id: run.c,v 1.2.2.5 2004/10/31 17:22:54 mike Exp $".
  */

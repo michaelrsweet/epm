@@ -1,5 +1,5 @@
 /*
- * "$Id: string.c,v 1.5.2.3 2004/10/25 18:51:04 mike Exp $"
+ * "$Id: string.c,v 1.5.2.4 2004/10/31 17:22:54 mike Exp $"
  *
  *   String functions for the ESP Package Manager (EPM).
  *
@@ -60,7 +60,7 @@ epm_strdup(const char *s)		/* I - String to duplicate */
 #  ifndef HAVE_STRCASECMP
 int					/* O - Result of comparison (-1, 0, or 1) */
 epm_strcasecmp(const char *s,		/* I - First string */
-           const char *t)		/* I - Second string */
+               const char *t)		/* I - Second string */
 {
   while (*s != '\0' && *t != '\0')
   {
@@ -90,8 +90,8 @@ epm_strcasecmp(const char *s,		/* I - First string */
 
 size_t					/* O - Length of string */
 epm_strlcat(char       *dst,		/* O - Destination string */
-             const char *src,		/* I - Source string */
-	     size_t     size)		/* I - Size of destination string buffer */
+            const char *src,		/* I - Source string */
+	    size_t     size)		/* I - Size of destination string buffer */
 {
   size_t	srclen;			/* Length of source string */
   size_t	dstlen;			/* Length of destination string */
@@ -135,8 +135,8 @@ epm_strlcat(char       *dst,		/* O - Destination string */
 
 size_t					/* O - Length of string */
 epm_strlcpy(char       *dst,		/* O - Destination string */
-             const char *src,		/* I - Source string */
-	     size_t      size)		/* I - Size of destination string buffer */
+            const char *src,		/* I - Source string */
+	    size_t      size)		/* I - Size of destination string buffer */
 {
   size_t	srclen;			/* Length of source string */
 
@@ -199,5 +199,5 @@ epm_strncasecmp(const char *s,		/* I - First string */
 
 
 /*
- * End of "$Id: string.c,v 1.5.2.3 2004/10/25 18:51:04 mike Exp $".
+ * End of "$Id: string.c,v 1.5.2.4 2004/10/31 17:22:54 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.27.2.15 2004/08/29 04:17:44 mike Exp $"
+ * "$Id: epm.h,v 1.27.2.16 2004/10/31 17:22:53 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -171,8 +171,8 @@ typedef struct				/**** TAR file ****/
 
 typedef struct				/**** File to install ****/
 {
-  char		type;			/* Type of file */
-  int		mode;			/* Permissions of file */
+  int		type;			/* Type of file */
+  mode_t	mode;			/* Permissions of file */
   char		user[32],		/* Owner of file */
 		group[32],		/* Group of file */
 		src[512],		/* Source path */
@@ -183,14 +183,14 @@ typedef struct				/**** File to install ****/
 
 typedef struct				/**** Install/Patch/Remove Commands ****/
 {
-  char		type,			/* Command type */
-		*command;		/* Command string */
+  int		type;			/* Command type */
+  char		*command;		/* Command string */
   const char	*subpackage;		/* Sub-package name */
 } command_t;
 
 typedef struct				/**** Dependencies ****/
 {
-  char		type;			/* Dependency type */
+  int		type;			/* Dependency type */
   char		product[256];		/* Product name */
   char		version[2][256];	/* Product version string */
   int		vernumber[2];		/* Product version number */
@@ -243,16 +243,16 @@ extern int		Verbosity;	/* Be verbose? */
  * Prototypes...
  */
 
-extern void	add_command(dist_t *dist, FILE *fp, char type,
+extern void	add_command(dist_t *dist, FILE *fp, int type,
 		            const char *command, const char *subpkg);
-extern void	add_depend(dist_t *dist, char type, const char *line,
+extern void	add_depend(dist_t *dist, int type, const char *line,
 		           const char *subpkg);
 extern void	add_description(dist_t *dist, FILE *fp, const char *description,
 		                const char *subpkg);
 extern file_t	*add_file(dist_t *dist, const char *subpkg);
 extern char	*add_subpackage(dist_t *dist, const char *subpkg);
 extern int	copy_file(const char *dst, const char *src,
-		          int mode, int owner, int group);
+		          mode_t mode, uid_t owner, gid_t group);
 extern char	*find_subpackage(dist_t *dist, const char *subpkg);
 extern void	free_dist(dist_t *dist);
 extern const char *get_option(file_t *file, const char *name, const char *defval);
@@ -269,8 +269,8 @@ extern int	make_bsd(const char *prodname, const char *directory,
 extern int	make_deb(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform);
-extern int	make_directory(const char *directory, int mode, int owner,
-		               int group);
+extern int	make_directory(const char *directory, mode_t mode, uid_t owner,
+		               gid_t group);
 extern int	make_inst(const char *prodname, const char *directory,
 		          const char *platname, dist_t *dist,
 			  struct utsname *platform);
@@ -308,7 +308,7 @@ extern int	tar_close(tarf_t *tar);
 extern int	tar_directory(tarf_t *tar, const char *srcpath,
 		              const char *dstpath);
 extern int	tar_file(tarf_t *tar, const char *filename);
-extern int	tar_header(tarf_t *tar, char type, int mode, int size,
+extern int	tar_header(tarf_t *tar, int type, mode_t mode, off_t size,
 		           time_t mtime, const char *user, const char *group,
 			   const char *pathname, const char *linkname);
 extern tarf_t	*tar_open(const char *filename, int compress);
@@ -323,5 +323,5 @@ extern int	write_dist(const char *listname, dist_t *dist);
 
 
 /*
- * End of "$Id: epm.h,v 1.27.2.15 2004/08/29 04:17:44 mike Exp $".
+ * End of "$Id: epm.h,v 1.27.2.16 2004/10/31 17:22:53 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63.2.25 2004/10/26 20:29:24 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.26 2004/10/31 17:22:53 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1196,7 +1196,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 
             rootsize += (srcstat.st_size + 1023) / 1024;
 
-            if (isupper(file->type))
+            if (isupper(file->type & 255))
               prootsize += (srcstat.st_size + 1023) / 1024;
 
            /*
@@ -1242,7 +1242,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 
             rootsize ++;
 
-            if (isupper(file->type))
+            if (isupper(file->type & 255))
               prootsize ++;
 	    break;
 
@@ -1261,7 +1261,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 
             rootsize ++;
 
-            if (isupper(file->type))
+            if (isupper(file->type & 255))
               prootsize ++;
 	    break;
       }
@@ -1305,7 +1305,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 
             usrsize += (srcstat.st_size + 1023) / 1024;
 
-            if (isupper(file->type))
+            if (isupper(file->type & 255))
               pusrsize += (srcstat.st_size + 1023) / 1024;
 
            /*
@@ -1351,7 +1351,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 
 	    usrsize ++;
 
-            if (isupper(file->type))
+            if (isupper(file->type & 255))
               pusrsize ++;
 	    break;
 
@@ -1370,7 +1370,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 
 	    usrsize ++;
 
-            if (isupper(file->type))
+            if (isupper(file->type & 255))
               pusrsize ++;
 	    break;
       }
@@ -1891,11 +1891,11 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
 #ifndef __sun
 	for (runlevels = get_runlevels(dist->files + i, "0235");
-             isdigit(*runlevels);
+             isdigit(*runlevels & 255);
 	     runlevels ++)
 #else
 	for (runlevels = get_runlevels(dist->files + i, "03");
-             isdigit(*runlevels);
+             isdigit(*runlevels & 255);
 	     runlevels ++)
 #endif /* !__sun */
 	{
@@ -1974,7 +1974,7 @@ write_instfiles(tarf_t     *tarfile,	/* I - Distribution tar file */
     if (srcstat.st_size == 0)
       continue;
 
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & 07555,
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
 		   dstname, NULL) < 0)
     {
@@ -2266,11 +2266,11 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
 #ifndef __sun
 	for (runlevels = get_runlevels(dist->files + i, "0235");
-             isdigit(*runlevels);
+             isdigit(*runlevels & 255);
 	     runlevels ++)
 #else
 	for (runlevels = get_runlevels(dist->files + i, "03");
-             isdigit(*runlevels);
+             isdigit(*runlevels & 255);
 	     runlevels ++)
 #endif /* !__sun */
 	{
@@ -2434,11 +2434,11 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 #ifndef __sun
 	for (runlevels = get_runlevels(dist->files + i, "0235");
-             isdigit(*runlevels);
+             isdigit(*runlevels & 255);
 	     runlevels ++)
 #else
 	for (runlevels = get_runlevels(dist->files + i, "03");
-             isdigit(*runlevels);
+             isdigit(*runlevels & 255);
 	     runlevels ++)
 #endif /* !__sun */
 	{
@@ -2679,5 +2679,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63.2.25 2004/10/26 20:29:24 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.26 2004/10/31 17:22:53 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.8.2.8 2004/08/29 04:17:44 mike Exp $"
+ * "$Id: aix.c,v 1.8.2.9 2004/10/31 17:22:53 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -44,7 +44,7 @@ typedef struct
  * Local functions...
  */
 
-static int	aix_addfile(char type, const char *src, const char *dst,
+static int	aix_addfile(int type, const char *src, const char *dst,
 		            int num_dirs, aixdir_t **dirs);
 static char	*aix_version(const char *version);
 static int	write_liblpp(const char *prodname,
@@ -240,7 +240,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
           break;
       case 'i' :
           for (runlevels = get_runlevels(file, "2");
-	       isdigit(*runlevels);
+	       isdigit(*runlevels & 255);
 	       runlevels ++)
 	  {
             snprintf(filename, sizeof(filename),
@@ -332,7 +332,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
  */
 
 static int				/* O  - New number dirs */
-aix_addfile(char       type,		/* I  - Filetype */
+aix_addfile(int        type,		/* I  - Filetype */
             const char *src,		/* I  - Source path */
             const char *dst,		/* I  - Destination path */
 	    int        num_dirs,	/* I  - Number of directories */
@@ -806,5 +806,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: aix.c,v 1.8.2.8 2004/08/29 04:17:44 mike Exp $".
+ * End of "$Id: aix.c,v 1.8.2.9 2004/10/31 17:22:53 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.16.2.9 2004/05/06 18:36:56 mike Exp $"
+ * "$Id: deb.c,v 1.16.2.10 2004/10/31 17:22:53 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -229,7 +229,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
         fprintf(fp, "update-rc.d %s start %02d", file->dst,
 	        get_start(file, 99));
 
-        for (; isdigit(*runlevels); runlevels ++)
+        for (; isdigit(*runlevels & 255); runlevels ++)
 	  if (*runlevels != '0')
 	    fprintf(fp, " %c", *runlevels);
 
@@ -443,5 +443,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.16.2.9 2004/05/06 18:36:56 mike Exp $".
+ * End of "$Id: deb.c,v 1.16.2.10 2004/10/31 17:22:53 mike Exp $".
  */

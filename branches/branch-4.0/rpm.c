@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.35.2.18 2004/10/26 20:29:24 mike Exp $"
+ * "$Id: rpm.c,v 1.35.2.19 2004/10/31 17:22:54 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -461,7 +461,7 @@ write_spec(const char *prodname,	/* I - Product name */
 	fputs("		fi\n", fp);
 
 	for (runlevels = get_runlevels(dist->files + i, "0123456");
-             isdigit(*runlevels);
+             isdigit(*runlevels & 255);
 	     runlevels ++)
 	{
 	  if (*runlevels == '0')
@@ -523,7 +523,7 @@ write_spec(const char *prodname,	/* I - Product name */
 	fputs("		fi\n", fp);
 
 	for (runlevels = get_runlevels(dist->files + i, "0123456");
-             isdigit(*runlevels);
+             isdigit(*runlevels & 255);
 	     runlevels ++)
 	{
 	  if (*runlevels == '0')
@@ -600,5 +600,5 @@ write_spec(const char *prodname,	/* I - Product name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.35.2.18 2004/10/26 20:29:24 mike Exp $".
+ * End of "$Id: rpm.c,v 1.35.2.19 2004/10/31 17:22:54 mike Exp $".
  */

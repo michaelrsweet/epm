@@ -1,5 +1,5 @@
 /*
- * "$Id: qprintf.c,v 1.1.2.5 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: qprintf.c,v 1.1.2.6 2004/10/31 17:22:54 mike Exp $"
  *
  *   Quoted fprintf function for the ESP Package Manager (EPM).
  *
@@ -79,7 +79,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
         sign = 0;
 
       width = 0;
-      while (isdigit(*format))
+      while (isdigit(*format & 255))
         width = width * 10 + *format++ - '0';
 
       if (*format == '.')
@@ -87,7 +87,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
         format ++;
 	prec = 0;
 
-	while (isdigit(*format))
+	while (isdigit(*format & 255))
           prec = prec * 10 + *format++ - '0';
       }
       else
@@ -116,8 +116,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
 	    if ((format - bufformat + 1) > sizeof(tformat))
 	      break;
 
-	    strncpy(tformat, bufformat, format - bufformat);
-	    tformat[format - bufformat] = '\0';
+	    strlcpy(tformat, bufformat, (size_t)(format - bufformat + 1));
 
 	    bytes += fprintf(fp, tformat, va_arg(ap, double));
 	    break;
@@ -133,8 +132,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
 	    if ((format - bufformat + 1) > sizeof(tformat))
 	      break;
 
-	    strncpy(tformat, bufformat, format - bufformat);
-	    tformat[format - bufformat] = '\0';
+	    strlcpy(tformat, bufformat, (size_t)(format - bufformat + 1));
 
 	    bytes += fprintf(fp, tformat, va_arg(ap, int));
 	    break;
@@ -143,8 +141,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
 	    if ((format - bufformat + 1) > sizeof(tformat))
 	      break;
 
-	    strncpy(tformat, bufformat, format - bufformat);
-	    tformat[format - bufformat] = '\0';
+	    strlcpy(tformat, bufformat, (size_t)(format - bufformat + 1));
 
 	    bytes += fprintf(fp, tformat, va_arg(ap, void *));
 	    break;
@@ -157,7 +154,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
 	    }
 	    else
 	    {
-	      fwrite(va_arg(ap, char *), 1, width, fp);
+	      fwrite(va_arg(ap, char *), 1, (size_t)width, fp);
 	      bytes += width;
 	    }
 	    break;
@@ -216,6 +213,6 @@ qprintf(FILE       *fp,		/* I - File to write to */
 
 
 /*
- * End of "$Id: qprintf.c,v 1.1.2.5 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: qprintf.c,v 1.1.2.6 2004/10/31 17:22:54 mike Exp $".
  */
 
