@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.4.2.12 2004/12/13 19:08:39 mike Exp $"
+ * "$Id: bsd.c,v 1.4.2.13 2004/12/14 19:33:21 mike Exp $"
  *
  *   Free/Net/OpenBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -405,21 +405,21 @@ make_subpackage(const char     *prodname,
 		  plistname,
 		  name))
     return (1);
+
+  if (run_command(NULL, "mv %s.tgz %s", name, directory))
+    return (1);
 #else
   if (run_command(NULL, "pkg_create -p / "
                         "-c %s "
 			"-d %s "
                         "-f %s "
-			"%s",
+			"%s/%s.tgz",
 		  commentname,
 		  descrname,
 		  plistname,
-		  name))
+		  directory, name))
     return (1);
 #endif /* __OpenBSD__ */
-
-  if (run_command(NULL, "mv %s.tgz %s", name, directory))
-    return (1);
 
  /*
   * Remove temporary files...
@@ -442,5 +442,5 @@ make_subpackage(const char     *prodname,
 
 
 /*
- * End of "$Id: bsd.c,v 1.4.2.12 2004/12/13 19:08:39 mike Exp $".
+ * End of "$Id: bsd.c,v 1.4.2.13 2004/12/14 19:33:21 mike Exp $".
  */
