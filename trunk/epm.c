@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.10 1999/07/30 14:12:14 mike Exp $"
+ * "$Id: epm.c,v 1.11 1999/08/10 20:12:19 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -240,6 +240,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   sprintf(platname, "%s-%s-%s", platform.sysname, platform.release,
           platform.machine);
+  strcpy(directory, platname);
   prodname[0] = '\0';
   listname[0] = '\0';
 
@@ -346,7 +347,6 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Make build directory...
   */
 
-  strcpy(directory, platname);
   mkdir(directory, 0777);
 
  /*
@@ -479,7 +479,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   if (havepatchfiles)
   {
-    puts("Creating software distribution file...");
+    puts("Creating software patch file...");
 
     sprintf(pswname, "%s.psw", prodname);
     sprintf(filename, "%s/%s", directory, pswname);
@@ -1161,8 +1161,12 @@ write_dist(char   *title,	/* I - Title to show */
   printf("Writing %s archive:", title);
   fflush(stdout);
 
-  sprintf(filename, "%s/%s-%s-%s.tar.gz", directory, prodname, dist->version,
-          platname);
+  if (platname[0])
+    sprintf(filename, "%s/%s-%s-%s.tar.gz", directory, prodname, dist->version,
+            platname);
+  else
+    sprintf(filename, "%s/%s-%s.tar.gz", directory, prodname, dist->version);
+
   sprintf(command, EPM_GZIP " -9 >%s", filename);
   if ((tarfile = popen(command, "w")) == NULL)
   {
@@ -1946,5 +1950,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.10 1999/07/30 14:12:14 mike Exp $".
+ * End of "$Id: epm.c,v 1.11 1999/08/10 20:12:19 mike Exp $".
  */
