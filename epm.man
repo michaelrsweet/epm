@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.19 2001/01/03 20:41:33 mike Exp $"
+.\" "$Id: epm.man,v 1.20 2001/01/19 16:16:51 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "10 December 2000" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "19 January 2001" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -107,8 +107,12 @@ Debian, IRIX, portable, and Red Hat distributions use the extensions ".deb",
 .SH LIST FILES
 Each product has an associated list file that describes the files to include
 with the product. Comment lines begin with the "#" character and are ignored.
-All other non-blank lines must begin with a letter or the percent sign ("%")
-as follows:
+All other non-blank lines must begin with a letter, dollar sign ("$"),
+or the percent sign ("%") as follows:
+.TP 5
+$name=value
+.br
+Sets the named variable to \fIvalue\fR.
 .TP 5
 %copyright \fIcopyright notice\fR
 .br
@@ -275,5 +279,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.19 2001/01/03 20:41:33 mike Exp $".
+.\" End of "$Id: epm.man,v 1.20 2001/01/19 16:16:51 mike Exp $".
 .\"

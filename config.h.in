@@ -1,9 +1,9 @@
 /*
- * "$Id: config.h.in,v 1.15 2001/01/10 16:29:29 mike Exp $"
+ * "$Id: config.h.in,v 1.16 2001/01/19 16:16:50 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2000 by Easy Software Products.
+ *   Copyright 1999-2001 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -91,5 +91,5 @@
 #define EPM_GZIP	"gzip"
 
 /*
- * End of "$Id: config.h.in,v 1.15 2001/01/10 16:29:29 mike Exp $".
+ * End of "$Id: config.h.in,v 1.16 2001/01/19 16:16:50 mike Exp $".
  */
