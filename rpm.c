@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.11 2000/02/18 17:54:58 mike Exp $"
+ * "$Id: rpm.c,v 1.12 2000/04/26 23:46:31 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -44,6 +44,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   char		specname[1024];		/* Spec filename */
   char		filename[1024];		/* Destination filename */
   char		command[1024];		/* RPM command to run */
+  const char	*rpmdir;		/* RPM directory */
   file_t	*file;			/* Current distribution file */
   struct passwd	*pwd;			/* Pointer to user record */
   struct group	*grp;			/* Pointer to group record */
@@ -219,13 +220,32 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   if (system(command))
     return (1);
 
+ /*
+  * Figure out where the RPMS are stored...
+  */
+
+  if ((rpmdir = getenv("RPMDIR")) == NULL)
+  {
+    if (!access("/usr/src/redhat/RPMS", 0))
+      rpmdir = "/usr/src/redhat";
+    else if (!access("/usr/src/RPM/RPMS", 0))
+      rpmdir = "/usr/src/RPM";
+    else
+      rpmdir = "/usr/local/src/RPM";
+  }
+
+ /*
+  * Move the RPM to the local directory and rename the RPM using the
+  * product name specified by the user...
+  */
+
   if (strcmp(platform->machine, "intel") == 0)
-    sprintf(command, "cd %s; /bin/mv /usr/src/RPM/RPMS/i386/%s-%s-1.i386.rpm %s.rpm",
-            directory, prodname, dist->version, name);
+    sprintf(command, "cd %s; /bin/mv %s/RPMS/i386/%s-%s-1.i386.rpm %s.rpm",
+            directory, rpmdir, prodname, dist->version, name);
   else
-    sprintf(command, "cd %s; /bin/mv /usr/src/RPM/RPMS/%s/%s-%s-1.%s.rpm %s.rpm", directory,
-            platform->machine, prodname, dist->version, platform->machine,
-	    name);
+    sprintf(command, "cd %s; /bin/mv %s/RPMS/%s/%s-%s-1.%s.rpm %s.rpm",
+            directory, rpmdir, platform->machine, prodname, dist->version,
+	    platform->machine, name);
 
   system(command);
 
@@ -246,5 +266,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.11 2000/02/18 17:54:58 mike Exp $".
+ * End of "$Id: rpm.c,v 1.12 2000/04/26 23:46:31 mike Exp $".
  */

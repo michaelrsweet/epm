@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.9 2000/04/26 14:27:06 mike Exp $"
+dnl "$Id: configure.in,v 1.10 2000/04/26 23:46:30 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -81,7 +81,7 @@ if test "$x_libraries" = "/usr/lib"; then
 	echo "Ignoring X library directory \"$x_libraries\" requested by configure."
 	x_libraries="NONE"
 fi
-if test ! "$x_libraries" = "NONE" -a ! "$x_libraries" = ""; then
+if test "$x_libraries" != "NONE"; then
 	LDFLAGS="$LDFLAGS -L$x_libraries"
 	if test "$uname" = "SunOS"; then
 		LDFLAGS="$LDFLAGS -R$x_libraries"
@@ -91,16 +91,17 @@ if test "$x_includes" = "/usr/include"; then
 	echo "Ignoring X include directory \"$x_includes\" requested by configure."
 	x_includes="NONE"
 fi
-if test ! "$x_includes" = "NONE" -a ! "$x_includes" = ""; then
+if test "$x_includes" != "NONE"; then
 	CFLAGS="$CFLAGS -I$x_includes"
 	CXXFLAGS="$CXXFLAGS -I$x_includes"
 fi
+AC_CHECK_LIB(m,pow)
 AC_CHECK_LIB(fltk,numericsort)
 
 if test "$ac_cv_lib_fltk_numericsort" = yes -a "$ac_cv_prog_CXX" != ""; then
 	SETUP="setup"
 	INSTALL_SETUP="install-setup"
-	LIBS="$LIBS -lXext -lX11 -lm"
+	LIBS="$LIBS -lXext -lX11"
 else
 	SETUP=""
 	INSTALL_SETUP=""
@@ -124,7 +125,7 @@ AC_SUBST(SETUP)
 AC_SUBST(INSTALL_SETUP)
 
 dnl See if the echo command supports the \c escape; if not, then it's broken!
-if test "$ac_c" = ""; then
+if test "x$ac_c" = "x"; then
 	AC_DEFINE(HAVE_BROKEN_ECHO)
 fi
 
@@ -132,16 +133,13 @@ dnl Update compiler options...
 if test -n "$GCC"; then
 	if test -z "$OPTIM"; then
 		if test "$uname" = "HP-UX"; then
-			OPTIM="-O1"
+			OPTIM="-O1 -fforce-mem -fforce-addr -fcaller-saves"
 		else
-	        	OPTIM="-O2"
+	        	OPTIM="-O2 -fforce-mem -fforce-addr -fcaller-saves"
 		fi
 	fi
-	if test $PICFLAG = 1; then
-    		OPTIM="-fPIC $OPTIM"
-	fi
 
-	OPTIM="-Wall -Wno-return-type -fno-rtti -fomit-frame-pointer $OPTIM"
+	OPTIM="-Wall -Wno-return-type -fno-rtti $OPTIM"
 
 	# See if GCC supports -fno-exceptions...
 	echo "Testing if GCC supports -fno-exceptions..."
@@ -154,7 +152,7 @@ if test -n "$GCC"; then
 	CFLAGS="$OLDCFLAGS"
 
 	# See if we are running Solaris; if so, try the -fpermissive option...
-	if test $uname = SunOS; then
+	if test "$uname" = SunOS; then
 		echo "Testing if GCC supports -fpermissive..."
 
 		OLDCFLAGS="$CFLAGS"
@@ -200,5 +198,5 @@ AC_SUBST(EPM_WHOAMI)
 AC_OUTPUT(Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.9 2000/04/26 14:27:06 mike Exp $".
+dnl End of "$Id: configure.in,v 1.10 2000/04/26 23:46:30 mike Exp $".
 dnl

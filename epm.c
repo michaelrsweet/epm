@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.38 2000/01/04 13:45:40 mike Exp $"
+ * "$Id: epm.c,v 1.39 2000/04/26 23:46:30 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -61,8 +61,6 @@ main(int  argc,			/* I - Number of command-line arguments */
 		prodname[256],	/* Product name */
 		listname[256],	/* List file name */
 		directory[255],	/* Name of install directory */
-		filename[1024],	/* Name of temporary file */
-		command[1024],	/* Command to run */
 		*temp,		/* Temporary string pointer */
 		*setup;		/* Setup GUI image */
   dist_t	*dist;		/* Software distribution */
@@ -423,5 +421,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.38 2000/01/04 13:45:40 mike Exp $".
+ * End of "$Id: epm.c,v 1.39 2000/04/26 23:46:30 mike Exp $".
  */

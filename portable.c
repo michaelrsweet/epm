@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.8 2000/04/26 14:27:06 mike Exp $"
+ * "$Id: portable.c,v 1.9 2000/04/26 23:46:31 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -66,9 +66,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
   tarf_t	*tarfile;	/* Distribution tar file */
   char		swname[255],	/* Name of distribution tar file */
 		pswname[255],	/* Name of patch tar file */
-		filename[1024],	/* Name of temporary file */
-		command[1024],	/* Command to run */
-		*temp;		/* Temporary string pointer */
+		filename[1024];	/* Name of temporary file */
   time_t	deftime;	/* File creation time */
   struct stat	srcstat;	/* Source file information */
   file_t	*file;		/* Software file */
@@ -1568,5 +1566,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.8 2000/04/26 14:27:06 mike Exp $".
+ * End of "$Id: portable.c,v 1.9 2000/04/26 23:46:31 mike Exp $".
  */

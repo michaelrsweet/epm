@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.11 2000/01/12 21:11:48 mike Exp $"
+.\" "$Id: epm.man,v 1.12 2000/04/26 23:46:30 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "12 January 2000" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "26 April 2000" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -224,6 +224,10 @@ R \fImode user group destination\fR
 Specifies that the file is to be removed upon patching.  The \fIuser\fR and
 \fIgroup\fR fields are ignored.  The \fImode\fR field is only used to determine
 if a check should be made for a previous version of the file.
+.SH ENVIRONMENT VARIABLES
+The \fIRPMDIR\fR environment variable will override where EPM looks
+for RPM distributions you generate. The default locations are
+/usr/src/redhat/RPMS, /usr/src/RPM/RPMS, and /usr/local/src/RPMS.
 .SH KNOWN BUGS
 EPM does not currently support generation of IRIX software patches.
 .SH COPYRIGHT
@@ -239,5 +243,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.11 2000/01/12 21:11:48 mike Exp $".
+.\" End of "$Id: epm.man,v 1.12 2000/04/26 23:46:30 mike Exp $".
 .\"
