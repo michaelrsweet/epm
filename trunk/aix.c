@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.14 2003/08/30 02:15:41 mike Exp $"
+ * "$Id: aix.c,v 1.15 2003/11/07 14:58:49 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -663,10 +663,10 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     else
     {
       if (tolower(file->type) == 'c' ||
-          strcmp(file->dst, "/usr") ||
-	  strncmp(file->dst, "/usr/", 5) ||
-	  strcmp(file->dst, "/opt") ||
-	  strncmp(file->dst, "/opt/", 5))
+          (strcmp(file->dst, "/usr") &&
+	   strncmp(file->dst, "/usr/", 5) &&
+	   strcmp(file->dst, "/opt") &&
+	   strncmp(file->dst, "/opt/", 5)))
 	continue;
     }
 
@@ -758,5 +758,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 }
 
 /*
- * End of "$Id: aix.c,v 1.14 2003/08/30 02:15:41 mike Exp $".
+ * End of "$Id: aix.c,v 1.15 2003/11/07 14:58:49 mike Exp $".
  */
