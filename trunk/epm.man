@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.17 2000/12/10 16:45:05 mike Exp $"
+.\" "$Id: epm.man,v 1.18 2000/12/11 04:00:37 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -239,8 +239,8 @@ I \fImode user group service-name source\fR
 Specifies an initialization script for installation. The second form
 specifies that the file has changed or is new and should be included as
 part of a patch. Initialization scripts are stored in /etc/software/init.d and
-are linked to the appropriate system-specific directories for run levels 0
-and 3. Initialization scripts \fBmust\fR accepts at least the \fIstart\fR
+are linked to the appropriate system-specific directories for run levels 0,
+2, 3, and 5. Initialization scripts \fBmust\fR accepts at least the \fIstart\fR
 and \fIstop\fR commands.
 .TP 5
 l \fImode user group destination source\fR
@@ -258,7 +258,8 @@ if a check should be made for a previous version of the file.
 .SH ENVIRONMENT VARIABLES
 The \fIRPMDIR\fR environment variable will override where EPM looks
 for RPM distributions you generate. The default locations are
-/usr/src/redhat/RPMS, /usr/src/RPM/RPMS, and /usr/local/src/RPMS.
+/usr/src/redhat/RPMS, /usr/src/RPM/RPMS, /usr/src/packages/RPMS,
+and /usr/local/src/RPMS.
 .SH KNOWN BUGS
 EPM does not currently support generation of IRIX software patches.
 .SH COPYRIGHT
@@ -274,5 +275,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.17 2000/12/10 16:45:05 mike Exp $".
+.\" End of "$Id: epm.man,v 1.18 2000/12/11 04:00:37 mike Exp $".
 .\"

@@ -242,9 +242,9 @@ epm(1)                Easy Software Products               epm(1)
             or is new and should be included as part of a  patch.
             Initialization   scripts  are  stored  in  /etc/soft-
             ware/init.d and are linked to the appropriate system-
-            specific directories for run levels 0 and 3. Initial-
-            ization scripts mmuusstt accepts at least the  _s_t_a_r_t  and
-            _s_t_o_p commands.
+            specific  directories  for run levels 0, 2, 3, and 5.
+            Initialization scripts  mmuusstt  accepts  at  least  the
+            _s_t_a_r_t and _s_t_o_p commands.
 
        l _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
 
@@ -274,8 +274,8 @@ epm(1)                Easy Software Products               epm(1)
 EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
        The _R_P_M_D_I_R environment variable will  override  where  EPM
        looks  for  RPM  distributions  you  generate. The default
-       locations are /usr/src/redhat/RPMS, /usr/src/RPM/RPMS, and
-       /usr/local/src/RPMS.
+       locations  are  /usr/src/redhat/RPMS,   /usr/src/RPM/RPMS,
+       /usr/src/packages/RPMS, and /usr/local/src/RPMS.
 
 KKNNOOWWNN BBUUGGSS
        EPM does not currently support generation of IRIX software
