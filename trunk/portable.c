@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.23 2001/03/15 15:31:02 mike Exp $"
+ * "$Id: portable.c,v 1.24 2001/03/15 16:13:35 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -916,13 +916,12 @@ write_echocheck(FILE *fp)		/* I - Script file */
   */
 
   fputs("# Determine correct echo options...\n", fp);
-  fputs("if (echo \"testing\c\"; echo 1,2,3) | grep c >/dev/null; then\n", fp);
+  fputs("if (echo \"testing\\c\"; echo 1,2,3) | grep c >/dev/null; then\n", fp);
   fputs("	ac_n=-n\n", fp);
   fputs("	ac_c=\n", fp);
-  fputs("  fi\n", fp);
   fputs("else\n", fp);
   fputs("	ac_n=\n", fp);
-  fputs("	ac_c='\c'\n", fp);
+  fputs("	ac_c='\\c'\n", fp);
   fputs("fi\n", fp);
 
   return (0);
@@ -1626,5 +1625,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.23 2001/03/15 15:31:02 mike Exp $".
+ * End of "$Id: portable.c,v 1.24 2001/03/15 16:13:35 mike Exp $".
  */
