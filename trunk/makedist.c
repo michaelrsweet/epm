@@ -1,5 +1,5 @@
 /*
- * "$Id: makedist.c,v 1.10 1999/06/10 16:15:24 mike Exp $"
+ * "$Id: makedist.c,v 1.11 1999/06/16 16:30:42 mike Exp $"
  *
  *   Makedist, a simple binary distribution generator for UNIX.
  *
@@ -549,52 +549,54 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("	echo \"Sorry, you must be root to install this software.\"\n", installfile);
   fputs("	exit 1\n", installfile);
   fputs("fi\n", installfile);
-  fprintf(installfile, "echo \"Copyright %s\"\n", copyright);
-  fputs("echo \"\"\n", installfile);
-  fprintf(installfile, "echo \"This installation script will install the %s\"\n",
+  fputs("if test ! \"$*\" = \"now\"; then\n", installfile);
+  fprintf(installfile, "	echo \"Copyright %s\"\n", copyright);
+  fputs("	echo \"\"\n", installfile);
+  fprintf(installfile, "	echo \"This installation script will install the %s\"\n",
           product);
-  fprintf(installfile, "echo \"software version %s on your system.\"\n", version);
-  fputs("echo \"\"\n", installfile);
-  fputs("while true ; do\n", installfile);
+  fprintf(installfile, "	echo \"software version %s on your system.\"\n", version);
+  fputs("	echo \"\"\n", installfile);
+  fputs("	while true ; do\n", installfile);
 #ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
-  fputs("	echo -n \"Do you wish to continue? \"\n", installfile);
+  fputs("		echo -n \"Do you wish to continue? \"\n", installfile);
 #else
-  fputs("	echo \"Do you wish to continue? \\c\"\n", installfile);
+  fputs("		echo \"Do you wish to continue? \\c\"\n", installfile);
 #endif /* __linux */
-  fputs("	read yesno\n", installfile);
-  fputs("	case \"$yesno\" in\n", installfile);
-  fputs("		y | yes | Y | Yes | YES)\n", installfile);
-  fputs("		break\n", installfile);
-  fputs("		;;\n", installfile);
-  fputs("		n | no | N | No | NO)\n", installfile);
-  fputs("		exit 0\n", installfile);
-  fputs("		;;\n", installfile);
-  fputs("		*)\n", installfile);
-  fputs("		echo \"Please enter yes or no.\"\n", installfile);
-  fputs("		;;\n", installfile);
-  fputs("	esac\n", installfile);
-  fputs("done\n", installfile);
-  fprintf(installfile, "more %s.license\n", prodname);
-  fputs("echo \"\"\n", installfile);
-  fputs("while true ; do\n", installfile);
+  fputs("		read yesno\n", installfile);
+  fputs("		case \"$yesno\" in\n", installfile);
+  fputs("			y | yes | Y | Yes | YES)\n", installfile);
+  fputs("			break\n", installfile);
+  fputs("			;;\n", installfile);
+  fputs("			n | no | N | No | NO)\n", installfile);
+  fputs("			exit 0\n", installfile);
+  fputs("			;;\n", installfile);
+  fputs("			*)\n", installfile);
+  fputs("			echo \"Please enter yes or no.\"\n", installfile);
+  fputs("			;;\n", installfile);
+  fputs("		esac\n", installfile);
+  fputs("	done\n", installfile);
+  fprintf(installfile, "	more %s.license\n", prodname);
+  fputs("	echo \"\"\n", installfile);
+  fputs("	while true ; do\n", installfile);
 #ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
-  fputs("	echo -n \"Do you agree with the terms of this license? \"\n", installfile);
+  fputs("		echo -n \"Do you agree with the terms of this license? \"\n", installfile);
 #else
-  fputs("	echo \"Do you agree with the terms of this license? \\c\"\n", installfile);
+  fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", installfile);
 #endif /* __linux */
-  fputs("	read yesno\n", installfile);
-  fputs("	case \"$yesno\" in\n", installfile);
-  fputs("		y | yes | Y | Yes | YES)\n", installfile);
-  fputs("		break\n", installfile);
-  fputs("		;;\n", installfile);
-  fputs("		n | no | N | No | NO)\n", installfile);
-  fputs("		exit 0\n", installfile);
-  fputs("		;;\n", installfile);
-  fputs("		*)\n", installfile);
-  fputs("		echo \"Please enter yes or no.\"\n", installfile);
-  fputs("		;;\n", installfile);
-  fputs("	esac\n", installfile);
-  fputs("done\n", installfile);
+  fputs("		read yesno\n", installfile);
+  fputs("		case \"$yesno\" in\n", installfile);
+  fputs("			y | yes | Y | Yes | YES)\n", installfile);
+  fputs("			break\n", installfile);
+  fputs("			;;\n", installfile);
+  fputs("			n | no | N | No | NO)\n", installfile);
+  fputs("			exit 0\n", installfile);
+  fputs("			;;\n", installfile);
+  fputs("			*)\n", installfile);
+  fputs("			echo \"Please enter yes or no.\"\n", installfile);
+  fputs("			;;\n", installfile);
+  fputs("		esac\n", installfile);
+  fputs("	done\n", installfile);
+  fputs("fi\n", installfile);
   fprintf(installfile, "if test -x /etc/software/%s.remove; then\n", prodname);
   fprintf(installfile, "	echo \"Please run /etc/software/%s.remove before installing the software.\"\n",
           prodname);
@@ -623,52 +625,54 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("	echo \"Sorry, you must be root to install this software.\"\n", patchfile);
   fputs("	exit 1\n", patchfile);
   fputs("fi\n", patchfile);
-  fprintf(patchfile, "echo \"Copyright %s\"\n", copyright);
-  fputs("echo \"\"\n", patchfile);
-  fprintf(patchfile, "echo \"This installation script will patch the %s\"\n",
+  fputs("if test ! \"$*\" = \"now\"; then\n", patchfile);
+  fprintf(patchfile, "	echo \"Copyright %s\"\n", copyright);
+  fputs("	echo \"\"\n", patchfile);
+  fprintf(patchfile, "	echo \"This installation script will patch the %s\"\n",
           product);
-  fprintf(patchfile, "echo \"software to version %s on your system.\"\n", version);
-  fputs("echo \"\"\n", patchfile);
-  fputs("while true ; do\n", patchfile);
+  fprintf(patchfile, "	echo \"software to version %s on your system.\"\n", version);
+  fputs("	echo \"\"\n", patchfile);
+  fputs("	while true ; do\n", patchfile);
 #ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
-  fputs("	echo -n \"Do you wish to continue? \"\n", patchfile);
+  fputs("		echo -n \"Do you wish to continue? \"\n", patchfile);
 #else
-  fputs("	echo \"Do you wish to continue? \\c\"\n", patchfile);
+  fputs("		echo \"Do you wish to continue? \\c\"\n", patchfile);
 #endif /* __linux */
-  fputs("	read yesno\n", patchfile);
-  fputs("	case \"$yesno\" in\n", patchfile);
-  fputs("		y | yes | Y | Yes | YES)\n", patchfile);
-  fputs("		break\n", patchfile);
-  fputs("		;;\n", patchfile);
-  fputs("		n | no | N | No | NO)\n", patchfile);
-  fputs("		exit 0\n", patchfile);
-  fputs("		;;\n", patchfile);
-  fputs("		*)\n", patchfile);
-  fputs("		echo \"Please enter yes or no.\"\n", patchfile);
-  fputs("		;;\n", patchfile);
-  fputs("	esac\n", patchfile);
-  fputs("done\n", patchfile);
-  fprintf(patchfile, "more %s.license\n", prodname);
-  fputs("echo \"\"\n", patchfile);
-  fputs("while true ; do\n", patchfile);
+  fputs("		read yesno\n", patchfile);
+  fputs("		case \"$yesno\" in\n", patchfile);
+  fputs("			y | yes | Y | Yes | YES)\n", patchfile);
+  fputs("			break\n", patchfile);
+  fputs("			;;\n", patchfile);
+  fputs("			n | no | N | No | NO)\n", patchfile);
+  fputs("			exit 0\n", patchfile);
+  fputs("			;;\n", patchfile);
+  fputs("			*)\n", patchfile);
+  fputs("			echo \"Please enter yes or no.\"\n", patchfile);
+  fputs("			;;\n", patchfile);
+  fputs("		esac\n", patchfile);
+  fputs("	done\n", patchfile);
+  fprintf(patchfile, "	more %s.license\n", prodname);
+  fputs("	echo \"\"\n", patchfile);
+  fputs("	while true ; do\n", patchfile);
 #ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
-  fputs("	echo -n \"Do you agree with the terms of this license? \"\n", patchfile);
+  fputs("		echo -n \"Do you agree with the terms of this license? \"\n", patchfile);
 #else
-  fputs("	echo \"Do you agree with the terms of this license? \\c\"\n", patchfile);
+  fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", patchfile);
 #endif /* __linux */
-  fputs("	read yesno\n", patchfile);
-  fputs("	case \"$yesno\" in\n", patchfile);
-  fputs("		y | yes | Y | Yes | YES)\n", patchfile);
-  fputs("		break\n", patchfile);
-  fputs("		;;\n", patchfile);
-  fputs("		n | no | N | No | NO)\n", patchfile);
-  fputs("		exit 0\n", patchfile);
-  fputs("		;;\n", patchfile);
-  fputs("		*)\n", patchfile);
-  fputs("		echo \"Please enter yes or no.\"\n", patchfile);
-  fputs("		;;\n", patchfile);
-  fputs("	esac\n", patchfile);
-  fputs("done\n", patchfile);
+  fputs("		read yesno\n", patchfile);
+  fputs("		case \"$yesno\" in\n", patchfile);
+  fputs("			y | yes | Y | Yes | YES)\n", patchfile);
+  fputs("			break\n", patchfile);
+  fputs("			;;\n", patchfile);
+  fputs("			n | no | N | No | NO)\n", patchfile);
+  fputs("			exit 0\n", patchfile);
+  fputs("			;;\n", patchfile);
+  fputs("			*)\n", patchfile);
+  fputs("			echo \"Please enter yes or no.\"\n", patchfile);
+  fputs("			;;\n", patchfile);
+  fputs("		esac\n", patchfile);
+  fputs("	done\n", patchfile);
+  fputs("fi\n", patchfile);
 
   fprintf(patchfile, "if test ! -x /etc/software/%s.remove; then\n", prodname);
   fputs("	echo \"You do not appear to have the base software installed!\"\n",
@@ -708,31 +712,33 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("	echo \"Sorry, you must be root to remove this software.\"\n", removefile);
   fputs("	exit 1\n", removefile);
   fputs("fi\n", removefile);
-  fprintf(removefile, "echo \"Copyright %s\"\n", copyright);
-  fputs("echo \"\"\n", removefile);
-  fprintf(removefile, "echo \"This removal script will remove the %s\"\n",
+  fputs("if test ! \"$*\" = \"now\"; then\n", removefile);
+  fprintf(removefile, "	echo \"Copyright %s\"\n", copyright);
+  fputs("	echo \"\"\n", removefile);
+  fprintf(removefile, "	echo \"This removal script will remove the %s\"\n",
           product);
-  fprintf(removefile, "echo \"software version %s from your system.\"\n", version);
-  fputs("echo \"\"\n", removefile);
-  fputs("while true ; do\n", removefile);
+  fprintf(removefile, "	echo \"software version %s from your system.\"\n", version);
+  fputs("	echo \"\"\n", removefile);
+  fputs("	while true ; do\n", removefile);
 #ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
-  fputs("	echo -n \"Do you wish to continue? \"\n", removefile);
+  fputs("		echo -n \"Do you wish to continue? \"\n", removefile);
 #else
-  fputs("	echo \"Do you wish to continue? \\c\"\n", removefile);
+  fputs("		echo \"Do you wish to continue? \\c\"\n", removefile);
 #endif /* __linux */
-  fputs("	read yesno\n", removefile);
-  fputs("	case \"$yesno\" in\n", removefile);
-  fputs("		y | yes | Y | Yes | YES)\n", removefile);
-  fputs("		break\n", removefile);
-  fputs("		;;\n", removefile);
-  fputs("		n | no | N | No | NO)\n", removefile);
-  fputs("		exit 0\n", removefile);
-  fputs("		;;\n", removefile);
-  fputs("		*)\n", removefile);
-  fputs("		echo \"Please enter yes or no.\"\n", removefile);
-  fputs("		;;\n", removefile);
-  fputs("	esac\n", removefile);
-  fputs("done\n", removefile);
+  fputs("		read yesno\n", removefile);
+  fputs("		case \"$yesno\" in\n", removefile);
+  fputs("			y | yes | Y | Yes | YES)\n", removefile);
+  fputs("			break\n", removefile);
+  fputs("			;;\n", removefile);
+  fputs("			n | no | N | No | NO)\n", removefile);
+  fputs("			exit 0\n", removefile);
+  fputs("			;;\n", removefile);
+  fputs("			*)\n", removefile);
+  fputs("			echo \"Please enter yes or no.\"\n", removefile);
+  fputs("			;;\n", removefile);
+  fputs("		esac\n", removefile);
+  fputs("	done\n", removefile);
+  fputs("fi\n", removefile);
 
  /*
   * Find any removal commands in the list file...
@@ -766,12 +772,14 @@ main(int  argc,			/* I - Number of command-line arguments */
       {
         sscanf(line + 10, "%s", src);
 
+        fprintf(installfile, "#%s\n", line);
         fprintf(installfile, "if test ! -f /etc/software/%s.remove; then\n", src);
 	fprintf(installfile, "	echo Sorry, you must first install \\'%s\\'!\n",
 	        src);
 	fputs("	exit 1\n", installfile);
 	fputs("fi\n", installfile);
 
+        fprintf(patchfile, "#%s\n", line);
         fprintf(patchfile, "if test ! -f /etc/software/%s.remove; then\n", src);
 	fprintf(patchfile, "	echo Sorry, you must first install \\'%s\\'!\n",
 	        src);
@@ -782,12 +790,14 @@ main(int  argc,			/* I - Number of command-line arguments */
       {
         sscanf(line + 10, "%s", src);
 
+        fprintf(installfile, "#%s\n", line);
         fprintf(installfile, "if test -f /etc/software/%s.remove; then\n", src);
 	fprintf(installfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
 	        src);
 	fputs("	exit 1\n", installfile);
 	fputs("fi\n", installfile);
 
+        fprintf(patchfile, "#%s\n", line);
         fprintf(patchfile, "if test ! -f /etc/software/%s.remove; then\n",
 	        line + 10);
 	fprintf(patchfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
@@ -1016,8 +1026,8 @@ main(int  argc,			/* I - Number of command-line arguments */
   while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
     if (strncmp(line, "%install ", 9) == 0)
     {
-      fprintf(installfile, "%s\n", line + 8);
-      fprintf(patchfile, "%s\n", line + 8);
+      fprintf(installfile, "%s\n", line + 9);
+      fprintf(patchfile, "%s\n", line + 9);
     }
 
  /*
@@ -1350,5 +1360,5 @@ usage(void)
 
 
 /*
- * End of "$Id: makedist.c,v 1.10 1999/06/10 16:15:24 mike Exp $".
+ * End of "$Id: makedist.c,v 1.11 1999/06/16 16:30:42 mike Exp $".
  */
