@@ -1,0 +1,82 @@
+----HTML-PRESS-RELEASE---------------------------------------------------
+
+<H1>ESP Package Manager 2.2 Released</H1>
+
+<P><B>Hollywood, MD (December 11, 2000)</B> -- Easy Software
+Products today announced the 2.2 release of the ESP Package
+Manager ("EPM"), a cross-platform software distribution
+program for UNIX.
+
+<P>EPM v2.2 adds new HTML documentation, adds wildcard support
+in list files, enhances the setup GUI, and fixes some
+small portability bugs. The new release is available on-line
+at:
+
+<UL><PRE>
+<A HREF="http://www.easysw.com/epm">http://www.easysw.com/epm</A>
+</PRE></UL>
+
+<P>EPM is a software packaging tool for all versions of UNIX that
+generates software and patch distributions in various formats,
+including:
+
+<UL>
+
+	<LI>AT&T Software Packages ("pkg"), used by Solaris.
+
+	<LI>Debian Package Manager ("dpkg")
+
+	<LI>HP-UX Software Packages ("swinstall" or "depot")
+
+	<LI>IRIX Software Manager ("inst" or "tardist")
+
+	<LI>Portable (installation and removal scripts with tar files)
+
+	<LI>Red Hat Package Manager ("RPM")
+
+</UL>
+
+<P>EPM also includes a graphical "setup" program that can be
+provided with your distributions to make installation of more
+than one package a snap.
+
+<P>EPM is provided under the terms of the GNU General Public
+License.  Please contact Easy Software Products at
+<A HREF="mailto:info@easysw.com">info@easysw.com</A> for
+commercial support.
+
+----TEXT-PRESS-RELEASE---------------------------------------------------
+
+ESP Package Manager 2.2 Released
+
+Hollywood, MD (December 11, 2000) -- Easy Software Products
+today announced the 2.2 release of the ESP Package Manager
+("EPM"), a cross-platform software distribution program for
+UNIX.
+
+EPM v2.2 adds new HTML documentation, adds wildcard support
+in list files, enhances the setup GUI, and fixes some
+small portability bugs. The new release is available on-line
+at:
+
+    http://www.easysw.com/epm
+
+EPM is a software packaging tool for all versions of UNIX that
+generates software and patch distributions in various formats,
+including:
+
+    - AT&T Software Packages ("pkg"), used by Solaris.
+    - Debian Package Manager ("dpkg")
+    - HP-UX Software Packages ("swinstall" or "depot")
+    - IRIX Software Manager ("inst" or "tardist")
+    - Portable (installation and removal scripts with tar files)
+    - Red Hat Package Manager ("RPM")
+
+EPM also includes a graphical "setup" program that can be
+provided with your distributions to make installation of more
+than one package a snap.
+
+EPM is provided under the terms of the GNU General Public
+License.  Please contact Easy Software Products at
+"info@easysw.com" for commercial support.
+
