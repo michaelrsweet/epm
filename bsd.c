@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.5 2002/06/04 19:30:33 mike Exp $"
+ * "$Id: bsd.c,v 1.6 2002/08/30 02:00:42 mike Exp $"
  *
  *   FreeBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -92,7 +92,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "%s\n", dist->product);
+  qprintf(fp, "%s\n", dist->product);
 
   fclose(fp);
 
@@ -112,19 +112,19 @@ make_bsd(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "Summary: %s\n", dist->product);
-  fprintf(fp, "Name: %s\n", prodname);
-  fprintf(fp, "Version: %s\n", dist->version);
-  fprintf(fp, "Release: %d\n", dist->relnumber);
-  fprintf(fp, "Copyright: %s\n", dist->copyright);
-  fprintf(fp, "Packager: %s\n", dist->packager);
-  fprintf(fp, "Vendor: %s\n", dist->vendor);
-  fprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
+  qprintf(fp, "Summary: %s\n", dist->product);
+  qprintf(fp, "Name: %s\n", prodname);
+  qprintf(fp, "Version: %s\n", dist->version);
+  qprintf(fp, "Release: %d\n", dist->relnumber);
+  qprintf(fp, "Copyright: %s\n", dist->copyright);
+  qprintf(fp, "Packager: %s\n", dist->packager);
+  qprintf(fp, "Vendor: %s\n", dist->vendor);
+  qprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
   fputs("Group: Applications\n", fp);
 
   fputs("Description:\n\n", fp);
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(fp, "%s\n", dist->descriptions[i]);
+    qprintf(fp, "%s\n", dist->descriptions[i]);
 
   fclose(fp);
 
@@ -144,31 +144,31 @@ make_bsd(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "@srcdir %s/%s/buildroot\n", current, directory);
+  qprintf(fp, "@srcdir %s/%s/buildroot\n", current, directory);
   fputs("@option preserve\n", fp);
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
   {
     if (d->type == DEPEND_REQUIRES)
-      fprintf(fp, "@pkgdep %s", d->product);
+      qprintf(fp, "@pkgdep %s", d->product);
     else
 #ifdef __FreeBSD__
      /*
       * FreeBSD doesn't have @pkgcfl command...
       */
-      fprintf(fp, "@comment conflicts with: %s", d->product);
+      qprintf(fp, "@comment conflicts with: %s", d->product);
 #else
-      fprintf(fp, "@pkgcfl %s", d->product);
+      qprintf(fp, "@pkgcfl %s", d->product);
 #endif /* __FreeBSD */
     if (d->vernumber[0] == 0)
     {
       if (d->vernumber[1] < INT_MAX)
-        fprintf(fp, " <= %s\n", d->version[1]);
+        qprintf(fp, " <= %s\n", d->version[1]);
       else
         putc('\n', fp);
     }
     else
-      fprintf(fp, " >= %s, <= %s\n", d->version[0], d->version[1]);
+      qprintf(fp, " >= %s, <= %s\n", d->version[0], d->version[1]);
   }
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
@@ -179,10 +179,10 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 	        "         by the BSD packager.\n", stderr);
           break;
       case COMMAND_POST_INSTALL :
-          fprintf(fp, "@exec %s\n", c->command);
+          qprintf(fp, "@exec %s\n", c->command);
 	  break;
       case COMMAND_PRE_REMOVE :
-          fprintf(fp, "@unexec %s\n", c->command);
+          qprintf(fp, "@unexec %s\n", c->command);
 	  break;
       case COMMAND_POST_REMOVE :
           fputs("WARNING: Package contains post-removal commands which are not supported\n"
@@ -196,24 +196,24 @@ make_bsd(const char     *prodname,	/* I - Product short name */
        i --, file ++)
   {
     if (file->mode != old_mode)
-      fprintf(fp, "@mode %04o\n", old_mode = file->mode);
+      qprintf(fp, "@mode %04o\n", old_mode = file->mode);
     if (strcmp(file->user, old_user))
-      fprintf(fp, "@owner %s\n", old_user = file->user);
+      qprintf(fp, "@owner %s\n", old_user = file->user);
     if (strcmp(file->group, old_group))
-      fprintf(fp, "@group %s\n", old_group = file->group);
+      qprintf(fp, "@group %s\n", old_group = file->group);
 
     switch (tolower(file->type))
     {
       case 'i' :
-          fprintf(fp, "usr/local/etc/rc.d/%s.sh\n", file->dst);
+          qprintf(fp, "usr/local/etc/rc.d/%s.sh\n", file->dst);
           break;
       case 'c' :
       case 'f' :
       case 'l' :
-          fprintf(fp, "%s\n", file->dst + 1);
+          qprintf(fp, "%s\n", file->dst + 1);
           break;
       case 'd' :
-          fprintf(fp, "%s\n@dirrm %s\n", file->dst + 1, file->dst + 1);
+          qprintf(fp, "%s\n@dirrm %s\n", file->dst + 1, file->dst + 1);
           break;
     }
   }
@@ -319,5 +319,5 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: bsd.c,v 1.5 2002/06/04 19:30:33 mike Exp $".
+ * End of "$Id: bsd.c,v 1.6 2002/08/30 02:00:42 mike Exp $".
  */

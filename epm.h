@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.30 2002/08/29 11:44:47 mike Exp $"
+ * "$Id: epm.h,v 1.31 2002/08/30 02:00:42 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -262,6 +262,7 @@ extern int	make_setld(const char *prodname, const char *directory,
 extern int	make_swinstall(const char *prodname, const char *directory,
 		               const char *platname, dist_t *dist,
 			       struct utsname *platform);
+extern int	qprintf(FILE *fp, const char *format, ...);
 extern dist_t	*read_dist(const char *filename, struct utsname *platform,
 		           const char *format);
 extern int	run_command(const char *directory, const char *command, ...);
@@ -278,5 +279,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.30 2002/08/29 11:44:47 mike Exp $".
+ * End of "$Id: epm.h,v 1.31 2002/08/30 02:00:42 mike Exp $".
  */

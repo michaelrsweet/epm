@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.21 2002/08/29 11:44:47 mike Exp $"
+ * "$Id: pkg.c,v 1.22 2002/08/30 02:00:42 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -93,16 +93,16 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   curtime = time(NULL);
   curdate = gmtime(&curtime);
 
-  fprintf(fp, "PKG=%s\n", prodname);
-  fprintf(fp, "NAME=%s\n", dist->product);
-  fprintf(fp, "VERSION=%s\n", dist->version);
-  fprintf(fp, "VENDOR=%s\n", dist->vendor);
-  fprintf(fp, "PSTAMP=epm%04d%02d%02d%02d%02d%02d\n",
+  qprintf(fp, "PKG=%s\n", prodname);
+  qprintf(fp, "NAME=%s\n", dist->product);
+  qprintf(fp, "VERSION=%s\n", dist->version);
+  qprintf(fp, "VENDOR=%s\n", dist->vendor);
+  qprintf(fp, "PSTAMP=epm%04d%02d%02d%02d%02d%02d\n",
           curdate->tm_year + 1900, curdate->tm_mon + 1, curdate->tm_mday,
 	  curdate->tm_hour, curdate->tm_min, curdate->tm_sec);
 
   if (dist->num_descriptions > 0)
-    fprintf(fp, "DESC=%s\n", dist->descriptions[0]);
+    qprintf(fp, "DESC=%s\n", dist->descriptions[0]);
 
   fputs("CATEGORY=application\n", fp);
   fputs("CLASSES=none\n", fp);
@@ -132,9 +132,9 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
     if (d->type == DEPEND_REQUIRES)
-      fprintf(fp, "P %s\n", d->product);
+      qprintf(fp, "P %s\n", d->product);
     else
-      fprintf(fp, "I %s\n", d->product);
+      qprintf(fp, "I %s\n", d->product);
 
   fclose(fp);
 
@@ -172,7 +172,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_INSTALL)
-        fprintf(fp, "%s\n", c->command);
+        qprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -218,11 +218,11 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_INSTALL)
-        fprintf(fp, "%s\n", c->command);
+        qprintf(fp, "%s\n", c->command);
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
-	fprintf(fp, "/etc/init.d/%s start\n", file->dst);
+	qprintf(fp, "/etc/init.d/%s start\n", file->dst);
 
     fclose(fp);
   }
@@ -267,11 +267,11 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
-	fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
+	qprintf(fp, "/etc/init.d/%s stop\n", file->dst);
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_PRE_REMOVE)
-        fprintf(fp, "%s\n", c->command);
+        qprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -312,7 +312,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_REMOVE)
-        fprintf(fp, "%s\n", c->command);
+        qprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
@@ -378,52 +378,52 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   }
 
   if (dist->license[0] == '/')
-    fprintf(fp, "i copyright=%s\n", dist->license);
+    qprintf(fp, "i copyright=%s\n", dist->license);
   else
-    fprintf(fp, "i copyright=%s/%s\n", current, dist->license);
+    qprintf(fp, "i copyright=%s/%s\n", current, dist->license);
 
-  fprintf(fp, "i depend=%s/%s/%s.depend\n", current, directory, prodname);
-  fprintf(fp, "i pkginfo=%s/%s/%s.pkginfo\n", current, directory, prodname);
+  qprintf(fp, "i depend=%s/%s/%s.depend\n", current, directory, prodname);
+  qprintf(fp, "i pkginfo=%s/%s/%s.pkginfo\n", current, directory, prodname);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
       break;
 
   if (preinstall[0])
-    fprintf(fp, "i preinstall=%s/%s\n", current, preinstall);
+    qprintf(fp, "i preinstall=%s/%s\n", current, preinstall);
   if (postinstall[0])
-    fprintf(fp, "i postinstall=%s/%s\n", current, postinstall);
+    qprintf(fp, "i postinstall=%s/%s\n", current, postinstall);
   if (preremove[0])
-    fprintf(fp, "i preremove=%s/%s\n", current, preremove);
+    qprintf(fp, "i preremove=%s/%s\n", current, preremove);
   if (postremove[0])
-    fprintf(fp, "i postremove=%s/%s\n", current, postremove);
+    qprintf(fp, "i postremove=%s/%s\n", current, postremove);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     switch (tolower(file->type))
     {
       case 'c' :
           if (file->src[0] == '/')
-            fprintf(fp, "e none %s=%s %04o %s %s\n", file->dst,
+            qprintf(fp, "e none %s=%s %04o %s %s\n", file->dst,
 	            file->src, file->mode, file->user, file->group);
           else
-            fprintf(fp, "e none %s=%s/%s %04o %s %s\n", file->dst,
+            qprintf(fp, "e none %s=%s/%s %04o %s %s\n", file->dst,
 	            current, file->src, file->mode, file->user, file->group);
           break;
       case 'd' :
-	  fprintf(fp, "d none %s %04o %s %s\n", file->dst, file->mode,
+	  qprintf(fp, "d none %s %04o %s %s\n", file->dst, file->mode,
 		  file->user, file->group);
           break;
       case 'f' :
       case 'i' :
           if (file->src[0] == '/')
-            fprintf(fp, "f none %s=%s %04o %s %s\n", file->dst,
+            qprintf(fp, "f none %s=%s %04o %s %s\n", file->dst,
 	            file->src, file->mode, file->user, file->group);
           else
-            fprintf(fp, "f none %s=%s/%s %04o %s %s\n", file->dst,
+            qprintf(fp, "f none %s=%s/%s %04o %s %s\n", file->dst,
 	            current, file->src, file->mode, file->user, file->group);
           break;
       case 'l' :
-          fprintf(fp, "s none %s=%s\n", file->dst, file->src);
+          qprintf(fp, "s none %s=%s\n", file->dst, file->src);
           break;
     }
 
@@ -503,5 +503,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.21 2002/08/29 11:44:47 mike Exp $".
+ * End of "$Id: pkg.c,v 1.22 2002/08/30 02:00:42 mike Exp $".
  */

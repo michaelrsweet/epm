@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.12 2002/08/29 11:44:48 mike Exp $"
+ * "$Id: setld.c,v 1.13 2002/08/30 02:00:43 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -201,40 +201,40 @@ make_setld(const char     *prodname,	/* I - Product short name */
   fputs("PRE_L)\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      fprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
+      qprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_INSTALL)
-      fprintf(fp, "%s\n", c->command);
+      qprintf(fp, "%s\n", c->command);
   fputs(";;\n", fp);
 
   fputs("POST_L)\n", fp);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_POST_INSTALL)
-      fprintf(fp, "%s\n", c->command);
+      qprintf(fp, "%s\n", c->command);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c')
     {
-      fprintf(fp, "if test ! -f %s; then\n", file->dst);
-      fprintf(fp, "	/bin/cp %s.N %s\n", file->dst, file->dst);
+      qprintf(fp, "if test ! -f %s; then\n", file->dst);
+      qprintf(fp, "	/bin/cp %s.N %s\n", file->dst, file->dst);
       fputs("fi\n", fp);
     }
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      fprintf(fp, "/sbin/init.d/%s start\n", file->dst);
+      qprintf(fp, "/sbin/init.d/%s start\n", file->dst);
   fputs(";;\n", fp);
 
   fputs("PRE_D)\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      fprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
+      qprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_REMOVE)
-      fprintf(fp, "%s\n", c->command);
+      qprintf(fp, "%s\n", c->command);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c')
     {
-      fprintf(fp, "if cmp -s %s.N %s; then\n", file->dst, file->dst);
-      fprintf(fp, "	/bin/rm -f %s\n", file->dst);
+      qprintf(fp, "if cmp -s %s.N %s; then\n", file->dst, file->dst);
+      qprintf(fp, "	/bin/rm -f %s\n", file->dst);
       fputs("fi\n", fp);
     }
   fputs(";;\n", fp);
@@ -242,7 +242,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   fputs("POST_D)\n", fp);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_POST_REMOVE)
-      fprintf(fp, "%s\n", c->command);
+      qprintf(fp, "%s\n", c->command);
   fputs(";;\n", fp);
 
   fputs("esac\n", fp);
@@ -276,13 +276,13 @@ make_setld(const char     *prodname,	/* I - Product short name */
     switch (tolower(file->type))
     {
       case 'c' :
-          fprintf(fp, "2\t.%s.N\t%s\n", file->dst, subset);
+          qprintf(fp, "2\t.%s.N\t%s\n", file->dst, subset);
 	  break;
       case 'd' :
       case 'i' :
       case 'f' :
       case 'l' :
-          fprintf(fp, "0\t.%s\t%s\n", file->dst, subset);
+          qprintf(fp, "0\t.%s\t%s\n", file->dst, subset);
 	  break;
     }
 
@@ -304,13 +304,13 @@ make_setld(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "NAME='%s, %s'\n", dist->product, dist->version);
-  fprintf(fp, "CODE=%s\n", prodname);
-  fprintf(fp, "VER=%03d\n", dist->vernumber);
-  fprintf(fp, "MI=%s%03d.mi\n", prodname, dist->vernumber);
+  qprintf(fp, "NAME='%s, %s'\n", dist->product, dist->version);
+  qprintf(fp, "CODE=%s\n", prodname);
+  qprintf(fp, "VER=%03d\n", dist->vernumber);
+  qprintf(fp, "MI=%s%03d.mi\n", prodname, dist->vernumber);
   fputs("COMPRESS=0\n", fp);
   fputs("%%\n", fp);
-  fprintf(fp, "%s\t.\t0\t'%s, %s'\n", subset, dist->product, dist->version);
+  qprintf(fp, "%s\t.\t0\t'%s, %s'\n", subset, dist->product, dist->version);
   fclose(fp);
 
  /*
@@ -428,5 +428,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.12 2002/08/29 11:44:48 mike Exp $".
+ * End of "$Id: setld.c,v 1.13 2002/08/30 02:00:43 mike Exp $".
  */
