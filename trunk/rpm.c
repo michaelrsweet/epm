@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.28 2001/03/26 20:11:09 mike Exp $"
+ * "$Id: rpm.c,v 1.29 2001/05/25 13:43:41 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -143,7 +143,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
     fputs("rcdir=\"\"\n", fp);
     fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
-    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", fp);
+    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", fp);
     fputs("		rcdir=\"$dir\"\n", fp);
     fputs("	fi\n", fp);
     fputs("done\n", fp);
@@ -195,7 +195,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
     fputs("rcdir=\"\"\n", fp);
     fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
-    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", fp);
+    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", fp);
     fputs("		rcdir=\"$dir\"\n", fp);
     fputs("	fi\n", fp);
     fputs("done\n", fp);
@@ -389,5 +389,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.28 2001/03/26 20:11:09 mike Exp $".
+ * End of "$Id: rpm.c,v 1.29 2001/05/25 13:43:41 mike Exp $".
  */
