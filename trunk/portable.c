@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.33 2001/03/30 02:26:03 mike Exp $"
+ * "$Id: portable.c,v 1.34 2001/04/25 16:10:38 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1373,52 +1373,6 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   write_commands(dist, scriptfile, COMMAND_PRE_PATCH);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if ((file->type == 'F' || file->type == 'L') &&
-        strncmp(file->dst, "/usr", 4) != 0)
-      break;
-
-  if (i)
-  {
-    fputs("echo Backing up old versions of non-shared files to be installed...\n", scriptfile);
-
-    fputs("for file in", scriptfile);
-    for (; i > 0; i --, file ++)
-      if ((file->type == 'F' || file->type == 'L') &&
-          strncmp(file->dst, "/usr", 4) != 0)
-        fprintf(scriptfile, " %s", file->dst);
-
-    fputs("; do\n", scriptfile);
-    fputs("	if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
-    fputs("		/bin/mv -f $file $file.O\n", scriptfile);
-    fputs("	fi\n", scriptfile);
-    fputs("done\n", scriptfile);
-  }
-
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if ((file->type == 'F' || file->type == 'L') &&
-        strncmp(file->dst, "/usr", 4) == 0)
-      break;
-
-  if (i)
-  {
-    fputs("if test -w /usr ; then\n", scriptfile);
-    fputs("	echo Backing up old versions of shared files to be installed...\n", scriptfile);
-
-    fputs("	for file in", scriptfile);
-    for (; i > 0; i --, file ++)
-      if ((file->type == 'F' || file->type == 'L') &&
-          strncmp(file->dst, "/usr", 4) == 0)
-        fprintf(scriptfile, " %s", file->dst);
-
-    fputs("; do\n", scriptfile);
-    fputs("		if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
-    fputs("			/bin/mv -f $file $file.O\n", scriptfile);
-    fputs("		fi\n", scriptfile);
-    fputs("	done\n", scriptfile);
-    fputs("fi\n", scriptfile);
-  }
-
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (file->type == 'D')
       break;
 
@@ -1789,5 +1743,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.33 2001/03/30 02:26:03 mike Exp $".
+ * End of "$Id: portable.c,v 1.34 2001/04/25 16:10:38 mike Exp $".
  */

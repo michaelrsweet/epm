@@ -21,7 +21,10 @@ WHAT'S NEW IN EPM 2.6?
 	- Added a "keep files" option (-k) to epm to keep the
 	  intermediate (spec, etc.) files around after building
 	  the binary distribution.
-
+	- Added support for Tru64 UNIX software packages (setld).
+	- Patch distributions were incorrectly backing up the
+	  original files, causing the original backup to be lost.
+	  
 
 WHAT'S NEW IN EPM 2.5?
 
