@@ -1,0 +1,217 @@
+#!@PERL@
+#
+# "$Id: mkepmlist.in,v 1.1 2001/03/26 20:11:09 mike Exp $"
+#
+#   List file generation utility for the ESP Package Manager (EPM).
+#
+#   Copyright 2001 by Christian Lademann (lademann@zls.de) and
+#   Easy Software Products.
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2, or (at your option)
+#   any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+
+#
+# Initialize globals...
+#
+
+$basedir = "";
+$instdir = "";
+$defuser = "";
+$defgroup = "";
+
+#
+# 'ProcessDir' - Process a directory and write list file entries for each
+#                file.
+#
+
+sub
+ProcessDir
+{
+	my($dir) = @_;
+	my($entry, @entries, @dirs, @st);
+	my($absdir);
+
+	return (0) unless(opendir(D, $dir));
+	@entries = sort(readdir(D));
+	closedir(D);
+
+	@st = stat($dir);
+
+	($absdir) = ($dir =~ /$basedir\/?(.*)/);
+	$absdir = $instdir . '/' . $absdir;
+
+	printf("d 0%0o %s %s %s -\n",
+	       $st[2] & 07777, get_user($st[4]), get_group($st[5]),
+	       $absdir);
+
+	@dirs = ();
+
+	foreach $entry (@entries)
+	{
+		my($fullpath) = $absdir . '/' . $entry;
+		my($instpath) = $dir . '/' . $entry;
+
+		if (-d $instpath)
+		{
+			if ($entry ne '.' && $entry ne '..')
+			{
+				push(@dirs, $entry);
+			}
+		}
+		elsif (-l $instpath)
+		{
+			my($linkto) = readlink($instpath);
+
+			printf("l 0%0o %s %s %s %s\n",
+			       $st[2] & 07777, get_user($st[4]),
+			       get_group($st[5]), $fullpath, $linkto);
+		}
+		elsif (-f $instpath)
+		{
+			printf("f 0%0o %s %s %s %s\n",
+			       $st[2] & 07777, get_user($st[4]),
+			       get_group($st[5]), $fullpath, $instpath);
+		}
+	}
+
+	foreach $entry (@dirs)
+	{
+		ProcessDir($dir . '/' . $entry);
+	}
+
+	return(1);
+}
+
+
+#
+# 'get_user' - Get the username for the specified ID.
+#
+
+sub
+get_user
+{
+	my($Uid) = @_;
+	my($name, $pw, $uid, $gid);
+
+	if ($defuser ne "")
+	{
+		return ($defuser);
+	}
+
+	defined($name = $USERS{$Uid}) and return($name);
+	($name, $pw, $uid, $gid) = getpwuid($Uid) or return($Uid);
+
+	return($USERS{$Uid} = $name);
+}
+
+
+#
+# 'get_group' - Get the group name from the specified ID.
+#
+
+sub
+get_group
+{
+	my($Gid) = @_;
+	my($name, $pw, $uid, $gid);
+
+	if ($defgroup ne "")
+	{
+		return ($defgroup);
+	}
+
+	defined($name = $GROUPS{$Gid}) and return($name);
+	($name, $pw, $uid, $gid) = getgrgid($Gid) or return($Gid);
+
+	return($GROUPS{$Gid} = $name);
+}
+
+
+#
+# 'usage' - Show program usage and exit.
+#
+
+sub
+usage
+{
+	print "mkepmlist v@VERSION@\n";
+	print "Usage: mkepmlist [options] /directory [... /directory] >filename.list\n";
+	print "Options:\n";
+	print "-g group              Set group name for files.\n";
+	print "-u user               Set user name for files.\n";
+	print "--prefix /directory   Set directory prefix for files.\n";
+	exit 1;
+}
+
+
+#
+# MAIN EMTRY
+#
+
+# Check for command-line arguments...
+for ($i = 0; $i <= $#ARGV; $i ++)
+{
+	if ($ARGV[$i] eq "-u")
+	{
+		# -u username
+		$i ++;
+		if ($i > $#ARGV)
+		{
+			usage();
+		}
+
+		$defuser = $ARGV[$i];
+	}
+	elsif ($ARGV[$i] eq "-g")
+	{
+		# -g groupname
+		$i ++;
+		if ($i > $#ARGV)
+		{
+			usage();
+		}
+
+		$defgroup = $ARGV[$i];
+	}
+	elsif ($ARGV[$i] eq "--prefix")
+	{
+		# --prefix /directory
+		$i ++;
+		if ($i > $#ARGV)
+		{
+			usage();
+		}
+
+		$instdir = $ARGV[$i];
+	}
+	elsif ($ARGV[$i] =~ "\-.*")
+	{
+		print "Unknown option \"$ARGV[$i]\"!\n";
+		usage();
+	}
+	else
+	{
+		# /directory
+		$basedir = $ARGV[$i];
+		ProcessDir($basedir, $basedir);
+	}
+}
+
+# Show usage if we didn't do anything...
+if ($basedir eq "")
+{
+	print "No directory specified!\n";
+	usage();
+}
+
+#
+# End of "$Id: mkepmlist.in,v 1.1 2001/03/26 20:11:09 mike Exp $".
+#
