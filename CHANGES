@@ -6,6 +6,10 @@ WHAT'S NEW IN EPM 3.7?
     EPM 3.7 adds the following features, fixes, and changes to
     EPM 3.6:
 
+	- AIX output now correctly lists file sizes by directory
+	  and handles /opt properly.
+	- RPM output now correctly handles installing,
+	  upgrading, and removing init scripts.
 	- RPM output did not work with filenames that contained
 	  a dollar sign ($).
 	- Added Slackware packager support based upon a patch

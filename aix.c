@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.13 2002/12/17 18:57:53 swdev Exp $"
+ * "$Id: aix.c,v 1.14 2003/08/30 02:15:41 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -30,9 +30,22 @@
 
 
 /*
+ * Directory information...
+ */
+
+typedef struct
+{
+  char	dst[1024];			/* Output directory */
+  int	blocks;				/* Size of files in this directory */
+} aixdir_t;
+
+
+/*
  * Local functions...
  */
 
+static int	aix_addfile(char type, const char *src, const char *dst,
+		            int num_dirs, aixdir_t **dirs);
 static char	*aix_version(const char *version);
 static int	write_liblpp(const char *prodname,
 		             const char *directory,
@@ -71,13 +84,13 @@ make_aix(const char     *prodname,	/* I - Product short name */
   char			name[1024];	/* Full product name */
   char			filename[1024];	/* Destination filename */
   char			current[1024];	/* Current directory */
-  int			blocks;		/* Number of blocks needed */
-  struct stat		fileinfo;	/* File information */
   depend_t		*d;		/* Current dependency */
   file_t		*file;		/* Current distribution file */
   struct passwd		*pwd;		/* Pointer to user record */
   struct group		*grp;		/* Pointer to group record */
   const char		*runlevels;	/* Run levels */
+  int			num_dirs;	/* Number of directories */
+  aixdir_t		*dirs;		/* Directories */
 
 
   REF(platform);
@@ -137,37 +150,19 @@ make_aix(const char     *prodname,	/* I - Product short name */
   */
 
   fputs("%\n", fp);
-  for (i = dist->num_files, file = dist->files, blocks = 0; i > 0; i --, file ++)
-    if (strncmp(file->dst, "/usr/", 5) != 0)
-      switch (tolower(file->type))
-      {
-        case 'd' :
-	case 'l' :
-	    blocks ++;
-	    break;
 
-	default :
-	    if (!stat(file->src, &fileinfo))
-	      blocks += (fileinfo.st_size + 511) / 512;
-	    break;
-      }
-  fprintf(fp, "/ %d\n", blocks);
+  num_dirs = 0;
+  dirs     = NULL;
 
-  for (i = dist->num_files, file = dist->files, blocks = 0; i > 0; i --, file ++)
-    if (strncmp(file->dst, "/usr/", 5) == 0)
-      switch (tolower(file->type))
-      {
-        case 'd' :
-	case 'l' :
-	    blocks ++;
-	    break;
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    num_dirs = aix_addfile(tolower(file->type), file->src, file->dst, num_dirs,
+                           &dirs);
 
-	default :
-	    if (!stat(file->src, &fileinfo))
-	      blocks += (fileinfo.st_size + 511) / 512;
-	    break;
-      }
-  fprintf(fp, "/usr %d\n", blocks);
+  for (i = 0; i < num_dirs; i ++)
+    fprintf(fp, "%s %d\n", dirs[i].dst, dirs[i].blocks);
+
+  if (num_dirs > 0)
+    free(dirs);
 
  /*
   * This package supercedes which others?
@@ -227,7 +222,8 @@ make_aix(const char     *prodname,	/* I - Product short name */
     {
       case 'c' :
       case 'f' :
-          if (strncmp(file->dst, "/usr/", 5) == 0)
+          if (!strncmp(file->dst, "/usr/", 5) ||
+	      !strncmp(file->dst, "/opt/", 5))
             snprintf(filename, sizeof(filename), "%s/%s%s", directory, prodname,
 	             file->dst);
 	  else
@@ -259,7 +255,10 @@ make_aix(const char     *prodname,	/* I - Product short name */
 	  }
           break;
       case 'd' :
-          if (strncmp(file->dst, "/usr/", 5) == 0)
+          if (!strcmp(file->dst, "/usr") ||
+	      !strncmp(file->dst, "/usr/", 5) ||
+	      !strcmp(file->dst, "/opt") ||
+	      !strncmp(file->dst, "/opt/", 5))
             snprintf(filename, sizeof(filename), "%s/%s%s", directory, prodname,
 	             file->dst);
 	  else
@@ -273,7 +272,8 @@ make_aix(const char     *prodname,	/* I - Product short name */
 			 grp ? grp->gr_gid : 0);
           break;
       case 'l' :
-          if (strncmp(file->dst, "/usr/", 5) == 0)
+          if (!strncmp(file->dst, "/usr/", 5) ||
+	      !strncmp(file->dst, "/opt/", 5))
             snprintf(filename, sizeof(filename), "%s/%s%s", directory, prodname,
 	             file->dst);
 	  else
@@ -327,6 +327,92 @@ make_aix(const char     *prodname,	/* I - Product short name */
 
 
 /*
+ * 'aix_addfile()' - Add a file to the AIX directory list...
+ */
+
+static int				/* O  - New number dirs */
+aix_addfile(char       type,		/* I  - Filetype */
+            const char *src,		/* I  - Source path */
+            const char *dst,		/* I  - Destination path */
+	    int        num_dirs,	/* I  - Number of directories */
+            aixdir_t   **dirs)		/* IO - Directories */
+{
+  int		i, j;			/* Looping vars */
+  int		blocks;			/* Blocks to add... */
+  struct stat	fileinfo;		/* File information */
+  aixdir_t	*temp;			/* Temporary pointer */
+  char		dstpath[1024],		/* Destination path */
+		*dstptr;		/* Pointer into destination */
+
+
+ /*
+  * Determine the destination path and block size...
+  */
+
+  strncpy(dstpath, dst, sizeof(dstpath) - 1);
+  dstpath[sizeof(dstpath) - 1] = '\0';
+
+  if (type == 'd')
+  {
+    blocks = 1;
+    dstptr = dstpath + strlen(dstpath) - 1;
+  }
+  else
+  {
+    dstptr = strrchr(dstpath, '/');
+
+    if (type == 'l')
+      blocks = 1;
+    else if (!stat(src, &fileinfo))
+      blocks = (fileinfo.st_size + 511) / 512;
+    else
+      blocks = 0;
+  }
+
+  if (dstptr && *dstptr == '/' && dstptr > dstpath)
+    *dstptr = '\0';
+
+ /*
+  * Now see if the destination path is in the array...
+  */
+
+  temp = *dirs;
+
+  for (i = 0; i < num_dirs; i ++)
+    if ((j = strcmp(temp[i].dst, dstpath)) == 0)
+    {
+      temp[i].blocks += blocks;
+      return (num_dirs);
+    }
+    else if (j > 0)
+      break;
+
+ /*
+  * Not in the list; allocate a new one...
+  */
+
+  if (num_dirs == 0)
+    temp = malloc(sizeof(aixdir_t));
+  else
+    temp = realloc(*dirs, (num_dirs + 1) * sizeof(aixdir_t));
+
+  if (!temp)
+    return (num_dirs);
+
+  *dirs = temp;
+  temp  += i;
+
+  if (i < num_dirs)
+    memmove(temp + 1, temp, (num_dirs - i) * sizeof(aixdir_t));
+
+  strcpy(temp->dst, dstpath);
+  temp->blocks = blocks;
+
+  return (num_dirs + 1);
+}
+
+
+/*
  * 'aix_version()' - Generate an AIX version number.
  */
 
@@ -367,6 +453,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   struct stat		fileinfo;	/* File information */
   command_t		*c;		/* Current command */
   file_t		*file;		/* Current distribution file */
+  int			configcount;	/* Number of config files */
 
 
  /*
@@ -375,7 +462,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
   if (Verbosity)
     puts(root ? "Creating root partition liblpp.a file..." :
-                "Creating /usr partition liblpp.a file...");
+                "Creating shared partition liblpp.a file...");
 
  /*
   * Write the product.al file for installp...
@@ -401,7 +488,10 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
             qprintf(fp, "./etc/rc.d/rc2.d/S99%s\n", file->dst);
 	  break;
       default :
-          if ((strncmp(file->dst, "/usr/", 5) != 0) == root)
+          if ((strcmp(file->dst, "/usr") ||
+	       strncmp(file->dst, "/usr/", 5) ||
+	       strcmp(file->dst, "/opt") ||
+	       strncmp(file->dst, "/opt/", 5)) == root)
             qprintf(fp, ".%s\n", file->dst);
 	  break;
     }
@@ -424,11 +514,17 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
+  configcount = 0;
+
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c' &&
-        (strncmp(file->dst, "/usr/", 5) != 0) == root)
+        (strcmp(file->dst, "/usr") ||
+	       strncmp(file->dst, "/usr/", 5) ||
+	       strcmp(file->dst, "/opt") ||
+	       strncmp(file->dst, "/opt/", 5)) == root)
     {
       qprintf(fp, ".%s hold_new\n", file->dst);
+      configcount ++;
     }
 
   fclose(fp);
@@ -558,13 +654,19 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   {
     if (root)
     {
-      if (strncmp(file->dst, "/usr/", 5) == 0)
+      if (!strcmp(file->dst, "/usr") ||
+	  !strncmp(file->dst, "/usr/", 5) ||
+	  !strcmp(file->dst, "/opt") ||
+	  !strncmp(file->dst, "/opt/", 5))
         continue;
     }
     else
     {
       if (tolower(file->type) == 'c' ||
-          strncmp(file->dst, "/usr/", 5) != 0)
+          strcmp(file->dst, "/usr") ||
+	  strncmp(file->dst, "/usr/", 5) ||
+	  strcmp(file->dst, "/opt") ||
+	  strncmp(file->dst, "/opt/", 5))
 	continue;
     }
 
@@ -644,6 +746,9 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     if (i >= 4 && !root)
       break;
 
+    if (i == 1 && !configcount)
+      continue;
+
     if (run_command(directory, "ar rc %s %s.%s",
                     filename, prodname, files[i]))
       return (1);
@@ -653,5 +758,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 }
 
 /*
- * End of "$Id: aix.c,v 1.13 2002/12/17 18:57:53 swdev Exp $".
+ * End of "$Id: aix.c,v 1.14 2003/08/30 02:15:41 mike Exp $".
  */

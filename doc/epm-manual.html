@@ -1706,6 +1706,10 @@ TYPE Custom Configuration
  software.</P>
 <H2><A NAME="9_1">Changes in EPM v3.7</A></H2>
 <UL>
+<LI>AIX output now correctly lists file sizes by directory and handles
+ /opt properly.</LI>
+<LI>RPM output now correctly handles installing, upgrading, and removing
+ init scripts.</LI>
 <LI>RPM output did not work with filenames that contained a dollar sign
  ($).</LI>
 <LI>Added Slackware packager support based upon a patch contributed by
@@ -1728,7 +1732,7 @@ TYPE Custom Configuration
  using an absolute path.</LI>
 <LI>Made cosmetic changes to the setup/uninstall GUIs.</LI>
 <LI>The setup GUI did not support software patches.</LI>
-<LI>The epm.list man page incorrectly specified runlevels() instead of
+<LI>The documentation incorrectly specified runlevels() instead of
  runlevel().</LI>
 <LI>The portable distributions incorrectly used /usr/local/src/rc.d as a
  fallback location for init scripts.</LI>
