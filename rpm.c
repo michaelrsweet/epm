@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.21 2000/12/01 14:44:16 mike Exp $"
+ * "$Id: rpm.c,v 1.22 2000/12/14 14:02:40 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -42,8 +42,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   FILE		*fp;			/* Spec file */
   char		name[1024];		/* Full product name */
   char		specname[1024];		/* Spec filename */
-  char		filename[1024],		/* Destination filename */
-		linkname[1024];		/* Link filename */
+  char		filename[1024];		/* Destination filename */
   char		command[1024];		/* RPM command to run */
   const char	*rpmdir;		/* RPM directory */
   file_t	*file;			/* Current distribution file */
@@ -100,26 +99,95 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_descriptions; i ++)
     fprintf(fp, "%s\n", dist->descriptions[i]);
   fputs("%post\n", fp);
+
   for (i = 0; i < dist->num_installs; i ++)
     fprintf(fp, "%s\n", dist->installs[i]);
+
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-    {
-      fputs("if test -x /sbin/chkconfig; then\n", fp);
-      fprintf(fp, "	/sbin/chkconfig --add %s\n", file->dst);
-      fprintf(fp, "	/sbin/chkconfig %s on\n", file->dst);
-      fputs("fi\n", fp);
-      fprintf(fp, "/etc/rc.d/init.d/%s start\n", file->dst);
-    }
+      break;
+
+  if (i)
+  {
+    fputs("echo Setting up init scripts...\n", fp);
+
+   /*
+    * Find where the frigging init scripts go...
+    */
+
+    fputs("rcdir=\"\"\n", fp);
+    fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
+    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", fp);
+    fputs("		rcdir=\"$dir\"\n", fp);
+    fputs("	fi\n", fp);
+    fputs("done\n", fp);
+    fputs("if test \"$rcdir\" = \"\" ; then\n", fp);
+    fputs("	echo Unable to determine location of startup scripts!\n", fp);
+    fputs("else\n", fp);
+    fputs("	for file in", fp);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(fp, " %s", file->dst);
+
+    fputs("; do\n", fp);
+    fputs("		/bin/rm -f $rcdir/init.d/$file\n", fp);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", fp);
+    fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", fp);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", fp);
+    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", fp);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", fp);
+    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", fp);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", fp);
+    fputs("		if test -d $rcdir/rc5.d; then\n", fp);
+    fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", fp);
+    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc5.d/S99$file\n", fp);
+    fputs("		fi\n", fp);
+    fputs("		" EPM_SOFTWARE "/init.d/$file start\n", fp);
+    fputs("	done\n", fp);
+    fputs("fi\n", fp);
+  }
+
   fputs("%preun\n", fp);
+
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-    {
-      fprintf(fp, "/etc/rc.d/init.d/%s stop\n", file->dst);
-      fputs("if test -x /sbin/chkconfig; then\n", fp);
-      fprintf(fp, "	/sbin/chkconfig --del %s\n", file->dst);
-      fputs("fi\n", fp);
-    }
+      break;
+
+  if (i)
+  {
+    fputs("echo Cleaning up init scripts...\n", fp);
+
+   /*
+    * Find where the frigging init scripts go...
+    */
+
+    fputs("rcdir=\"\"\n", fp);
+    fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", fp);
+    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", fp);
+    fputs("		rcdir=\"$dir\"\n", fp);
+    fputs("	fi\n", fp);
+    fputs("done\n", fp);
+    fputs("if test \"$rcdir\" = \"\" ; then\n", fp);
+    fputs("	echo Unable to determine location of startup scripts!\n", fp);
+    fputs("else\n", fp);
+    fputs("	for file in", fp);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(fp, " %s", file->dst);
+
+    fputs("; do\n", fp);
+    fputs("		/bin/rm -f $rcdir/init.d/$file\n", fp);
+    fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", fp);
+    fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", fp);
+    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", fp);
+    fputs("		if test -d $rcdir/rc5.d; then\n", fp);
+    fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", fp);
+    fputs("		fi\n", fp);
+    fputs("		" EPM_SOFTWARE "/init.d/$file stop\n", fp);
+    fputs("	done\n", fp);
+    fputs("fi\n", fp);
+  }
+
   for (i = 0; i < dist->num_removes; i ++)
     fprintf(fp, "%s\n", dist->removes[i]);
   fputs("%files\n", fp);
@@ -140,14 +208,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	          file->group, file->dst);
           break;
       case 'i' :
-          fprintf(fp, "%%attr(0555,root,root) /etc/rc.d/init.d/%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /etc/rc.d/rc0.d/K00%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /etc/rc.d/rc3.d/S99%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /etc/rc.d/rc5.d/S99%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /etc/init.d/%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /etc/rc0.d/K00%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /etc/rc3.d/S99%s\n", file->dst);
-          fprintf(fp, "%%attr(0555,root,root) /etc/rc5.d/S99%s\n", file->dst);
+          fprintf(fp, "%%attr(0555,root,root) /etc/software/init.d/%s\n", file->dst);
           break;
     }
 
@@ -190,7 +251,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'i' :
-          sprintf(filename, "%s/buildroot/etc/rc.d/init.d/%s", directory,
+          sprintf(filename, "%s/buildroot/etc/software/init.d/%s", directory,
 	          file->dst);
 
 	  if (Verbosity > 1)
@@ -199,29 +260,6 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	  if (copy_file(filename, file->src, file->mode, pwd ? pwd->pw_uid : 0,
 			grp ? grp->gr_gid : 0))
 	    return (1);
-
-          sprintf(linkname, "/etc/rc.d/init.d/%s", file->dst);
-
-          sprintf(filename, "%s/buildroot/etc/init.d/%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/etc/rc0.d/K00%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/etc/rc3.d/S99%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/etc/rc5.d/S99%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/etc/rc.d/rc0.d/K00%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/etc/rc.d/rc3.d/S99%s", directory, file->dst);
-          make_link(filename, linkname);
-
-          sprintf(filename, "%s/buildroot/etc/rc.d/rc5.d/S99%s", directory, file->dst);
-          make_link(filename, linkname);
           break;
       case 'd' :
           sprintf(filename, "%s/buildroot%s", directory, file->dst);
@@ -308,5 +346,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.21 2000/12/01 14:44:16 mike Exp $".
+ * End of "$Id: rpm.c,v 1.22 2000/12/14 14:02:40 mike Exp $".
  */

@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.6 2000/10/12 20:03:53 mike Exp $"
+// "$Id: setup2.cxx,v 1.7 2000/12/14 14:02:40 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -17,6 +17,15 @@
 //
 // Contents:
 //
+//   main()         - Main entry for software wizard...
+//   get_dists()    - Get a list of available software products.
+//   install_dist() - Install a distribution...
+//   list_cb()      - Handle selections in the software list.
+//   load_image()   - Load the setup image file (setup.xpm)...
+//   next_cb()      - Show software selections or install software.
+//   sort_dists()   - Compare two distribution names...
+//   add_string()   - Add a command to an array of commands...
+//   log_cb()       - Add one or more lines of text to the installation log.
 //
 
 #define _SETUP2_CXX_
@@ -592,5 +601,5 @@ log_cb(int fd,			// I - Pipe to read from
 
 
 //
-// End of "$Id: setup2.cxx,v 1.6 2000/10/12 20:03:53 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.7 2000/12/14 14:02:40 mike Exp $".
 //
