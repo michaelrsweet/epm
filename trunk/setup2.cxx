@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.19 2001/07/05 16:22:06 mike Exp $"
+// "$Id: setup2.cxx,v 1.20 2001/07/06 14:49:31 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -464,6 +464,7 @@ install_dist(const dist_t *dist)// I - Distribution to install
       Fl::wait();
 
     CancelButton->deactivate();
+    NextButton->deactivate();
 
     if (LicenseDecline->value())
     {
@@ -1077,5 +1078,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.19 2001/07/05 16:22:06 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.20 2001/07/06 14:49:31 mike Exp $".
 //
