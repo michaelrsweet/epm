@@ -1,9 +1,9 @@
-CHANGES - ESP Package Manager (EPM) 3.3.1
------------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.4
+---------------------------------------
 
-WHAT'S NEW IN EPM 3.3.1?
+WHAT'S NEW IN EPM 3.4?
 
-    EPM 3.3.1 adds the following features, fixes, and changes to
+    EPM 3.4 adds the following features, fixes, and changes to
     EPM 3.3:
 
 	- No longer install init scripts in run levels 2 and 5
@@ -17,6 +17,9 @@ WHAT'S NEW IN EPM 3.3.1?
 	  placed in the root partition.
 	- Now install init scripts for *BSD in
 	  /usr/local/etc/rc.d.
+	- Portable installation scripts now issue chown and
+	  chgrp commands for all installed files that are not
+	  owned by user root.
 
 
 WHAT'S NEW IN EPM 3.3?

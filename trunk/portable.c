@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.65 2002/06/04 19:30:33 mike Exp $"
+ * "$Id: portable.c,v 1.66 2002/06/04 19:53:42 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1301,7 +1301,6 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("echo Installing software...\n", scriptfile);
   fprintf(scriptfile, "$ac_tar %s.sw\n", prodname);
   fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-  fputs("rm -f /usr/.writetest\n", scriptfile);
   fprintf(scriptfile, "	$ac_tar %s.ss\n", prodname);
   fputs("fi\n", scriptfile);
 
@@ -1312,6 +1311,35 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("fi\n", scriptfile);
   fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
   fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
+
+  fputs("echo Updating file permissions...\n", scriptfile);
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) != 0 &&
+        strcmp(file->user, "root") != 0)
+      switch (tolower(file->type))
+      {
+	case 'c' :
+	case 'f' :
+	    fprintf(scriptfile, "chown %s %s\n", file->user, file->dst);
+	    fprintf(scriptfile, "chgrp %s %s\n", file->group, file->dst);
+	    break;
+      }
+
+  fputs("if test -f /usr/.writetest; then\n", scriptfile);
+  fputs("	rm -f /usr/.writetest\n", scriptfile);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) != 0 &&
+        strcmp(file->user, "root") != 0)
+      switch (tolower(file->type))
+      {
+	case 'c' :
+	case 'f' :
+	    fprintf(scriptfile, "	chown %s %s\n", file->user, file->dst);
+	    fprintf(scriptfile, "	chgrp %s %s\n", file->group, file->dst);
+	    break;
+      }
+  fputs("fi\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c')
@@ -1560,13 +1588,41 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("echo Patching software...\n", scriptfile);
   fprintf(scriptfile, "$ac_tar %s.psw\n", prodname);
   fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-  fputs("rm -f /usr/.writetest\n", scriptfile);
   fprintf(scriptfile, "	$ac_tar %s.pss\n", prodname);
   fputs("fi\n", scriptfile);
 
   fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
   fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
   fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
+
+  fputs("echo Updating file permissions...\n", scriptfile);
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) != 0 &&
+        strcmp(file->user, "root") != 0)
+      switch (file->type)
+      {
+	case 'C' :
+	case 'F' :
+	    fprintf(scriptfile, "chown %s %s\n", file->user, file->dst);
+	    fprintf(scriptfile, "chgrp %s %s\n", file->group, file->dst);
+	    break;
+      }
+
+  fputs("if test -f /usr/.writetest; then\n", scriptfile);
+  fputs("	rm -f /usr/.writetest\n", scriptfile);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) != 0 &&
+        strcmp(file->user, "root") != 0)
+      switch (file->type)
+      {
+	case 'C' :
+	case 'F' :
+	    fprintf(scriptfile, "	chown %s %s\n", file->user, file->dst);
+	    fprintf(scriptfile, "	chgrp %s %s\n", file->group, file->dst);
+	    break;
+      }
+  fputs("fi\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (file->type == 'C')
@@ -2011,5 +2067,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.65 2002/06/04 19:30:33 mike Exp $".
+ * End of "$Id: portable.c,v 1.66 2002/06/04 19:53:42 mike Exp $".
  */
