@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.3 2000/01/04 13:45:40 mike Exp $"
+ * "$Id: inst.c,v 1.4 2000/01/04 14:52:17 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -92,32 +92,57 @@ make_inst(const char     *prodname,	/* I - Product short name */
   }
 
   fprintf(fp, "product %s\n", prodname);
-  fprintf(fp, "	id \"%s\"\n", dist->product);
+  fprintf(fp, "	id \"%s, %s\"\n", dist->product, dist->version);
 
   fputs("	image sw\n", fp);
-  fprintf(fp, "		id \"%s, Software\"\n", dist->product);
+  fprintf(fp, "		id \"%s, Software, %s\"\n", dist->product,
+          dist->version);
   fprintf(fp, "		version %d\n", dist->vernumber);
   fputs("		subsys eoe default\n", fp);
+  fprintf(fp, "			id \"%s, Software, %s\"\n", dist->product,
+          dist->version);
   fprintf(fp, "			exp \"%s.sw.eoe\"\n", prodname);
+
   if (dist->num_requires)
   {
     fputs("			prereq\n", fp);
     fputs("			(\n", fp);
     for (i = 0; i < dist->num_requires; i ++)
-      fprintf(fp, "				%s.sw.eoe 0 maxint\n",
-              dist->requires[i]);
+      if (strchr(dist->requires[i], '.') != NULL)
+	fprintf(fp, "				%s 0 maxint\n",
+        	dist->requires[i]);
+      else if (dist->requires[i][0] != '/')
+	fprintf(fp, "				%s.sw.eoe 0 maxint\n",
+        	dist->requires[i]);
     fputs("			)\n", fp);
   }
+
+  for (i = 0; i < dist->num_replaces; i ++)
+    if (strchr(dist->replaces[i], '.') != NULL)
+      fprintf(fp, "			replaces %s 0 maxint\n",
+              dist->replaces[i]);
+    else if (dist->replaces[i][0] != '/')
+      fprintf(fp, "			replaces %s.sw.eoe 0 maxint\n",
+              dist->replaces[i]);
+
   for (i = 0; i < dist->num_incompats; i ++)
-    fprintf(fp, "			incompat %s.sw.eoe 0 maxint\n",
-            dist->incompats[i]);
+    if (strchr(dist->incompats[i], '.') != NULL)
+      fprintf(fp, "			incompat %s 0 maxint\n",
+              dist->incompats[i]);
+    else if (dist->incompats[i][0] != '/')
+      fprintf(fp, "			incompat %s.sw.eoe 0 maxint\n",
+              dist->incompats[i]);
+
   fputs("		endsubsys\n", fp);
   fputs("	endimage\n", fp);
 
   fputs("	image man\n", fp);
-  fprintf(fp, "		id \"%s, Man Pages\"\n", dist->product);
+  fprintf(fp, "		id \"%s, Man Pages, %s\"\n", dist->product,
+          dist->version);
   fprintf(fp, "		version %d\n", dist->vernumber);
   fputs("		subsys eoe default\n", fp);
+  fprintf(fp, "			id \"%s, Man Pages, %s\"\n", dist->product,
+          dist->version);
   fprintf(fp, "			exp \"%s.man.eoe\"\n", prodname);
   fputs("		endsubsys\n", fp);
   fputs("	endimage\n", fp);
@@ -419,5 +444,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.3 2000/01/04 13:45:40 mike Exp $".
+ * End of "$Id: inst.c,v 1.4 2000/01/04 14:52:17 mike Exp $".
  */
