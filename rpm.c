@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.5 1999/11/05 16:52:52 mike Exp $"
+ * "$Id: rpm.c,v 1.6 1999/12/14 22:59:06 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -94,14 +94,14 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
     {
-      fprintf(fp, "/bin/chkconfig --add %s\n", file->dst);
+      fprintf(fp, "/sbin/chkconfig --add %s\n", file->dst);
       fprintf(fp, "/etc/rc.d/init.d/%s start\n", file->dst);
     }
   fputs("%preun\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
     {
-      fprintf(fp, "/bin/chkconfig --del %s\n", file->dst);
+      fprintf(fp, "/sbin/chkconfig --del %s\n", file->dst);
       fprintf(fp, "/etc/rc.d/init.d/%s stop\n", file->dst);
     }
   for (i = 0; i < dist->num_removes; i ++)
@@ -272,5 +272,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.5 1999/11/05 16:52:52 mike Exp $".
+ * End of "$Id: rpm.c,v 1.6 1999/12/14 22:59:06 mike Exp $".
  */
