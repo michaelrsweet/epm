@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.10 2000/02/10 01:08:46 mike Exp $"
+ * "$Id: rpm.c,v 1.11 2000/02/18 17:54:58 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -136,41 +136,6 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   fclose(fp);
 
-#if 0
- /*
-  * Write the rpmrc file for RPM...
-  */
-
-  if (Verbosity)
-    puts("Creating rpmrc file...");
-
-  sprintf(filename, "%s/rpmrc", directory);
-
-  if ((fp = fopen(filename, "w")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create file \"%s\" - %s\n", filename,
-            strerror(errno));
-    return (1);
-  }
-
-  fprintf(fp, "topdir: %s\n", directory);
-
-  fclose(fp);
-#endif /* 0 */
-
-  sprintf(filename, "%s/RPMS", directory);
-  mkdir(filename, 0755);
-
-  if (strcmp(platform->machine, "intel") == 0)
-    strcat(filename, "/i386");
-  else
-  {
-    strcat(filename, "/");
-    strcat(filename, platform->machine);
-  }
-
-  mkdir(filename, 0755);
-
  /*
   * Copy the files over...
   */
@@ -245,7 +210,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     puts("Building RPM binary distribution...");
 
   if (strcmp(platform->machine, "intel") == 0)
-    sprintf(command, "rpm -bb --buildarch i386 %s %s",
+    sprintf(command, "rpm -bb --target i386 %s %s",
             Verbosity == 0 ? "--quiet" : "", specname);
   else
     sprintf(command, "rpm -bb %s %s",
@@ -255,10 +220,10 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     return (1);
 
   if (strcmp(platform->machine, "intel") == 0)
-    sprintf(command, "cd %s; /bin/mv RPMS/i386/%s-%s-1.i386.rpm %s.rpm",
+    sprintf(command, "cd %s; /bin/mv /usr/src/RPM/RPMS/i386/%s-%s-1.i386.rpm %s.rpm",
             directory, prodname, dist->version, name);
   else
-    sprintf(command, "cd %s; /bin/mv RPMS/%s/%s-%s-1.%s.rpm %s.rpm", directory,
+    sprintf(command, "cd %s; /bin/mv /usr/src/RPM/RPMS/%s/%s-%s-1.%s.rpm %s.rpm", directory,
             platform->machine, prodname, dist->version, platform->machine,
 	    name);
 
@@ -274,20 +239,12 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   sprintf(command, "/bin/rm -rf %s/buildroot", directory);
   system(command);
 
-  sprintf(command, "/bin/rm -rf %s/RPMS", directory);
-  system(command);
-
   unlink(specname);
-
-#if 0
-  sprintf(filename, "%s/rpmrc", directory);
-  unlink(filename);
-#endif /* 0 */
 
   return (0);
 }
 
 
 /*
- * End of "$Id: rpm.c,v 1.10 2000/02/10 01:08:46 mike Exp $".
+ * End of "$Id: rpm.c,v 1.11 2000/02/18 17:54:58 mike Exp $".
  */
