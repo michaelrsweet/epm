@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.22 2001/06/26 16:22:22 mike Exp $"
+ * "$Id: epm.h,v 1.23 2001/06/28 16:20:10 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -118,7 +118,8 @@ enum
 {
   DEPEND_REQUIRES,			/* This product requires */
   DEPEND_INCOMPAT,			/* This product is incompatible with */
-  DEPEND_REPLACES			/* This product replaces */
+  DEPEND_REPLACES,			/* This product replaces */
+  DEPEND_PROVIDES			/* This product provides */
 };
 
 
@@ -267,5 +268,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.22 2001/06/26 16:22:22 mike Exp $".
+ * End of "$Id: epm.h,v 1.23 2001/06/28 16:20:10 mike Exp $".
  */

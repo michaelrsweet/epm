@@ -20,6 +20,7 @@ WHAT'S NEW IN EPM 3.0?
 	  for all formatted strings that aren't just numbers.
 	- Added new run_command() function to replace use of
 	  system() function.
+	- Added new %provides directive.
 	- The mkepmlist utility had a bad regular expression
 	  that thought that any argument (directory names, etc.)
 	  with a dash ("-") in it was an unsupported option.
