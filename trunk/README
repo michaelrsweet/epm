@@ -89,6 +89,12 @@ WHAT'S NEW IN EPM 2.0.1?
 	  avoid name clash with RedHat setup program.
 	- Added Debian distribution files from Jeff Licquia.
 	- Configure script changes for GCC 2.95.x and Solaris.
+	- Portability fixes.
+	- Now look for RPMS in different "standard" locations
+	  after building them; the RPMDIR environment variable
+	  can be used to override the default locations.
+	- The sample project list file (epm.list) was missing
+	  from the 2.0 distribution.
 
 
 WHAT'S NEW IN EPM 2.0?

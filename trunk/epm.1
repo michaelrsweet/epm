@@ -61,7 +61,7 @@ DDEESSCCRRIIPPTTIIOONN
 
 
 
-12 January 2000        ESP Package Manager                      1
+26 April 2000          ESP Package Manager                      1
 
 
 
@@ -127,7 +127,7 @@ LLIISSTT FFIILLEESS
 
 
 
-12 January 2000        ESP Package Manager                      2
+26 April 2000          ESP Package Manager                      2
 
 
 
@@ -193,7 +193,7 @@ epm(1)                Easy Software Products               epm(1)
 
 
 
-12 January 2000        ESP Package Manager                      3
+26 April 2000          ESP Package Manager                      3
 
 
 
@@ -218,11 +218,11 @@ epm(1)                Easy Software Products               epm(1)
             Specifies  an initialization script for installation.
             The second form specifies that the file  has  changed
             or  is new and should be included as part of a patch.
-            Initialization     scripts     are     stored      in
-            /etc/software/init.d  and are linked to the appropri-
-            ate system-specific directories for run levels 0  and
-            3.  Initialization  scripts mmuusstt accepts at least the
-            _s_t_a_r_t and _s_t_o_p commands.
+            Initialization  scripts  are  stored  in   /etc/soft-
+            ware/init.d and are linked to the appropriate system-
+            specific directories for run levels 0 and 3. Initial-
+            ization  scripts  mmuusstt accepts at least the _s_t_a_r_t and
+            _s_t_o_p commands.
 
        l _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
 
@@ -237,28 +237,94 @@ epm(1)                Easy Software Products               epm(1)
             _m_o_d_e field is only  used  to  determine  if  a  check
             should be made for a previous version of the file.
 
+EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
+       The  _R_P_M_D_I_R  environment  variable will override where EPM
+       looks for RPM  distributions  you  generate.  The  default
+       locations are /usr/src/redhat/RPMS, /usr/src/RPM/RPMS, and
+       /usr/local/src/RPMS.
+
 KKNNOOWWNN BBUUGGSS
        EPM does not currently support generation of IRIX software
        patches.
 
 CCOOPPYYRRIIGGHHTT
-       Copyright 1999-2000 by Easy Software Products, All  Rights
+       Copyright  1999-2000 by Easy Software Products, All Rights
        Reserved.
 
-       This  program  is  free  software; you can redistribute it
+       This program is free software;  you  can  redistribute  it
        and/or modify it under the terms of the GNU General Public
-       License  as  published  by  the  Free Software Foundation;
+       License as published  by  the  Free  Software  Foundation;
        either version 2, or (at your option) any later version.
 
-       This program is distributed in the hope that  it  will  be
+
+
+
+26 April 2000          ESP Package Manager                      4
+
+
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
+
+       This  program  is  distributed in the hope that it will be
        useful, but WITHOUT ANY WARRANTY; without even the implied
-       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
-       PURPOSE.   See  the  GNU  General  Public License for more
+       warranty  of  MERCHANTABILITY  or FITNESS FOR A PARTICULAR
+       PURPOSE.  See the GNU  General  Public  License  for  more
        details.
 
 
 
 
-12 January 2000        ESP Package Manager                      4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+26 April 2000          ESP Package Manager                      5
 
 

@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.4 2000/01/04 13:45:40 mike Exp $"
+// "$Id: setup2.cxx,v 1.5 2000/04/26 23:46:31 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -469,7 +469,7 @@ next_cb(Fl_Button *, void *)
     CancelButton->deactivate();
     CancelButton->label("Close");
 
-    for (i = 0, progress = 0; i < NumDists; i ++)
+    for (i = 0, progress = 0, error = 0; i < NumDists; i ++)
       if (SoftwareList->checked(i + 1))
       {
         sprintf(message, "Installing %s v%s...", Dists[i].name,
@@ -586,5 +586,5 @@ log_cb(int fd,			// I - Pipe to read from
 
 
 //
-// End of "$Id: setup2.cxx,v 1.4 2000/01/04 13:45:40 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.5 2000/04/26 23:46:31 mike Exp $".
 //
