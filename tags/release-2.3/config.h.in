@@ -1,0 +1,95 @@
+/*
+ * "$Id: config.h.in,v 1.16 2001/01/19 16:16:50 mike Exp $"
+ *
+ *   Configuration file for the ESP Package Manager (EPM).
+ *
+ *   Copyright 1999-2001 by Easy Software Products.
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2, or (at your option)
+ *   any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ */
+
+/*
+ * Version of software...
+ */
+
+#define EPM_VERSION	"ESP Package Manager v2.3"
+
+/*
+ * Where are files stored?
+ */
+
+#define EPM_SOFTWARE	"/etc/software"
+
+/*
+ * Where are binaries stored?
+ */
+
+#define EPM_BINDIR	"/usr/bin"
+#define EPM_LIBDIR	"/usr/lib/epm"
+
+/*
+ * What options does the strip command take?
+ */
+
+#define EPM_STRIP	"/bin/strip"
+
+/*
+ * What option is used to specify the RPM architecture?
+ */
+
+#define EPM_RPMARCH	"--target"
+
+/*
+ * Compiler stuff...
+ */
+
+#undef const
+#undef __CHAR_UNSIGNED__
+
+/*
+ * Do we have the strXXX() functions?
+ */
+
+#undef HAVE_STRDUP
+#undef HAVE_STRCASECMP
+#undef HAVE_STRNCASECMP
+
+/*
+ * Which directory functions and headers do we use?
+ */
+
+#undef HAVE_DIRENT_H
+#undef HAVE_SYS_DIR_H
+#undef HAVE_SYS_NDIR_H
+#undef HAVE_NDIR_H
+
+/*
+ * Are we using a broken "echo" command that doesn't support the \c
+ * escape (like GNU echo?)
+ */
+
+#undef HAVE_BROKEN_ECHO
+
+/*
+ * Where is the "whoami" executable?
+ */
+
+#define EPM_WHOAMI	"whoami"
+
+/*
+ * Where is the "gzip" executable?
+ */
+
+#define EPM_GZIP	"gzip"
+
+/*
+ * End of "$Id: config.h.in,v 1.16 2001/01/19 16:16:50 mike Exp $".
+ */
