@@ -4,7 +4,7 @@ CHANGES - ESP Package Manager (EPM) 4.0
 WHAT'S NEW IN EPM 4.0?
 
     EPM 4.0 adds the following features, fixes, and changes to
-    EPM 3.6.1:
+    EPM 3.7.1:
 
 	- New GUI editor for list files.
 	- New subpackage support for creating multiple dependent
@@ -17,6 +17,14 @@ WHAT'S NEW IN EPM 3.7.1?
     EPM 3.7.1 adds the following features, fixes, and changes to
     EPM 3.7:
 
+	- Solaris packages were not created when the output
+	  directory was absolute.
+	- EPM no longer tries to strip empty files.
+	- Solaris 7 and higher no longer have the "2." prefix in
+	  the version number.
+	- The setup and uninst GUIs now support GIF setup images
+	  (setup.gif) as well as XPM images (setup.xpm)
+	- Debian packages now properly install init scripts.
 	- MacOS X packages can now be created when using the
 	  new Xcode developer tools.
 	- Packages created on MacOS X now use the system name
