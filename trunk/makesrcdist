@@ -6,19 +6,13 @@
 echo "Getting distribution..."
 
 cd /tmp
-cvs -dmike@tango.easysw.com:/development/cvs get epm >& /dev/null
+cvs -dmike@o2.easysw.com:/development/cvs get epm >& /dev/null
 
 if ($#argv == 0) then
 	echo -n "Version number for distribution? "
 	set version = $<
 else
 	set version = $1
-endif
-
-if ($#argv == 2) then
-	set suffix="-$2"
-else
-	set suffix=""
 endif
 
 rm -rf epm-$version
@@ -28,7 +22,7 @@ cd epm-$version
 if ("$version" != "snapshot") then
 	echo "Tagging release..."
 
-	set tag = `echo v$version$suffix | tr '.' '_'`
+	set tag = `echo v$version | tr '.' '_'`
 
 	cvs tag -F $tag
 endif
@@ -38,17 +32,16 @@ echo "Removing CVS directories..."
 rm -rf CVS */CVS
 rm -f makesrcdist
 rm -f ANNOUCEMENT
-rm -rf autom4te*
 
 echo "Making .tar.gz distribution..."
 
 cd ..
-gtar czf epm-$version$suffix-source.tar.gz epm-$version
+gtar czf epm-$version-source.tar.gz epm-$version
 
 echo "Making .tar.bz2 distribution..."
 
-rm -f epm-$version$suffix-source.tar.bz2
-gunzip -c epm-$version$suffix-source.tar.gz | bzip2 >epm-$version$suffix-source.tar.bz2
+rm -f epm-$version-source.tar.bz2
+gunzip -c epm-$version-source.tar.gz | bzip2 >epm-$version-source.tar.bz2
 
 echo "Removing distribution directory..."
 

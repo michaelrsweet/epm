@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.29 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: config.h.in,v 1.30 2005/01/11 21:20:17 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -96,8 +96,10 @@
  * Do we have the strXXX() functions?
  */
 
-#undef HAVE_STRDUP
 #undef HAVE_STRCASECMP
+#undef HAVE_STRDUP
+#undef HAVE_STRLCAT
+#undef HAVE_STRLCPY
 #undef HAVE_STRNCASECMP
 
 
@@ -127,5 +129,5 @@
 
 
 /*
- * End of "$Id: config.h.in,v 1.29 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: config.h.in,v 1.30 2005/01/11 21:20:17 mike Exp $".
  */

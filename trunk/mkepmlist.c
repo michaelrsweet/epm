@@ -1,5 +1,5 @@
 /*
- * "$Id: mkepmlist.c,v 1.8 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: mkepmlist.c,v 1.9 2005/01/11 21:20:17 mike Exp $"
  *
  *   List file generation utility for the ESP Package Manager (EPM).
  *
@@ -203,8 +203,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
 	    if (dstpath != dst)
 	    {
-	      strncpy(dst, dstpath, sizeof(dst) - 1);
-	      dst[sizeof(dst) - 1] = '\0';
+	      strlcpy(dst, dstpath, sizeof(dst));
 	      dstpath = dst;
 	    }
 
@@ -622,5 +621,5 @@ usage(void)
 
 
 /*
- * End of "$Id: mkepmlist.c,v 1.8 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: mkepmlist.c,v 1.9 2005/01/11 21:20:17 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.25 2004/10/31 15:40:40 mike Exp $"
+ * "$Id: deb.c,v 1.26 2005/01/11 21:20:17 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -17,7 +17,8 @@
  *
  * Contents:
  *
- *   make_deb() - Make a Debian software distribution package.
+ *   make_deb()        - Make a Debian software distribution package.
+ *   make_subpackage() - Make a subpackage...
  */
 
 /*
@@ -25,6 +26,16 @@
  */
 
 #include "epm.h"
+
+
+/*
+ * Local functions...
+ */
+
+static int	make_subpackage(const char *prodname, const char *directory,
+		                const char *platname, dist_t *dist,
+		                struct utsname *platform,
+				const char *subpackage);
 
 
 /*
@@ -38,11 +49,44 @@ make_deb(const char     *prodname,	/* I - Product short name */
          dist_t         *dist,		/* I - Distribution information */
 	 struct utsname *platform)	/* I - Platform information */
 {
+  int	i;				/* Looping var */
+
+
+  if (make_subpackage(prodname, directory, platname, dist, platform, NULL))
+    return (1);
+
+  for (i = 0; i < dist->num_subpackages; i ++)
+    if (make_subpackage(prodname, directory, platname, dist, platform,
+                        dist->subpackages[i]))
+      return (1);
+
+  return (0);
+}
+
+
+/*
+ * 'make_subpackage()' - Make a subpackage...
+ */
+
+static int				/* O - 0 = success, 1 = fail */
+make_subpackage(const char     *prodname,
+					/* I - Product short name */
+                const char     *directory,
+					/* I - Directory for distribution files */
+                const char     *platname,
+					/* I - Platform name */
+                dist_t         *dist,	/* I - Distribution information */
+	        struct utsname *platform,
+					/* I - Platform information */
+		const char     *subpackage)
+					/* I - Subpackage */
+{
   int			i, j;		/* Looping vars */
   const char		*header;	/* Dependency header string */
   FILE			*fp;		/* Control file */
-  char			name[1024];	/* Full product name */
-  char			filename[1024];	/* Destination filename */
+  char			prodfull[255],	/* Full name of product */
+			name[1024],	/* Full product name */
+			filename[1024];	/* Destination filename */
   command_t		*c;		/* Current command */
   depend_t		*d;		/* Current dependency */
   file_t		*file;		/* Current distribution file */
@@ -58,21 +102,33 @@ make_deb(const char     *prodname,	/* I - Product short name */
 			};
 
 
-  if (Verbosity)
-    puts("Creating Debian distribution...");
+ /*
+  * Figure out the full name of the distribution...
+  */
+
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
+ /*
+  * Then the subdirectory name...
+  */
 
   if (dist->relnumber)
-  {
-    if (platname[0])
-      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
-              platname);
-    else
-      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
-  }
-  else if (platname[0])
-    snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
+    snprintf(name, sizeof(name), "%s-%s-%d", prodfull, dist->version,
+             dist->relnumber);
   else
-    snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
+    snprintf(name, sizeof(name), "%s-%s", prodfull, dist->version);
+
+  if (platname[0])
+  {
+    strlcat(name, "-", sizeof(name));
+    strlcat(name, platname, sizeof(name));
+  }
+
+  if (Verbosity)
+    printf("Creating Debian %s distribution...\n", name);
 
  /*
   * Write the control file for DPKG...
@@ -83,11 +139,11 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
   snprintf(filename, sizeof(filename), "%s/%s", directory, name);
   mkdir(filename, 0777);
-  strcat(filename, "/DEBIAN");
+  strlcat(filename, "/DEBIAN", sizeof(filename));
   mkdir(filename, 0777);
   chmod(filename, 0755);
 
-  strcat(filename, "/control");
+  strlcat(filename, "/control", sizeof(filename));
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -116,20 +172,24 @@ make_deb(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "Description: %s\n", dist->product);
   fprintf(fp, " Copyright: %s\n", dist->copyright);
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(fp, " %s\n", dist->descriptions[i]);
+    if (dist->descriptions[i].subpackage == subpackage)
+      fprintf(fp, " %s\n", dist->descriptions[i].description);
 
   for (j = DEPEND_REQUIRES; j <= DEPEND_PROVIDES; j ++)
   {
     for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-      if (d->type == j)
+      if (d->type == j && d->subpackage == subpackage)
 	break;
 
     if (i)
     {
       for (header = depends[j]; i > 0; i --, d ++, header = ",")
-	if (d->type == j)
+	if (d->type == j && d->subpackage == subpackage)
 	{
-          fprintf(fp, "%s %s", header, d->product);
+	  if (!strcmp(d->product, "_self"))
+            fprintf(fp, "%s %s", header, prodname);
+	  else
+            fprintf(fp, "%s %s", header, d->product);
 
 	  if (d->vernumber[0] == 0)
 	  {
@@ -156,7 +216,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
   */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_PRE_INSTALL)
+    if (c->type == COMMAND_PRE_INSTALL && c->subpackage == subpackage)
       break;
 
   if (i)
@@ -179,7 +239,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (; i > 0; i --, c ++)
-      if (c->type == COMMAND_PRE_INSTALL)
+      if (c->type == COMMAND_PRE_INSTALL && c->subpackage == subpackage)
         fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -190,12 +250,12 @@ make_deb(const char     *prodname,	/* I - Product short name */
   */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_POST_INSTALL)
+    if (c->type == COMMAND_POST_INSTALL && c->subpackage == subpackage)
       break;
 
   if (!i)
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
         break;
 
   if (i)
@@ -218,11 +278,11 @@ make_deb(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-      if (c->type == COMMAND_POST_INSTALL)
+      if (c->type == COMMAND_POST_INSTALL && c->subpackage == subpackage)
         fprintf(fp, "%s\n", c->command);
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       {
         runlevels = get_runlevels(file, "02345");
 
@@ -248,12 +308,12 @@ make_deb(const char     *prodname,	/* I - Product short name */
   */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_PRE_REMOVE)
+    if (c->type == COMMAND_PRE_REMOVE && c->subpackage == subpackage)
       break;
 
   if (!i)
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
         break;
 
   if (i)
@@ -276,11 +336,11 @@ make_deb(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-      if (c->type == COMMAND_PRE_REMOVE)
+      if (c->type == COMMAND_PRE_REMOVE && c->subpackage == subpackage)
         fprintf(fp, "%s\n", c->command);
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       {
         fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
 
@@ -297,7 +357,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
   */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_POST_REMOVE)
+    if (c->type == COMMAND_POST_REMOVE && c->subpackage == subpackage)
       break;
 
   if (i)
@@ -320,7 +380,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (; i > 0; i --, c ++)
-      if (c->type == COMMAND_POST_REMOVE)
+      if (c->type == COMMAND_POST_REMOVE && c->subpackage == subpackage)
         fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -343,9 +403,9 @@ make_deb(const char     *prodname,	/* I - Product short name */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'c')
+    if (tolower(file->type) == 'c' && file->subpackage == subpackage)
       fprintf(fp, "%s\n", file->dst);
-    else if (tolower(file->type) == 'i')
+    else if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       fprintf(fp, "/etc/init.d/%s\n", file->dst);
 
   fclose(fp);
@@ -359,6 +419,9 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
   {
+    if (file->subpackage != subpackage)
+      continue;
+
    /*
     * Find the username and groupname IDs...
     */
@@ -377,7 +440,8 @@ make_deb(const char     *prodname,	/* I - Product short name */
     {
       case 'c' :
       case 'f' :
-          snprintf(filename, sizeof(filename), "%s/%s%s", directory, name, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s%s", directory, name,
+	           file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -387,7 +451,8 @@ make_deb(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'i' :
-          snprintf(filename, sizeof(filename), "%s/%s/etc/init.d/%s", directory, name, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s/etc/init.d/%s",
+	           directory, name, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -397,7 +462,8 @@ make_deb(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'd' :
-          snprintf(filename, sizeof(filename), "%s/%s%s", directory, name, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s%s", directory, name,
+	           file->dst);
 
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", filename);
@@ -406,7 +472,8 @@ make_deb(const char     *prodname,	/* I - Product short name */
 			 grp ? grp->gr_gid : 0);
           break;
       case 'l' :
-          snprintf(filename, sizeof(filename), "%s/%s%s", directory, name, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s%s", directory, name,
+	           file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -421,7 +488,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
   */
 
   if (Verbosity)
-    puts("Building Debian binary distribution...");
+    printf("Building Debian %s binary distribution...\n", name);
 
   if (run_command(directory, "dpkg --build %s", name))
     return (1);
@@ -433,7 +500,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
   if (!KeepFiles)
   {
     if (Verbosity)
-      puts("Removing temporary distribution files...");
+      printf("Removing temporary %s distribution files...\n", name);
 
     run_command(NULL, "/bin/rm -rf %s/%s", directory, name);
   }
@@ -443,5 +510,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.25 2004/10/31 15:40:40 mike Exp $".
+ * End of "$Id: deb.c,v 1.26 2005/01/11 21:20:17 mike Exp $".
  */

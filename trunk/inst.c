@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.27 2004/10/31 15:40:40 mike Exp $"
+ * "$Id: inst.c,v 1.28 2005/01/11 21:20:17 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -52,6 +52,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 		preremove[1024],	/* Pre remove script */
 		postremove[1024];	/* Post remove script */
   char		subsys[255];		/* Subsystem name */
+  const char	*product;		/* Product for dependency */
   file_t	*file;			/* Current distribution file */
   command_t	*c;			/* Current command */
   depend_t	*d;			/* Current dependency */
@@ -66,7 +67,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 		};
 
 
-  (void)platform; /* Eliminates compiler warning about unused variable */
+  REF(platform);
 
   if (Verbosity)
     puts("Creating inst distribution...");
@@ -123,12 +124,17 @@ make_inst(const char     *prodname,	/* I - Product short name */
     for (; i > 0; i --, d ++)
       if (d->type == DEPEND_REQUIRES)
       {
-        if (strchr(d->product, '.') != NULL)
+	if (!strcmp(d->product, "_self"))
+          product = prodname;
+	else
+          product = d->product;
+
+        if (strchr(product, '.') != NULL)
   	  fprintf(fp, "				%s %d %d\n",
-         	  d->product, d->vernumber[0], d->vernumber[1]);
-        else if (d->product[0] != '/')
+         	  product, d->vernumber[0], d->vernumber[1]);
+        else if (product[0] != '/')
   	  fprintf(fp, "				%s.sw.eoe %d %d\n",
-         	  d->product, d->vernumber[0], d->vernumber[1]);
+         	  product, d->vernumber[0], d->vernumber[1]);
       }
     fputs("			)\n", fp);
   }
@@ -136,21 +142,31 @@ make_inst(const char     *prodname,	/* I - Product short name */
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
     if (d->type == DEPEND_REPLACES)
     {
-      if (strchr(d->product, '.') != NULL)
+      if (!strcmp(d->product, "_self"))
+        product = prodname;
+      else
+        product = d->product;
+
+      if (strchr(product, '.') != NULL)
         fprintf(fp, "			replaces %s %d %d\n",
-         	d->product, d->vernumber[0], d->vernumber[1]);
-      else if (d->product[0] != '/')
+         	product, d->vernumber[0], d->vernumber[1]);
+      else if (product[0] != '/')
         fprintf(fp, "			replaces %s.sw.eoe %d %d\n",
-         	d->product, d->vernumber[0], d->vernumber[1]);
+         	product, d->vernumber[0], d->vernumber[1]);
     }
     else if (d->type == DEPEND_INCOMPAT)
     {
-      if (strchr(d->product, '.') != NULL)
+      if (!strcmp(d->product, "_self"))
+        product = prodname;
+      else
+        product = d->product;
+
+      if (strchr(product, '.') != NULL)
         fprintf(fp, "			incompat %s %d %d\n",
-         	d->product, d->vernumber[0], d->vernumber[1]);
-      else if (d->product[0] != '/')
+         	product, d->vernumber[0], d->vernumber[1]);
+      else if (product[0] != '/')
         fprintf(fp, "			incompat %s.sw.eoe %d %d\n",
-         	d->product, d->vernumber[0], d->vernumber[1]);
+         	product, d->vernumber[0], d->vernumber[1]);
     }
 
   fputs("		endsubsys\n", fp);
@@ -186,7 +202,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
            isdigit(*runlevels & 255);
 	   runlevels ++)
       {
-	file = add_file(dist);
+	file = add_file(dist, dist->files[i].subpackage);
 	file->type = 'l';
 	file->mode = 0;
 	strcpy(file->user, "root");
@@ -227,7 +243,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     * Add the preinstall script file to the list...
     */
 
-    file = add_file(dist);
+    file = add_file(dist, NULL);
     file->type = '1';
     file->mode = 0555;
     strcpy(file->user, "root");
@@ -281,7 +297,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     * Add the postinstall script file to the list...
     */
 
-    file = add_file(dist);
+    file = add_file(dist, NULL);
     file->type = '2';
     file->mode = 0555;
     strcpy(file->user, "root");
@@ -335,7 +351,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     * Add the preremove script file to the list...
     */
 
-    file = add_file(dist);
+    file = add_file(dist, NULL);
     file->type = '3';
     file->mode = 0555;
     strcpy(file->user, "root");
@@ -391,7 +407,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     * Add the postremove script file to the list...
     */
 
-    file = add_file(dist);
+    file = add_file(dist, NULL);
     file->type = '4';
     file->mode = 0555;
     strcpy(file->user, "root");
@@ -460,9 +476,11 @@ make_inst(const char     *prodname,	/* I - Product short name */
   {
     if (strstr(file->dst, "/man/") != NULL ||
         strstr(file->dst, "/catman/") != NULL)
-      snprintf(subsys, sizeof(subsys), "%s.man.eoe", prodname);
+      snprintf(subsys, sizeof(subsys), "%s.man.%s", prodname,
+               file->subpackage ? file->subpackage : "eoe");
     else
-      snprintf(subsys, sizeof(subsys), "%s.sw.eoe", prodname);
+      snprintf(subsys, sizeof(subsys), "%s.sw.%s", prodname,
+               file->subpackage ? file->subpackage : "eoe");
 
     switch (tolower(file->type))
     {
@@ -612,5 +630,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.27 2004/10/31 15:40:40 mike Exp $".
+ * End of "$Id: inst.c,v 1.28 2005/01/11 21:20:17 mike Exp $".
  */

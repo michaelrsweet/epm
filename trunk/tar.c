@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.20 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: tar.c,v 1.21 2005/01/11 21:20:17 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -35,13 +35,13 @@
  * 'tar_close()' - Close a tar file, padding as needed.
  */
 
-int			/* O - -1 on error, 0 on success */
-tar_close(tarf_t *fp)	/* I - File to write to */
+int					/* O - -1 on error, 0 on success */
+tar_close(tarf_t *fp)			/* I - File to write to */
 {
-  int	blocks;		/* Number of blocks to write */
-  int	status;		/* Return status */
-  char	padding[TAR_BLOCKS * TAR_BLOCK];
-			/* Padding for tar blocks */
+  size_t	blocks;			/* Number of blocks to write */
+  int		status;			/* Return status */
+  char		padding[TAR_BLOCKS * TAR_BLOCK];
+					/* Padding for tar blocks */
 
 
   if (fp->blocks > 0)
@@ -164,10 +164,7 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
     if (dstpath[0])
       snprintf(dst, sizeof(dst), "%s/%s", dstpath, dent->d_name);
     else
-    {
-      strncpy(dst, dent->d_name, sizeof(dst) - 1);
-      dst[sizeof(dst) - 1] = '\0';
-    }
+      strlcpy(dst, dent->d_name, sizeof(dst));
 
     if (stat(src, &srcinfo))
     {
@@ -233,15 +230,15 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
  * 'tar_file()' - Write the contents of a file...
  */
 
-int				/* O - 0 on success, -1 on error */
-tar_file(tarf_t     *fp,	/* I - Tar file to write to */
-         const char *filename)	/* I - File to write */
+int					/* O - 0 on success, -1 on error */
+tar_file(tarf_t     *fp,		/* I - Tar file to write to */
+         const char *filename)		/* I - File to write */
 {
-  FILE	*file;			/* File to write */
-  int	nbytes,			/* Number of bytes read */
-	tbytes,			/* Total bytes read/written */
-	fill;			/* Number of fill bytes needed */
-  char	buffer[8192];		/* Copy buffer */
+  FILE		*file;			/* File to write */
+  size_t	nbytes,			/* Number of bytes read */
+		tbytes,			/* Total bytes read/written */
+		fill;			/* Number of fill bytes needed */
+  char		buffer[8192];		/* Copy buffer */
 
 
  /*
@@ -301,25 +298,25 @@ tar_file(tarf_t     *fp,	/* I - Tar file to write to */
  * 'tar_header()' - Write a TAR header for the specified file...
  */
 
-int				/* O - 0 on success, -1 on error */
-tar_header(tarf_t     *fp,	/* I - Tar file to write to */
-           char       type,	/* I - File type */
-	   int        mode,	/* I - File permissions */
-	   int        size,	/* I - File size */
-           time_t     mtime,	/* I - File modification time */
-	   const char *user,	/* I - File owner */
-	   const char *group,	/* I - File group */
-	   const char *pathname,/* I - File name */
-	   const char *linkname)/* I - File link name (for links only) */
+int					/* O - 0 on success, -1 on error */
+tar_header(tarf_t     *fp,		/* I - Tar file to write to */
+           int        type,		/* I - File type */
+	   mode_t     mode,		/* I - File permissions */
+	   off_t      size,		/* I - File size */
+           time_t     mtime,		/* I - File modification time */
+	   const char *user,		/* I - File owner */
+	   const char *group,		/* I - File group */
+	   const char *pathname,	/* I - File name */
+	   const char *linkname)	/* I - File link name (for links only) */
 {
-  tar_t		record;		/* TAR header record */
-  int		pathlen;	/* Length of pathname */
-  const char	*pathsep;	/* Path separator */
-  int		i,		/* Looping var... */
-		sum;		/* Checksum */
-  unsigned char	*sumptr;	/* Pointer into header record */
-  struct passwd	*pwd;		/* Pointer to user record */
-  struct group	*grp;		/* Pointer to group record */
+  tar_t		record;			/* TAR header record */
+  int		pathlen;		/* Length of pathname */
+  const char	*pathsep;		/* Path separator */
+  int		i,			/* Looping var... */
+		sum;			/* Checksum */
+  unsigned char	*sumptr;		/* Pointer into header record */
+  struct passwd	*pwd;			/* Pointer to user record */
+  struct group	*grp;			/* Pointer to group record */
 
 
  /*
@@ -395,7 +392,7 @@ tar_header(tarf_t     *fp,	/* I - Tar file to write to */
     if (type == TAR_DIR && pathname[pathlen - 1] != '/')
       record.header.pathname[pathlen - (pathsep - pathname + 1)] = '/';
 
-    strncpy(record.header.prefix, pathname, pathsep - pathname);
+    strlcpy(record.header.prefix, pathname, (size_t)(pathsep - pathname + 1));
   }
 
   sprintf(record.header.mode, "%-6o ", (unsigned)mode);
@@ -406,12 +403,11 @@ tar_header(tarf_t     *fp,	/* I - Tar file to write to */
   memset(&(record.header.chksum), ' ', sizeof(record.header.chksum));
   record.header.linkflag = type;
   if (type == TAR_SYMLINK)
-    strncpy(record.header.linkname, linkname,
-            sizeof(record.header.linkname) - 1);
+    strlcpy(record.header.linkname, linkname, sizeof(record.header.linkname));
   strcpy(record.header.magic, TAR_MAGIC);
   memcpy(record.header.version, TAR_VERSION, 2);
-  strncpy(record.header.uname, user, sizeof(record.header.uname) - 1);
-  strncpy(record.header.gname, group, sizeof(record.header.uname) - 1);
+  strlcpy(record.header.uname, user, sizeof(record.header.uname));
+  strlcpy(record.header.gname, group, sizeof(record.header.uname));
 
  /*
   * Compute the checksum of the header...
@@ -438,12 +434,12 @@ tar_header(tarf_t     *fp,	/* I - Tar file to write to */
  * 'tar_open()' - Open a TAR file for writing.
  */
 
-tarf_t *			/* O - New tar file */
-tar_open(const char *filename,	/* I - File to create */
-         int        compress)	/* I - Compress with gzip? */
+tarf_t *				/* O - New tar file */
+tar_open(const char *filename,		/* I - File to create */
+         int        compress)		/* I - Compress with gzip? */
 {
-  tarf_t	*fp;		/* New tar file */
-  char		command[1024];	/* Compression command */
+  tarf_t	*fp;			/* New tar file */
+  char		command[1024];		/* Compression command */
 
 
  /*
@@ -486,5 +482,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.20 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: tar.c,v 1.21 2005/01/11 21:20:17 mike Exp $".
  */

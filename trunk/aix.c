@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.17 2004/10/31 15:40:40 mike Exp $"
+ * "$Id: aix.c,v 1.18 2005/01/11 21:20:17 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -18,6 +18,8 @@
  * Contents:
  *
  *   make_aix()     - Make an AIX software distribution package.
+ *   aix_addfile()  - Add a file to the AIX directory list...
+ *   aix_fileset()  - Write a subpackage description...
  *   aix_version()  - Generate an AIX version number.
  *   write_liblpp() - Create the liblpp.a file for the root or /usr parts.
  */
@@ -44,12 +46,15 @@ typedef struct
  * Local functions...
  */
 
-static int	aix_addfile(char type, const char *src, const char *dst,
+static int	aix_addfile(int type, const char *src, const char *dst,
 		            int num_dirs, aixdir_t **dirs);
+static void	aix_fileset(FILE *fp, const char *prodname, dist_t *dist,
+		            const char *subpackage);
 static char	*aix_version(const char *version);
 static int	write_liblpp(const char *prodname,
 		             const char *directory,
-		             dist_t *dist, int root);
+		             dist_t *dist, int root,
+			     const char *subpackage);
 
 
 /*
@@ -82,16 +87,13 @@ make_aix(const char     *prodname,	/* I - Product short name */
 {
   int			i;		/* Looping var */
   FILE			*fp;		/* Control file */
-  char			name[1024];	/* Full product name */
-  char			filename[1024];	/* Destination filename */
-  char			current[1024];	/* Current directory */
-  depend_t		*d;		/* Current dependency */
+  char			name[1024],	/* Full product name */
+			filename[1024],	/* Destination filename */
+			current[1024];	/* Current directory */
   file_t		*file;		/* Current distribution file */
   struct passwd		*pwd;		/* Pointer to user record */
   struct group		*grp;		/* Pointer to group record */
   const char		*runlevels;	/* Run levels */
-  int			num_dirs;	/* Number of directories */
-  aixdir_t		*dirs;		/* Directories */
 
 
   REF(platform);
@@ -102,10 +104,11 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (dist->relnumber)
   {
     if (platname[0])
-      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
-              platname);
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version,
+               dist->relnumber, platname);
     else
-      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version,
+               dist->relnumber);
   }
   else if (platname[0])
     snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
@@ -133,54 +136,9 @@ make_aix(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "4 R I %s {\n", prodname);
-  fprintf(fp, "%s %s 01 N B x %s\n", prodname,
-          aix_version(dist->version), dist->product);
-
- /*
-  * Dependencies...
-  */
-
-  fputs("[\n", fp);
-  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (d->type == DEPEND_REQUIRES)
-      fprintf(fp, "*prereq %s %s\n", d->product, aix_version(d->version[0]));
-
- /*
-  * Installation sizes...
-  */
-
-  fputs("%\n", fp);
-
-  num_dirs = 0;
-  dirs     = NULL;
-
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    num_dirs = aix_addfile(tolower(file->type), file->src, file->dst, num_dirs,
-                           &dirs);
-
-  for (i = 0; i < num_dirs; i ++)
-    fprintf(fp, "%s %d\n", dirs[i].dst, dirs[i].blocks);
-
-  if (num_dirs > 0)
-    free(dirs);
-
- /*
-  * This package supercedes which others?
-  */
-
-  fputs("%\n", fp);
-  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (d->type == DEPEND_REPLACES)
-      fprintf(fp, "%s %s", d->product, aix_version(d->version[0]));
-
- /*
-  * Fix information is only used for updates (patches)...
-  */
-
-  fputs("%\n", fp);
-  fputs("]\n", fp);
-  fputs("}\n", fp);
+  aix_fileset(fp, prodname, dist, NULL);
+  for (i = 0; i < dist->num_subpackages; i ++)
+    aix_fileset(fp, prodname, dist, dist->subpackages[i]);
 
   fclose(fp);
 
@@ -188,13 +146,17 @@ make_aix(const char     *prodname,	/* I - Product short name */
   * Write the root partition liblpp.a file...
   */
 
-  write_liblpp(prodname, directory, dist, 1);
+  write_liblpp(prodname, directory, dist, 1, NULL);
+  for (i = 0; i < dist->num_subpackages; i ++)
+    write_liblpp(prodname, directory, dist, 1, dist->subpackages[i]);
 
  /*
   * Write the usr partition liblpp.a file...
   */
 
-  write_liblpp(prodname, directory, dist, 0);
+  write_liblpp(prodname, directory, dist, 0, NULL);
+  for (i = 0; i < dist->num_subpackages; i ++)
+    write_liblpp(prodname, directory, dist, 0, dist->subpackages[i]);
 
  /*
   * Copy the files over...
@@ -332,7 +294,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
  */
 
 static int				/* O  - New number dirs */
-aix_addfile(char       type,		/* I  - Filetype */
+aix_addfile(int        type,		/* I  - Filetype */
             const char *src,		/* I  - Source path */
             const char *dst,		/* I  - Destination path */
 	    int        num_dirs,	/* I  - Number of directories */
@@ -350,8 +312,7 @@ aix_addfile(char       type,		/* I  - Filetype */
   * Determine the destination path and block size...
   */
 
-  strncpy(dstpath, dst, sizeof(dstpath) - 1);
-  dstpath[sizeof(dstpath) - 1] = '\0';
+  strlcpy(dstpath, dst, sizeof(dstpath));
 
   if (type == 'd')
   {
@@ -414,6 +375,86 @@ aix_addfile(char       type,		/* I  - Filetype */
 
 
 /*
+ * 'aix_fileset()' - Write a subpackage description...
+ */
+
+static void
+aix_fileset(FILE       *fp,		/* I - File to write to */
+            const char *prodname,	/* I - Product name */
+            dist_t     *dist,		/* I - Distribution */
+	    const char *subpackage)	/* I - Subpackage */
+{
+  int			i;		/* Looping var */
+  depend_t		*d;		/* Current dependency */
+  file_t		*file;		/* Current distribution file */
+  int			num_dirs;	/* Number of directories */
+  aixdir_t		*dirs;		/* Directories */
+
+
+ /*
+  * Start fileset definition...
+  */
+
+  fprintf(fp, "4 R I %s {\n", prodname);
+
+  if (subpackage)
+    fprintf(fp, "%s.%s", prodname, subpackage);
+  else
+    fprintf(fp, "%s", prodname);
+
+  fprintf(fp, " %s 01 N B x %s\n", aix_version(dist->version), dist->product);
+
+ /*
+  * Dependencies...
+  */
+
+  fputs("[\n", fp);
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REQUIRES && d->subpackage == subpackage &&
+        strcmp(d->product, "_self"))
+      fprintf(fp, "*prereq %s %s\n", d->product, aix_version(d->version[0]));
+
+ /*
+  * Installation sizes...
+  */
+
+  fputs("%\n", fp);
+
+  num_dirs = 0;
+  dirs     = NULL;
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (file->subpackage == subpackage)
+      num_dirs = aix_addfile(tolower(file->type), file->src, file->dst,
+                             num_dirs, &dirs);
+
+  for (i = 0; i < num_dirs; i ++)
+    fprintf(fp, "%s %d\n", dirs[i].dst, dirs[i].blocks);
+
+  if (num_dirs > 0)
+    free(dirs);
+
+ /*
+  * This package supercedes which others?
+  */
+
+  fputs("%\n", fp);
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REPLACES && d->subpackage == subpackage &&
+        strcmp(d->product, "_self"))
+      fprintf(fp, "%s %s", d->product, aix_version(d->version[0]));
+
+ /*
+  * Fix information is only used for updates (patches)...
+  */
+
+  fputs("%\n", fp);
+  fputs("]\n", fp);
+  fputs("}\n", fp);
+}
+
+
+/*
  * 'aix_version()' - Generate an AIX version number.
  */
 
@@ -446,11 +487,13 @@ static int				/* O - 0 = success, 1 = fail */
 write_liblpp(const char     *prodname,	/* I - Product short name */
              const char     *directory,	/* I - Directory for distribution files */
              dist_t         *dist,	/* I - Distribution information */
-             int            root)	/* I - Root partition? */
+             int            root,	/* I - Root partition? */
+	     const char     *subpackage)/* I - Subpackage */
 {
   int			i;		/* Looping var */
   FILE			*fp;		/* Control file */
-  char			filename[1024];	/* Destination filename */
+  char			filename[1024],	/* Destination filename */
+			prodfull[1024];	/* Full product name */
   struct stat		fileinfo;	/* File information */
   command_t		*c;		/* Current command */
   file_t		*file;		/* Current distribution file */
@@ -462,9 +505,14 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   * Progress info...
   */
 
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s.%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
   if (Verbosity)
-    puts(root ? "Creating root partition liblpp.a file..." :
-                "Creating shared partition liblpp.a file...");
+    printf("Updating %s partition liblpp.a file for %s...\n",
+           root ? "root" : "shared", prodfull);
 
  /*
   * Write the product.al file for installp...
@@ -473,7 +521,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   if (Verbosity > 1)
     puts("    Creating .al file...");
 
-  snprintf(filename, sizeof(filename), "%s/%s.al", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.al", directory, prodfull);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -483,37 +531,38 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    switch (tolower(file->type))
-    {
-      case 'i' :
-          if (root)
-            qprintf(fp, "./etc/rc.d/rc2.d/S99%s\n", file->dst);
-	  break;
+    if (file->subpackage == subpackage)
+      switch (tolower(file->type))
+      {
+	case 'i' :
+            if (root)
+              qprintf(fp, "./etc/rc.d/rc2.d/S99%s\n", file->dst);
+	    break;
 
-      default :
-          shared_file = !(strcmp(file->dst, "/usr") && 
-                          strncmp(file->dst, "/usr/", 5) && 
-                          strcmp(file->dst, "/opt") && 
-                          strncmp(file->dst, "/opt/", 5));
+	default :
+            shared_file = !(strcmp(file->dst, "/usr") && 
+                            strncmp(file->dst, "/usr/", 5) && 
+                            strcmp(file->dst, "/opt") && 
+                            strncmp(file->dst, "/opt/", 5));
 
-         /*
-	  * Put file in root or share .al file as appropriate
-          */
+           /*
+	    * Put file in root or share .al file as appropriate
+            */
 
-          if ((shared_file && !root) || (!shared_file && root))
-            qprintf(fp, ".%s\n", file->dst);
+            if ((shared_file && !root) || (!shared_file && root))
+              qprintf(fp, ".%s\n", file->dst);
 
-         /*
-	  * Put any root file in the share .al so it will be extracted
-	  * to /usr/lpp/<prodname>/inst_root directory.  I have no
-	  * idea if this is really the way to do it but it seems to
-	  * work...
-	  */
+           /*
+	    * Put any root file in the share .al so it will be extracted
+	    * to /usr/lpp/<prodfull>/inst_root directory.  I have no
+	    * idea if this is really the way to do it but it seems to
+	    * work...
+	    */
 
-          if (!shared_file && !root)
-            qprintf(fp, "./usr/lpp/%s/inst_root%s\n", prodname, file->dst);
-	  break;
-    }
+            if (!shared_file && !root)
+              qprintf(fp, "./usr/lpp/%s/inst_root%s\n", prodfull, file->dst);
+	    break;
+      }
 
   fclose(fp);
 
@@ -524,19 +573,19 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   if (Verbosity > 1)
     puts("    Creating .cfgfiles file...");
 
-  snprintf(filename, sizeof(filename), "%s/%s.cfgfiles", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.cfgfiles", directory, prodfull);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create .cfgfiles file \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create .cfgfiles file \"%s\" - %s\n",
+            filename, strerror(errno));
     return (1);
   }
 
   configcount = 0;
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'c' &&
+    if (tolower(file->type) == 'c' && file->subpackage == subpackage &&
         (strcmp(file->dst, "/usr") ||
 	 strncmp(file->dst, "/usr/", 5) ||
 	 strcmp(file->dst, "/opt") ||
@@ -555,7 +604,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   if (Verbosity > 1)
     puts("    Creating .copyright file...");
 
-  snprintf(filename, sizeof(filename), "%s/%s.copyright", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.copyright", directory, prodfull);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -578,12 +627,12 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     if (Verbosity > 1)
       puts("    Creating .pre_i file...");
 
-    snprintf(filename, sizeof(filename), "%s/%s.pre_i", directory, prodname);
+    snprintf(filename, sizeof(filename), "%s/%s.pre_i", directory, prodfull);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create .pre_i file \"%s\" - %s\n", filename,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create .pre_i file \"%s\" - %s\n",
+              filename, strerror(errno));
       return (1);
     }
 
@@ -593,7 +642,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
-      if (c->type == COMMAND_PRE_INSTALL)
+      if (c->type == COMMAND_PRE_INSTALL && c->subpackage == subpackage)
 	fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -605,12 +654,12 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     if (Verbosity > 1)
       puts("    Creating .post_i file...");
 
-    snprintf(filename, sizeof(filename), "%s/%s.post_i", directory, prodname);
+    snprintf(filename, sizeof(filename), "%s/%s.post_i", directory, prodfull);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create .post_i file \"%s\" - %s\n", filename,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create .post_i file \"%s\" - %s\n",
+              filename, strerror(errno));
       return (1);
     }
 
@@ -620,7 +669,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
-      if (c->type == COMMAND_POST_INSTALL)
+      if (c->type == COMMAND_POST_INSTALL && c->subpackage == subpackage)
 	fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -632,12 +681,12 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     if (Verbosity > 1)
       puts("	Creating .unpre_i file...");
 
-    snprintf(filename, sizeof(filename), "%s/%s.unpre_i", directory, prodname);
+    snprintf(filename, sizeof(filename), "%s/%s.unpre_i", directory, prodfull);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create .unpre_i file \"%s\" - %s\n", filename,
-	      strerror(errno));
+      fprintf(stderr, "epm: Unable to create .unpre_i file \"%s\" - %s\n",
+              filename, strerror(errno));
       return (1);
     }
 
@@ -647,7 +696,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
-      if (c->type == COMMAND_PRE_REMOVE)
+      if (c->type == COMMAND_PRE_REMOVE && c->subpackage == subpackage)
 	fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -659,12 +708,12 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     if (Verbosity > 1)
       puts("    Creating .unpost_i file...");
 
-    snprintf(filename, sizeof(filename), "%s/%s.unpost_i", directory, prodname);
+    snprintf(filename, sizeof(filename), "%s/%s.unpost_i", directory, prodfull);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create .unpost_i file \"%s\" - %s\n", filename,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create .unpost_i file \"%s\" - %s\n",
+              filename, strerror(errno));
       return (1);
     }
 
@@ -674,7 +723,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
-     if (c->type == COMMAND_POST_REMOVE)
+     if (c->type == COMMAND_POST_REMOVE && c->subpackage == subpackage)
 	fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -687,17 +736,20 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   if (Verbosity > 1)
     puts("    Creating .inventory file...");
 
-  snprintf(filename, sizeof(filename), "%s/%s.inventory", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.inventory", directory, prodfull);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create .inventory file \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create .inventory file \"%s\" - %s\n",
+            filename, strerror(errno));
     return (1);
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
   {
+    if (file->subpackage != subpackage)
+      continue;
+
     if (root)
     {
       if (!strcmp(file->dst, "/usr") ||
@@ -726,7 +778,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 	  break;
     }
 
-    fprintf(fp, "    class=apply,inventory,%s\n", prodname);
+    fprintf(fp, "    class=apply,inventory,%s\n", prodfull);
 
     switch (tolower(file->type))
     {
@@ -806,5 +858,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: aix.c,v 1.17 2004/10/31 15:40:40 mike Exp $".
+ * End of "$Id: aix.c,v 1.18 2005/01/11 21:20:17 mike Exp $".
  */

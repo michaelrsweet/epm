@@ -1,5 +1,5 @@
 //
-// "$Id: uninst2.cxx,v 1.6 2004/05/26 19:39:05 mike Exp $"
+// "$Id: uninst2.cxx,v 1.7 2005/01/11 21:20:17 mike Exp $"
 //
 //   ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -674,5 +674,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: uninst2.cxx,v 1.6 2004/05/26 19:39:05 mike Exp $".
+// End of "$Id: uninst2.cxx,v 1.7 2005/01/11 21:20:17 mike Exp $".
 //

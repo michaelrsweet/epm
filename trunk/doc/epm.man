@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.16 2004/04/21 19:25:19 mike Exp $"
+.\" "$Id: epm.man,v 1.17 2005/01/11 21:20:17 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "23 July 2003" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "9 December 2004" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -155,6 +155,8 @@ man page.
 .SH KNOWN BUGS
 EPM does not currently support generation of IRIX software patches.
 .SH SEE ALSO
+epmeditor(1) - edit software list files
+.br
 epminstall(1) - add a directory, file, or symlink to a list file
 .br
 mkepmlist(1) - make an epm list file from a directory
@@ -175,5 +177,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.16 2004/04/21 19:25:19 mike Exp $".
+.\" End of "$Id: epm.man,v 1.17 2005/01/11 21:20:17 mike Exp $".
 .\"

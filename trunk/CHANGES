@@ -1,10 +1,17 @@
-CHANGES - ESP Package Manager (EPM) 3.7.1
------------------------------------------
+CHANGES - ESP Package Manager (EPM) 4.0
+---------------------------------------
 
-WHAT'S NEW IN EPM 3.7.1?
+EPM 4.0
 
-    EPM 3.7.1 adds the following features, fixes, and changes to
-    EPM 3.7:
+	- New GUI editor for list files.
+	- New subpackage support for creating multiple dependent
+	  packages or a combined package with selectable
+	  subpackages, depending on the package format.
+	- Fixed NetBSD and OpenBSD packaging support - no longer
+	  use FreeBSD-specific extensions to pkg_create on those
+	  variants.
+
+EPM 3.7.1
 
 	- Solaris packages were not created when the output
 	  directory was absolute.
@@ -31,10 +38,7 @@ WHAT'S NEW IN EPM 3.7.1?
 	  some AIX packaging issues with patch from David Maltz.
 
 
-WHAT'S NEW IN EPM 3.7?
-
-    EPM 3.7 adds the following features, fixes, and changes to
-    EPM 3.6:
+EPM 3.7
 
 	- Fixed init script support for Tru64 packages.
 	- AIX output now correctly generates the inventory file
@@ -80,10 +84,7 @@ WHAT'S NEW IN EPM 3.7?
 	  scripts.
 
 
-WHAT'S NEW IN EPM 3.6?
-
-    EPM 3.6 adds the following features, fixes, and changes to
-    EPM 3.5.1:
+EPM 3.6
 
 	- Added a GUI uninstall program to be distributed with
 	  portable distributions with a setup image.
@@ -127,10 +128,7 @@ WHAT'S NEW IN EPM 3.6?
 	  systems.
 
 
-WHAT'S NEW IN EPM 3.5.1?
-
-    EPM 3.5.1 adds the following features, fixes, and changes to
-    EPM 3.5:
+EPM 3.5.1
 
 	- OSX packages did not set the "install as root" package
 	  type, so package installation usually failed.
@@ -143,10 +141,7 @@ WHAT'S NEW IN EPM 3.5.1?
 	  creating OSX packages.
 
 
-WHAT'S NEW IN EPM 3.5?
-
-    EPM 3.5 adds the following features, fixes, and changes to
-    EPM 3.4:
+EPM 3.5
 
 	- Added support for MacOS X package generation.
 	- No longer need/use RPMDIR when building RPMs, just
@@ -170,10 +165,7 @@ WHAT'S NEW IN EPM 3.5?
 	  separately and in reverse order.
 
 
-WHAT'S NEW IN EPM 3.4?
-
-    EPM 3.4 adds the following features, fixes, and changes to
-    EPM 3.3:
+EPM 3.4
 
 	- No longer install init scripts in run levels 2 and 5
 	  under Solaris, which runs all init scripts in each run
@@ -193,10 +185,7 @@ WHAT'S NEW IN EPM 3.4?
 	  of disk space per distribution.
 
 
-WHAT'S NEW IN EPM 3.3?
-
-    EPM 3.3 adds the following features, fixes, and changes to
-    EPM 3.2.1:
+EPM 3.3
 
 	- UnixWare 7 needs the absolute path when transferring
 	  an AT&T package directory to a .pkg file.
@@ -223,20 +212,14 @@ WHAT'S NEW IN EPM 3.3?
 	  script before running the "strip" command.
 
 
-WHAT'S NEW IN EPM 3.2.1?
-
-    EPM 3.2.1 adds the following features, fixes, and changes to
-    EPM 3.2:
+EPM 3.2.1
 
 	- The check for Darwin (MacOS X) in the portable
 	  installation scripts was using "==" instead of just
 	  "=".
 
 
-WHAT'S NEW IN EPM 3.2?
-
-    EPM 3.2 adds the following features, fixes, and changes to
-    EPM 3.1:
+EPM 3.2
 
 	- Added "SHELL=/bin/sh" line to portable installation,
 	  patch, and remove scripts in case the root shell is
@@ -264,10 +247,7 @@ WHAT'S NEW IN EPM 3.2?
 	- The setup GUI now requires FLTK 1.1.x.
 
 
-WHAT'S NEW IN EPM 3.1?
-
-    EPM 3.1 adds the following features, fixes, and changes to
-    EPM 3.0:
+EPM 3.1
 
 	- Added support for "<<end ... end" and "<filename" to
 	  insert descriptions and commands in-line and from a
@@ -297,10 +277,7 @@ WHAT'S NEW IN EPM 3.1?
 	  uses "--target arch" instead of "--target=arch".
 
 
-WHAT'S NEW IN EPM 3.0?
-
-    EPM 3.0 adds the following features, fixes, and changes to
-    EPM 2.8:
+EPM 3.0?
 
 	- Added new documentation.
 	- Added new "-a arch" option to support specific
@@ -334,10 +311,7 @@ WHAT'S NEW IN EPM 3.0?
 	  upgrade/install, while changed ones are preserved.
 
 
-WHAT'S NEW IN EPM 2.8?
-
-    EPM 2.8 adds the following features, fixes, and changes to
-    EPM 2.7:
+EPM 2.8
 
 	- The line breaking code did not include an extra
 	  space, so filenames in the portable install/patch/
@@ -355,10 +329,7 @@ WHAT'S NEW IN EPM 2.8?
 	  even with GNU test even though it isn't documented...
 
 
-WHAT'S NEW IN EPM 2.7?
-
-    EPM 2.7 adds the following features, fixes, and changes to
-    EPM 2.6:
+EPM 2.7
 
 	- Fixed a bug in the configuration script with the
 	  --with-fltk-includes option.
@@ -372,10 +343,7 @@ WHAT'S NEW IN EPM 2.7?
 	  remove scripts.
 
 
-WHAT'S NEW IN EPM 2.6?
-
-    EPM 2.6 adds the following features, fixes, and changes to
-    EPM 2.5:
+EPM 2.6
 
 	- Changed the automatic version number generation code to
 	  properly handle patch, beta, and pre releases.
@@ -399,10 +367,7 @@ WHAT'S NEW IN EPM 2.6?
 	  right filename for Solaris PKG distributions.	
   
 
-WHAT'S NEW IN EPM 2.5?
-
-    EPM 2.5 adds the following features, fixes, and changes to
-    EPM 2.4:
+EPM 2.5
 
 	- Added support for pre-install, post-install, pre-patch,
 	  post-patch, pre-remove, and post-remove commands.
@@ -428,20 +393,14 @@ WHAT'S NEW IN EPM 2.5?
 	  rather then hardcoding this based on the build system.
 
 
-WHAT'S NEW IN EPM 2.4?
-
-    EPM 2.4 adds the following features, fixes, and changes to
-    EPM 2.3:
+EPM 2.4
 
 	- The [] wildcard matching did not skip over the
 	  character that was matched.  This prevented matches in
 	  most cases...
 
 
-WHAT'S NEW IN EPM 2.3?
-
-    EPM 2.3 adds the following features, fixes, and changes to
-    EPM 2.2:
+EPM 2.3
 
 	- Fix for an incredibly stupid bug in the portable
 	  distribution code - was using ! instead of ~ to mask
@@ -464,10 +423,7 @@ WHAT'S NEW IN EPM 2.3?
 	- The variable expansion code didn't check for ${name}.
 
 
-WHAT'S NEW IN EPM 2.2?
-
-    EPM 2.2 adds the following features, fixes, and changes to
-    EPM 2.1:
+EPM 2.2
 
 	- New HTML documentation files.
 	- Updated the BuildRoot directive in RPM spec files to
@@ -500,10 +456,7 @@ WHAT'S NEW IN EPM 2.2?
 	  the major and minor release numbers.
 
 
-WHAT'S NEW IN EPM 2.1?
-
-    EPM 2.1 adds the following features, fixes, and changes to
-    EPM 2.0:
+EPM 2.1
 
 	- Moved setup program to /usr/lib/epm ($prefix/lib/epm)
 	  to avoid name clash with RedHat setup program.
@@ -535,9 +488,7 @@ WHAT'S NEW IN EPM 2.1?
 	  tar.gz file formats.
 
 
-WHAT'S NEW IN EPM 2.0?
-
-    EPM 2.0 adds the following features and fixes to EPM 1.7:
+EPM 2.0?
 
 	- New "-f" option to generate vendor-specific software
 	  distributions.  Now support AT&T, Debian, HP-UX, IRIX,
@@ -555,9 +506,7 @@ WHAT'S NEW IN EPM 2.0?
 	- Portable distributions should now be more portable.
 
 
-WHAT'S NEW IN EPM 1.7?
-
-    EPM 1.7 adds the following features and fixes to EPM 1.6:
+EPM 1.7
 
 	- The %requires and %incompat directives now support
 	  specification of files as well as products.
@@ -568,9 +517,7 @@ WHAT'S NEW IN EPM 1.7?
 	  the same.
 
 
-WHAT'S NEW IN EPM 1.6?
-
-    EPM 1.6 adds the following features and fixes to EPM 1.5:
+EPM 1.6
 
 	- Installation archives were missing the ".ss" and ".pss"
 	  files that were added to support diskless installations.
@@ -580,17 +527,13 @@ WHAT'S NEW IN EPM 1.6?
 	  user did not agree with the license or want to install.
 
 
-WHAT'S NEW IN EPM 1.5?
-
-    EPM 1.5 adds the following features and fixes to EPM 1.4:
+EPM 1.5
 
 	- Now support diskless installations; all files destined for
 	  /usr are put in a separate archive and are installed (or
 	  removed) only if /usr is read+write.
 
-WHAT'S NEW IN EPM 1.4?
-
-    EPM 1.4 adds the following features and fixes to EPM 1.3:
+EPM 1.4
 
 	- Now map group "sys" to "system" for Digital UNIX and "root" for
 	  Linux.
@@ -598,9 +541,7 @@ WHAT'S NEW IN EPM 1.4?
 	  of run levels 4 and 5.
 
 
-WHAT'S NEW IN EPM 1.3?
-
-    EPM 1.3 adds the following features and fixes to EPM 1.2:
+EPM 1.3
 
 	- Now use the "p" option to tar to ensure that file permissions
 	  are created properly.  This is normally the default for the
@@ -609,9 +550,7 @@ WHAT'S NEW IN EPM 1.3?
 	  and 5.
 
 
-WHAT'S NEW IN EPM 1.2?
-
-    EPM 1.2 adds the following features and fixes to EPM 1.1:
+EPM 1.2
 
 	- Patch distributions were not correctly named.
 	- Added new "initialization script" file types "i" and "I". The
@@ -621,9 +560,7 @@ WHAT'S NEW IN EPM 1.2?
 	  accordingly.
 
 
-WHAT'S NEW IN EPM 1.1?
-
-    EPM 1.1 adds the following features and fixes to EPM 1.0:
+EPM 1.1
 
 	- The "whoami" command isn't always in the user's path, so
 	  scripts now use a hard-coded path (setup by the configure
