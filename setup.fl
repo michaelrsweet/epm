@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0008 
+version 1.0011 
 header_name {.h} 
 code_name {.cxx} 
 gridx 5 
@@ -40,7 +40,7 @@ Function {make_window()} {open
     label {ESP Software Wizard}
     callback {if (CancelButton->active())
   exit(0);} open
-    xywh {625 170 450 345}
+    xywh {148 94 450 345}
     code0 {\#include "setup2.h"} visible
   } {
     Fl_Button NextButton {
@@ -58,7 +58,7 @@ Function {make_window()} {open
       code0 {\#include "Fl_Wizard.h"}
       class Fl_Wizard
     } {
-      Fl_Group WelcomePane {selected
+      Fl_Group WelcomePane {
         xywh {10 10 430 280} box FLAT_BOX
       } {
         Fl_Box {} {
@@ -76,7 +76,7 @@ To select software for installation, please click on the "Next" button below.}
         }
       }
       Fl_Group SoftwarePane {open
-        xywh {10 10 430 280} box FLAT_BOX hide
+        xywh {10 10 430 280} box FLAT_BOX
       } {
         Fl_Box {} {
           label {Software Selection}
@@ -88,8 +88,8 @@ To select software for installation, please click on the "Next" button below.}
         }
         Fl_Browser SoftwareList {
           label { Available Software:}
-          callback list_cb
-          xywh {40 120 370 135} type Select box DOWN_BOX align 5 when 4
+          callback list_cb selected
+          xywh {40 120 370 135} box DOWN_BOX align 5 when 4
           code0 {\#include "Fl_Check_Browser.h"}
           class Fl_Check_Browser
         }
