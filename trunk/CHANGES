@@ -1,9 +1,9 @@
-CHANGES - ESP Package Manager (EPM) 2.9
+CHANGES - ESP Package Manager (EPM) 3.0
 ---------------------------------------
 
-WHAT'S NEW IN EPM 2.9?
+WHAT'S NEW IN EPM 3.0?
 
-    EPM 2.9 adds the following features, fixes, and changes to
+    EPM 3.0 adds the following features, fixes, and changes to
     EPM 2.8:
 
 	- The mkepmlist utility had a bad regular expression

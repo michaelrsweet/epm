@@ -1,17 +1,17 @@
 <HTML>
 <BODY>
-<H2>epm</H2>
+<H2><A NAME="epm">epm</A></H2>
 <HR>
 <P>Create software packages</P>
 
-<H3>SYNOPSIS</H3>
+<H3>Synopsis</H3>
 
 <P><B>epm</B> [ -f <I>format</I> ] [ -g ] [ -k ] [ -n[mrs] ] [
 -s <I>setup.xpm</I> ] [ --setup-image <I>setup.xpm</I> ] [
 --setup-program <I>/foo/bar/setup</I> ] [ -v ] [ <I>name=value
 name=value</I> ] product [ <I>listfile</I> ]</P>
 
-<H3>DESCRIPTION</H3>
+<H3>Description</H3>
 
 <P><B>epm</B> generates software packages complete with
 installation, removal, and (if necessary) patch scripts. Unless
@@ -93,9 +93,9 @@ output.</P>
 
 <P>Distributions normally are named
 "product-version-system-release-machine.ext" and
-"product-version-system- release-machine-patch.ext" (for patch
+"product-version-system-release-machine-patch.ext" (for patch
 distributions.) The "system-release-machine" information can be
-cus- tomized or eliminated using the <I>-n</I> option with the
+customized or eliminated using the <I>-n</I> option with the
 appropriate trailing letters. Using <I>-n</I> by itself will
 remove the "system-release-machine" string from the filename
 entirely.</P>
@@ -104,12 +104,12 @@ entirely.</P>
 extensions ".deb", ".tardist", "tar.gz", and ".rpm"
 respectively.</P>
 
-<H3>LIST VARIABLES</H3>
+<H3>List Variables</H3>
 
 <P><I>EPM</I> maintains a list of variables and their values
 which can be used to substitute values in the list file. These
-vari- ables are imported from the current environment and taken
-from the command-line and list file as provided. Sub- stitutions
+variables are imported from the current environment and taken
+from the command-line and list file as provided. Substitutions
 occur when the variable name is referenced with the dollar sign
 ($):</P>
 
@@ -129,23 +129,31 @@ or alone ($name); without brackets the name is terminated by the
 first slash (/), dash (-), or whitespace. The dollar sign can be
 inserted using $$.</P>
 
-<H3>ENVIRONMENT VARIABLES</H3>
+<H3>Environment Variables</H3>
 
 <P>The <I>RPMDIR</I> environment variable will override where
 EPM looks for RPM distributions you generate. The default
-locations are /usr/src/redhat/RPMS, /usr/src/RPM/RPMS,
-/usr/src/packages/RPMS, and /usr/local/src/RPMS.</P>
+locations are <VAR>/usr/src/redhat/RPMS, /usr/src/RPM/RPMS,
+/usr/src/packages/RPMS</VAR>, and <VAR>/usr/local/src/RPMS</VAR>.</P>
 
-<H3>KNOWN BUGS</H3>
+<H3>Known Bugs</H3>
 
-<P>EPM does not currently support generation of IRIX software
+<P><I>EPM</I> does not currently support generation of IRIX software
 patches.</P>
 
-<H3>SEE ALSO</H3>
+<H3>See Also</H3>
 
-<P>mkepmlist(1) - make an EPM list file from a directory.</P>
+<P><A HREF="#epm">epm(1)</A> - create software packages.</P>
 
-<H3>COPYRIGHT</H3>
+<P><A HREF="#epminstall">epminstall(1)</A> - add a directory,
+file, or symlink to a list file.</P>
+
+<P><A HREF="#mkepmlist">mkepmlist(1)</A> - make an epm list file
+from a directory.</P>
+
+<P><A HREF="#REFERENCE">epm.list(5)</A> - epm list file format.</P>
+
+<H3>Copyright</H3>
 
 <P>Copyright 1999-2001 by Easy Software Products, All Rights
 Reserved.</P>

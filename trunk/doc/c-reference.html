@@ -3,21 +3,254 @@
 
 <H1 ALIGN="RIGHT"><A NAME="REFERENCE">C - List File Reference</A></H1>
 
-<P>Summary</P>
+<P>This appendix provides a complete reference for the EPM list file
+format.</P>
 
-<H2>Directives</H2>
+<H2>Overview of the List File Format</H2>
 
-<H2>Variables</H2>
+<P>Each <I>EPM</I> product has an associated list file that
+describes the files to include with the product. Comment lines
+begin with the "#" character and are ignored. All other
+non-blank lines must begin with a letter, dollar sign ("$"), or
+the percent sign ("%").</P>
 
-<H2>Files</H2>
+<H2>List File Directives</H2>
 
-<H2>Configuration Files</H2>
+<P>The following list describes all of the list file directives
+supported by <I>EPM</I>:</P>
 
-<H2>Initialization Scripts</H2>
+<UL><DL>
 
-<H2>Directories</H2>
+	<DT>$name=value</DT>
 
-<H2>Symbolic Links</H2>
+	<DD>Sets the named variable to <I>value</I>.
+	<B>Note:</B> Variables set in the list file are
+	overridden by variables specified on the command-line or
+	in the current environment.</DD>
+
+	<DT>%copyright <I>copyright notice</I></DT>
+
+	<DD>Sets the copyright notice for the file.</DD>
+
+	<DT>%description <I>description text</I></DT>
+
+	<DD>Adds a line of descriptive text to the distribution.
+	Multiple lines are supported.</DD>
+
+	<DT>%format <I>format [... format]</I></DT>
+
+	<DD>Uses following files and directives only if the
+	distribution format is the same as <I>format</I>.</DD>
+
+	<DT>%format !<I>format [... format]</I></DT>
+
+	<DD>Uses following files and directives only if the
+	distribution format is not the same as
+	<I>format</I>.</DD>
+
+	<DT>%include <I>filename</I></DT>
+
+	<DD>Includes files listed in <I>filename</I>.</DD>
+
+	<DT>%incompat <I>product</I></DT>
+
+	<DT>%incompat <I>filename</I></DT>
+
+	<DD>Indicates that this product is incompatible with the
+	named product or file.</DD>
+
+	<DT>%install <I>script or program</I></DT>
+
+	<DD>Specifies a script or program to be run after all
+	files are installed. (This has been obsoleted by the
+	%postinstall directive)</DD>
+
+	<DT>%license <I>license file</I></DT>
+
+	<DD>Specifies the file to display as the software
+	license.</DD>
+
+	<DT>%packager <I>name of packager</I></DT>
+
+	<DD>Specifies the name of the packager.</DD>
+
+	<DT>%patch <I>script or program</I></DT>
+
+	<DD>Specifies a script or program to be run after all
+	files are patched. (This has been obsoleted by the
+	%postpatch directive)</DD>
+
+	<DT>%postinstall <I>script or program</I></DT>
+
+	<DD>Specifies a script or program to be run after all
+	files are installed.</DD>
+
+	<DT>%postpatch <I>script or program</I></DT>
+
+	<DD>Specifies a script or program to be run after all
+	files are patched.</DD>
+
+	<DT>%postremove <I>script or program</I></DT>
+
+	<DD>Specifies a script or program to be run after removing files.</DD>
+
+	<DT>%preinstall <I>script or program</I></DT>
+
+	<DD>Specifies a script or program to be run before all
+	files are installed.</DD>
+
+	<DT>%prepatch <I>script or program</I></DT>
+
+	<DD>Specifies a script or program to be run before all
+	files are patched.</DD>
+
+	<DT>%preremove <I>script or program</I></DT>
+
+	<DD>Specifies a script or program to be run before removing files.</DD>
+
+	<DT>%product <I>product name</I></DT>
+
+	<DD>Specifies the product name.</DD>
+
+	<DT>%readme <I>readme file</I></DT>
+
+	<DD>Specifies a README file to be included in the distribution.</DD>
+
+	<DT>%remove <I>script or program</I></DT>
+
+	<DD>Specifies a script or program to be run before removing files.
+	(This has been obsoleted by the %preremove directive)</DD>
+
+	<DT>%release <I>number</I></DT>
+
+	<DD>Specifies the release or build number of a product
+	(defaults to 0).</DD>
+
+	<DT>%replaces <I>product</I></DT>
+
+	<DD>Indicates that this product replaces the named product.</DD>
+
+	<DT>%requires <I>product</I></DT>
+
+	<DT>%requires <I>filename</I></DT>
+
+	<DD>Indicates that this product requires the named product or file.</DD>
+
+	<DT>%vendor <I>vendor or author name</I></DT>
+
+	<DD>Specifies the vendor or author of the product.</DD>
+
+	<DT>%version <I>version number</I></DT>
+
+	<DD>Specifies the version number of the product.</DD>
+
+	<DT>%system <I>system[-release] [... system[-release]]</I></DT>
+
+	<DD>Specifies that the following files should only be
+	used for the specified operating systems and
+	releases.</DD>
+
+	<DT>%system !<I>system[-release] [... system[-release]]</I></DT>
+
+	<DD>Specifies that the following files should not be
+	used for the specified operating systems and
+	releases.</DD>
+
+	<DT>%system all</DT>
+
+	<DD>Specifies that the following files are applicable to
+	all operating systems.</DD>
+
+	<DT>c <I>mode user group destination source</I></DT>
+
+	<DT>C <I>mode user group destination source</I></DT>
+
+	<DD>Specifies a configuration file for installation. The
+	second form specifies that the file has changed or is
+	new and should be included as part of a patch.
+	Configuration files are installed as "destination.N" if
+	the destination already exists.</DD>
+
+	<DT>d <I>mode user group destination -</I></DT>
+
+	<DT>D <I>mode user group destination -</I></DT>
+
+	<DD>Specifies a directory should be created when
+	installing the software. The second form specifies that
+	the directory is new and should be included as part of a
+	patch.</DD>
+
+	<DT>f <I>mode user group destination source</I></DT>
+
+	<DT>F <I>mode user group destination source</I></DT>
+
+	<DD>Specifies a file for installation. The second form
+	specifies that the file has changed or is new and should
+	be included as part of a patch.</DD>
+
+	<DT>f <I>mode user group destination source/pattern</I></DT>
+
+	<DT>F <I>mode user group destination source/pattern</I></DT>
+
+	<DD>Specifies one or more files for installation using
+	shell wildcard patterns. The second form specifies that
+	the files have changed or are new and should be included
+	as part of a patch.</DD>
+
+	<DT>i <I>mode user group service-name source</I></DT>
+
+	<DT>I <I>mode user group service-name source</I></DT>
+
+	<DD>Specifies an initialization script for installation.
+	The second form specifies that the file has changed or
+	is new and should be included as part of a patch.
+	Initialization scripts are stored in
+	<VAR>/etc/software/init.d</VAR> and are linked to the
+	appropriate system-specific directories for run levels
+	0, 2, 3, and 5. Initialization scripts <B>must</B>
+	accept at least the <I>start</I> and <I>stop</I>
+	commands.</DD>
+
+	<DT>l <I>mode user group destination source</I></DT>
+
+	<DT>L <I>mode user group destination source</I></DT>
+
+	<DD>Specifies a symbolic link in the installation. The
+	second form specifies that the link has changed or is
+	new and should be included as part of a patch.</DD>
+
+	<DT>R <I>mode user group destination</I></DT>
+
+	<DD>Specifies that the file is to be removed upon
+	patching.  The <I>user</I> and <I>group</I> fields are
+	ignored.  The <I>mode</I> field is only used to
+	determine if a check should be made for a previous
+	version of the file.</DD>
+
+</DL></UL>
+
+<H2>List Variables</H2>
+
+<P><I>EPM</I> maintains a list of variables and their values
+which can be used to substitute values in the list file. These
+variables are imported from the current environment and taken
+from the command-line and list file as provided. Substitutions
+occur when the variable name is referenced with the dollar sign
+($):</P>
+
+<UL><PRE>
+%install echo What is your name:
+%install read $$name
+%install echo Your name is $$name
+
+f 0555 root sys ${bindir}/foo foo
+f 0555 root sys $datadir/foo/foo.dat foo.dat
+</PRE></UL>
+
+<P>Variable names can be surrounded by curley brackets (${name})
+or alone ($name); without brackets the name is terminated by the
+first slash (/), dash (-), or whitespace. The dollar sign can be
+inserted using $$.</P>
 
 </BODY>
 </HTML>

@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.list.man,v 1.1 2001/06/20 18:34:56 mike Exp $"
+.\" "$Id: epm.list.man,v 1.2 2001/06/20 19:56:53 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM) list file format.
 .\"
@@ -192,7 +192,7 @@ Specifies an initialization script for installation. The second form
 specifies that the file has changed or is new and should be included as
 part of a patch. Initialization scripts are stored in /etc/software/init.d and
 are linked to the appropriate system-specific directories for run levels 0,
-2, 3, and 5. Initialization scripts \fBmust\fR accepts at least the \fIstart\fR
+2, 3, and 5. Initialization scripts \fBmust\fR accept at least the \fIstart\fR
 and \fIstop\fR commands.
 .TP 5
 l \fImode user group destination source\fR
@@ -245,5 +245,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.list.man,v 1.1 2001/06/20 18:34:56 mike Exp $".
+.\" End of "$Id: epm.list.man,v 1.2 2001/06/20 19:56:53 mike Exp $".
 .\"
