@@ -1,9 +1,9 @@
 /*
- * "$Id: aix.c,v 1.15 2003/11/07 14:58:49 mike Exp $"
+ * "$Id: aix.c,v 1.16 2004/03/05 05:24:34 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2003 by Easy Software Products.
+ *   Copyright 1999-2004 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -64,7 +64,8 @@ static const char	*files[] =	/* Control files... */
 			  "inventory",
 			  "post_i",
 			  "pre_i",
-			  "unpost_i"
+			  "unpost_i",
+                          "unpre_i"
 			};
 
 
@@ -454,6 +455,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   command_t		*c;		/* Current command */
   file_t		*file;		/* Current distribution file */
   int			configcount;	/* Number of config files */
+  int 			shared_file;	/* Shared file? */
 
 
  /*
@@ -487,12 +489,29 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
           if (root)
             qprintf(fp, "./etc/rc.d/rc2.d/S99%s\n", file->dst);
 	  break;
+
       default :
-          if ((strcmp(file->dst, "/usr") ||
-	       strncmp(file->dst, "/usr/", 5) ||
-	       strcmp(file->dst, "/opt") ||
-	       strncmp(file->dst, "/opt/", 5)) == root)
+          shared_file = !(strcmp(file->dst, "/usr") && 
+                          strncmp(file->dst, "/usr/", 5) && 
+                          strcmp(file->dst, "/opt") && 
+                          strncmp(file->dst, "/opt/", 5));
+
+         /*
+	  * Put file in root or share .al file as appropriate
+          */
+
+          if ((shared_file && !root) || (!shared_file && root))
             qprintf(fp, ".%s\n", file->dst);
+
+         /*
+	  * Put any root file in the share .al so it will be extracted
+	  * to /usr/lpp/<prodname>/inst_root directory.  I have no
+	  * idea if this is really the way to do it but it seems to
+	  * work...
+	  */
+
+          if (!shared_file && !root)
+            qprintf(fp, "./usr/lpp/%s/inst_root%s\n", prodname, file->dst);
 	  break;
     }
 
@@ -519,9 +538,9 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c' &&
         (strcmp(file->dst, "/usr") ||
-	       strncmp(file->dst, "/usr/", 5) ||
-	       strcmp(file->dst, "/opt") ||
-	       strncmp(file->dst, "/opt/", 5)) == root)
+	 strncmp(file->dst, "/usr/", 5) ||
+	 strcmp(file->dst, "/opt") ||
+	 strncmp(file->dst, "/opt/", 5)) == root)
     {
       qprintf(fp, ".%s hold_new\n", file->dst);
       configcount ++;
@@ -607,6 +626,33 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fclose(fp);
 
    /*
+    * Write the product.unpre_i file for installp...
+    */
+
+    if (Verbosity > 1)
+      puts("	Creating .unpre_i file...");
+
+    snprintf(filename, sizeof(filename), "%s/%s.unpre_i", directory, prodname);
+
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create .unpre_i file \"%s\" - %s\n", filename,
+	      strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_PRE_REMOVE)
+	fprintf(fp, "%s\n", c->command);
+
+    fclose(fp);
+
+   /*
     * Write the product.unpost_i file for installp...
     */
 
@@ -628,7 +674,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
-      if (c->type == COMMAND_PRE_REMOVE)
+     if (c->type == COMMAND_POST_REMOVE)
 	fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -697,6 +743,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 	    fprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
 	  break;
     }
+
     fprintf(fp, "    owner=%s\n", file->user);
     fprintf(fp, "    group=%s\n", file->group);
     fprintf(fp, "    mode=%04o\n", file->mode);
@@ -757,6 +804,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   return (0);
 }
 
+
 /*
- * End of "$Id: aix.c,v 1.15 2003/11/07 14:58:49 mike Exp $".
+ * End of "$Id: aix.c,v 1.16 2004/03/05 05:24:34 mike Exp $".
  */

@@ -1,9 +1,9 @@
 /*
- * "$Id: qprintf.c,v 1.4 2003/01/27 21:48:03 mike Exp $"
+ * "$Id: qprintf.c,v 1.5 2004/03/05 05:24:34 mike Exp $"
  *
  *   Quoted fprintf function for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2003 by Easy Software Products.
+ *   Copyright 1999-2004 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -216,6 +216,6 @@ qprintf(FILE       *fp,		/* I - File to write to */
 
 
 /*
- * End of "$Id: qprintf.c,v 1.4 2003/01/27 21:48:03 mike Exp $".
+ * End of "$Id: qprintf.c,v 1.5 2004/03/05 05:24:34 mike Exp $".
  */
 

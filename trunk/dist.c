@@ -1,9 +1,9 @@
 /*
- * "$Id: dist.c,v 1.52 2003/08/07 14:14:40 mike Exp $"
+ * "$Id: dist.c,v 1.53 2004/03/05 05:24:34 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2003 by Easy Software Products.
+ *   Copyright 1999-2004 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ add_depend(dist_t     *dist,		/* I - Distribution */
     * Handle <version, >version, etc.
     */
 
-    if (!isdigit((int)*line))
+    if (!isalnum((int)*line))
     {
       if (*line == '<' && i == 0)
       {
@@ -378,8 +378,53 @@ void
 get_platform(struct utsname *platform)	/* O - Platform info */
 {
   char	*temp;				/* Temporary pointer */
+#ifdef __APPLE__
+  FILE	*fp;				/* SystemVersion.plist file */
+  char	line[1024],			/* Line from file */
+	*ptr;				/* Pointer into line */
+  int	major, minor;			/* Major and minor release numbers */
 
 
+ /*
+  * Try to get the OS version number from the SystemVersion.plist file.
+  * If not present, use the uname() results for Darwin...
+  */
+
+  if ((fp = fopen("/System/Library/CoreServices/SystemVersion.plist", "r")) != NULL)
+  {
+    ptr = NULL;
+
+    while (fgets(line, sizeof(line), fp) != NULL)
+      if ((ptr = strstr(line, "ProductUserVisibleVersion")) != NULL)
+        break;
+      else if ((ptr = strstr(line, "ProductVersion")) != NULL)
+        break;
+
+    if (ptr && fgets(line, sizeof(line), fp) != NULL)
+    {
+      major = 10;
+      minor = 2;
+
+      if ((ptr = strstr(line, "<string>")) != NULL)
+        sscanf(ptr + 8, "%d.%d", &major, &minor);
+
+      sprintf(platform->release, "%d.%d", major, minor);
+    }
+    else
+    {
+     /*
+      * Couldn't find the version number, so assume it is 10.1...
+      */
+
+      strcpy(platform->release, "10.1");
+    }
+
+    fclose(fp);
+
+    strcpy(platform->sysname, "macosx");
+  }
+  else
+#endif /* __APPLE__ */
  /*
   * Get the system identification information...
   */
@@ -974,11 +1019,29 @@ sort_dist_files(dist_t *dist)	/* I - Distribution to sort */
   */
 
   for (i = dist->num_files - 1, file = dist->files; i > 0; i --, file ++)
-    if (strcmp(file[0].dst, file[1].dst) == 0)
+    if (!strcmp(file[0].dst, file[1].dst))
     {
-      memcpy(file, file + 1, i * sizeof(file_t));
-      dist->num_files --;
-      file --;
+      if (file[0].type == file[1].type && file[0].mode == file[1].mode &&
+          !strcmp(file[0].src, file[1].src) &&
+          !strcmp(file[0].user, file[1].user) &&
+	  !strcmp(file[0].group, file[1].group) &&
+	  !strcmp(file[0].options, file[1].options))
+      {
+       /*
+        * Ignore exact duplicates...
+	*/
+
+	memcpy(file, file + 1, i * sizeof(file_t));
+	dist->num_files --;
+	file --;
+      }
+      else
+        fprintf(stderr, "epm: Duplicate destination path \"%s\" with different info!\n"
+	                "     \"%c %04o %s %s\" from source \"%s\"\n"
+			"     \"%c %04o %s %s\" from source \"%s\"\n",
+	        file[0].dst,
+		file[0].type, file[0].mode, file[0].user, file[0].group, file[0].src,
+		file[1].type, file[1].mode, file[1].user, file[1].group, file[1].src);
     }
 }
 
@@ -1366,8 +1429,11 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 
 	  *ptr = '\0';
 
-          if (strncmp(value, "dunix", 5) == 0)
+          if (!strncmp(value, "dunix", 5))
 	    memcpy(value, "tru64", 5); /* Keep existing nul/version */
+          else if (!strncmp(value, "darwin", 6) &&
+	           !strcmp(platform->sysname, "macosx"))
+	    memcpy(value, "macosx", 6); /* Keep existing nul/version */
 
           if ((ptr = strchr(value, '-')) != NULL)
 	    len = ptr - value;
@@ -1798,9 +1864,10 @@ get_vernumber(const char *version)	/* I - Version string */
 
   memset(numbers, 0, sizeof(numbers));
 
-  for (ptr = version, offset = 0, temp = 0, nnumbers = 0;
-       *ptr && !isspace((int)*ptr);
-       ptr ++)
+  for (ptr = version; *ptr && !isdigit((int)*ptr); ptr ++);
+    /* Skip leading letters, periods, etc. */
+
+  for (offset = 0, temp = 0, nnumbers = 0; *ptr && !isspace((int)*ptr); ptr ++)
     if (isdigit((int)*ptr))
       temp = temp * 10 + *ptr - '0';
     else
@@ -1972,5 +2039,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.52 2003/08/07 14:14:40 mike Exp $".
+ * End of "$Id: dist.c,v 1.53 2004/03/05 05:24:34 mike Exp $".
  */

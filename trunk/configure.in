@@ -1,9 +1,9 @@
 dnl
-dnl "$Id: configure.in,v 1.67 2003/07/23 21:41:08 mike Exp $"
+dnl "$Id: configure.in,v 1.68 2004/03/05 05:24:34 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
-dnl   Copyright 1999-2003 by Easy Software Products, all rights reserved.
+dnl   Copyright 1999-2004 by Easy Software Products, all rights reserved.
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=3.7.0
-VERNUMBER=370
+VERSION=3.7.1
+VERNUMBER=371
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -188,7 +188,7 @@ if test -n "$GCC"; then
 	OLDCFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -fno-rtti"
 	AC_TRY_COMPILE(,,
-		OPTIM="$OPTIM -fno-rtti"
+		CXXFLAGS="$CXXFLAGS -fno-rtti"
 		AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no))
 	CFLAGS="$OLDCFLAGS"
@@ -198,7 +198,7 @@ if test -n "$GCC"; then
 	OLDCFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -fno-exceptions"
 	AC_TRY_COMPILE(,,
-		OPTIM="$OPTIM -fno-exceptions"
+		CXXFLAGS="$CXXFLAGS -fno-exceptions"
 		AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no))
 	CFLAGS="$OLDCFLAGS"
@@ -212,7 +212,7 @@ if test -n "$GCC"; then
 			OLDCFLAGS="$CFLAGS"
 			CFLAGS="$CFLAGS -fpermissive"
 			AC_TRY_COMPILE(,,
-				OPTIM="$OPTIM -fpermissive"
+				CXXFLAGS="$CXXFLAGS -fpermissive"
 				AC_MSG_RESULT(yes),
 				AC_MSG_RESULT(no))
 			CFLAGS="$OLDCFLAGS"
@@ -384,5 +384,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist)
 
 dnl
-dnl End of "$Id: configure.in,v 1.67 2003/07/23 21:41:08 mike Exp $".
+dnl End of "$Id: configure.in,v 1.68 2004/03/05 05:24:34 mike Exp $".
 dnl

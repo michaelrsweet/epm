@@ -1,9 +1,9 @@
 .\"
-.\" "$Id: epm.man,v 1.14 2003/07/24 01:20:56 mike Exp $"
+.\" "$Id: epm.man,v 1.15 2004/03/05 05:24:34 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
-.\"   Copyright 1999-2003 by Easy Software Products, all rights reserved.
+.\"   Copyright 1999-2004 by Easy Software Products, all rights reserved.
 .\"
 .\"   This program is free software; you can redistribute it and/or modify
 .\"   it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ epm.list(5) - epm list file format
 .br
 setup(1) - graphical setup program for the esp package manager
 .SH COPYRIGHT
-Copyright 1999-2003 by Easy Software Products, All Rights Reserved.
+Copyright 1999-2004 by Easy Software Products, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -175,5 +175,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.14 2003/07/24 01:20:56 mike Exp $".
+.\" End of "$Id: epm.man,v 1.15 2004/03/05 05:24:34 mike Exp $".
 .\"
