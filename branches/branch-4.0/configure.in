@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.52.2.9 2003/01/03 20:23:19 mike Exp $"
+dnl "$Id: configure.in,v 1.52.2.10 2003/01/24 03:02:27 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -136,6 +136,10 @@ else
 	EPMEDITOR="epmeditor"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
+
+	if "$uname" = Darwin; then
+		GUILIBS="$GUILIBS --framework Security"
+	fi
 fi
 
 AC_SUBST(EPMEDITOR)
@@ -378,5 +382,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52.2.9 2003/01/03 20:23:19 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52.2.10 2003/01/24 03:02:27 mike Exp $".
 dnl

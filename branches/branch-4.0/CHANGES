@@ -12,14 +12,15 @@ WHAT'S NEW IN EPM 4.0?
 	  subpackages, depending on the package format.
 
 
-WHAT'S NEW IN EPM 3.5.2?
+WHAT'S NEW IN EPM 3.6?
 
-    EPM 3.5.2 adds the following features, fixes, and changes to
+    EPM 3.6 adds the following features, fixes, and changes to
     EPM 3.5.1:
 
-	- Debian packages did not include the (required but
-	  undocumented) trailing period when running the
-	  update-rc.d script.
+	- MacOS X portable packages now support graphical setup
+	  using the Apple authorization API.
+	- Debian packages did not include the (required)
+	  trailing period when running the update-rc.d script.
 	- BSD packages now create directories using postinstall
 	  commands instead of listing them directly.  This
 	  should eliminate errors from the FreeBSD pkg_delete
