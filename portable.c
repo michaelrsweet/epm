@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.20 2001/03/03 21:29:48 mike Exp $"
+ * "$Id: portable.c,v 1.21 2001/03/05 13:24:18 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -544,7 +544,7 @@ write_commands(dist_t *dist,		/* I - Distribution */
 
     for (; i > 0; i --, c ++)
       if (c->type == type)
-        if (fprintf(fp, "%s\n", dist->commands[i].command) < 1)
+        if (fprintf(fp, "%s\n", c->command) < 1)
         {
           perror("epm: Error writing command");
           return (-1);
@@ -1600,5 +1600,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.20 2001/03/03 21:29:48 mike Exp $".
+ * End of "$Id: portable.c,v 1.21 2001/03/05 13:24:18 mike Exp $".
  */
