@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.30 2001/05/11 14:42:12 mike Exp $"
+dnl "$Id: configure.in,v 1.31 2001/05/11 20:07:19 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=2.6
-VERNUMBER=260
+VERSION=2.7
+VERNUMBER=270
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -172,9 +172,9 @@ else
 	SETUPLIBS=""
 
 	if test x$ac_cv_prog_CXX = x; then
-		AC_MSG_WARN(C++ compiler not available so setup GUI will not be built.)
+		AC_MSG_WARN(Setup GUI requires C++ compiler.)
 	else
-		AC_MSG_WARN(Static FLTK library not available so setup GUI will not be built.)
+		AC_MSG_WARN(Setup GUI requires static FLTK library.)
 	fi
 fi
 
@@ -220,6 +220,17 @@ if test -n "$GCC"; then
 	fi
 else
 	case $uname in
+		AIX*)
+			if test -z "$OPTIM"; then
+				OPTIM="-O2"
+			fi
+			;;
+		HP-UX*)
+			if test -z "$OPTIM"; then
+				OPTIM="+O2"
+			fi
+			OPTIM="$OPTIM +DAportable"
+			;;
         	IRIX*)
 			if test -z "$OPTIM"; then
         			OPTIM="-O2"
@@ -231,12 +242,6 @@ else
 			else
 				OPTIM="-fullwarn $OPTIM"
 			fi
-			;;
-		HP-UX*)
-			if test -z "$OPTIM"; then
-				OPTIM="+O2"
-			fi
-			OPTIM="$OPTIM +DAportable"
 			;;
 		SunOS*)
 			# Solaris
@@ -335,5 +340,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.30 2001/05/11 14:42:12 mike Exp $".
+dnl End of "$Id: configure.in,v 1.31 2001/05/11 20:07:19 mike Exp $".
 dnl

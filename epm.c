@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.49 2001/04/25 20:27:48 mike Exp $"
+ * "$Id: epm.c,v 1.50 2001/05/11 20:07:19 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -392,6 +392,8 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   strcpy(platform->machine, "mips");
 #elif defined(__hpux)
   strcpy(platform->machine, "hppa");
+#elif defined(_AIX)
+  strcpy(platform->machine, "powerpc");
 #else
   for (temp = platform->machine; *temp != '\0'; temp ++)
     if (*temp == '-' || *temp == '_')
@@ -408,6 +410,15 @@ get_platform(struct utsname *platform)	/* O - Platform info */
     strcpy(platform->machine, "sparc");
 #endif /* __sgi */
 
+#ifdef _AIX
+ /*
+  * AIX stores the major and minor version numbers separately;
+  * combine them...
+  */
+
+  sprintf(platform->release, "%d.%d", atoi(platform->version),
+          atoi(platform->release));
+#else
  /*
   * Remove any extra junk from the release number - we just want the
   * major and minor numbers...
@@ -425,6 +436,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
     for (temp ++; *temp && isdigit((int)*temp); temp ++);
 
   *temp = '\0';
+#endif /* _AIX */
 
  /*
   * Convert the operating system name to lowercase, and strip out
@@ -452,7 +464,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
     platform->release[0] -= 3;
   }
   else if (strcmp(platform->sysname, "osf1") == 0)
-    strcpy(platform->sysname, "dunix"); /* AKA Compaq Tru64 UNIX */
+    strcpy(platform->sysname, "tru64"); /* AKA Digital UNIX */
   else if (strcmp(platform->sysname, "irix64") == 0)
     strcpy(platform->sysname, "irix"); /* IRIX */
 
@@ -514,5 +526,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.49 2001/04/25 20:27:48 mike Exp $".
+ * End of "$Id: epm.c,v 1.50 2001/05/11 20:07:19 mike Exp $".
  */

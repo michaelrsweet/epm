@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.30 2001/04/25 20:27:48 mike Exp $"
+ * "$Id: dist.c,v 1.31 2001/05/11 20:07:19 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -828,6 +828,9 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	  while (isspace((int)*bufptr))
 	    bufptr ++;
 
+          if (strncmp(value, "dunix", 5) == 0)
+	    memcpy(value, "tru64", 5); /* Keep existing nul/version */
+
           if ((ptr = strchr(value, '-')) != NULL)
 	    len = ptr - value;
 	  else
@@ -1088,5 +1091,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.30 2001/04/25 20:27:48 mike Exp $".
+ * End of "$Id: dist.c,v 1.31 2001/05/11 20:07:19 mike Exp $".
  */
