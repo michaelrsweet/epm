@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.19 2001/01/23 13:35:43 mike Exp $"
+ * "$Id: dist.c,v 1.20 2001/01/24 15:25:13 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -750,6 +750,8 @@ patmatch(const char *s,		/* I - String to match against */
       if (*pat == ']')
         pat ++;
 
+      s ++;
+
       continue;
     }
     else if (*pat == '\\')
@@ -779,5 +781,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.19 2001/01/23 13:35:43 mike Exp $".
+ * End of "$Id: dist.c,v 1.20 2001/01/24 15:25:13 mike Exp $".
  */
