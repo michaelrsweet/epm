@@ -9,6 +9,9 @@ WHAT'S NEW IN EPM 4.0?
 	- No longer install init scripts in run levels 2 and 5
 	  under Solaris, which runs all init scripts in each run
 	  level.
+	- Tar files created by EPM now conform to the POSIX
+	  standard, including the long filename support (up to
+	  255 chars...)
 
 
 WHAT'S NEW IN EPM 3.3?

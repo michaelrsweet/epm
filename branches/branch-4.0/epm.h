@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.27.2.5 2002/05/20 00:47:57 mike Exp $"
+ * "$Id: epm.h,v 1.27.2.6 2002/06/03 16:46:23 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -75,7 +75,8 @@ extern "C" {
 #  define TAR_BLOCK	512		/* Number of bytes in a block */
 #  define TAR_BLOCKS	10		/* Blocking factor */
 
-#  define TAR_MAGIC	"ustar  "	/* 7 chars and a null */
+#  define TAR_MAGIC	"ustar"		/* 5 chars and a null */
+#  define TAR_VERSION	"00"		/* POSIX tar version */
 
 #  define TAR_OLDNORMAL	'\0'		/* Normal disk file, Unix compat */
 #  define TAR_NORMAL	'0'		/* Normal disk file */
@@ -149,11 +150,13 @@ typedef union				/**** TAR record format ****/
 		chksum[8],		/* Octal checksum value */
 		linkflag,		/* File type */
 		linkname[100],		/* Source path for link */
-		magic[8],		/* Magic string */
+		magic[6],		/* Magic string */
+		version[2],		/* Format version */
 		uname[32],		/* User name */
 		gname[32],		/* Group name */
 		devmajor[8],		/* Octal device major number */
-		devminor[8];		/* Octal device minor number */
+		devminor[8],		/* Octal device minor number */
+		prefix[155];		/* Prefix for long filenames */
   }	header;
 } tar_t;
 
@@ -304,5 +307,5 @@ extern int	write_dist(const char *listname, dist_t *dist);
 
 
 /*
- * End of "$Id: epm.h,v 1.27.2.5 2002/05/20 00:47:57 mike Exp $".
+ * End of "$Id: epm.h,v 1.27.2.6 2002/06/03 16:46:23 mike Exp $".
  */
