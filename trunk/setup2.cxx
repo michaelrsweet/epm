@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.16 2001/07/02 14:26:54 mike Exp $"
+// "$Id: setup2.cxx,v 1.17 2001/07/02 21:44:10 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -84,11 +84,11 @@ main(int  argc,		// I - Number of command-line arguments
   Fl_Window	*w;	// Main window...
 
 
-//  if (getuid() != 0)
-//  {
-//    fl_alert("You must be logged in as root to run setup!");
-//    return (1);
-//  }
+  if (getuid() != 0)
+  {
+    fl_alert("You must be logged in as root to run setup!");
+    return (1);
+  }
 
   w = make_window();
 
@@ -1066,5 +1066,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.16 2001/07/02 14:26:54 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.17 2001/07/02 21:44:10 mike Exp $".
 //
