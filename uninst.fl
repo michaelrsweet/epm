@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0103 
+version 1.0104 
 header_name {.h} 
 code_name {.cxx}
 Function {make_window()} {open
@@ -12,103 +12,103 @@ Function {make_window()} {open
     code0 {\#include "gui-common.h"} visible
   } {
     Fl_Wizard Wizard {open
-      xywh {0 0 580 300}
+      xywh {10 10 560 290}
     } {
       Fl_Group WelcomePane {
-        xywh {10 10 560 280} box FLAT_BOX
+        xywh {10 10 560 290} hide
       } {
         Fl_Box {} {
-          label {Welcome to the Software Removal Wizard} selected
-          xywh {10 10 560 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+          label {Welcome to the Software Removal Wizard}
+          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Box WelcomeImage {
-          xywh {40 50 500 180} align 21
+          xywh {20 50 540 180} align 16
         }
         Fl_Box {} {
           label {This wizard will remove the software you select from your system.
 
 To select software for removal, please click on the "Next" button below.}
-          xywh {40 235 500 55} align 149
+          xywh {20 235 540 55} align 149
         }
       }
-      Fl_Group SoftwarePane {open
-        xywh {10 10 560 285} box FLAT_BOX hide
+      Fl_Group SoftwarePane {
+        xywh {10 10 560 290} hide
       } {
         Fl_Box {} {
           label {Software Selection}
-          xywh {10 10 560 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Box {} {
           label {Please select the software you would like to remove and click on the "Next" button below.}
-          xywh {40 55 370 35} align 149
+          xywh {20 55 540 35} align 149
         }
         Fl_Check_Browser SoftwareList {
           label { Available Software:}
           callback list_cb
-          xywh {40 120 500 135} type Multi box DOWN_BOX selection_color 7 align 5 when 3
+          xywh {20 120 540 135} type Multi box DOWN_BOX selection_color 7 align 5 when 3
         }
         Fl_Box SoftwareSize {
           label {0k marked for removal.}
-          xywh {40 260 280 35} box FLAT_BOX align 20
+          xywh {20 265 265 25} align 20
         }
         Fl_Button RemoveAllButton {
           label {Remove All}
           callback {SoftwareList->check_all();
 list_cb(0,0);}
-          xywh {330 265 90 25}
+          xywh {295 265 120 25}
         }
         Fl_Button RemoveNoneButton {
           label {Remove None}
           callback {SoftwareList->check_none();
 list_cb(0,0);}
-          xywh {430 265 110 25}
+          xywh {425 265 135 25}
         }
       }
-      Fl_Group ConfirmPane {open
-        xywh {10 10 560 280} box FLAT_BOX hide
+      Fl_Group ConfirmPane {
+        xywh {10 10 560 290} hide
       } {
         Fl_Box {} {
           label {Confirm Removal}
-          xywh {10 10 560 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Box {} {
           label {You have selected the software below for removal. Click on the "Next" button to start the software removal or the "Back" button to change your selections.}
-          xywh {40 55 500 50} align 149
+          xywh {20 55 540 50} align 149
         }
         Fl_Browser ConfirmList {
-          xywh {40 110 500 180}
+          xywh {20 110 540 180}
         }
       }
-      Fl_Group RemovePane {open
-        xywh {10 10 555 280} box FLAT_BOX hide
+      Fl_Group RemovePane {
+        xywh {10 10 560 290}
       } {
         Fl_Box {} {
           label {Removing Software...}
-          xywh {10 10 430 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Progress RemovePercent {
           label {Progress Label...}
-          xywh {40 75 525 15} selection_color 63 labelfont 2 align 5
+          xywh {20 75 540 15} selection_color 63 labelfont 2 align 5
         }
-        Fl_Browser RemoveLog {
-          xywh {40 100 525 190}
+        Fl_Browser RemoveLog {selected
+          xywh {20 100 540 190}
         }
       }
     }
     Fl_Button PrevButton {
       label {@-2< Back}
       callback {Wizard->prev();}
-      xywh {345 310 70 25}
+      xywh {280 310 90 25}
     }
     Fl_Button NextButton {
       label {Next @-2>}
       callback next_cb
-      xywh {425 310 70 25}
+      xywh {380 310 90 25}
     }
     Fl_Button CancelButton {
       label Cancel
       callback {exit(0);}
-      xywh {505 310 65 25}
+      xywh {480 310 90 25}
     }
   }
 } 
