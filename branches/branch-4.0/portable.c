@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63.2.23 2004/08/29 04:17:44 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.24 2004/10/26 02:44:56 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -20,8 +20,9 @@
  *   make_portable()      - Make a portable software distribution package.
  *   write_commands()     - Write commands.
  *   write_common()       - Write the common shell script header.
- *   write_distfiles()    - Write a software distribution...
  *   write_confcheck()    - Write the echo check to find the right echo options.
+ *   write_distfiles()    - Write a software distribution...
+ *   write_instfiles()    - Write the installer files to the tar file...
  *   write_install()      - Write the installation script.
  *   write_patch()        - Write the patch script.
  *   write_remove()       - Write the removal script.
@@ -39,25 +40,37 @@
  * Local functions...
  */
 
-static int	write_commands(dist_t *dist, FILE *fp, int type);
+static int	write_combined(const char *title, const char *directory,
+		               const char *prodname, const char *platname,
+			       dist_t *dist, const char **files,
+			       time_t deftime, const char *setup,
+			       const char *types);
+static int	write_commands(dist_t *dist, FILE *fp, int type,
+		               const char *subpackage);
 static FILE	*write_common(dist_t *dist, const char *title,
 			      int rootsize, int usrsize,
 		              const char *filename);
-static int	write_depends(dist_t *dist, FILE *fp);
-static int	write_distfiles(const char *title, const char *directory,
-		                const char *prodname, const char *platname,
-			        dist_t *dist, const char **files,
-			        const char *setup, const char *types);
 static int	write_confcheck(FILE *fp);
+static int	write_depends(dist_t *dist, FILE *fp, const char *subpackage);
+static int	write_distfiles(const char *directory, const char *prodname,
+		                const char *platname, dist_t *dist,
+				time_t deftime, const char *subpackage);
 static int	write_install(dist_t *dist, const char *prodname,
 			      int rootsize, int usrsize,
-		              const char *directory);
+		              const char *directory,
+		              const char *subpackage);
+static int	write_instfiles(tarf_t *tarfile, const char *directory,
+		                const char *prodname, const char *platname,
+			        const char **files, const char *destdir,
+				const char *subpackage);
 static int	write_patch(dist_t *dist, const char *prodname,
 			    int rootsize, int usrsize,
-		            const char *directory);
+		            const char *directory,
+		            const char *subpackage);
 static int	write_remove(dist_t *dist, const char *prodname,
 			     int rootsize, int usrsize,
-		             const char *directory);
+		             const char *directory,
+		             const char *subpackage);
 static int	write_space_checks(const char *prodname, FILE *fp,
 		                   const char *sw, const char *ss);
 
@@ -77,17 +90,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 {
   int		i;			/* Looping var */
   int		havepatchfiles;		/* 1 if we have patch files, 0 otherwise */
-  tarf_t	*tarfile;		/* Distribution tar file */
-  char		swname[255],		/* Name of distribution tar file */
-		pswname[255],		/* Name of patch tar file */
-		filename[1024];		/* Name of temporary file */
   time_t	deftime;		/* File creation time */
-  struct stat	srcstat;		/* Source file information */
   file_t	*file;			/* Software file */
-  int		rootsize,		/* Size of files in root partition */
-		usrsize;		/* Size of files in /usr partition */
-  int		prootsize,		/* Size of patch files in root partition */
-		pusrsize;		/* Size of patch files in /usr partition */
   static const char	*distfiles[] =	/* Distribution files */
 		{
 		  "install",
@@ -125,455 +129,32 @@ make_portable(const char     *prodname,	/* I - Product short name */
 
   havepatchfiles = i > 0;
 
- /*
-  * Copy the license and readme files...
-  */
-
   deftime = time(NULL);
 
-  if (Verbosity)
-    puts("Copying license and readme files...");
-
-  snprintf(filename, sizeof(filename), "%s/%s.license", directory, prodname);
-  if (copy_file(filename, dist->license, 0444, getuid(), getgid()))
-    return (1);
-
-  snprintf(filename, sizeof(filename), "%s/%s.readme", directory, prodname);
-  if (copy_file(filename, dist->readme, 0444, getuid(), getgid()))
-    return (1);
-
  /*
-  * Create the non-shared software distribution file...
+  * Build the main package and all of the subpackages...
   */
 
-  if (Verbosity)
-    puts("Creating non-shared software distribution file...");
-
-  snprintf(swname, sizeof(swname), "%s.sw", prodname);
-  snprintf(filename, sizeof(filename), "%s/%s", directory, swname);
-
-  unlink(filename);
-  if ((tarfile = tar_open(filename, 0)) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
-            filename, strerror(errno));
+  if (write_distfiles(directory, prodname, platname, dist, deftime, NULL))
     return (1);
-  }
 
-  for (i = dist->num_files, file = dist->files, rootsize = 0, prootsize = 0;
-       i > 0;
-       i --, file ++)
-    if (strncmp(file->dst, "/usr", 4) != 0)
-      switch (tolower(file->type))
-      {
-	case 'f' : /* Regular file */
-	case 'c' : /* Config file */
-	case 'i' : /* Init script */
-            if (stat(file->src, &srcstat))
-	    {
-	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
-	              strerror(errno));
-	      tar_close(tarfile);
-	      return (1);
-	    }
-
-            rootsize += (srcstat.st_size + 1023) / 1024;
-
-            if (isupper(file->type))
-              prootsize += (srcstat.st_size + 1023) / 1024;
-
-           /*
-	    * Configuration files are extracted to the config file name with
-	    * .N appended; add a bit of script magic to check if the config
-	    * file already exists, and if not we copy the .N to the config
-	    * file location...
-	    */
-
-	    if (tolower(file->type) == 'c')
-	      snprintf(filename, sizeof(filename), "%s.N", file->dst);
-	    else if (tolower(file->type) == 'i')
-	      snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
-	               file->dst);
-	    else
-              strcpy(filename, file->dst);
-
-            if (Verbosity > 1)
-	      printf("%s -> %s...\n", file->src, filename);
-
-	    if (tar_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
-	                   srcstat.st_mtime, file->user, file->group,
-			   filename, NULL) < 0)
-	    {
-	      fprintf(stderr, "epm: Error writing file header - %s\n",
-	              strerror(errno));
-	      tar_close(tarfile);
-	      return (1);
-	    }
-
-	    if (tar_file(tarfile, file->src) < 0)
-	    {
-	      fprintf(stderr, "epm: Error writing file data - %s\n",
-	              strerror(errno));
-	      tar_close(tarfile);
-	      return (1);
-	    }
-	    break;
-
-	case 'd' : /* Create directory */
-            if (Verbosity > 1)
-	      printf("Directory %s...\n", file->dst);
-
-            rootsize ++;
-
-            if (isupper(file->type))
-              prootsize ++;
-	    break;
-
-	case 'l' : /* Link file */
-            if (Verbosity > 1)
-	      printf("%s -> %s...\n", file->src, file->dst);
-
-	    if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
-	                   file->user, file->group, file->dst, file->src) < 0)
-	    {
-	      fprintf(stderr, "epm: Error writing link header - %s\n",
-	              strerror(errno));
-	      tar_close(tarfile);
-	      return (1);
-	    }
-
-            rootsize ++;
-
-            if (isupper(file->type))
-              prootsize ++;
-	    break;
-      }
-
-  tar_close(tarfile);
-
- /*
-  * Create the shared software distribution file...
-  */
-
-  if (Verbosity)
-    puts("Creating shared software distribution file...");
-
-  snprintf(swname, sizeof(swname), "%s.ss", prodname);
-  snprintf(filename, sizeof(filename), "%s/%s", directory, swname);
-
-  unlink(filename);
-  if ((tarfile = tar_open(filename, 0)) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
-            filename, strerror(errno));
-    return (1);
-  }
-
-  for (i = dist->num_files, file = dist->files, usrsize = 0, pusrsize = 0;
-       i > 0;
-       i --, file ++)
-    if (strncmp(file->dst, "/usr", 4) == 0)
-      switch (tolower(file->type))
-      {
-	case 'f' : /* Regular file */
-	case 'c' : /* Config file */
-	case 'i' : /* Init script */
-            if (stat(file->src, &srcstat))
-	    {
-	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
-	              strerror(errno));
-	      tar_close(tarfile);
-	      return (1);
-	    }
-
-            usrsize += (srcstat.st_size + 1023) / 1024;
-
-            if (isupper(file->type))
-              pusrsize += (srcstat.st_size + 1023) / 1024;
-
-           /*
-	    * Configuration files are extracted to the config file name with
-	    * .N appended; add a bit of script magic to check if the config
-	    * file already exists, and if not we copy the .N to the config
-	    * file location...
-	    */
-
-	    if (tolower(file->type) == 'c')
-	      snprintf(filename, sizeof(filename), "%s.N", file->dst);
-	    else if (tolower(file->type) == 'i')
-	      snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
-	               file->dst);
-	    else
-              strcpy(filename, file->dst);
-
-            if (Verbosity > 1)
-	      printf("%s -> %s...\n", file->src, filename);
-
-	    if (tar_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
-	                   srcstat.st_mtime, file->user, file->group,
-			   filename, NULL) < 0)
-	    {
-	      fprintf(stderr, "epm: Error writing file header - %s\n",
-	              strerror(errno));
-	      tar_close(tarfile);
-	      return (1);
-	    }
-
-	    if (tar_file(tarfile, file->src) < 0)
-	    {
-	      fprintf(stderr, "epm: Error writing file data - %s\n",
-	              strerror(errno));
-	      tar_close(tarfile);
-	      return (1);
-	    }
-	    break;
-
-	case 'd' : /* Create directory */
-            if (Verbosity > 1)
-	      printf("%s...\n", file->dst);
-
-	    usrsize ++;
-
-            if (isupper(file->type))
-              pusrsize ++;
-	    break;
-
-	case 'l' : /* Link file */
-            if (Verbosity > 1)
-	      printf("%s -> %s...\n", file->src, file->dst);
-
-	    if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
-	                   file->user, file->group, file->dst, file->src) < 0)
-	    {
-	      fprintf(stderr, "epm: Error writing link header - %s\n",
-	              strerror(errno));
-	      tar_close(tarfile);
-	      return (1);
-	    }
-
-	    usrsize ++;
-
-            if (isupper(file->type))
-              pusrsize ++;
-	    break;
-      }
-
-  tar_close(tarfile);
-
- /*
-  * Create the patch distribution files...
-  */
-
-  if (havepatchfiles)
-  {
-    if (Verbosity)
-      puts("Creating non-shared software patch file...");
-
-    snprintf(pswname, sizeof(pswname), "%s.psw", prodname);
-    snprintf(filename, sizeof(filename), "%s/%s", directory, pswname);
-
-    unlink(filename);
-    if ((tarfile = tar_open(filename, 0)) == NULL)
-    {
-      fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
-              filename, strerror(errno));
+  for (i = 0; i < dist->num_subpackages; i ++)
+    if (write_distfiles(directory, prodname, platname, dist, deftime,
+                        dist->subpackages[i]))
       return (1);
-    }
-
-    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (strncmp(file->dst, "/usr", 4) != 0)
-	switch (file->type)
-	{
-	  case 'C' : /* Config file */
-	  case 'F' : /* Regular file */
-          case 'I' : /* Init script */
-              if (stat(file->src, &srcstat))
-	      {
-		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
-	        	strerror(errno));
-		tar_close(tarfile);
-		return (1);
-	      }
-
-             /*
-	      * Configuration files are extracted to the config file name with
-	      * .N appended; add a bit of script magic to check if the config
-	      * file already exists, and if not we copy the .N to the config
-	      * file location...
-	      */
-
-	      if (file->type == 'C')
-		snprintf(filename, sizeof(filename), "%s.N", file->dst);
-	      else if (file->type == 'I')
-		snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
-		         file->dst);
-	      else
-        	strcpy(filename, file->dst);
-
-              if (Verbosity > 1)
-		printf("%s -> %s...\n", file->src, filename);
-
-	      if (tar_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
-	                     srcstat.st_mtime, file->user, file->group,
-			     filename, NULL) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing file header - %s\n",
-	        	strerror(errno));
-		tar_close(tarfile);
-		return (1);
-	      }
-
-	      if (tar_file(tarfile, file->src) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing file data - %s\n",
-	        	strerror(errno));
-		tar_close(tarfile);
-		return (1);
-	      }
-	      break;
-
-	  case 'd' : /* Create directory */
-              if (Verbosity > 1)
-		printf("%s...\n", file->dst);
-	      break;
-
-	  case 'L' : /* Link file */
-              if (Verbosity > 1)
-		printf("%s -> %s...\n", file->src, file->dst);
-
-	      if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
-	                     file->user, file->group, file->dst, file->src) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing link header - %s\n",
-	        	strerror(errno));
-		tar_close(tarfile);
-		return (1);
-	      }
-	      break;
-	}
-
-    tar_close(tarfile);
-
-    if (Verbosity)
-      puts("Creating shared software patch file...");
-
-    snprintf(pswname, sizeof(pswname), "%s.pss", prodname);
-    snprintf(filename, sizeof(filename), "%s/%s", directory, pswname);
-
-    unlink(filename);
-    if ((tarfile = tar_open(filename, 0)) == NULL)
-    {
-      fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
-              filename, strerror(errno));
-      return (1);
-    }
-
-    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (strncmp(file->dst, "/usr", 4) == 0)
-	switch (file->type)
-	{
-	  case 'C' : /* Config file */
-	  case 'F' : /* Regular file */
-          case 'I' : /* Init script */
-              if (stat(file->src, &srcstat))
-	      {
-		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
-	        	strerror(errno));
-		tar_close(tarfile);
-		return (1);
-	      }
-
-             /*
-	      * Configuration files are extracted to the config file name with
-	      * .N appended; add a bit of script magic to check if the config
-	      * file already exists, and if not we copy the .N to the config
-	      * file location...
-	      */
-
-	      if (file->type == 'C')
-		snprintf(filename, sizeof(filename), "%s.N", file->dst);
-	      else if (file->type == 'I')
-		snprintf(filename, sizeof(filename), "%s/init.d/%s",
-		         SoftwareDir, file->dst);
-	      else
-        	strcpy(filename, file->dst);
-
-              if (Verbosity > 1)
-		printf("%s -> %s...\n", file->src, filename);
-
-	      if (tar_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
-	                     srcstat.st_mtime, file->user, file->group,
-			     filename, NULL) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing file header - %s\n",
-	        	strerror(errno));
-		tar_close(tarfile);
-		return (1);
-	      }
-
-	      if (tar_file(tarfile, file->src) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing file data - %s\n",
-	        	strerror(errno));
-		tar_close(tarfile);
-		return (1);
-	      }
-	      break;
-
-	  case 'd' : /* Create directory */
-              if (Verbosity > 1)
-		printf("%s...\n", file->dst);
-	      break;
-
-	  case 'L' : /* Link file */
-              if (Verbosity > 1)
-		printf("%s -> %s...\n", file->src, file->dst);
-
-	      if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
-	                     file->user, file->group, file->dst, file->src) < 0)
-	      {
-		fprintf(stderr, "epm: Error writing link header - %s\n",
-	        	strerror(errno));
-		tar_close(tarfile);
-		return (1);
-	      }
-	      break;
-	}
-
-    tar_close(tarfile);
-  }
-
- /*
-  * Create the scripts...
-  */
-
-  if (write_install(dist, prodname, rootsize, usrsize, directory))
-    return (1);
-
-  if (havepatchfiles)
-    if (write_patch(dist, prodname, prootsize, pusrsize, directory))
-      return (1);
-
-  if (write_remove(dist, prodname, rootsize, usrsize, directory))
-    return (1);
 
  /*
   * Create the distribution archives...
   */
 
-  if (write_distfiles("distribution", directory, prodname, platname, dist,
-                      distfiles, setup, types))
+  if (write_combined("distribution", directory, prodname, platname, dist,
+                     distfiles, deftime, setup, types))
     return (1);
 
   if (havepatchfiles)
-  {
-    snprintf(filename, sizeof(filename), "%s-patch", dist->version);
-    strcpy(dist->version, filename);
-
-    if (write_distfiles("patch", directory, prodname, platname, dist, patchfiles,
-                        setup, types))
+    if (write_combined("patch", directory, prodname, platname, dist,
+                       patchfiles, deftime, setup, types))
       return (1);
-  }
 
  /*
   * Return!
@@ -584,13 +165,523 @@ make_portable(const char     *prodname,	/* I - Product short name */
 
 
 /*
+ * 'write_combined()' - Write all of the distribution files in tar files.
+ */
+
+static int				/* O - 0 on success, -1 on failure */
+write_combined(const char *title,	/* I - Title */
+               const char *directory,	/* I - Output directory */
+	       const char *prodname,	/* I - Base product name */
+	       const char *platname,	/* I - Platform name */
+	       dist_t     *dist,	/* I - Distribution */
+	       const char **files,	/* I - Files */
+	       time_t     deftime,	/* I - Default timestamp */
+	       const char *setup,	/* I - Setup program */
+	       const char *types)	/* I - Setup types file */
+{
+  int		i;			/* Looping var */
+  tarf_t	*tarfile;		/* Distribution tar file */
+  char		filename[1024];		/* Name of temporary file */
+  struct stat	srcstat;		/* Source file information */
+  const char	*destdir;		/* Destination directory */
+  const char	*setup_img;		/* Setup image name */
+
+
+ /*
+  * Figure out the filename...
+  */
+
+  if (dist->relnumber)
+    snprintf(filename, sizeof(filename), "%s/%s-%s-%d", directory, prodname,
+             dist->version, dist->relnumber);
+  else
+    snprintf(filename, sizeof(filename), "%s/%s-%s", directory, prodname,
+             dist->version);
+
+  if (!strcmp(title, "patch"))
+    strlcat(filename, "-patch", sizeof(filename));
+
+  if (platname[0])
+  {
+    strlcat(filename, "-", sizeof(filename));
+    strlcat(filename, platname, sizeof(filename));
+  }
+
+  strlcat(filename, ".tar.gz", sizeof(filename));
+
+ /*
+  * Open output file...
+  */
+
+  if ((tarfile = tar_open(filename, 1)) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create output pipe to gzip -\n     %s\n",
+            strerror(errno));
+    return (-1);
+  }
+
+  if (Verbosity)
+    printf("Writing %s archive %s:\n", title, filename);
+
+  destdir = "";
+
+#ifdef __APPLE__
+  if (setup)
+  {
+   /*
+    * Create directories for the setup application...
+    */
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+                   "Install.app", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+                   "Install.app/Contents", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+                   "Install.app/Contents/MacOS", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+                   "Install.app/Contents/Resources", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+   /*
+    * Then copy the data files...
+    */
+
+    snprintf(srcname, sizeof(srcname), "%s/setup.icns", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Install.app/Contents/Resources/setup.icns", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    printf("    %7.2fM setup.icns\n", srcstat.st_size / 1024.0 / 1024.0);
+
+    snprintf(srcname, sizeof(srcname), "%s/setup.info", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Install.app/Contents/PkgInfo", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    printf("    %7.2fM PkgInfo\n", srcstat.st_size / 1024.0 / 1024.0);
+
+    snprintf(srcname, sizeof(srcname), "%s/setup.plist", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Install.app/Contents/Info.plist", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    printf("    %7.2fM Info.plist\n", srcstat.st_size / 1024.0 / 1024.0);
+  }
+
+  destdir = "Install.app/Contents/Resources/";
+#endif /* __APPLE__ */
+
+ /*
+  * Write installer files...
+  */
+
+  if (write_instfiles(tarfile, directory, prodname, platname, files, destdir,
+                      NULL))
+  {
+    tar_close(tarfile);
+    return (-1);
+  }
+
+  for (i = 0; i < dist->num_subpackages; i ++)
+    if (write_instfiles(tarfile, directory, prodname, platname, files, destdir,
+                	dist->subpackages[i]))
+    {
+      tar_close(tarfile);
+      return (-1);
+    }
+
+ /*
+  * Now the setup files...
+  */
+
+  if (setup)
+  {
+   /*
+    * Include the ESP Software Installation Wizard (setup)...
+    */
+
+    if (stat(SetupProgram, &srcstat))
+    {
+      fprintf(stderr, "epm: Unable to stat GUI setup program %s - %s\n",
+	      SetupProgram, strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+#ifdef __APPLE__
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root",
+		   "Install.app/Contents/MacOS/setup", NULL) < 0)
+#else
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
+#endif /* __APPLE__ */
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, SetupProgram) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for setup -\n    %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (Verbosity)
+      printf("    %7.2fM setup\n", srcstat.st_size / 1024.0 / 1024.0);
+
+   /*
+    * And the image file...
+    */
+
+    stat(setup, &srcstat);
+
+    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
+      setup_img = "setup.gif";
+    else
+      setup_img = "setup.xpm";
+
+    snprintf(filename, sizeof(filename), "%s%s", destdir, setup_img);
+
+    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", filename, NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, setup) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      setup_img, strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (Verbosity)
+      printf("    %7.2fM %s\n", srcstat.st_size / 1024.0 / 1024.0, setup_img);
+
+   /*
+    * And the types file...
+    */
+
+    if (types)
+    {
+      stat(types, &srcstat);
+      snprintf(filename, sizeof(filename), "%ssetup.types", destdir);
+
+      if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+		     srcstat.st_mtime, "root", "root", filename, NULL) < 0)
+      {
+	fprintf(stderr, "epm: Error writing file header - %s\n",
+		strerror(errno));
+        tar_close(tarfile);
+	return (-1);
+      }
+
+      if (tar_file(tarfile, types) < 0)
+      {
+	fprintf(stderr, "epm: Error writing file data for setup.types -\n    %s\n",
+		strerror(errno));
+        tar_close(tarfile);
+	return (-1);
+      }
+
+      if (Verbosity)
+        printf("    %7.2fM setup.types\n", srcstat.st_size / 1024.0 / 1024.0);
+    }
+
+   /*
+    * And finally the uninstall stuff...
+    */
+
+#ifdef __APPLE__
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+                   "Uninstall.app", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+                   "Uninstall.app/Contents", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+                   "Uninstall.app/Contents/MacOS", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
+                   "Uninstall.app/Contents/Resources", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+   /*
+    * Then copy the data files...
+    */
+
+    snprintf(srcname, sizeof(srcname), "%s/uninst.icns", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/Resources/uninst.icns", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (Verbosity)
+      printf("    %7.2fM uninst.icns\n", srcstat.st_size / 1024.0 / 1024.0);
+
+    snprintf(srcname, sizeof(srcname), "%s/uninst.info", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/PkgInfo", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (Verbosity)
+      printf("    %7.2fM PkgInfo\n", srcstat.st_size / 1024.0 / 1024.0);
+
+    snprintf(srcname, sizeof(srcname), "%s/uninst.plist", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/Info.plist", NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      tar_close(tarfile);
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    if (Verbosity)
+      printf("    %7.2fM Info.plist\n", srcstat.st_size / 1024.0 / 1024.0);
+#endif /* __APPLE__ */
+
+   /*
+    * Include the ESP Software Removal Wizard (uninst)...
+    */
+
+    if (stat(UninstProgram, &srcstat))
+    {
+      fprintf(stderr, "epm: Unable to stat GUI uninstall program %s - %s\n",
+	      UninstProgram, strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+#ifdef __APPLE__
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/MacOS/uninst", NULL) < 0)
+#else
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "uninst", NULL) < 0)
+#endif /* __APPLE__ */
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, UninstProgram) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for uninst -\n    %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (Verbosity)
+      printf("    %7.2fM uninst\n", srcstat.st_size / 1024.0 / 1024.0);
+
+#ifdef __APPLE__
+   /*
+    * And the image file...
+    */
+
+    stat(setup, &srcstat);
+
+    snprintf(filename, sizeof(filename), "Uninstall.app/Contents/Resources/%s",
+             setup_img);
+
+    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", filename, NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (tar_file(tarfile, setup) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      setup_img, strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    if (Verbosity)
+      printf("    %7.2fM %s\n", srcstat.st_size / 1024.0 / 1024.0, setup_img);
+#endif /* __APPLE__ */
+  }
+
+  tar_close(tarfile);
+
+  if (Verbosity)
+  {
+    stat(filename, &srcstat);
+
+    if (Verbosity)
+      printf("    %7.2fM (total)\n", srcstat.st_size / 1024.0 / 1024.0);
+  }
+
+  return (0);
+}
+
+
+/*
  * 'write_commands()' - Write commands.
  */
 
 static int				/* O - 0 on success, -1 on failure */
-write_commands(dist_t *dist,		/* I - Distribution */
-               FILE   *fp,		/* I - File pointer */
-               int    type)		/* I - Type of commands to write */
+write_commands(dist_t     *dist,	/* I - Distribution */
+               FILE       *fp,		/* I - File pointer */
+               int        type,		/* I - Type of commands to write */
+               const char *subpackage)	/* I - Subsystem */
 {
   int			i;		/* Looping var */
   command_t		*c;		/* Current command */
@@ -606,7 +697,7 @@ write_commands(dist_t *dist,		/* I - Distribution */
 
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == type)
+    if (c->type == type && c->subpackage == subpackage)
       break;
 
   if (i)
@@ -614,7 +705,7 @@ write_commands(dist_t *dist,		/* I - Distribution */
     fprintf(fp, "echo Running %s commands...\n", commands[type]);
 
     for (; i > 0; i --, c ++)
-      if (c->type == type)
+      if (c->type == type && c->subpackage == subpackage)
         if (fprintf(fp, "%s\n", c->command) < 1)
         {
           perror("epm: Error writing command");
@@ -722,786 +813,6 @@ write_common(dist_t     *dist,		/* I - Distribution */
 
 
 /*
- * 'write_depends()' - Write dependencies.
- */
-
-static int				/* O - 0 on success, - 1 on failure */
-write_depends(dist_t *dist,		/* I - Distribution */
-              FILE   *fp)		/* I - File pointer */
-{
-  int			i;		/* Looping var */
-  depend_t		*d;		/* Current dependency */
-  static const char	*depends[] =	/* Dependency strings */
-			{
-			  "requires",
-			  "incompat",
-			  "replaces",
-			  "provides"
-			};
-
-
-  for (i = 0, d= dist->depends; i < dist->num_depends; i ++, d ++)
-  {
-    fprintf(fp, "#%%%s %s %d %d\n", depends[(int)d->type], d->product,
-            d->vernumber[0], d->vernumber[1]);
-
-    switch (d->type)
-    {
-      case DEPEND_REQUIRES :
-          if (d->product[0] == '/')
-          {
-           /*
-            * Require a file...
-            */
-
-            qprintf(fp, "if test ! -r %s -a ! -h %s; then\n",
-                    d->product, d->product);
-            qprintf(fp, "	echo Sorry, you must first install \\'%s\\'!\n",
-	            d->product);
-            fputs("	exit 1\n", fp);
-            fputs("fi\n", fp);
-          }
-          else
-          {
-           /*
-            * Require a product...
-            */
-
-            fprintf(fp, "if test ! -x %s/%s.remove; then\n",
-                    SoftwareDir, d->product);
-            fprintf(fp, "	if test -x %s.install; then\n",
-                    d->product);
-            fprintf(fp, "		echo Installing required %s software...\n",
-                    d->product);
-            fprintf(fp, "		./%s.install now\n", d->product);
-            fputs("	else\n", fp);
-            fprintf(fp, "		echo Sorry, you must first install \\'%s\\'!\n",
-	            d->product);
-            fputs("		exit 1\n", fp);
-            fputs("	fi\n", fp);
-            fputs("fi\n", fp);
-
-            if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
-	    {
-	     /*
-	      * Do version number checking...
-	      */
-
-              fprintf(fp, "installed=`grep \'^#%%version\' "
-	                  "%s/%s.remove | awk \'{print $3}\'`\n",
-                      SoftwareDir, d->product);
-
-              fputs("if test x$installed = x; then\n", fp);
-	      fputs("	installed=0\n", fp);
-	      fputs("fi\n", fp);
-
-	      fprintf(fp, "if test $installed -lt %d -o $installed -gt %d; then\n",
-	              d->vernumber[0], d->vernumber[1]);
-              fprintf(fp, "	if test -x %s.install; then\n",
-                      d->product);
-              fprintf(fp, "		echo Installing required %s software...\n",
-                      d->product);
-              fprintf(fp, "		./%s.install now\n", d->product);
-              fputs("	else\n", fp);
-              fprintf(fp, "		echo Sorry, you must first install \\'%s\\' version %s to %s!\n",
-	              d->product, d->version[0], d->version[1]);
-              fputs("		exit 1\n", fp);
-              fputs("	fi\n", fp);
-              fputs("fi\n", fp);
-	    }
-          }
-	  break;
-
-      case DEPEND_INCOMPAT :
-          if (d->product[0] == '/')
-          {
-           /*
-            * Incompatible with a file...
-            */
-
-            qprintf(fp, "if test -r %s -o -h %s; then\n",
-                    d->product, d->product);
-            qprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	            d->product);
-            fputs("	echo Please remove it first.\n", fp);
-            fputs("	exit 1\n", fp);
-            fputs("fi\n", fp);
-          }
-          else
-          {
-           /*
-            * Incompatible with a product...
-            */
-
-            fprintf(fp, "if test -x %s/%s.remove; then\n",
-                    SoftwareDir, d->product);
-
-            if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
-	    {
-	     /*
-	      * Do version number checking...
-	      */
-
-              fprintf(fp, "	installed=`grep \'^#%%version\' "
-	                  "%s/%s.remove | awk \'{print $3}\'`\n",
-		      SoftwareDir, d->product);
-
-              fputs("	if test x$installed = x; then\n", fp);
-	      fputs("		installed=0\n", fp);
-	      fputs("	fi\n", fp);
-
-	      fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
-	              d->vernumber[0], d->vernumber[1]);
-              fprintf(fp, "		echo Sorry, this software is incompatible with \\'%s\\' version %s to %s!\n",
-	              d->product, d->version[0], d->version[1]);
-              fprintf(fp, "		echo Please remove it first by running \\'%s/%s.remove\\'.\n",
-	              SoftwareDir, d->product);
-              fputs("		exit 1\n", fp);
-              fputs("	fi\n", fp);
-	    }
-	    else
-	    {
-              fprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	              d->product);
-              fprintf(fp, "	echo Please remove it first by running \\'%s/%s.remove\\'.\n",
-	              SoftwareDir, d->product);
-              fputs("	exit 1\n", fp);
-	    }
-
-            fputs("fi\n", fp);
-          }
-	  break;
-
-      case DEPEND_REPLACES :
-          fprintf(fp, "if test -x %s/%s.remove; then\n", SoftwareDir,
-	          d->product);
-
-          if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
-	  {
-	   /*
-	    * Do version number checking...
-	    */
-
-            fprintf(fp, "	installed=`grep \'^#%%version\' "
-	                "%s/%s.remove | awk \'{print $3}\'`\n",
-                    SoftwareDir, d->product);
-
-            fputs("	if test x$installed = x; then\n", fp);
-	    fputs("		installed=0\n", fp);
-	    fputs("	fi\n", fp);
-
-	    fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
-	            d->vernumber[0], d->vernumber[1]);
-            fprintf(fp, "		echo Automatically replacing \\'%s\\'...\n",
-	            d->product);
-            fprintf(fp, "		%s/%s.remove now\n",
-	            SoftwareDir, d->product);
-            fputs("	fi\n", fp);
-	  }
-	  else
-	  {
-            fprintf(fp, "	echo Automatically replacing \\'%s\\'...\n",
-	            d->product);
-            fprintf(fp, "	%s/%s.remove now\n",
-	            SoftwareDir, d->product);
-          }
-
-          fputs("fi\n", fp);
-	  break;
-    }
-  }
-
-  return (0);
-}
-
-
-/*
- * 'write_distfiles()' - Write a software distribution...
- */
-
-static int				/* O - -1 on error, 0 on success */
-write_distfiles(const char *title,	/* I - Title to show */
-                const char *directory,	/* I - Directory */
-	        const char *prodname,	/* I - Product name */
-                const char *platname,	/* I - Platform name */
-	        dist_t     *dist,	/* I - Distribution */
-	        const char **files,	/* I - Filenames */
-                const char *setup,	/* I - Setup GUI image */
-                const char *types)	/* I - Setup GUI install types */
-{
-  int		i;			/* Looping var */
-  tarf_t	*tarfile;		/* Distribution tar file */
-  char		filename[1024],		/* Name of temporary file */
-		srcname[1024],		/* Name of source file in distribution */
-		dstname[1024];		/* Name of destination file in distribution */
-  struct stat	srcstat;		/* Source file information */
-  const char	*setup_img;		/* Setup image name */
-
-
-  if (Verbosity)
-  {
-    printf("Writing %s archive:", title);
-    fflush(stdout);
-  }
-
-  if (dist->relnumber)
-  {
-    if (platname[0])
-      snprintf(filename, sizeof(filename), "%s/%s-%s-%d-%s.tar.gz", directory, prodname,
-              dist->version, dist->relnumber, platname);
-    else
-      snprintf(filename, sizeof(filename), "%s/%s-%s-%d.tar.gz", directory, prodname,
-              dist->version, dist->relnumber);
-  }
-  else if (platname[0])
-    snprintf(filename, sizeof(filename), "%s/%s-%s-%s.tar.gz", directory, prodname,
-            dist->version, platname);
-  else
-    snprintf(filename, sizeof(filename), "%s/%s-%s.tar.gz", directory, prodname, dist->version);
-
-  if ((tarfile = tar_open(filename, 1)) == NULL)
-  {
-    if (Verbosity)
-      puts("");
-
-    fprintf(stderr, "epm: Unable to create output pipe to gzip -\n     %s\n",
-            strerror(errno));
-    return (-1);
-  }
-
-#ifdef __APPLE__
-  if (setup)
-  {
-   /*
-    * Create directories for the setup application...
-    */
-
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app/Contents", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app/Contents/MacOS", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app/Contents/Resources", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-   /*
-    * Then copy the data files...
-    */
-
-    snprintf(srcname, sizeof(srcname), "%s/setup.icns", DataDir);
-    stat(srcname, &srcstat);
-
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
-                   srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Install.app/Contents/Resources/setup.icns", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, srcname) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
-      return (-1);
-    }
-
-    snprintf(srcname, sizeof(srcname), "%s/setup.info", DataDir);
-    stat(srcname, &srcstat);
-
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
-                   srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Install.app/Contents/PkgInfo", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, srcname) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
-      return (-1);
-    }
-
-    snprintf(srcname, sizeof(srcname), "%s/setup.plist", DataDir);
-    stat(srcname, &srcstat);
-
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
-                   srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Install.app/Contents/Info.plist", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, srcname) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
-      return (-1);
-    }
-  }
-#endif /* __APPLE__ */
-
-  for (i = 0; files[i] != NULL; i ++)
-  {
-    snprintf(srcname, sizeof(srcname), "%s/%s.%s", directory, prodname, files[i]);
-
-#ifdef __APPLE__
-    if (setup)
-      snprintf(dstname, sizeof(dstname), "Install.app/Contents/Resources/%s.%s", prodname, files[i]);
-    else
-#endif /* __APPLE__ */
-    snprintf(dstname, sizeof(dstname), "%s.%s", prodname, files[i]);
-
-    stat(srcname, &srcstat);
-
-    if (srcstat.st_size == 0)
-      continue;
-
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
-                   srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   dstname, NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, srcname) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
-      return (-1);
-    }
-
-    if (Verbosity)
-    {
-      printf(" %s", files[i]);
-      fflush(stdout);
-    }
-  }
-
-  if (setup)
-  {
-   /*
-    * Include the ESP Software Installation Wizard (setup)...
-    */
-
-    if (stat(SetupProgram, &srcstat))
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Unable to stat GUI setup program %s - %s\n",
-	      SetupProgram, strerror(errno));
-      return (-1);
-    }
-
-#ifdef __APPLE__
-    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root",
-		   "Install.app/Contents/MacOS/setup", NULL) < 0)
-#else
-    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
-#endif /* __APPLE__ */
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, SetupProgram) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for setup -\n    %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (Verbosity)
-    {
-      printf(" setup");
-      fflush(stdout);
-    }
-
-   /*
-    * And the image file...
-    */
-
-    stat(setup, &srcstat);
-#ifdef __APPLE__
-    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
-      setup_img = "Install.app/Contents/Resources/setup.gif";
-    else
-      setup_img = "Install.app/Contents/Resources/setup.xpm";
-
-    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
-#else
-    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
-      setup_img = "setup.gif";
-    else
-      setup_img = "setup.xpm";
-
-    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
-#endif /* __APPLE__ */
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, setup) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for setup.xpm -\n    %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (Verbosity)
-    {
-      printf(" setup.xpm");
-      fflush(stdout);
-    }
-
-   /*
-    * And the types file...
-    */
-
-    if (types)
-    {
-      stat(types, &srcstat);
-#ifdef __APPLE__
-      if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-		     srcstat.st_mtime, "root", "root", "Install.app/Contents/Resources/setup.types", NULL) < 0)
-#else
-      if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-		     srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
-#endif /* __APPLE__ */
-      {
-	if (Verbosity)
-          puts("");
-
-	fprintf(stderr, "epm: Error writing file header - %s\n",
-		strerror(errno));
-	return (-1);
-      }
-
-      if (tar_file(tarfile, types) < 0)
-      {
-	if (Verbosity)
-          puts("");
-
-	fprintf(stderr, "epm: Error writing file data for setup.types -\n    %s\n",
-		strerror(errno));
-	return (-1);
-      }
-
-      if (Verbosity)
-      {
-	printf(" setup.types");
-	fflush(stdout);
-      }
-    }
-
-   /*
-    * And finally the uninstall stuff...
-    */
-
-#ifdef __APPLE__
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root",
-                   "Uninstall.app", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Uninstall.app/Contents", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/MacOS", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/Resources", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-   /*
-    * Then copy the data files...
-    */
-
-    snprintf(srcname, sizeof(srcname), "%s/uninst.icns", DataDir);
-    stat(srcname, &srcstat);
-
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
-                   srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Uninstall.app/Contents/Resources/uninst.icns", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, srcname) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
-      return (-1);
-    }
-
-    snprintf(srcname, sizeof(srcname), "%s/uninst.info", DataDir);
-    stat(srcname, &srcstat);
-
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
-                   srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Uninstall.app/Contents/PkgInfo", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, srcname) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
-      return (-1);
-    }
-
-    snprintf(srcname, sizeof(srcname), "%s/uninst.plist", DataDir);
-    stat(srcname, &srcstat);
-
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
-                   srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Uninstall.app/Contents/Info.plist", NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, srcname) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
-      return (-1);
-    }
-#endif /* __APPLE__ */
-
-   /*
-    * Include the ESP Software Removal Wizard (uninst)...
-    */
-
-    if (stat(UninstProgram, &srcstat))
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Unable to stat GUI uninstall program %s - %s\n",
-	      UninstProgram, strerror(errno));
-      return (-1);
-    }
-
-#ifdef __APPLE__
-    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root",
-		   "Uninstall.app/Contents/MacOS/uninst", NULL) < 0)
-#else
-    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", "uninst", NULL) < 0)
-#endif /* __APPLE__ */
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, UninstProgram) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for uninst -\n    %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (Verbosity)
-    {
-      printf(" uninst");
-      fflush(stdout);
-    }
-
-#ifdef __APPLE__
-   /*
-    * And the image file...
-    */
-
-    stat(setup, &srcstat);
-
-    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
-      setup_img = "Uninstall.app/Contents/Resources/setup.gif";
-    else
-      setup_img = "Uninstall.app/Contents/Resources/setup.xpm";
-
-    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, setup) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for setup.xpm -\n    %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-#endif /* __APPLE__ */
-  }
-
-  tar_close(tarfile);
-
-  if (Verbosity)
-  {
-    stat(filename, &srcstat);
-    if (srcstat.st_size > (1024 * 1024))
-      printf(" size=%.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
-    else
-      printf(" size=%.0fk\n", srcstat.st_size / 1024.0);
-  }
-
-  return (0);
-}
-
-
-/*
  * 'write_confcheck()' - Write the echo check to find the right echo options.
  */
 
@@ -1543,6 +854,686 @@ write_confcheck(FILE *fp)		/* I - Script file */
 
 
 /*
+ * 'write_depends()' - Write dependencies.
+ */
+
+static int				/* O - 0 on success, - 1 on failure */
+write_depends(dist_t     *dist,		/* I - Distribution */
+              FILE       *fp,		/* I - File pointer */
+	      const char *subpackage)	/* I - Subpackage */
+{
+  int			i;		/* Looping var */
+  depend_t		*d;		/* Current dependency */
+  static const char	*depends[] =	/* Dependency strings */
+			{
+			  "requires",
+			  "incompat",
+			  "replaces",
+			  "provides"
+			};
+
+
+  for (i = 0, d = dist->depends; i < dist->num_depends; i ++, d ++)
+    if (d->subpackage == subpackage)
+    {
+      fprintf(fp, "#%%%s %s %d %d\n", depends[(int)d->type], d->product,
+              d->vernumber[0], d->vernumber[1]);
+
+      switch (d->type)
+      {
+	case DEPEND_REQUIRES :
+            if (d->product[0] == '/')
+            {
+             /*
+              * Require a file...
+              */
+
+              qprintf(fp, "if test ! -r %s -a ! -h %s; then\n",
+                      d->product, d->product);
+              qprintf(fp, "	echo Sorry, you must first install \\'%s\\'!\n",
+	              d->product);
+              fputs("	exit 1\n", fp);
+              fputs("fi\n", fp);
+            }
+            else
+            {
+             /*
+              * Require a product...
+              */
+
+              fprintf(fp, "if test ! -x %s/%s.remove; then\n",
+                      SoftwareDir, d->product);
+              fprintf(fp, "	if test -x %s.install; then\n",
+                      d->product);
+              fprintf(fp, "		echo Installing required %s software...\n",
+                      d->product);
+              fprintf(fp, "		./%s.install now\n", d->product);
+              fputs("	else\n", fp);
+              fprintf(fp, "		echo Sorry, you must first install \\'%s\\'!\n",
+	              d->product);
+              fputs("		exit 1\n", fp);
+              fputs("	fi\n", fp);
+              fputs("fi\n", fp);
+
+              if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
+	      {
+	       /*
+		* Do version number checking...
+		*/
+
+        	fprintf(fp, "installed=`grep \'^#%%version\' "
+	                    "%s/%s.remove | awk \'{print $3}\'`\n",
+                	SoftwareDir, d->product);
+
+        	fputs("if test x$installed = x; then\n", fp);
+		fputs("	installed=0\n", fp);
+		fputs("fi\n", fp);
+
+		fprintf(fp, "if test $installed -lt %d -o $installed -gt %d; then\n",
+	        	d->vernumber[0], d->vernumber[1]);
+        	fprintf(fp, "	if test -x %s.install; then\n",
+                	d->product);
+        	fprintf(fp, "		echo Installing required %s software...\n",
+                	d->product);
+        	fprintf(fp, "		./%s.install now\n", d->product);
+        	fputs("	else\n", fp);
+        	fprintf(fp, "		echo Sorry, you must first install \\'%s\\' version %s to %s!\n",
+	        	d->product, d->version[0], d->version[1]);
+        	fputs("		exit 1\n", fp);
+        	fputs("	fi\n", fp);
+        	fputs("fi\n", fp);
+	      }
+            }
+	    break;
+
+	case DEPEND_INCOMPAT :
+            if (d->product[0] == '/')
+            {
+             /*
+              * Incompatible with a file...
+              */
+
+              qprintf(fp, "if test -r %s -o -h %s; then\n",
+                      d->product, d->product);
+              qprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	              d->product);
+              fputs("	echo Please remove it first.\n", fp);
+              fputs("	exit 1\n", fp);
+              fputs("fi\n", fp);
+            }
+            else
+            {
+             /*
+              * Incompatible with a product...
+              */
+
+              fprintf(fp, "if test -x %s/%s.remove; then\n",
+                      SoftwareDir, d->product);
+
+              if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
+	      {
+	       /*
+		* Do version number checking...
+		*/
+
+        	fprintf(fp, "	installed=`grep \'^#%%version\' "
+	                    "%s/%s.remove | awk \'{print $3}\'`\n",
+			SoftwareDir, d->product);
+
+        	fputs("	if test x$installed = x; then\n", fp);
+		fputs("		installed=0\n", fp);
+		fputs("	fi\n", fp);
+
+		fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
+	        	d->vernumber[0], d->vernumber[1]);
+        	fprintf(fp, "		echo Sorry, this software is incompatible with \\'%s\\' version %s to %s!\n",
+	        	d->product, d->version[0], d->version[1]);
+        	fprintf(fp, "		echo Please remove it first by running \\'%s/%s.remove\\'.\n",
+	        	SoftwareDir, d->product);
+        	fputs("		exit 1\n", fp);
+        	fputs("	fi\n", fp);
+	      }
+	      else
+	      {
+        	fprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	        	d->product);
+        	fprintf(fp, "	echo Please remove it first by running \\'%s/%s.remove\\'.\n",
+	        	SoftwareDir, d->product);
+        	fputs("	exit 1\n", fp);
+	      }
+
+              fputs("fi\n", fp);
+            }
+	    break;
+
+	case DEPEND_REPLACES :
+            fprintf(fp, "if test -x %s/%s.remove; then\n", SoftwareDir,
+	            d->product);
+
+            if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
+	    {
+	     /*
+	      * Do version number checking...
+	      */
+
+              fprintf(fp, "	installed=`grep \'^#%%version\' "
+	                  "%s/%s.remove | awk \'{print $3}\'`\n",
+                      SoftwareDir, d->product);
+
+              fputs("	if test x$installed = x; then\n", fp);
+	      fputs("		installed=0\n", fp);
+	      fputs("	fi\n", fp);
+
+	      fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
+	              d->vernumber[0], d->vernumber[1]);
+              fprintf(fp, "		echo Automatically replacing \\'%s\\'...\n",
+	              d->product);
+              fprintf(fp, "		%s/%s.remove now\n",
+	              SoftwareDir, d->product);
+              fputs("	fi\n", fp);
+	    }
+	    else
+	    {
+              fprintf(fp, "	echo Automatically replacing \\'%s\\'...\n",
+	              d->product);
+              fprintf(fp, "	%s/%s.remove now\n",
+	              SoftwareDir, d->product);
+            }
+
+            fputs("fi\n", fp);
+	    break;
+      }
+    }
+
+  return (0);
+}
+
+
+/*
+ * 'write_distfiles()' - Write a software distribution...
+ */
+
+static int				/* O - -1 on error, 0 on success */
+write_distfiles(const char *directory,	/* I - Directory */
+	        const char *prodname,	/* I - Product name */
+                const char *platname,	/* I - Platform name */
+	        dist_t     *dist,	/* I - Distribution */
+		time_t     deftime,	/* I - Default file time */
+	        const char *subpackage)	/* I - Subpackage */
+{
+  int		i;			/* Looping var */
+  int		havepatchfiles;		/* 1 if we have patch files, 0 otherwise */
+  tarf_t	*tarfile;		/* Distribution tar file */
+  char		prodfull[255],		/* Full name of product */
+		swname[255],		/* Name of distribution tar file */
+		pswname[255],		/* Name of patch tar file */
+		filename[1024];		/* Name of temporary file */
+  struct stat	srcstat;		/* Source file information */
+  file_t	*file;			/* Software file */
+  int		rootsize,		/* Size of files in root partition */
+		usrsize;		/* Size of files in /usr partition */
+  int		prootsize,		/* Size of patch files in root partition */
+		pusrsize;		/* Size of patch files in /usr partition */
+
+
+ /*
+  * Figure out the full name of the distribution...
+  */
+
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
+ /*
+  * See if we need to make a patch distribution...
+  */
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (isupper((int)file->type) && file->subpackage == subpackage)
+      break;
+
+  havepatchfiles = i > 0;
+
+ /*
+  * Copy the license and readme files...
+  */
+
+  if (Verbosity)
+    printf("Copying %s license and readme files...\n", prodfull);
+
+  snprintf(filename, sizeof(filename), "%s/%s.license", directory, prodfull);
+  if (copy_file(filename, dist->license, 0444, getuid(), getgid()))
+    return (1);
+
+  snprintf(filename, sizeof(filename), "%s/%s.readme", directory, prodfull);
+  if (copy_file(filename, dist->readme, 0444, getuid(), getgid()))
+    return (1);
+
+ /*
+  * Create the non-shared software distribution file...
+  */
+
+  if (Verbosity)
+    puts("Creating non-shared software distribution file...");
+
+  snprintf(swname, sizeof(swname), "%s.sw", prodfull);
+  snprintf(filename, sizeof(filename), "%s/%s", directory, swname);
+
+  unlink(filename);
+  if ((tarfile = tar_open(filename, 0)) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
+            filename, strerror(errno));
+    return (1);
+  }
+
+  for (i = dist->num_files, file = dist->files, rootsize = 0, prootsize = 0;
+       i > 0;
+       i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) != 0 && file->subpackage == subpackage)
+      switch (tolower(file->type))
+      {
+	case 'f' : /* Regular file */
+	case 'c' : /* Config file */
+	case 'i' : /* Init script */
+            if (stat(file->src, &srcstat))
+	    {
+	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
+	              strerror(errno));
+	      tar_close(tarfile);
+	      return (1);
+	    }
+
+            rootsize += (srcstat.st_size + 1023) / 1024;
+
+            if (isupper(file->type))
+              prootsize += (srcstat.st_size + 1023) / 1024;
+
+           /*
+	    * Configuration files are extracted to the config file name with
+	    * .N appended; add a bit of script magic to check if the config
+	    * file already exists, and if not we copy the .N to the config
+	    * file location...
+	    */
+
+	    if (tolower(file->type) == 'c')
+	      snprintf(filename, sizeof(filename), "%s.N", file->dst);
+	    else if (tolower(file->type) == 'i')
+	      snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
+	               file->dst);
+	    else
+              strcpy(filename, file->dst);
+
+            if (Verbosity > 1)
+	      printf("%s -> %s...\n", file->src, filename);
+
+	    if (tar_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
+	                   srcstat.st_mtime, file->user, file->group,
+			   filename, NULL) < 0)
+	    {
+	      fprintf(stderr, "epm: Error writing file header - %s\n",
+	              strerror(errno));
+	      tar_close(tarfile);
+	      return (1);
+	    }
+
+	    if (tar_file(tarfile, file->src) < 0)
+	    {
+	      fprintf(stderr, "epm: Error writing file data - %s\n",
+	              strerror(errno));
+	      tar_close(tarfile);
+	      return (1);
+	    }
+	    break;
+
+	case 'd' : /* Create directory */
+            if (Verbosity > 1)
+	      printf("Directory %s...\n", file->dst);
+
+            rootsize ++;
+
+            if (isupper(file->type))
+              prootsize ++;
+	    break;
+
+	case 'l' : /* Link file */
+            if (Verbosity > 1)
+	      printf("%s -> %s...\n", file->src, file->dst);
+
+	    if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
+	                   file->user, file->group, file->dst, file->src) < 0)
+	    {
+	      fprintf(stderr, "epm: Error writing link header - %s\n",
+	              strerror(errno));
+	      tar_close(tarfile);
+	      return (1);
+	    }
+
+            rootsize ++;
+
+            if (isupper(file->type))
+              prootsize ++;
+	    break;
+      }
+
+  tar_close(tarfile);
+
+ /*
+  * Create the shared software distribution file...
+  */
+
+  if (Verbosity)
+    puts("Creating shared software distribution file...");
+
+  snprintf(swname, sizeof(swname), "%s.ss", prodfull);
+  snprintf(filename, sizeof(filename), "%s/%s", directory, swname);
+
+  unlink(filename);
+  if ((tarfile = tar_open(filename, 0)) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
+            filename, strerror(errno));
+    return (1);
+  }
+
+  for (i = dist->num_files, file = dist->files, usrsize = 0, pusrsize = 0;
+       i > 0;
+       i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) == 0 && file->subpackage == subpackage)
+      switch (tolower(file->type))
+      {
+	case 'f' : /* Regular file */
+	case 'c' : /* Config file */
+	case 'i' : /* Init script */
+            if (stat(file->src, &srcstat))
+	    {
+	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
+	              strerror(errno));
+	      tar_close(tarfile);
+	      return (1);
+	    }
+
+            usrsize += (srcstat.st_size + 1023) / 1024;
+
+            if (isupper(file->type))
+              pusrsize += (srcstat.st_size + 1023) / 1024;
+
+           /*
+	    * Configuration files are extracted to the config file name with
+	    * .N appended; add a bit of script magic to check if the config
+	    * file already exists, and if not we copy the .N to the config
+	    * file location...
+	    */
+
+	    if (tolower(file->type) == 'c')
+	      snprintf(filename, sizeof(filename), "%s.N", file->dst);
+	    else if (tolower(file->type) == 'i')
+	      snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
+	               file->dst);
+	    else
+              strcpy(filename, file->dst);
+
+            if (Verbosity > 1)
+	      printf("%s -> %s...\n", file->src, filename);
+
+	    if (tar_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
+	                   srcstat.st_mtime, file->user, file->group,
+			   filename, NULL) < 0)
+	    {
+	      fprintf(stderr, "epm: Error writing file header - %s\n",
+	              strerror(errno));
+	      tar_close(tarfile);
+	      return (1);
+	    }
+
+	    if (tar_file(tarfile, file->src) < 0)
+	    {
+	      fprintf(stderr, "epm: Error writing file data - %s\n",
+	              strerror(errno));
+	      tar_close(tarfile);
+	      return (1);
+	    }
+	    break;
+
+	case 'd' : /* Create directory */
+            if (Verbosity > 1)
+	      printf("%s...\n", file->dst);
+
+	    usrsize ++;
+
+            if (isupper(file->type))
+              pusrsize ++;
+	    break;
+
+	case 'l' : /* Link file */
+            if (Verbosity > 1)
+	      printf("%s -> %s...\n", file->src, file->dst);
+
+	    if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
+	                   file->user, file->group, file->dst, file->src) < 0)
+	    {
+	      fprintf(stderr, "epm: Error writing link header - %s\n",
+	              strerror(errno));
+	      tar_close(tarfile);
+	      return (1);
+	    }
+
+	    usrsize ++;
+
+            if (isupper(file->type))
+              pusrsize ++;
+	    break;
+      }
+
+  tar_close(tarfile);
+
+ /*
+  * Create the patch distribution files...
+  */
+
+  if (havepatchfiles)
+  {
+    if (Verbosity)
+      puts("Creating non-shared software patch file...");
+
+    snprintf(pswname, sizeof(pswname), "%s.psw", prodfull);
+    snprintf(filename, sizeof(filename), "%s/%s", directory, pswname);
+
+    unlink(filename);
+    if ((tarfile = tar_open(filename, 0)) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
+              filename, strerror(errno));
+      return (1);
+    }
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (strncmp(file->dst, "/usr", 4) != 0 && file->subpackage == subpackage)
+	switch (file->type)
+	{
+	  case 'C' : /* Config file */
+	  case 'F' : /* Regular file */
+          case 'I' : /* Init script */
+              if (stat(file->src, &srcstat))
+	      {
+		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
+	        	strerror(errno));
+		tar_close(tarfile);
+		return (1);
+	      }
+
+             /*
+	      * Configuration files are extracted to the config file name with
+	      * .N appended; add a bit of script magic to check if the config
+	      * file already exists, and if not we copy the .N to the config
+	      * file location...
+	      */
+
+	      if (file->type == 'C')
+		snprintf(filename, sizeof(filename), "%s.N", file->dst);
+	      else if (file->type == 'I')
+		snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
+		         file->dst);
+	      else
+        	strcpy(filename, file->dst);
+
+              if (Verbosity > 1)
+		printf("%s -> %s...\n", file->src, filename);
+
+	      if (tar_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
+	                     srcstat.st_mtime, file->user, file->group,
+			     filename, NULL) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file header - %s\n",
+	        	strerror(errno));
+		tar_close(tarfile);
+		return (1);
+	      }
+
+	      if (tar_file(tarfile, file->src) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file data - %s\n",
+	        	strerror(errno));
+		tar_close(tarfile);
+		return (1);
+	      }
+	      break;
+
+	  case 'd' : /* Create directory */
+              if (Verbosity > 1)
+		printf("%s...\n", file->dst);
+	      break;
+
+	  case 'L' : /* Link file */
+              if (Verbosity > 1)
+		printf("%s -> %s...\n", file->src, file->dst);
+
+	      if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
+	                     file->user, file->group, file->dst, file->src) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing link header - %s\n",
+	        	strerror(errno));
+		tar_close(tarfile);
+		return (1);
+	      }
+	      break;
+	}
+
+    tar_close(tarfile);
+
+    if (Verbosity)
+      puts("Creating shared software patch file...");
+
+    snprintf(pswname, sizeof(pswname), "%s.pss", prodfull);
+    snprintf(filename, sizeof(filename), "%s/%s", directory, pswname);
+
+    unlink(filename);
+    if ((tarfile = tar_open(filename, 0)) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
+              filename, strerror(errno));
+      return (1);
+    }
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (strncmp(file->dst, "/usr", 4) == 0 && file->subpackage == subpackage)
+	switch (file->type)
+	{
+	  case 'C' : /* Config file */
+	  case 'F' : /* Regular file */
+          case 'I' : /* Init script */
+              if (stat(file->src, &srcstat))
+	      {
+		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
+	        	strerror(errno));
+		tar_close(tarfile);
+		return (1);
+	      }
+
+             /*
+	      * Configuration files are extracted to the config file name with
+	      * .N appended; add a bit of script magic to check if the config
+	      * file already exists, and if not we copy the .N to the config
+	      * file location...
+	      */
+
+	      if (file->type == 'C')
+		snprintf(filename, sizeof(filename), "%s.N", file->dst);
+	      else if (file->type == 'I')
+		snprintf(filename, sizeof(filename), "%s/init.d/%s",
+		         SoftwareDir, file->dst);
+	      else
+        	strcpy(filename, file->dst);
+
+              if (Verbosity > 1)
+		printf("%s -> %s...\n", file->src, filename);
+
+	      if (tar_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
+	                     srcstat.st_mtime, file->user, file->group,
+			     filename, NULL) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file header - %s\n",
+	        	strerror(errno));
+		tar_close(tarfile);
+		return (1);
+	      }
+
+	      if (tar_file(tarfile, file->src) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file data - %s\n",
+	        	strerror(errno));
+		tar_close(tarfile);
+		return (1);
+	      }
+	      break;
+
+	  case 'd' : /* Create directory */
+              if (Verbosity > 1)
+		printf("%s...\n", file->dst);
+	      break;
+
+	  case 'L' : /* Link file */
+              if (Verbosity > 1)
+		printf("%s -> %s...\n", file->src, file->dst);
+
+	      if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
+	                     file->user, file->group, file->dst, file->src) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing link header - %s\n",
+	        	strerror(errno));
+		tar_close(tarfile);
+		return (1);
+	      }
+	      break;
+	}
+
+    tar_close(tarfile);
+  }
+
+ /*
+  * Create the scripts...
+  */
+
+  if (write_install(dist, prodfull, rootsize, usrsize, directory, subpackage))
+    return (1);
+
+  if (havepatchfiles)
+    if (write_patch(dist, prodfull, prootsize, pusrsize, directory, subpackage))
+      return (1);
+
+  if (write_remove(dist, prodfull, rootsize, usrsize, directory, subpackage))
+    return (1);
+
+ /*
+  * Return...
+  */
+
+  return (0);
+}
+
+
+/*
  * 'write_install()' - Write the installation script.
  */
 
@@ -1551,7 +1542,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
               const char *prodname,	/* I - Product name */
               int        rootsize,	/* I - Size of root files in kbytes */
 	      int        usrsize,	/* I - Size of /usr files in kbytes */
-	      const char *directory)	/* I - Directory */
+	      const char *directory,	/* I - Directory */
+	      const char *subpackage)	/* I - Subpackage */
 {
   int		i;			/* Looping var */
   int		col;			/* Column in the output */
@@ -1626,12 +1618,12 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   write_space_checks(prodname, scriptfile, rootsize ? "sw" : NULL,
                      usrsize ? "ss" : NULL);
-  write_depends(dist, scriptfile);
-  write_commands(dist, scriptfile, COMMAND_PRE_INSTALL);
+  write_depends(dist, scriptfile, subpackage);
+  write_commands(dist, scriptfile, COMMAND_PRE_INSTALL, subpackage);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
-        strncmp(file->dst, "/usr", 4) != 0)
+        strncmp(file->dst, "/usr", 4) != 0 && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -1641,7 +1633,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     col = fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
       if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
-          strncmp(file->dst, "/usr", 4) != 0)
+          strncmp(file->dst, "/usr", 4) != 0 && file->subpackage == subpackage)
       {
         if (col > 80)
 	  col = qprintf(scriptfile, " \\\n%s", file->dst) - 2;
@@ -1658,7 +1650,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
-        strncmp(file->dst, "/usr", 4) == 0)
+        strncmp(file->dst, "/usr", 4) == 0 && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -1669,7 +1661,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     col = fputs("	for file in", scriptfile);
     for (; i > 0; i --, file ++)
       if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
-          strncmp(file->dst, "/usr", 4) == 0)
+          strncmp(file->dst, "/usr", 4) == 0 && file->subpackage == subpackage)
       {
         if (col > 80)
 	  col = qprintf(scriptfile, " \\\n%s", file->dst) - 2;
@@ -1686,7 +1678,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'd')
+    if (tolower(file->type) == 'd' && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -1694,7 +1686,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("echo Creating installation directories...\n", scriptfile);
 
     for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'd')
+      if (tolower(file->type) == 'd' && file->subpackage == subpackage)
       {
 	qprintf(scriptfile, "if test ! -d %s -a ! -f %s -a ! -h %s; then\n",
         	file->dst, file->dst, file->dst);
@@ -1735,7 +1727,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'c')
+    if (tolower(file->type) == 'c' && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -1744,7 +1736,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     col = fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'c')
+      if (tolower(file->type) == 'c' && file->subpackage == subpackage)
       {
         if (col > 80)
 	  col = qprintf(scriptfile, " \\\n%s", file->dst) - 2;
@@ -1763,7 +1755,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (strncmp(file->dst, "/usr", 4) != 0 &&
-        strcmp(file->user, "root") != 0)
+        strcmp(file->user, "root") != 0 && file->subpackage == subpackage)
       switch (tolower(file->type))
       {
 	case 'c' :
@@ -1779,7 +1771,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("	rm -f /usr/.writetest\n", scriptfile);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (strncmp(file->dst, "/usr", 4) == 0 &&
-        strcmp(file->user, "root") != 0)
+        strcmp(file->user, "root") != 0 && file->subpackage == subpackage)
       switch (tolower(file->type))
       {
 	case 'c' :
@@ -1793,7 +1785,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("fi\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+    if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -1815,7 +1807,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("	if test -d /usr/local/etc/rc.d; then\n", scriptfile);
     fputs("		for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
         qprintf(scriptfile, " %s", file->dst);
     fputs("; do\n", scriptfile);
     fputs("			rm -f /usr/local/etc/rc.d/$file.sh\n", scriptfile);
@@ -1828,7 +1820,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       {
 	fputs("	if test -d $rcdir/init.d; then\n", scriptfile);
 	qprintf(scriptfile, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
@@ -1878,15 +1870,75 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("fi\n", scriptfile);
   }
 
-  write_commands(dist, scriptfile, COMMAND_POST_INSTALL);
+  write_commands(dist, scriptfile, COMMAND_POST_INSTALL, subpackage);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+    if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       qprintf(scriptfile, "%s/init.d/%s start\n", SoftwareDir, file->dst);
 
   fputs("echo Installation is complete.\n", scriptfile);
 
   fclose(scriptfile);
+
+  return (0);
+}
+
+
+/*
+ * 'write_instfiles()' - Write the installer files to the tar file...
+ */
+
+static int				/* O - 0 = success, -1 on failure */
+write_instfiles(tarf_t     *tarfile,	/* I - Distribution tar file */
+                const char *directory,	/* I - Output directory */
+                const char *prodname,	/* I - Base product name */
+	        const char *platname,	/* I - Platform name */
+	        const char **files,	/* I - Files */
+		const char *destdir,	/* I - Destination directory in tar file */
+	        const char *subpackage)	/* I - Subpackage */
+{
+  int		i;			/* Looping var */
+  char		srcname[1024],		/* Name of source file in distribution */
+		dstname[1024],		/* Name of destination file in distribution */
+		prodfull[255];		/* Full name of product */
+  struct stat	srcstat;		/* Source file information */
+
+
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
+  for (i = 0; files[i] != NULL; i ++)
+  {
+    snprintf(srcname, sizeof(srcname), "%s/%s.%s", directory, prodfull, files[i]);
+    snprintf(dstname, sizeof(dstname), "%s%s.%s", destdir, prodfull, files[i]);
+
+    stat(srcname, &srcstat);
+
+    if (srcstat.st_size == 0)
+      continue;
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   dstname, NULL) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    if (Verbosity)
+      printf("    %7.2fM %s.%s\n", srcstat.st_size / 1024.0 / 1024.0,
+	     prodfull, files[i]);
+  }
 
   return (0);
 }
@@ -1901,7 +1953,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
             const char *prodname,	/* I - Product name */
             int        rootsize,	/* I - Size of root files in kbytes */
 	    int        usrsize,		/* I - Size of /usr files in kbytes */
-	    const char *directory)	/* I - Directory */
+	    const char *directory,	/* I - Directory */
+	    const char *subpackage)	/* I - Subpackage */
 {
   int		i;			/* Looping var */
   FILE		*scriptfile;		/* Patch script */
@@ -1969,7 +2022,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   write_space_checks(prodname, scriptfile, rootsize ? "psw" : NULL,
                      usrsize ? "pss" : NULL);
-  write_depends(dist, scriptfile);
+  write_depends(dist, scriptfile, subpackage);
 
   fprintf(scriptfile, "if test ! -x %s/%s.remove; then\n",
           SoftwareDir, prodname);
@@ -1980,13 +2033,13 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("fi\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+    if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       qprintf(scriptfile, "%s/init.d/%s stop\n", SoftwareDir, file->dst);
 
-  write_commands(dist, scriptfile, COMMAND_PRE_PATCH);
+  write_commands(dist, scriptfile, COMMAND_PRE_PATCH, subpackage);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (file->type == 'D')
+    if (file->type == 'D' && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -1994,7 +2047,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("echo Creating new installation directories...\n", scriptfile);
 
     for (; i > 0; i --, file ++)
-      if (file->type == 'D')
+      if (file->type == 'D' && file->subpackage == subpackage)
       {
 	qprintf(scriptfile, "if test ! -d %s -a ! -f %s -a ! -h %s; then\n",
         	file->dst, file->dst, file->dst);
@@ -2034,7 +2087,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (strncmp(file->dst, "/usr", 4) != 0 &&
-        strcmp(file->user, "root") != 0)
+        strcmp(file->user, "root") != 0 && file->subpackage == subpackage)
       switch (file->type)
       {
 	case 'C' :
@@ -2048,7 +2101,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("	rm -f /usr/.writetest\n", scriptfile);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (strncmp(file->dst, "/usr", 4) == 0 &&
-        strcmp(file->user, "root") != 0)
+        strcmp(file->user, "root") != 0 && file->subpackage == subpackage)
       switch (file->type)
       {
 	case 'C' :
@@ -2060,7 +2113,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("fi\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (file->type == 'C')
+    if (file->type == 'C' && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -2069,7 +2122,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (file->type == 'C')
+      if (file->type == 'C' && file->subpackage == subpackage)
         qprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
@@ -2080,7 +2133,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (file->type == 'R')
+    if (file->type == 'R' && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -2089,7 +2142,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (file->type == 'R')
+      if (file->type == 'R' && file->subpackage == subpackage)
         qprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
@@ -2101,7 +2154,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (file->type == 'I')
+    if (file->type == 'I' && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -2123,7 +2176,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("	if test -d /usr/local/etc/rc.d; then\n", scriptfile);
     fputs("		for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'I')
+      if (tolower(file->type) == 'I' && file->subpackage == subpackage)
         qprintf(scriptfile, " %s", file->dst);
     fputs("; do\n", scriptfile);
     fputs("			rm -f /usr/local/etc/rc.d/$file.sh\n", scriptfile);
@@ -2136,7 +2189,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       {
 	fputs("	if test -d $rcdir/init.d; then\n", scriptfile);
 	qprintf(scriptfile, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
@@ -2185,10 +2238,10 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("fi\n", scriptfile);
   }
 
-  write_commands(dist, scriptfile, COMMAND_POST_PATCH);
+  write_commands(dist, scriptfile, COMMAND_POST_PATCH, subpackage);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+    if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       qprintf(scriptfile, "%s/init.d/%s start\n", SoftwareDir, file->dst);
 
   fputs("echo Patching is complete.\n", scriptfile);
@@ -2208,7 +2261,8 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
              const char *prodname,	/* I - Product name */
              int        rootsize,	/* I - Size of root files in kbytes */
 	     int        usrsize,	/* I - Size of /usr files in kbytes */
-	     const char *directory)	/* I - Directory */
+	     const char *directory,	/* I - Directory */
+	     const char *subpackage)	/* I - Subpackage */
 {
   int		i;			/* Looping var */
   int		col;			/* Current column */
@@ -2261,13 +2315,13 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+    if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       qprintf(scriptfile, "%s/init.d/%s stop\n", SoftwareDir, file->dst);
 
-  write_commands(dist, scriptfile, COMMAND_PRE_REMOVE);
+  write_commands(dist, scriptfile, COMMAND_PRE_REMOVE, subpackage);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+    if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -2289,7 +2343,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("	if test -d /usr/local/etc/rc.d; then\n", scriptfile);
     fputs("		for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
         qprintf(scriptfile, " %s", file->dst);
     fputs("; do\n", scriptfile);
     fputs("			rm -f /usr/local/etc/rc.d/$file.sh\n", scriptfile);
@@ -2299,7 +2353,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
       {
         qprintf(scriptfile, "	%s/init.d/%s stop\n", SoftwareDir, file->dst);
 
@@ -2346,7 +2400,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
-        strncmp(file->dst, "/usr", 4) != 0)
+        strncmp(file->dst, "/usr", 4) != 0 && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -2354,7 +2408,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     col = fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
       if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
-          strncmp(file->dst, "/usr", 4) != 0)
+          strncmp(file->dst, "/usr", 4) != 0 && file->subpackage == subpackage)
       {
         if (col > 80)
 	  col = qprintf(scriptfile, " \\\n%s", file->dst) - 2;
@@ -2372,7 +2426,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
-        strncmp(file->dst, "/usr", 4) == 0)
+        strncmp(file->dst, "/usr", 4) == 0 && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -2381,7 +2435,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     col = fputs("	for file in", scriptfile);
     for (; i > 0; i --, file ++)
       if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
-          strncmp(file->dst, "/usr", 4) == 0)
+          strncmp(file->dst, "/usr", 4) == 0 && file->subpackage == subpackage)
       {
         if (col > 80)
 	  col = qprintf(scriptfile, " \\\n%s", file->dst) - 2;
@@ -2401,14 +2455,14 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   fputs("echo Checking configuration files...\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'c')
+    if (tolower(file->type) == 'c' && file->subpackage == subpackage)
       break;
 
   if (i)
   {
     col = fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'c')
+      if (tolower(file->type) == 'c' && file->subpackage == subpackage)
       {
         if (col > 80)
 	  col = qprintf(scriptfile, " \\\n%s", file->dst) - 2;
@@ -2426,7 +2480,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   }
 
   for (i = dist->num_files, file = dist->files + i - 1; i > 0; i --, file --)
-    if (tolower(file->type) == 'd')
+    if (tolower(file->type) == 'd' && file->subpackage == subpackage)
       break;
 
   if (i)
@@ -2434,7 +2488,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("echo Removing empty installation directories...\n", scriptfile);
 
     for (; i > 0; i --, file --)
-      if (tolower(file->type) == 'd')
+      if (tolower(file->type) == 'd' && file->subpackage == subpackage)
       {
 	qprintf(scriptfile, "if test -d %s; then\n", file->dst);
 	qprintf(scriptfile, "	rmdir %s >/dev/null 2>&1\n", file->dst);
@@ -2442,7 +2496,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
       }
   }
 
-  write_commands(dist, scriptfile, COMMAND_POST_REMOVE);
+  write_commands(dist, scriptfile, COMMAND_POST_REMOVE, subpackage);
 
   fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
 
@@ -2558,5 +2612,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63.2.23 2004/08/29 04:17:44 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.24 2004/10/26 02:44:56 mike Exp $".
  */
