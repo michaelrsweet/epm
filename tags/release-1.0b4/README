@@ -1,0 +1,89 @@
+README - ESP Package Manager (EPM) 1.0
+--------------------------------------
+
+WHAT IS EPM?
+
+    EPM is the software packaging tool that we now use at Easy Software
+    Products.  It is a simple tool that generates compressed tar files
+    containing installation and removal scripts, a README and license
+    file, and a tar file containing the actual software files.  EPM can
+    also generate patch distributions and keeps track of software that
+    is installed using the EPM-generated scripts.
+
+
+WHY ANOTHER SOFTWARE PACKAGING TOOL?
+
+    We developed EPM because we are sick of developing and testing N
+    different software distributions for the operating systems we
+    support.  Also, when we started looking at selling software for
+    Linux we saw that there are at least four different "standard"
+    distribution formats, and none of them are compatible with the
+    other.  Also, many of these formats required that you install the
+    software on your development system (or performing some voodoo
+    magic) before you could build your distribution!
+
+    Clearly we needed something that could be used for all platforms,
+    *without* requiring special software packages on the customer's
+    system!
+
+
+WHAT IS REQUIRED FOR EPM?
+
+    On your development system you just need a C compiler, a make
+    program, the Bourne (or Korn or Bash) shell, a tar program, and
+    GNU zip.
+
+    On the destination system your customers/users will need the Bourne
+    (or Korn or Bash) shell, a tar program, and GNU zip. The first two
+    are standard items, and GNU zip is being shipped by most vendors as
+    well.
+
+
+HOW DO I COMPILE EPM?
+
+    EPM uses GNU autoconf to configure itself for your system.  To build
+    it, use:
+
+        ./configure ENTER
+	make ENTER
+
+    Once EPM is compiled you can type:
+
+        su ENTER
+	make install ENTER
+
+    to install the software in /usr/bin.
+
+
+HOW DO I USE EPM?
+
+    Please look at the EPM man page; a preformatted copy is included in
+    the file "epm.1":
+
+        more epm.1
+
+    An example of an EPM software list file can be found in the CUPS
+    software distribution at:
+
+        http://www.cups.org/software.html
+
+
+REPORTING PROBLEMS
+
+    Report all problems and submit all patches to Michael Sweet at
+    "mike@easysw.com".
+
+
+COPYRIGHT AND LICENSE INFO
+
+    EPM is Copyright 1999 by Easy Software Products, All Rights Reserved.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2, or (at your option)
+    any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
