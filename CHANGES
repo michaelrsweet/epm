@@ -13,6 +13,8 @@ WHAT'S NEW IN EPM 3.2?
 	  environment variable as documented.
 	- The "native" distribution format is now "deb" if
 	  the "dpkg" command is installed in /usr/bin.
+	- Debian packages did not use the release number in
+	  the Version: keyword.
 
 
 WHAT'S NEW IN EPM 3.1?
