@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.60 2002/11/07 13:57:52 mike Exp $"
+dnl "$Id: configure.in,v 1.61 2002/12/11 21:41:39 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -86,6 +86,7 @@ if test x$NROFF = x; then
 fi
 AC_PATH_PROG(RM,rm)
 AC_PATH_PROG(RPM,rpm)
+AC_PATH_PROG(RPMBUILD,rpmbuild)
 AC_PATH_PROG(STRIP,strip)
 
 dnl Architecture checks...
@@ -264,6 +265,11 @@ if test "$exec_prefix" = "NONE"; then
 	exec_prefix="$prefix"
 fi
 
+dnl Fix "libdir" variable if it hasn't been specified...
+if test "$libdir" = "\${exec_prefix}/lib"; then
+	libdir="$exec_prefix/lib"
+fi
+
 dnl Fix "mandir" variable if it hasn't been specified...
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
@@ -328,11 +334,11 @@ AC_SUBST(EPM_STRIP)
 AC_DEFINE_UNQUOTED(EPM_BINDIR, "$exec_prefix/bin")
 AC_SUBST(EPM_BINDIR)
 
-AC_DEFINE_UNQUOTED(EPM_LIBDIR, "$prefix/lib/epm")
+AC_DEFINE_UNQUOTED(EPM_LIBDIR, "$libdir/epm")
 AC_SUBST(EPM_LIBDIR)
 
 dnl Figure out the right option to use for the RPM build architecture...
-if test "x$RPM" != "x"; then
+if test "x$RPM" != x; then
 	# It would be nice if Red Hat could make up its mind...
 	rpmversion="`$RPM --version | awk '{print $3}' | awk -F. '{print $1 * 10000 + $2 * 100 + $3}'`"
 
@@ -347,9 +353,20 @@ if test "x$RPM" != "x"; then
 	fi
 fi
 
+if test "x$RPMBUILD" != x; then
+	AC_DEFINE_UNQUOTED(EPM_RPMBUILD, "$RPMBUILD")
+	AC_DEFINE(EPM_RPMTOPDIR)
+else
+	if test "x$RPM" != x; then
+		AC_DEFINE_UNQUOTED(EPM_RPMBUILD, "$RPM")
+	else
+		AC_DEFINE_UNQUOTED(EPM_RPMBUILD, "rpm")
+	fi
+fi
+
 dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.60 2002/11/07 13:57:52 mike Exp $".
+dnl End of "$Id: configure.in,v 1.61 2002/12/11 21:41:39 mike Exp $".
 dnl

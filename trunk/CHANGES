@@ -6,6 +6,14 @@ WHAT'S NEW IN EPM 3.5.2?
     EPM 3.5.2 adds the following features, fixes, and changes to
     EPM 3.5.1:
 
+	- Now correctly use --libdir setting to locate the setup
+	  GUI.
+	- Now use rpmbuild command, if available, to build RPM
+	  files since newer versions of RPM may not map the
+	  "-bb" option to build a package.
+	- Now set the RPMDIR environment variable when building
+	  with older versions of RPM that don't understand the
+	  "topdir_" variable.
 	- Now handle dependencies of the form "package >=
 	  version" in Debian packages.
 	- Portable distributions that didn't have any files in
