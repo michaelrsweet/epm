@@ -12,6 +12,8 @@ WHAT'S NEW IN EPM 2.7?
 	  instead of "dunix".  "dunix" is still supported
 	  in list files for compatibility with old list files.
 	- Added support for portable scripts under AIX.
+	- Fixed the space checking code in portable installation
+	  scripts.
 
 
 WHAT'S NEW IN EPM 2.6?
