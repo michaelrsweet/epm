@@ -115,7 +115,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   fputs("CATEGORY=application\n", fp);
   fputs("CLASSES=none", fp);
   for (i = 0; i < dist->num_subpackages; i ++)
-    fprintf(fp, ",%s", dist->subpackages[i]);
+    fprintf(fp, " %s", dist->subpackages[i]);
   putc('\n', fp);
 
   if (strcmp(platform->machine, "intel") == 0)
