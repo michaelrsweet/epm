@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.25 1999/09/27 16:50:30 mike Exp $"
+ * "$Id: epm.c,v 1.26 1999/09/27 20:41:07 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -206,6 +206,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 		  "license",
 		  "readme",
 		  "remove",
+		  "ss",
 		  "sw",
 		  NULL
 		};
@@ -213,6 +214,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 		{
 		  "license",
 		  "patch",
+		  "pss",
 		  "psw",
 		  "readme",
 		  "remove",
@@ -2349,5 +2351,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.25 1999/09/27 16:50:30 mike Exp $".
+ * End of "$Id: epm.c,v 1.26 1999/09/27 20:41:07 mike Exp $".
  */
