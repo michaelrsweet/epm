@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.12 2001/03/03 21:29:49 mike Exp $"
+ * "$Id: tar.c,v 1.13 2001/04/25 16:04:58 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -329,11 +329,11 @@ tar_header(tarf_t     *fp,	/* I - Tar file to write to */
   memset(&record, 0, sizeof(record));
 
   strcpy(record.header.pathname, pathname);
-  sprintf(record.header.mode, "%-6o ", mode);
+  sprintf(record.header.mode, "%-6o ", (unsigned)mode);
   sprintf(record.header.uid, "%o ", pwd == NULL ? 0 : (unsigned)pwd->pw_uid);
   sprintf(record.header.gid, "%o ", grp == NULL ? 0 : (unsigned)grp->gr_gid);
-  sprintf(record.header.size, "%011o", size);
-  sprintf(record.header.mtime, "%011lo", mtime);
+  sprintf(record.header.size, "%011o", (unsigned)size);
+  sprintf(record.header.mtime, "%011o", (unsigned)mtime);
   memset(&(record.header.chksum), ' ', sizeof(record.header.chksum));
   record.header.linkflag = type;
   if (type == TAR_SYMLINK)
@@ -415,5 +415,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.12 2001/03/03 21:29:49 mike Exp $".
+ * End of "$Id: tar.c,v 1.13 2001/04/25 16:04:58 mike Exp $".
  */
