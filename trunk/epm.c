@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.26 1999/09/27 20:41:07 mike Exp $"
+ * "$Id: epm.c,v 1.27 1999/09/30 19:44:28 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -1711,16 +1711,18 @@ write_install(dist_t *dist,	/* I - Software distribution */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'f' || tolower(file->type) == 'l')
+    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+        strncmp(file->dst, "/usr", 4) != 0)
       break;
 
   if (i)
   {
-    fputs("echo Backing up old versions of files to be installed...\n", scriptfile);
+    fputs("echo Backing up old versions of non-shared files to be installed...\n", scriptfile);
 
     fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'f' || tolower(file->type) == 'l')
+      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+          strncmp(file->dst, "/usr", 4) != 0)
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
@@ -1728,6 +1730,30 @@ write_install(dist_t *dist,	/* I - Software distribution */
     fputs("		/bin/mv $file $file.O\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
+  }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+        strncmp(file->dst, "/usr", 4) == 0)
+      break;
+
+  if (i)
+  {
+    fputs("if test -w /usr ; then\n", scriptfile);
+    fputs("	echo Backing up old versions of shared files to be installed...\n", scriptfile);
+
+    fputs("	for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+          strncmp(file->dst, "/usr", 4) == 0)
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("		if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
+    fputs("			/bin/mv $file $file.O\n", scriptfile);
+    fputs("		fi\n", scriptfile);
+    fputs("	done\n", scriptfile);
+    fputs("fi\n", scriptfile);
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
@@ -2018,16 +2044,18 @@ write_patch(dist_t *dist,	/* I - Software distribution */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (file->type == 'F' || file->type == 'L')
+    if ((file->type == 'F' || file->type == 'L') &&
+        strncmp(file->dst, "/usr", 4) != 0)
       break;
 
   if (i)
   {
-    fputs("echo Backing up old versions of files to be installed...\n", scriptfile);
+    fputs("echo Backing up old versions of non-shared files to be installed...\n", scriptfile);
 
     fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (file->type == 'F' || file->type == 'L')
+      if ((file->type == 'F' || file->type == 'L') &&
+          strncmp(file->dst, "/usr", 4) != 0)
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
@@ -2035,6 +2063,30 @@ write_patch(dist_t *dist,	/* I - Software distribution */
     fputs("		/bin/mv $file $file.O\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
+  }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if ((file->type == 'F' || file->type == 'L') &&
+        strncmp(file->dst, "/usr", 4) == 0)
+      break;
+
+  if (i)
+  {
+    fputs("if test -w /usr ; then\n", scriptfile);
+    fputs("	echo Backing up old versions of shared files to be installed...\n", scriptfile);
+
+    fputs("	for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if ((file->type == 'F' || file->type == 'L') &&
+          strncmp(file->dst, "/usr", 4) == 0)
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("		if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
+    fputs("			/bin/mv $file $file.O\n", scriptfile);
+    fputs("		fi\n", scriptfile);
+    fputs("	done\n", scriptfile);
+    fputs("fi\n", scriptfile);
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
@@ -2313,34 +2365,50 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
   fputs("echo Removing/restoring installed files...\n", scriptfile);
 
-  fputs("for file in", scriptfile);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
         strncmp(file->dst, "/usr", 4) != 0)
-      fprintf(scriptfile, " %s", file->dst);
+      break;
 
-  fputs("; do\n", scriptfile);
-  fputs("	rm -f $file\n", scriptfile);
-  fputs("	if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
-  fputs("		/bin/mv $file.O $file\n", scriptfile);
-  fputs("	fi\n", scriptfile);
-  fputs("done\n", scriptfile);
+  if (i)
+  {
+    fputs("for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+          strncmp(file->dst, "/usr", 4) != 0)
+	fprintf(scriptfile, " %s", file->dst);
 
-  fputs("if test -w /usr ; then\n", scriptfile);
-  fputs("	for file in", scriptfile);
+    fputs("; do\n", scriptfile);
+    fputs("	rm -f $file\n", scriptfile);
+    fputs("	if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
+    fputs("		/bin/mv $file.O $file\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("done\n", scriptfile);
+  }
+
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
         strncmp(file->dst, "/usr", 4) == 0)
-      fprintf(scriptfile, " %s", file->dst);
+      break;
 
-  fputs("; do\n", scriptfile);
-  fputs("		rm -f $file\n", scriptfile);
-  fputs("		if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
-  fputs("			/bin/mv $file.O $file\n", scriptfile);
-  fputs("		fi\n", scriptfile);
-  fputs("	done\n", scriptfile);
-  fputs("fi\n", scriptfile);
-  fprintf(scriptfile, "rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  if (i)
+  {
+    fputs("if test -w /usr ; then\n", scriptfile);
+    fputs("	for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+          strncmp(file->dst, "/usr", 4) == 0)
+	fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("		rm -f $file\n", scriptfile);
+    fputs("		if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
+    fputs("			/bin/mv $file.O $file\n", scriptfile);
+    fputs("		fi\n", scriptfile);
+    fputs("	done\n", scriptfile);
+    fputs("fi\n", scriptfile);
+    fprintf(scriptfile, "rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  }
 
   fputs("echo Removal is complete.\n", scriptfile);
 
@@ -2351,5 +2419,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.26 1999/09/27 20:41:07 mike Exp $".
+ * End of "$Id: epm.c,v 1.27 1999/09/30 19:44:28 mike Exp $".
  */
