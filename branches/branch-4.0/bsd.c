@@ -1,9 +1,9 @@
 /*
- * "$Id: bsd.c,v 1.4.2.8 2003/01/14 17:05:43 mike Exp $"
+ * "$Id: bsd.c,v 1.4.2.9 2004/03/05 05:28:17 mike Exp $"
  *
  *   FreeBSD package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2003 by Easy Software Products.
+ *   Copyright 1999-2004 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -354,5 +354,5 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: bsd.c,v 1.4.2.8 2003/01/14 17:05:43 mike Exp $".
+ * End of "$Id: bsd.c,v 1.4.2.9 2004/03/05 05:28:17 mike Exp $".
  */

@@ -1,9 +1,9 @@
 /*
- * "$Id: aix.c,v 1.8.2.5 2003/01/03 20:23:16 mike Exp $"
+ * "$Id: aix.c,v 1.8.2.6 2004/03/05 05:28:17 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2003 by Easy Software Products.
+ *   Copyright 1999-2004 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -51,7 +51,8 @@ static const char	*files[] =	/* Control files... */
 			  "inventory",
 			  "post_i",
 			  "pre_i",
-			  "unpost_i"
+			  "unpost_i",
+                          "unpre_i"
 			};
 
 
@@ -511,6 +512,33 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fclose(fp);
 
    /*
+    * Write the product.unpre_i file for installp...
+    */
+
+    if (Verbosity > 1)
+      puts("	Creating .unpre_i file...");
+
+    snprintf(filename, sizeof(filename), "%s/%s.unpre_i", directory, prodname);
+
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create .unpre_i file \"%s\" - %s\n", filename,
+	      strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_PRE_REMOVE)
+	fprintf(fp, "%s\n", c->command);
+
+    fclose(fp);
+
+   /*
     * Write the product.unpost_i file for installp...
     */
 
@@ -532,7 +560,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
-      if (c->type == COMMAND_PRE_REMOVE)
+     if (c->type == COMMAND_POST_REMOVE)
 	fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
@@ -595,6 +623,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 	    fprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
 	  break;
     }
+
     fprintf(fp, "    owner=%s\n", file->user);
     fprintf(fp, "    group=%s\n", file->group);
     fprintf(fp, "    mode=%04o\n", file->mode);
@@ -652,6 +681,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   return (0);
 }
 
+
 /*
- * End of "$Id: aix.c,v 1.8.2.5 2003/01/03 20:23:16 mike Exp $".
+ * End of "$Id: aix.c,v 1.8.2.6 2004/03/05 05:28:17 mike Exp $".
  */

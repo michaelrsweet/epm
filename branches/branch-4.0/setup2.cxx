@@ -1,9 +1,9 @@
 //
-// "$Id: setup2.cxx,v 1.29.2.5 2003/05/30 05:11:27 mike Exp $"
+// "$Id: setup2.cxx,v 1.29.2.6 2004/03/05 05:28:17 mike Exp $"
 //
 //   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2003 by Easy Software Products.
+//   Copyright 1999-2004 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -1008,5 +1008,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.29.2.5 2003/05/30 05:11:27 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.29.2.6 2004/03/05 05:28:17 mike Exp $".
 //
