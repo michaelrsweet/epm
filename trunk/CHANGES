@@ -15,8 +15,8 @@ WHAT'S NEW IN EPM 2.8?
 	- The mkepmlist program didn't get the permissions of
 	  each file (just the parent directory.)
 	- The portable installation scripts used the -L or -h
-	  option to test for symlinks with the test command.
-	  The choice of option was based on the build platform,
+	  option to test for symlinks with the test command. The
+	  choice of option was based on the build platform,
 	  making the script non-portable. Now use -h exclusively
 	  since it is supported on all UNIX's we have access to,
 	  even with GNU test even though it isn't documented...
