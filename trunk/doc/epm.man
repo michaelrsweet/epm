@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.10 2002/08/01 01:50:25 mike Exp $"
+.\" "$Id: epm.man,v 1.11 2002/10/07 19:29:46 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -143,11 +143,6 @@ Debian, IRIX, portable, and Red Hat distributions use the extensions ".deb",
 .SH LIST FILES
 The EPM list file format is now described in the \fIepm.list(5)\fR
 man page.
-.SH ENVIRONMENT VARIABLES
-The \fIRPMDIR\fR environment variable will override where EPM looks
-for RPM distributions you generate. The default locations are
-/usr/src/redhat/RPMS, /usr/src/RPM/RPMS, /usr/src/packages/RPMS,
-and /usr/local/src/RPMS.
 .SH KNOWN BUGS
 EPM does not currently support generation of IRIX software patches.
 .SH SEE ALSO
@@ -171,5 +166,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.10 2002/08/01 01:50:25 mike Exp $".
+.\" End of "$Id: epm.man,v 1.11 2002/10/07 19:29:46 mike Exp $".
 .\"
