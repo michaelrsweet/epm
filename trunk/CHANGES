@@ -12,6 +12,9 @@ WHAT'S NEW IN EPM 3.6.1?
 	- The setup GUI did not support software patches.
 	- The epm.list man page incorrectly specified runlevels()
 	  instead of runlevel().
+	- The portable distributions incorrectly used
+	  /usr/local/src/rc.d as a fallback location for init
+	  scripts.
 
 
 WHAT'S NEW IN EPM 3.6?
