@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.19 2001/03/15 15:31:01 mike Exp $"
+ * "$Id: config.h.in,v 1.20 2001/05/03 20:03:19 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -72,17 +72,11 @@
 #undef HAVE_NDIR_H
 
 /*
- * Where is the "whoami" executable?
- */
-
-#define EPM_WHOAMI	"whoami"
-
-/*
  * Where is the "gzip" executable?
  */
 
 #define EPM_GZIP	"gzip"
 
 /*
- * End of "$Id: config.h.in,v 1.19 2001/03/15 15:31:01 mike Exp $".
+ * End of "$Id: config.h.in,v 1.20 2001/05/03 20:03:19 mike Exp $".
  */

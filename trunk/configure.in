@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.28 2001/04/25 20:27:48 mike Exp $"
+dnl "$Id: configure.in,v 1.29 2001/05/03 20:03:20 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -74,7 +74,6 @@ AC_PATH_PROG(PERL,perl)
 AC_PATH_PROG(RM,rm)
 AC_PATH_PROG(RPM,rpm)
 AC_PATH_PROG(STRIP,strip)
-AC_PATH_PROG(WHOAMI,whoami)
 
 dnl Architecture checks...
 AC_C_CONST
@@ -319,9 +318,6 @@ AC_SUBST(EPM_BINDIR)
 AC_DEFINE_UNQUOTED(EPM_LIBDIR, "$prefix/lib/epm")
 AC_SUBST(EPM_LIBDIR)
 
-AC_DEFINE_UNQUOTED(EPM_WHOAMI, "$WHOAMI")
-AC_SUBST(EPM_WHOAMI)
-
 dnl Figure out the right option to use for the RPM build architecture...
 if test "x$RPM" != "x"; then
 	build="`$RPM -v | grep buildarch`"
@@ -339,5 +335,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.28 2001/04/25 20:27:48 mike Exp $".
+dnl End of "$Id: configure.in,v 1.29 2001/05/03 20:03:20 mike Exp $".
 dnl
