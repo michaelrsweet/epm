@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.58 2001/06/27 06:24:17 mike Exp $"
+ * "$Id: epm.c,v 1.59 2001/07/02 14:26:54 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -63,7 +63,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 		listname[256],	/* List file name */
 		directory[255],	/* Name of install directory */
 		*temp,		/* Temporary string pointer */
-		*setup;		/* Setup GUI image */
+		*setup,		/* Setup GUI image */
+		*types;		/* Setup GUI install types */
   dist_t	*dist;		/* Software distribution */
   int		format;		/* Distribution format */
   static char	*formats[] =	/* Distribution format strings */
@@ -99,6 +100,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   strip       = 1;
   format      = PACKAGE_PORTABLE;
   setup       = NULL;
+  types       = NULL;
   namefmt     = "srm";
   prodname[0] = '\0';
   listname[0] = '\0';
@@ -253,6 +255,17 @@ main(int  argc,			/* I - Number of command-line arguments */
 	        usage();
               }
             }
+	    else if (strcmp(argv[i], "--setup-types") == 0)
+	    {
+	      i ++;
+	      if (i < argc)
+	        types = argv[i];
+	      else
+              {
+                puts("epm: Expected setup.types file.");
+	        usage();
+              }
+            }
 	    else
             {
               printf("epm: Unknown option \"%s\".\n", argv[i]);
@@ -388,7 +401,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   {
     case PACKAGE_PORTABLE :
         i = make_portable(prodname, directory, platname, dist, &platform,
-	                  setup);
+	                  setup, types);
 	break;
     case PACKAGE_AIX :
         i = make_aix(prodname, directory, platname, dist, &platform);
@@ -495,5 +508,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.58 2001/06/27 06:24:17 mike Exp $".
+ * End of "$Id: epm.c,v 1.59 2001/07/02 14:26:54 mike Exp $".
  */

@@ -77,12 +77,12 @@ Copyright 1999-2001 by Easy Software Products<BR>
 <LI><A HREF="#epm">epm</A></LI>
 <LI><A HREF="#epminstall">epminstall</A></LI>
 <LI><A HREF="#mkepmlist">mkepmlist</A></LI>
+<LI><A HREF="#setup">setup</A></LI>
 </UL>
 <B><A HREF="#REFERENCE">C - List File Reference</A></B>
 <UL>
-<LI><A HREF="#8_1">Overview of the List File Format</A></LI>
-<LI><A HREF="#8_2">List File Directives</A></LI>
-<LI><A HREF="#8_3">List Variables</A></LI>
+<LI><A HREF="#8_1">The EPM List File Format</A></LI>
+<LI><A HREF="#SETUPTYPES">The setup.types File</A></LI>
 </UL>
 <B><A HREF="#RELNOTES">D</A></B>
 <UL>
@@ -546,12 +546,17 @@ Installing EPM documentation in /usr/share/doc/epm
 <TABLE BORDER><CAPTION><A NAME="TABLE_2_3"> Table 2.3: Native Operating
  System Formats</A></CAPTION>
 <TR><TH>Operating System</TH><TH>Format</TH><TH>Command</TH></TR>
-<TR><TD>AIX</TD><TD><CODE>???</CODE></TD><TD NOWRAP><CODE>???</CODE></TD>
-</TR>
+<TR><TD>AIX</TD><TD><CODE>bff</CODE></TD><TD NOWRAP><CODE>installp -d<I>
+directory</I> epm</CODE></TD></TR>
 <TR><TD>Compaq Tru64 UNIX
 <BR> Digital UNIX
 <BR> OSF/1</TD><TD><CODE>setld</CODE></TD><TD NOWRAP><CODE>setld -a<I>
  directory</I>???</CODE></TD></TR>
+<TR><TD>FreeBSD
+<BR> NetBSD
+<BR> OpenBSD</TD><TD><CODE>pkg_add</CODE></TD><TD NOWRAP><CODE>cd<I>
+ directory</I>
+<BR> pkg_add epm</CODE></TD></TR>
 <TR><TD>HP-UX</TD><TD><CODE>depot</CODE></TD><TD NOWRAP><CODE>swinstall
  -f<I> directory</I></CODE></TD></TR>
 <TR><TD>IRIX</TD><TD><CODE>inst</CODE></TD><TD NOWRAP><CODE>swmgr -f<I>
@@ -1267,10 +1272,12 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
 <H3>See Also</H3>
 <P><A HREF="#epm">epm(1)</A> - create software packages.</P>
 <P><A HREF="#epminstall">epminstall(1)</A> - add a directory, file, or
- symlink to a list file.</P>
-<P><A HREF="#mkepmlist">mkepmlist(1)</A> - make an epm list file from a
- directory.</P>
-<P><A HREF="#REFERENCE">epm.list(5)</A> - epm list file format.</P>
+ symlink to a list file.
+<BR><A HREF="#mkepmlist"> mkepmlist(1)</A> - make an epm list file from
+ a directory.
+<BR><A HREF="#REFERENCE"> epm.list(5)</A> - epm list file format.</P>
+<A HREF="#setup"> setup(1)</A> - graphical setup program for the esp
+ package manager.
 <H3>Copyright</H3>
 <P>Copyright 1999-2001 by Easy Software Products, All Rights Reserved.</P>
 <P>This program is free software; you can redistribute it and/or modify
@@ -1325,10 +1332,10 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
 </DL>
 </UL>
 <H3>See Also</H3>
-<P><A HREF="#epm">epm(1)</A> - create software packages.</P>
-<P><A HREF="#mkepmlist">mkepmlist(1)</A> - make an epm list file from a
- directory.</P>
-<P><A HREF="#REFERENCE">epm.list(5)</A> - epm list file format.</P>
+<P><A HREF="#epm">epm(1)</A> - create software packages.
+<BR><A HREF="#mkepmlist"> mkepmlist(1)</A> - make an epm list file from
+ a directory.
+<BR><A HREF="#REFERENCE"> epm.list(5)</A> - epm list file format.</P>
 <H3>Copyright</H3>
 <P>Copyright 1999-2001 by Easy Software Products, All Rights Reserved.</P>
 <P>This program is free software; you can redistribute it and/or modify
@@ -1365,10 +1372,43 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
 </PRE>
 </UL>
 <H3>See Also</H3>
-<P><A HREF="#epm">epm(1)</A> - create software packages.</P>
-<P><A HREF="#epminstall">epminstall(1)</A> - add a directory, file, or
- symlink to a list file.</P>
-<P><A HREF="#REFERENCE">epm.list(5)</A> - epm list file format.</P>
+<P><A HREF="#epm">epm(1)</A> - create software packages.
+<BR><A HREF="#epminstall"> epminstall(1)</A> - add a directory, file, or
+ symlink to a list file.
+<BR><A HREF="#REFERENCE"> epm.list(5)</A> - epm list file format.</P>
+<H3>Copyright</H3>
+<P>Copyright 1999-2001 by Easy Software Products, All Rights Reserved.</P>
+<P>This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2, or (at your option) any
+ later version.</P>
+<P>This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ General Public License for more details.</P>
+
+<!-- NEW PAGE -->
+<H2><A NAME="setup">setup</A></H2>
+<HR>
+<P>Graphical setup program for the ESP package manager.</P>
+<H3>Synopsis</H3>
+<P><B>setup</B> [<I> directory</I> ]</P>
+<H3>Description</H3>
+<P><B>setup</B> provides a graphical installation interface for
+ EPM-generated portable installation packages. It presents a
+ step-by-step dialog for collecting a list of packages to install and
+ accepting any license agreements for those packages.</P>
+<P><B>setup</B> searches for products in the current directory or the
+ directory specified on the command-line.</P>
+<H3>Installation Types</H3>
+<P>The default type of installation is &quot;custom&quot;. That is, users will be
+ able to select from the list of products and install them.</P>
+<P><B>setup</B> also supports other types of installations. The<I>
+ setup.types</I> file, if present, defines the other installation types.</P>
+<H3>See Also</H3>
+<P><A HREF="#epm">epm(1)</A> - create software packages.
+<BR><A HREF="#SETUPTYPES"> setup.types(5)</A> - epm gui setup types file
+ format.</P>
 <H3>Copyright</H3>
 <P>Copyright 1999-2001 by Easy Software Products, All Rights Reserved.</P>
 <P>This program is free software; you can redistribute it and/or modify
@@ -1381,14 +1421,14 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
  General Public License for more details.</P>
 <HR>
 <H1 ALIGN="RIGHT"><A NAME="REFERENCE">C - List File Reference</A></H1>
-<P>This appendix provides a complete reference for the EPM list file
- format.</P>
-<H2><A NAME="8_1">Overview of the List File Format</A></H2>
+<P>This appendix provides a complete reference for the EPM list file and
+ setup types formats.</P>
+<H2><A NAME="8_1">The EPM List File Format</A></H2>
 <P>Each<I> EPM</I> product has an associated list file that describes
  the files to include with the product. Comment lines begin with the &quot;#&quot;
  character and are ignored. All other non-blank lines must begin with a
  letter, dollar sign (&quot;$&quot;), or the percent sign (&quot;%&quot;).</P>
-<H2><A NAME="8_2">List File Directives</A></H2>
+<H3>List File Directives</H3>
 <P>The following list describes all of the list file directives
  supported by<I> EPM</I>:</P>
 <UL>
@@ -1508,7 +1548,7 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
  file.</DD>
 </DL>
 </UL>
-<H2><A NAME="8_3">List Variables</A></H2>
+<H3>List Variables</H3>
 <P><I>EPM</I> maintains a list of variables and their values which can
  be used to substitute values in the list file. These variables are
  imported from the current environment and taken from the command-line
@@ -1528,6 +1568,37 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
  alone ($name); without brackets the name is terminated by the first
  slash (/), dash (-), or whitespace. The dollar sign can be inserted
  using $$.</P>
+<H2><A NAME="SETUPTYPES">The setup.types File</A></H2>
+<P>The EPM<B> setup</B> program normally presents the user with a list
+ of software products to install, which is called a &quot;custom&quot; software
+ installation.</P>
+<P>If a file called<I> setup.types</I> is present in the package
+ directory, the user will instead be presented with a list of instal-
+ lation types. Each type has an associated product list which determines
+ the products that are installed by default. If a type has no products
+ associated with it, then it is treated as a custom installation and the
+ user is presented with a list of packages to choose from.</P>
+<P>The<I> setup.types</I> file is an ASCII text file consisting of type
+ and product lines. Comments can be inserted by starting a line with the
+ pound sign (#). Each installation type is defined by a line starting
+ with the word <CODE>TYPE</CODE>. Products are defined by a line
+ starting with the word <CODE>INSTALL</CODE>:</P>
+<UL>
+<PRE>
+TYPE Typical End-User Configuration
+INSTALL foo
+INSTALL foo-help
+TYPE Typical Developer Configuration
+INSTALL foo
+INSTALL foo-help
+INSTALL foo-devel
+INSTALL foo-examples
+TYPE Custom Configuration
+</PRE>
+</UL>
+<P>In the example above, three installation types are defined. Since the
+ last type includes no products, the user will be presented with the
+ full list of products to choose from.</P>
 <HR>
 <H1 ALIGN="RIGHT"><A NAME="RELNOTES">D</A></H1>
 <LI>Release Notes</LI>
