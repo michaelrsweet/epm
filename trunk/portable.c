@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.22 2001/03/06 17:13:39 mike Exp $"
+ * "$Id: portable.c,v 1.23 2001/03/15 15:31:02 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -17,13 +17,14 @@
  *
  * Contents:
  *
- *   make_portable()  - Make a portable software distribution package.
- *   write_commands() - Write commands.
- *   write_common()   - Write the common shell script header.
- *   write_dist()     - Write a software distribution...
- *   write_install()  - Write the installation script.
- *   write_patch()    - Write the patch script.
- *   write_remove()   - Write the removal script.
+ *   make_portable()   - Make a portable software distribution package.
+ *   write_commands()  - Write commands.
+ *   write_common()    - Write the common shell script header.
+ *   write_dist()      - Write a software distribution...
+ *   write_echocheck() - Write the echo check to find the right echo options.
+ *   write_install()   - Write the installation script.
+ *   write_patch()     - Write the patch script.
+ *   write_remove()    - Write the removal script.
  */
 
 /*
@@ -45,6 +46,7 @@ static int	write_dist(const char *title, const char *directory,
 		           const char *prodname, const char *platname,
 			   dist_t *dist, const char **files,
 			   const char *setup);
+static int	write_echocheck(FILE *fp);
 static int	write_install(dist_t *dist, const char *prodname,
 		              const char *directory);
 static int	write_patch(dist_t *dist, const char *prodname,
@@ -612,11 +614,13 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fprintf(fp, "echo Copyright %s\n", dist->copyright);
   fputs("umask 002\n", fp);
 
+  write_echocheck(fp);
+
  /*
   * Return the file pointer...
   */
 
-  return(fp);
+  return (fp);
 }
 
 
@@ -898,6 +902,34 @@ write_dist(const char *title,		/* I - Title to show */
 
 
 /*
+ * 'write_echocheck()' - Write the echo check to find the right echo options.
+ */
+
+static int				/* O - -1 on error, 0 on success */
+write_echocheck(FILE *fp)		/* I - Script file */
+{
+ /*
+  * This is a simplified version of the autoconf test for echo; basically
+  * we ignore the Stardent Vistra SVR4 case, since 1) we've never heard of
+  * this OS, and 2) it doesn't provide the same functionality, specifically
+  * the omission of a newline when prompting the user for some text.
+  */
+
+  fputs("# Determine correct echo options...\n", fp);
+  fputs("if (echo \"testing\c\"; echo 1,2,3) | grep c >/dev/null; then\n", fp);
+  fputs("	ac_n=-n\n", fp);
+  fputs("	ac_c=\n", fp);
+  fputs("  fi\n", fp);
+  fputs("else\n", fp);
+  fputs("	ac_n=\n", fp);
+  fputs("	ac_c='\c'\n", fp);
+  fputs("fi\n", fp);
+
+  return (0);
+}
+
+
+/*
  * 'write_install()' - Write the installation script.
  */
 
@@ -938,11 +970,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
           dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you wish to continue? \"\n", scriptfile);
-#else
-  fputs("		echo \"Do you wish to continue? \\c\"\n", scriptfile);
-#endif /* HAVE_BROKEN_ECHO */
+  fputs("		echo $ac_n \"Do you wish to continue? $ac_c\"\n", scriptfile);
   fputs("		read yesno\n", scriptfile);
   fputs("		case \"$yesno\" in\n", scriptfile);
   fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
@@ -960,11 +988,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "	more %s.license\n", prodname);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you agree with the terms of this license? \"\n", scriptfile);
-#else
-  fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", scriptfile);
-#endif /* HAVE_BROKEN_ECHO */
+  fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
   fputs("		read yesno\n", scriptfile);
   fputs("		case \"$yesno\" in\n", scriptfile);
   fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
@@ -1202,11 +1226,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "	echo software to version \'%s\' on your system.\n", dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you wish to continue? \"\n", scriptfile);
-#else
-  fputs("		echo \"Do you wish to continue? \\c\"\n", scriptfile);
-#endif /* HAVE_BROKEN_ECHO */
+  fputs("		echo $ac_n \"Do you wish to continue? $ac_c\"\n", scriptfile);
   fputs("		read yesno\n", scriptfile);
   fputs("		case \"$yesno\" in\n", scriptfile);
   fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
@@ -1224,11 +1244,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "	more %s.license\n", prodname);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you agree with the terms of this license? \"\n", scriptfile);
-#else
-  fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", scriptfile);
-#endif /* HAVE_BROKEN_ECHO */
+  fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
   fputs("		read yesno\n", scriptfile);
   fputs("		case \"$yesno\" in\n", scriptfile);
   fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
@@ -1486,11 +1502,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
           dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
-#ifdef HAVE_BROKEN_ECHO
-  fputs("		echo -n \"Do you wish to continue? \"\n", scriptfile);
-#else
-  fputs("		echo \"Do you wish to continue? \\c\"\n", scriptfile);
-#endif /* HAVE_BROKEN_ECHO */
+  fputs("		echo $ac_n \"Do you wish to continue? $ac_c\"\n", scriptfile);
   fputs("		read yesno\n", scriptfile);
   fputs("		case \"$yesno\" in\n", scriptfile);
   fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
@@ -1614,5 +1626,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.22 2001/03/06 17:13:39 mike Exp $".
+ * End of "$Id: portable.c,v 1.23 2001/03/15 15:31:02 mike Exp $".
  */

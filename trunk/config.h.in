@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.18 2001/02/28 22:34:46 mike Exp $"
+ * "$Id: config.h.in,v 1.19 2001/03/15 15:31:01 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -72,13 +72,6 @@
 #undef HAVE_NDIR_H
 
 /*
- * Are we using a broken "echo" command that doesn't support the \c
- * escape (like GNU echo?)
- */
-
-#undef HAVE_BROKEN_ECHO
-
-/*
  * Where is the "whoami" executable?
  */
 
@@ -91,5 +84,5 @@
 #define EPM_GZIP	"gzip"
 
 /*
- * End of "$Id: config.h.in,v 1.18 2001/02/28 22:34:46 mike Exp $".
+ * End of "$Id: config.h.in,v 1.19 2001/03/15 15:31:01 mike Exp $".
  */
