@@ -6,7 +6,7 @@
 echo "Getting distribution..."
 
 cd /tmp
-cvs -dmike@o2.easysw.com:/development/cvs get epm >& /dev/null
+cvs -dmike@tango.easysw.com:/development/cvs get epm >& /dev/null
 
 if ($#argv == 0) then
 	echo -n "Version number for distribution? "
