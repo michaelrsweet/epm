@@ -8,16 +8,17 @@ NNAAMMEE
        epm - create software packages
 
 SSYYNNOOPPSSIISS
-       eeppmm [ -f _f_o_r_m_a_t ] [ -g ] [ -n[mrs] ] [ -s _x_p_m_f_i_l_e ] [ -v ]
-       [ _n_a_m_e_=_v_a_l_u_e _n_a_m_e_=_v_a_l_u_e ] product [ _l_i_s_t_f_i_l_e ]
+       eeppmm  [  -f  _f_o_r_m_a_t ] [ -g ] [ -n[mrs] ] [ -s _s_e_t_u_p_._x_p_m ] [
+       --setup-image _s_e_t_u_p_._x_p_m ] [ --setup-program _/_f_o_o_/_b_a_r_/_s_e_t_u_p
+       ] [ -v ] [ _n_a_m_e_=_v_a_l_u_e _n_a_m_e_=_v_a_l_u_e ] product [ _l_i_s_t_f_i_l_e ]
 
 DDEESSCCRRIIPPTTIIOONN
-       eeppmm generates software packages  complete  with  installa-
-       tion,  removal,  and  (if necessary) patch scripts. Unless
-       otherwise specified, the files required  for  _p_r_o_d_u_c_t  are
+       eeppmm  generates  software  packages complete with installa-
+       tion, removal, and (if necessary)  patch  scripts.  Unless
+       otherwise  specified,  the  files required for _p_r_o_d_u_c_t are
        read from a file named "_p_r_o_d_u_c_t.list".
 
-       The  _-_f  option ("format") specifies the distribution for-
+       The _-_f option ("format") specifies the  distribution  for-
        mat:
 
        deb
@@ -25,8 +26,14 @@ DDEESSCCRRIIPPTTIIOONN
             tion on a Debian Linux system.
 
        inst, tardist
-            Generate  an IRIX distribution suitable for installa-
+            Generate an IRIX distribution suitable for  installa-
             tion on an system running IRIX.
+
+       native
+            Generate  an  native  distribution. This uses _r_p_m for
+            Linux, _i_n_s_t for IRIX, _p_k_g for Solaris, and  _s_w_i_n_s_t_a_l_l
+            for HP-UX. All other operating systems default to the
+            _p_o_r_t_a_b_l_e format.
 
        pkg
             Generate an AT&T software  package.  These  are  used
@@ -50,18 +57,11 @@ DDEESSCCRRIIPPTTIIOONN
        of  debugging  information  when packaged. To disable this
        functionality use the _-_g option.
 
-       The _-_s option ("setup") includes the ESP  Software  Wizard
-       with  the  specified XPM image file with the distribution.
-       This option is currently only available for portable  dis-
-       tributions.
-
-       The _-_v option ("verbose") increases the amount of informa-
-       tion that is reported. Use multiple v's for  more  verbose
-       output.
+       The _-_s and _-_-_s_e_t_u_p_-_i_m_a_g_e options ("setup") include the ESP
 
 
 
-28 June 2000           ESP Package Manager                      1
+10 December 2000       ESP Package Manager                      1
 
 
 
@@ -69,6 +69,18 @@ DDEESSCCRRIIPPTTIIOONN
 
 epm(1)                Easy Software Products               epm(1)
 
+
+       Software Wizard with the specified XPM image file with the
+       distribution. This option is currently only  supported  by
+       portable distributions.
+
+       The  _-_-_s_e_t_u_p_-_p_r_o_g_r_a_m option specifies the setup executable
+       to use with the distribution.  This  option  is  currently
+       only supported by portable distributions.
+
+       The _-_v option ("verbose") increases the amount of informa-
+       tion that is reported. Use multiple v's for  more  verbose
+       output.
 
        Distributions  normally are named "product-version-system-
        release-machine.ext" and  "product-version-system-release-
@@ -113,6 +125,17 @@ LLIISSTT FFIILLEESS
             Indicates that this product is incompatible with  the
             named product or file.
 
+
+
+10 December 2000       ESP Package Manager                      2
+
+
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
+
        %install _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
             Specifies  a  script  or  program to be run after all
             files are installed.
@@ -121,20 +144,12 @@ LLIISSTT FFIILLEESS
             Specifies  the  file  to  display  as  the   software
             license.
 
+       %packager _n_a_m_e _o_f _p_a_c_k_a_g_e_r
+            Specifies the name of the packager.
+
        %patch _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
             Specifies  a  script  or  program to be run after all
             files are patched.
-
-
-
-28 June 2000           ESP Package Manager                      2
-
-
-
-
-
-epm(1)                Easy Software Products               epm(1)
-
 
        %product _p_r_o_d_u_c_t _n_a_m_e
             Specifies the product name.
@@ -176,24 +191,9 @@ epm(1)                Easy Software Products               epm(1)
             Specifies  that the following files are applicable to
             all operating systems.
 
-       f _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-
-       F _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-            Specifies a file for installation.  The  second  form
-            specifies  that  the  file  has changed or is new and
-            should be included as part of a patch.
-
-       c _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-
-       C _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-            Specifies a configuration file for installation.  The
-            second form specifies that the file has changed or is
-            new and should be included as part of a  patch.  Con-
-            figuration  files are installed as "destination.N" if
 
 
-
-28 June 2000           ESP Package Manager                      3
+10 December 2000       ESP Package Manager                      3
 
 
 
@@ -202,6 +202,13 @@ epm(1)                Easy Software Products               epm(1)
 epm(1)                Easy Software Products               epm(1)
 
 
+       c _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+
+       C _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+            Specifies a configuration file for installation.  The
+            second form specifies that the file has changed or is
+            new and should be included as part of a  patch.  Con-
+            figuration  files are installed as "destination.N" if
             the destination already exists.
 
        d _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
@@ -212,54 +219,47 @@ epm(1)                Easy Software Products               epm(1)
             that the directory is new and should be  included  as
             part of a patch.
 
+       f _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+
+       F _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+            Specifies  a  file  for installation. The second form
+            specifies that the file has changed  or  is  new  and
+            should be included as part of a patch.
+
+       f _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e_/_p_a_t_t_e_r_n
+
+       F _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e_/_p_a_t_t_e_r_n
+            Specifies  one  or  more files for installation using
+            shell wildcard patterns. The  second  form  specifies
+            that  the files have changed or are new and should be
+            included as part of a patch.
+
        i _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
 
        I _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
-            Specifies  an initialization script for installation.
-            The second form specifies that the file  has  changed
-            or  is new and should be included as part of a patch.
-            Initialization     scripts     are     stored      in
-            /etc/software/init.d  and are linked to the appropri-
-            ate system-specific directories for run levels 0  and
-            3.  Initialization  scripts mmuusstt accepts at least the
-            _s_t_a_r_t and _s_t_o_p commands.
+            Specifies an initialization script for  installation.
+            The  second  form specifies that the file has changed
+            or is new and should be included as part of a  patch.
+            Initialization   scripts  are  stored  in  /etc/soft-
+            ware/init.d and are linked to the appropriate system-
+            specific directories for run levels 0 and 3. Initial-
+            ization scripts mmuusstt accepts at least the  _s_t_a_r_t  and
+            _s_t_o_p commands.
 
        l _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
 
        L _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-            Specifies a symbolic link in  the  installation.  The
+            Specifies  a  symbolic  link in the installation. The
             second form specifies that the link has changed or is
             new and should be included as part of a patch.
 
        R _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n
-            Specifies that the file is to be removed upon  patch-
-            ing.   The  _u_s_e_r  and  _g_r_o_u_p fields are ignored.  The
-            _m_o_d_e field is only  used  to  determine  if  a  check
-            should be made for a previous version of the file.
-
-EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
-       The  _R_P_M_D_I_R  environment  variable will override where EPM
-       looks for RPM  distributions  you  generate.  The  default
-       locations are /usr/src/redhat/RPMS, /usr/src/RPM/RPMS, and
-       /usr/local/src/RPMS.
-
-KKNNOOWWNN BBUUGGSS
-       EPM does not currently support generation of IRIX software
-       patches.
-
-CCOOPPYYRRIIGGHHTT
-       Copyright  1999-2000 by Easy Software Products, All Rights
-       Reserved.
-
-       This program is free software;  you  can  redistribute  it
-       and/or modify it under the terms of the GNU General Public
-       License as published  by  the  Free  Software  Foundation;
-       either version 2, or (at your option) any later version.
+            Specifies  that the file is to be removed upon patch-
+            ing.  The _u_s_e_r and _g_r_o_u_p  fields  are  ignored.   The
 
 
 
-
-28 June 2000           ESP Package Manager                      4
+10 December 2000       ESP Package Manager                      4
 
 
 
@@ -268,10 +268,32 @@ CCOOPPYYRRIIGGHHTT
 epm(1)                Easy Software Products               epm(1)
 
 
-       This  program  is  distributed in the hope that it will be
+            _m_o_d_e  field  is  only  used  to  determine if a check
+            should be made for a previous version of the file.
+
+EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
+       The _R_P_M_D_I_R environment variable will  override  where  EPM
+       looks  for  RPM  distributions  you  generate. The default
+       locations are /usr/src/redhat/RPMS, /usr/src/RPM/RPMS, and
+       /usr/local/src/RPMS.
+
+KKNNOOWWNN BBUUGGSS
+       EPM does not currently support generation of IRIX software
+       patches.
+
+CCOOPPYYRRIIGGHHTT
+       Copyright 1999-2000 by Easy Software Products, All  Rights
+       Reserved.
+
+       This  program  is  free  software; you can redistribute it
+       and/or modify it under the terms of the GNU General Public
+       License  as  published  by  the  Free Software Foundation;
+       either version 2, or (at your option) any later version.
+
+       This program is distributed in the hope that  it  will  be
        useful, but WITHOUT ANY WARRANTY; without even the implied
-       warranty  of  MERCHANTABILITY  or FITNESS FOR A PARTICULAR
-       PURPOSE.  See the GNU  General  Public  License  for  more
+       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
+       PURPOSE.   See  the  GNU  General  Public License for more
        details.
 
 
@@ -303,28 +325,6 @@ epm(1)                Easy Software Products               epm(1)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-28 June 2000           ESP Package Manager                      5
+10 December 2000       ESP Package Manager                      5
 
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.9 2000/12/01 14:44:16 mike Exp $"
+ * "$Id: dist.c,v 1.10 2000/12/10 16:45:05 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -37,11 +37,12 @@
  */
 
 static int	add_string(int num_strings, char ***strings, char *string);
+static void	expand_name(char *buffer, char *name);
 static void	free_strings(int num_strings, char **strings);
 static char	*get_line(char *buffer, int size, FILE *fp,
 		          struct utsname *platform, const char *format,
 			  int *skip);
-static void	expand_name(char *buffer, char *name);
+static int	patmatch(const char *, const char *);
 
 
 /*
@@ -102,8 +103,9 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
   char		line[2048],	/* Expanded line from list file */
 		buf[1024],	/* Original line from list file */
 		type,		/* File type */
-		dst[255],	/* Destination path */
-		src[255],	/* Source path */
+		dst[256],	/* Destination path */
+		src[256],	/* Source path */
+		pattern[256],	/* Pattern for source files */
 		user[32],	/* User */
 		group[32],	/* Group */
 		*temp;		/* Temporary pointer */
@@ -111,6 +113,9 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 		skip;		/* 1 = skip files, 0 = archive files */
   dist_t	*dist;		/* Distribution data */
   file_t	*file;		/* Distribution file */
+  struct stat	fileinfo;	/* File information */
+  DIR		*dir;		/* Directory */
+  DIRENT	*dent;		/* Directory entry */
 
 
  /*
@@ -275,14 +280,6 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	if (tolower(type) == 'd' || type == 'R')
 	  src[0] = '\0';
 
-        file = add_file(dist);
-
-        file->type = type;
-	file->mode = mode;
-        strcpy(file->src, src);
-	strcpy(file->dst, dst);
-	strcpy(file->user, user);
-
 #ifdef __osf__ /* Remap group "sys" to "system" */
         if (strcmp(group, "sys") == 0)
 	  strcpy(group, "system");
@@ -291,7 +288,71 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  strcpy(group, "root");
 #endif /* __osf__ */
 
-	strcpy(file->group, group);
+        for (temp = strrchr(src, '/'); temp && *temp; temp ++)
+	  if (strchr("*?[", *temp))
+	    break;
+
+        if (temp && *temp)
+	{
+	 /*
+	  * Add using wildcards...
+	  */
+
+          temp  = strrchr(src, '/');
+	  *temp = '\0';
+	  strncpy(pattern, temp + 1, sizeof(pattern) - 1);
+	  pattern[sizeof(pattern) - 1] = '\0';
+
+          if (dst[strlen(dst) - 1] != '/')
+	    strncat(dst, "/", sizeof(dst) - 1);
+
+          if ((dir = opendir(src)) == NULL)
+	    fprintf(stderr, "epm: Unable to open directory \"%s\" - %s\n",
+	            src, strerror(errno));
+          else
+	  {
+	    *temp++ = '/';
+	    while ((dent = readdir(dir)) != NULL)
+	    {
+	      strcpy(temp, dent->d_name);
+	      if (stat(src, &fileinfo))
+	        continue; /* Skip files we can't read */
+
+              if (S_ISDIR(fileinfo.st_mode))
+	        continue; /* Skip directories */
+
+              if (!patmatch(dent->d_name, pattern))
+	        continue;
+
+              file = add_file(dist);
+
+              file->type = type;
+	      file->mode = mode;
+              strcpy(file->src, src);
+	      strcpy(file->dst, dst);
+	      strncat(file->dst, dent->d_name, sizeof(file->dst) - 1);
+	      strcpy(file->user, user);
+	      strcpy(file->group, group);
+	    }
+
+            closedir(dir);
+	  }
+	}
+	else
+	{
+         /*
+	  * Add single file...
+	  */
+
+          file = add_file(dist);
+
+          file->type = type;
+	  file->mode = mode;
+          strcpy(file->src, src);
+	  strcpy(file->dst, dst);
+	  strcpy(file->user, user);
+	  strcpy(file->group, group);
+	}
       }
     }
 
@@ -330,6 +391,42 @@ add_string(int  num_strings,	/* I - Number of strings */
 
   (*strings)[num_strings] = strdup(string);
   return (num_strings + 1);
+}
+
+
+/*
+ * 'expand_name()' - Expand a filename with environment variables.
+ */
+
+static void
+expand_name(char *buffer,	/* O - Output string */
+            char *name)		/* I - Input string */
+{
+  char	var[255],		/* Environment variable name */
+	*varptr;		/* Current position in name */
+
+
+  while (*name != '\0')
+  {
+    if (*name == '$')
+    {
+      name ++;
+      for (varptr = var; strchr("/ \t-", *name) == NULL && *name != '\0';)
+        *varptr++ = *name++;
+
+      *varptr = '\0';
+
+      if ((varptr = getenv(var)) != NULL)
+      {
+        strcpy(buffer, varptr);
+	buffer += strlen(buffer);
+      }
+    }
+    else
+      *buffer++ = *name++;
+  }
+
+  *buffer = '\0';
 }
 
 
@@ -496,41 +593,109 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 
 
 /*
- * 'expand_name()' - Expand a filename with environment variables.
+ * 'patmatch()' - Pattern matching...
  */
 
-static void
-expand_name(char *buffer,	/* O - Output string */
-            char *name)		/* I - Input string */
+static int			/* O - 1 if match, 0 if no match */
+patmatch(const char *s,		/* I - String to match against */
+         const char *pat)	/* I - Pattern to match against */
 {
-  char	var[255],		/* Environment variable name */
-	*varptr;		/* Current position in name */
+ /*
+  * Range check the input...
+  */
 
+  if (s == NULL || pat == NULL)
+    return (0);
 
-  while (*name != '\0')
+ /*
+  * Loop through the pattern and match strings, and stop if we come to a
+  * point where the strings don't match or we find a complete match.
+  */
+
+  while (*s != '\0' && *pat != '\0')
   {
-    if (*name == '$')
+    if (*pat == '*')
     {
-      name ++;
-      for (varptr = var; strchr("/ \t-", *name) == NULL && *name != '\0';)
-        *varptr++ = *name++;
+     /*
+      * Wildcard - 0 or more characters...
+      */
 
-      *varptr = '\0';
+      pat ++;
+      if (*pat == '\0')
+        return (1);	/* Last pattern char is *, so everything matches now... */
 
-      if ((varptr = getenv(var)) != NULL)
+     /*
+      * Test all remaining combinations until we get to the end of the string.
+      */
+
+      while (*s != '\0')
       {
-        strcpy(buffer, varptr);
-	buffer += strlen(buffer);
+        if (patmatch(s, pat))
+	  return (1);
+
+	s ++;
       }
     }
-    else
-      *buffer++ = *name++;
+    else if (*pat == '?')
+    {
+     /*
+      * Wildcard - 1 character...
+      */
+
+      pat ++;
+      s ++;
+      continue;
+    }
+    else if (*pat == '[')
+    {
+     /*
+      * Match a character from the input set [chars]...
+      */
+
+      pat ++;
+      while (*pat != ']' && *pat != '\0')
+        if (*s == *pat)
+	  break;
+	else
+	  pat ++;
+
+      if (*pat == ']' || *pat == '\0')
+        return (0);
+
+      while (*pat != ']' && *pat != '\0')
+        pat ++;
+
+      if (*pat == ']')
+        pat ++;
+
+      continue;
+    }
+    else if (*pat == '\\')
+    {
+     /*
+      * Handle quoted characters...
+      */
+
+      pat ++;
+    }
+
+   /*
+    * Stop if the pattern and string don't match...
+    */
+
+    if (*pat++ != *s++)
+      return (0);
   }
 
-  *buffer = '\0';
+ /*
+  * Done parsing the pattern and string; return 1 if the last character matches
+  * and 0 otherwise...
+  */
+
+  return (*s == *pat);
 }
 
 
 /*
- * End of "$Id: dist.c,v 1.9 2000/12/01 14:44:16 mike Exp $".
+ * End of "$Id: dist.c,v 1.10 2000/12/10 16:45:05 mike Exp $".
  */

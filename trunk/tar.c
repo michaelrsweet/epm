@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.7 2000/11/11 20:30:03 mike Exp $"
+ * "$Id: tar.c,v 1.8 2000/12/10 16:45:05 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -28,24 +28,6 @@
  */
 
 #include "epm.h"
-
-#if HAVE_DIRENT_H
-#  include <dirent.h>
-typedef struct dirent DIRENT;
-#  define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
-#  if HAVE_SYS_NDIR_H
-#    include <sys/ndir.h>
-#  endif
-#  if HAVE_SYS_DIR_H
-#    include <sys/dir.h>
-#  endif
-#  if HAVE_NDIR_H
-#    include <ndir.h>
-#  endif
-typedef struct direct DIRENT;
-#  define NAMLEN(dirent) (dirent)->d_namlen
-#endif
 
 
 /*
@@ -432,5 +414,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.7 2000/11/11 20:30:03 mike Exp $".
+ * End of "$Id: tar.c,v 1.8 2000/12/10 16:45:05 mike Exp $".
  */

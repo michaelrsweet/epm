@@ -113,6 +113,7 @@ WHAT'S NEW IN EPM 2.2?
 	  distributions.
 	- Added command-line option to specify the location of
 	  the setup program.
+	- Added support for wildcards in source filenames.
 
 
 WHAT'S NEW IN EPM 2.1?
