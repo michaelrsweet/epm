@@ -8,29 +8,73 @@ NNAAMMEE
        epm - create software packages
 
 SSYYNNOOPPSSIISS
-       eeppmm [ -g ] [ -n[mrs] ] [ -t ] product [ _l_i_s_t_f_i_l_e ]
+       eeppmm [ -f _f_o_r_m_a_t ] [ -g ] [ -n[mrs] ] [ -s _x_p_m_f_i_l_e ] [ -v ]
+       product [ _l_i_s_t_f_i_l_e ]
 
 DDEESSCCRRIIPPTTIIOONN
-       eeppmm  generates  software  packages complete with installa-
-       tion, removal, and (if necessary)  patch  scripts.  Unless
-       otherwise  specified,  the  files required for _p_r_o_d_u_c_t are
+       eeppmm generates software packages  complete  with  installa-
+       tion,  removal,  and  (if necessary) patch scripts. Unless
+       otherwise specified, the files required  for  _p_r_o_d_u_c_t  are
        read from a file named "_p_r_o_d_u_c_t.list".
 
+       The  _-_f  option ("format") specifies the distribution for-
+       mat:
+
+       deb
+            Generate a Debian distribution suitable for installa-
+            tion on a Debian Linux system.
+
+       inst
+            Generate  an IRIX distribution suitable for installa-
+            tion on an system running IRIX.
+
+       portable
+            Generate  a  portable  distribution  based  on  shell
+            scripts and tar files.  The resulting distribution is
+            installed and removed the same way on  all  operating
+            systems. [default]
+
+       rpm
+            Generate  a Red Hat Package Manager ("RPM") distribu-
+            tion suitable for installation on  a  Red  Hat  Linux
+            system.
+
        Executable files in the distribution are normally stripped
-       of  debugging  information  when packaged. To disable this
+       of debugging information when packaged.  To  disable  this
        functionality use the _-_g option.
 
-       The _-_t _o_p_t_i_o_n _(_"_t_e_s_t_"_) _d_i_s_a_b_l_e_s  _t_h_e  _g_e_n_e_r_a_t_i_o_n  _o_f  _c_o_m_-
-       _p_r_e_s_s_e_d _a_r_c_h_i_v_e_s _c_o_n_t_a_i_n_i_n_g _t_h_e _d_i_s_t_r_i_b_u_t_i_o_n_.
+       The  _-_s  option ("setup") includes the ESP Software Wizard
+       with the specified XPM image file with  the  distribution.
+       This  option is currently only available for portable dis-
+       tributions.
 
-       Distribution archives normally are named "product-version-
-       system-release-machine.tar.gz"    and    "product-version-
-       system-release-machine-patch.tar.gz"  (for patch distribu-
-       tions.)  The "system-release-machine" information  can  be
-       customized  or  eliminated  using  the  _-_n option with the
-       appropriate trailing letters.  Using  _-_n  by  itself  will
-       remove  the "system-release-machine" string from the file-
-       name entirely.
+       The _-_v _o_p_t_i_o_n _(_"_v_e_r_b_o_s_e_"_) _i_n_c_r_e_a_s_e_s _t_h_e _a_m_o_u_n_t _o_f _i_n_f_o_r_m_a_-
+       _t_i_o_n  _t_h_a_t  _i_s _r_e_p_o_r_t_e_d_. _U_s_e _m_u_l_t_i_p_l_e _v_'_s _f_o_r _m_o_r_e _v_e_r_b_o_s_e
+       _o_u_t_p_u_t_.
+
+       Distributions normally are named  "product-version-system-
+       release-machine.ext"  and "product-version-system-release-
+       machine-patch.ext" (for patch distributions.) The "system-
+       release-machine"  information  can be customized or elimi-
+       nated using the _-_n option with  the  appropriate  trailing
+       letters.  Using  _-_n  by  itself  will  remove the "system-
+
+
+
+5 November 1999        ESP Package Manager                      1
+
+
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
+
+       release-machine" string from the filename entirely.
+
+       Debian, IRIX, portable, and Red Hat distributions use  the
+       extensions   ".deb",   ".tardist",  "tar.gz",  and  ".rpm"
+       respectively.
 
 LLIISSTT FFIILLEESS
        Each product has an associated list  file  that  describes
@@ -42,36 +86,29 @@ LLIISSTT FFIILLEESS
        %copyright _c_o_p_y_r_i_g_h_t _n_o_t_i_c_e
             Sets the copyright notice for the file.
 
+       %description _d_e_s_c_r_i_p_t_i_o_n _t_e_x_t
+            Adds a line of descriptive text to the  distribution.
+            Multiple lines are supported.
+
        %include _f_i_l_e_n_a_m_e
             Includes files listed in _f_i_l_e_n_a_m_e.
 
        %incompat _p_r_o_d_u_c_t
 
        %incompat _f_i_l_e_n_a_m_e
-            Indicates that this product is incompatible with  the
+            Indicates  that this product is incompatible with the
             named product or file.
 
        %install _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
-            Specifies  a  script  or  program to be run after all
+            Specifies a script or program to  be  run  after  all
             files are installed.
 
        %license _l_i_c_e_n_s_e _f_i_l_e
-            Specifies  the  file  to  display  as  the   software
+            Specifies   the  file  to  display  as  the  software
             license.
 
-
-
-22 October 1999        ESP Package Manager                      1
-
-
-
-
-
-epm(1)                Easy Software Products               epm(1)
-
-
        %patch _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
-            Specifies  a  script  or  program to be run after all
+            Specifies a script or program to  be  run  after  all
             files are patched.
 
        %product _p_r_o_d_u_c_t _n_a_m_e
@@ -84,6 +121,22 @@ epm(1)                Easy Software Products               epm(1)
        %remove _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
             Specifies a script or program to be run before remov-
             ing or patching files.
+
+       %replaces _p_r_o_d_u_c_t
+            Indicates   that  this  product  replaces  the  named
+
+
+
+5 November 1999        ESP Package Manager                      2
+
+
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
+
+            product.
 
        %requires _p_r_o_d_u_c_t
 
@@ -124,18 +177,6 @@ epm(1)                Easy Software Products               epm(1)
             second form specifies that the file has changed or is
             new  and  should be included as part of a patch. Con-
             figuration files are installed as "destination.N"  if
-
-
-
-22 October 1999        ESP Package Manager                      2
-
-
-
-
-
-epm(1)                Easy Software Products               epm(1)
-
-
             the destination already exists.
 
        d _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
@@ -147,6 +188,19 @@ epm(1)                Easy Software Products               epm(1)
             part of a patch.
 
        i _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
+
+
+
+
+
+5 November 1999        ESP Package Manager                      3
+
+
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
 
        I _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
             Specifies an initialization script for  installation.
@@ -171,19 +225,23 @@ epm(1)                Easy Software Products               epm(1)
             _m_o_d_e  field  is  only  used  to  determine if a check
             should be made for a previous version of the file.
 
+KKNNOOWWNN BBUUGGSS
+       EPM does not currently support generation of IRIX software
+       patches.
+
 CCOOPPYYRRIIGGHHTT
-       Copyright 1999  by  Easy  Software  Products,  All  Rights
+       Copyright  1999  by  Easy  Software  Products,  All Rights
        Reserved.
 
-       This  program  is  free  software; you can redistribute it
+       This program is free software;  you  can  redistribute  it
        and/or modify it under the terms of the GNU General Public
-       License  as  published  by  the  Free Software Foundation;
+       License as published  by  the  Free  Software  Foundation;
        either version 2, or (at your option) any later version.
 
-       This program is distributed in the hope that  it  will  be
+       This  program  is  distributed in the hope that it will be
        useful, but WITHOUT ANY WARRANTY; without even the implied
-       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
-       PURPOSE.   See  the  GNU  General  Public License for more
+       warranty  of  MERCHANTABILITY  or FITNESS FOR A PARTICULAR
+       PURPOSE.  See the GNU  General  Public  License  for  more
        details.
 
 
@@ -193,6 +251,14 @@ CCOOPPYYRRIIGGHHTT
 
 
 
-22 October 1999        ESP Package Manager                      3
+
+
+
+
+
+
+
+
+5 November 1999        ESP Package Manager                      4
 
 

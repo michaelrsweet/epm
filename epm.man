@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.6 1999/12/02 22:27:41 mike Exp $"
+.\" "$Id: epm.man,v 1.7 1999/12/06 16:35:11 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -59,7 +59,7 @@ Executable files in the distribution are normally stripped of debugging
 information when packaged. To disable this functionality use the
 \fI\-g\fR option.
 .LP
-The \fI-s\fI option ("setup") includes the ESP Software Wizard with the
+The \fI-s\fR option ("setup") includes the ESP Software Wizard with the
 specified XPM image file with the distribution. This option is currently
 only available for portable distributions.
 .LP
@@ -221,5 +221,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.6 1999/12/02 22:27:41 mike Exp $".
+.\" End of "$Id: epm.man,v 1.7 1999/12/06 16:35:11 mike Exp $".
 .\"
