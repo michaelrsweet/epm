@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.3 1999/06/23 16:24:13 mike Exp $"
+ * "$Id: epm.c,v 1.4 1999/06/23 17:21:52 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -547,6 +547,8 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(installfile, "$tar %s.sw\n", prodname);
 
   fputs("if test -d " EPM_SOFTWARE "; then\n", installfile);
+  fprintf(installfile, "	echo \"Removing old versions of %s software...\"\n",
+          prodname);
   fprintf(installfile, "	/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
   fputs("else\n", installfile);
   fputs("	/bin/mkdir -p " EPM_SOFTWARE "\n", installfile);
@@ -1392,5 +1394,5 @@ write_header(FILE   *fp,	/* I - Tar file to write to */
 
 
 /*
- * End of "$Id: epm.c,v 1.3 1999/06/23 16:24:13 mike Exp $".
+ * End of "$Id: epm.c,v 1.4 1999/06/23 17:21:52 mike Exp $".
  */
