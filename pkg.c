@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.6 2000/06/20 13:51:50 mike Exp $"
+ * "$Id: pkg.c,v 1.7 2000/06/27 18:20:32 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -207,7 +207,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      for (j = 0; j < 6; j ++)
+      for (j = 0; j < 4; j ++)
         if (j != 1)
 	{
 	  file = add_file(dist);
@@ -341,5 +341,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.6 2000/06/20 13:51:50 mike Exp $".
+ * End of "$Id: pkg.c,v 1.7 2000/06/27 18:20:32 mike Exp $".
  */
