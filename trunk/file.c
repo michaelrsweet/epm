@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.15 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: file.c,v 1.16 2004/08/26 18:42:41 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -222,7 +222,9 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
         * Read the first 3 bytes of the file...
 	*/
 
-        fread(header, 1, sizeof(header) - 1, fp);
+        if (fread(header, 1, sizeof(header) - 1, fp) == 0)
+	  continue;
+
 	header[sizeof(header) - 1] = '\0';
 
 	fclose(fp);
@@ -257,5 +259,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.15 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: file.c,v 1.16 2004/08/26 18:42:41 mike Exp $".
  */

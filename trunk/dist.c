@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.53 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: dist.c,v 1.54 2004/08/26 18:42:41 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -500,15 +500,26 @@ get_platform(struct utsname *platform)	/* O - Platform info */
       *temp = tolower(*temp);
 
  /*
-  * SunOS 5.x is really Solaris 2.x, and OSF1 is really Digital UNIX a.k.a.
-  * Compaq Tru64 UNIX...
+  * SunOS 5.x is really Solaris 2.x or Solaris X, and OSF1 is really
+  * Digital UNIX a.k.a. Compaq Tru64 UNIX...
   */
 
   if (strcmp(platform->sysname, "sunos") == 0 &&
       platform->release[0] >= '5')
   {
     strcpy(platform->sysname, "solaris");
-    platform->release[0] -= 3;
+
+    if (atoi(platform->release + 2) < 7)
+      platform->release[0] -= 3;
+    else
+    {
+     /*
+      * Strip 5. from the front of the version number...
+      */
+
+      for (temp = platform->release; temp[2]; temp ++)
+        *temp = temp[2];
+    }
   }
   else if (strcmp(platform->sysname, "osf1") == 0)
     strcpy(platform->sysname, "tru64"); /* AKA Digital UNIX */
@@ -2039,5 +2050,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.53 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: dist.c,v 1.54 2004/08/26 18:42:41 mike Exp $".
  */

@@ -6,6 +6,9 @@ WHAT'S NEW IN EPM 3.7.1?
     EPM 3.7.1 adds the following features, fixes, and changes to
     EPM 3.7:
 
+	- EPM no longer tries to strip empty files.
+	- Solaris 7 and higher no longer have the "2." prefix in
+	  the version number.
 	- The setup and uninst GUIs now support GIF setup images
 	  (setup.gif) as well as XPM images (setup.xpm)
 	- Debian packages now properly install init scripts.
