@@ -80,9 +80,9 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
     unencumbered by licensing of any kind (not even the GPL.)
 
 
-WHAT'S NEW IN EPM 2.0.1?
+WHAT'S NEW IN EPM 2.1?
 
-    EPM 2.0.1 adds the following features, fixes, and changes to
+    EPM 2.1 adds the following features, fixes, and changes to
     EPM 2.0:
 
 	- Moved setup program to /usr/lib/epm ($prefix/lib/epm) to
@@ -95,6 +95,9 @@ WHAT'S NEW IN EPM 2.0.1?
 	  can be used to override the default locations.
 	- The sample project list file (epm.list) was missing
 	  from the 2.0 distribution.
+	- Now check for write permission in /usr by writing a
+	  test file (/usr/.writetest); this should make diskless
+	  client installations more reliable.
 
 
 WHAT'S NEW IN EPM 2.0?
