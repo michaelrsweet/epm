@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.15 2004/08/29 04:17:44 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.16 2004/09/08 21:04:47 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -648,6 +648,8 @@ get_platform(struct utsname *platform)	/* O - Platform info */
 
       for (temp = platform->release; temp[2]; temp ++)
         *temp = temp[2];
+
+      *temp = '\0';
     }
   }
   else if (strcmp(platform->sysname, "osf1") == 0)
@@ -2321,5 +2323,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.15 2004/08/29 04:17:44 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.16 2004/09/08 21:04:47 mike Exp $".
  */
