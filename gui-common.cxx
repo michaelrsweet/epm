@@ -1,9 +1,9 @@
 //
-// "$Id: gui-common.cxx,v 1.1 2003/01/30 04:27:46 mike Exp $"
+// "$Id: gui-common.cxx,v 1.2 2004/03/05 05:24:34 mike Exp $"
 //
 //   ESP Software Wizard common functions for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2003 by Easy Software Products.
+//   Copyright 1999-2004 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -215,5 +215,5 @@ sort_dists(const dist_t *d0,	// I - First distribution
 
 
 //
-// End of "$Id: gui-common.cxx,v 1.1 2003/01/30 04:27:46 mike Exp $".
+// End of "$Id: gui-common.cxx,v 1.2 2004/03/05 05:24:34 mike Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: uninst2.cxx,v 1.4 2003/05/21 13:03:30 mike Exp $"
+// "$Id: uninst2.cxx,v 1.5 2004/03/05 05:24:34 mike Exp $"
 //
 //   ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2003 by Easy Software Products.
+//   Copyright 1999-2004 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -659,5 +659,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: uninst2.cxx,v 1.4 2003/05/21 13:03:30 mike Exp $".
+// End of "$Id: uninst2.cxx,v 1.5 2004/03/05 05:24:34 mike Exp $".
 //

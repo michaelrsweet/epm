@@ -1,5 +1,25 @@
-CHANGES - ESP Package Manager (EPM) 3.7
----------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.7.1
+-----------------------------------------
+
+WHAT'S NEW IN EPM 3.7.1?
+
+    EPM 3.7.1 adds the following features, fixes, and changes to
+    EPM 3.7:
+
+	- Packages created on MacOS X now use the system name
+	  "macosx" and the MacOS X version number.  The old
+	  "darwin" name is still accepted as a synonym.
+	- EPM now supports version numbers that do not start
+	  with a number (HP-UX workaround for OS
+	  dependencies...)
+	- EPM now issues an error message if you have identical
+	  destination files that don't match up.
+	- HP-UX packages now use the %readme file for the readme
+	  info in a package, and the %license file for the
+	  copyright info in a package.
+	- Added %preremove support for AIX packages and fixed
+	  some AIX packaging issues with patch from David Maltz.
+
 
 WHAT'S NEW IN EPM 3.7?
 

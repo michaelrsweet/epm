@@ -1,7 +1,5 @@
 TODO for EPM:
 
-	- Use /System/Library/CoreServices/SystemVersion.plist
-	  file on OSX/Darwin to get OS name and version.
 	- Do portable config file stuff for formats that don't
 	  support config files (HP-UX + others)
 	- Add /opt relocation hack and allow for relocatable and
