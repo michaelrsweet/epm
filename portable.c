@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.10 2000/05/16 18:48:15 mike Exp $"
+ * "$Id: portable.c,v 1.11 2000/05/16 19:39:46 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -943,7 +943,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
-    fputs("		/bin/mv $file $file.O\n", scriptfile);
+    fputs("		/bin/mv -f $file $file.O\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -966,7 +966,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("		if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
-    fputs("			/bin/mv $file $file.O\n", scriptfile);
+    fputs("			/bin/mv -f $file $file.O\n", scriptfile);
     fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
     fputs("fi\n", scriptfile);
@@ -1028,7 +1028,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	if test ! -f $file; then\n", scriptfile);
-    fputs("		/bin/mv $file.N $file\n", scriptfile);
+    fputs("		/bin/mv -f $file.N $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1222,7 +1222,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
-    fputs("		/bin/mv $file $file.O\n", scriptfile);
+    fputs("		/bin/mv -f $file $file.O\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1245,7 +1245,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("		if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
-    fputs("			/bin/mv $file $file.O\n", scriptfile);
+    fputs("			/bin/mv -f $file $file.O\n", scriptfile);
     fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
     fputs("fi\n", scriptfile);
@@ -1303,7 +1303,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	if test ! -f $file; then\n", scriptfile);
-    fputs("		/bin/mv $file.N $file\n", scriptfile);
+    fputs("		/bin/mv -f $file.N $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1324,7 +1324,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("	rm -f $file\n", scriptfile);
     fputs("	if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
-    fputs("		/bin/mv $file.O $file\n", scriptfile);
+    fputs("		/bin/mv -f $file.O $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1532,7 +1532,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("	rm -f $file\n", scriptfile);
     fputs("	if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
-    fputs("		/bin/mv $file.O $file\n", scriptfile);
+    fputs("		/bin/mv -f $file.O $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1554,7 +1554,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("; do\n", scriptfile);
     fputs("		rm -f $file\n", scriptfile);
     fputs("		if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
-    fputs("			/bin/mv $file.O $file\n", scriptfile);
+    fputs("			/bin/mv -f $file.O $file\n", scriptfile);
     fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
     fputs("fi\n", scriptfile);
@@ -1570,5 +1570,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.10 2000/05/16 18:48:15 mike Exp $".
+ * End of "$Id: portable.c,v 1.11 2000/05/16 19:39:46 mike Exp $".
  */
