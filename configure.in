@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.17 2001/02/28 22:34:47 mike Exp $"
+dnl "$Id: configure.in,v 1.18 2001/03/07 00:54:00 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -289,7 +289,7 @@ if test "x$RPM" != "x"; then
 	build="`$RPM -v | grep buildarch`"
 
 	if test "x$build" = "x"; then
-		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--target")
+		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--target=")
 	else
 		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--buildarch")
 	fi
@@ -299,5 +299,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list)
 
 dnl
-dnl End of "$Id: configure.in,v 1.17 2001/02/28 22:34:47 mike Exp $".
+dnl End of "$Id: configure.in,v 1.18 2001/03/07 00:54:00 mike Exp $".
 dnl
