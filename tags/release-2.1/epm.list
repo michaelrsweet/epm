@@ -1,0 +1,48 @@
+#
+# "$Id: epm.list,v 1.1 2000/04/26 14:27:06 mike Exp $"
+#
+#   Sample software list file for the ESP Package Manager (EPM).
+#
+#   Please report problems and fixes to "epm@easysw.com".
+#
+#   Copyright 1999-2000 by Easy Software Products, all rights reserved.
+#
+#   These coded instructions, statements, and computer programs are the
+#   property of Easy Software Products and are protected by Federal
+#   copyright law.  Distribution and use rights are outlined in the file
+#   "COPYING" which should have been included with this file.  If this
+#   file is missing or damaged please contact Easy Software Products
+#   at:
+#
+#       Attn: EPM Licensing Information
+#       Easy Software Products
+#       44141 Airport View Drive, Suite 204
+#       Hollywood, Maryland 20636-3111 USA
+#
+#       Voice: (301) 373-9603
+#       EMail: epm@easysw.com
+#         WWW: http://www.easysw.com/epm
+#
+
+%product ESP Package Manager
+%copyright 1999-2000 by Easy Software Products, All Rights Reserved.
+%vendor Easy Software Products
+%license COPYING
+%readme README
+%description Universal software packaging tool for UNIX.
+%version 2.0.1
+
+# Executables
+%system all
+f 0555 root sys /usr/bin/epm epm
+f 0555 root sys /usr/lib/epm/setup setup
+
+# Man pages
+%system irix
+f 0444 root sys /usr/share/catman/u_man/cat1/epm.1 epm.1
+%system !irix
+f 0444 root sys /usr/man/man1/epm.1 epm.man
+
+#
+# End of "$Id: epm.list,v 1.1 2000/04/26 14:27:06 mike Exp $".
+#
