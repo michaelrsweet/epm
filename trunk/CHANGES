@@ -9,6 +9,7 @@ WHAT'S NEW IN EPM 3.6.1?
 	- RPM building did not work properly when --output-dir
 	  was specified using an absolute path.
 	- Made cosmetic changes to the setup/uninstall GUIs.
+	- The setup GUI did not support software patches.
 
 
 WHAT'S NEW IN EPM 3.6?

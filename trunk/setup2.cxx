@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.37 2003/05/21 13:03:30 mike Exp $"
+// "$Id: setup2.cxx,v 1.38 2003/06/06 20:48:43 mike Exp $"
 //
 //   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -258,7 +258,7 @@ get_dists(const char *d)	// I - Directory to look in
   for (i = 0; i < num_files; i ++)
   {
     ext = fl_filename_ext(files[i]->d_name);
-    if (strcmp(ext, ".install") == 0)
+    if (!strcmp(ext, ".install") || !strcmp(ext, ".patch"))
     {
       // Found a .install script...
       if ((fp = fopen(files[i]->d_name, "r")) == NULL)
@@ -410,6 +410,8 @@ install_dist(const dist_t *dist)// I - Distribution to install
   }
 
   sprintf(command, "%s.install", dist->product);
+  if (access(command, 0))
+    sprintf(command, "%s.patch", dist->product);
 
 #ifdef __APPLE__
   // Run the install script using Apple's authorization API...
@@ -1008,5 +1010,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.37 2003/05/21 13:03:30 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.38 2003/06/06 20:48:43 mike Exp $".
 //
