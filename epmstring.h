@@ -1,5 +1,5 @@
 /*
- * "$Id: epmstring.h,v 1.1 2001/01/19 16:16:51 mike Exp $"
+ * "$Id: epmstring.h,v 1.2 2001/05/31 19:03:04 mike Exp $"
  *
  *   String definitions for the ESP Package Manager (EPM).
  *
@@ -25,6 +25,10 @@
 
 #  include "config.h"
 #  include <string.h>
+
+#  ifdef HAVE_STRINGS_H
+#    include <strings.h>
+#  endif /* HAVE_STRINGS_H */
 
 #  ifdef __cplusplus
 extern "C" {
@@ -54,5 +58,5 @@ extern int	strncasecmp(const char *, const char *, size_t n);
 #endif /* !_EPM_STRING_H_ */
 
 /*
- * End of "$Id: epmstring.h,v 1.1 2001/01/19 16:16:51 mike Exp $".
+ * End of "$Id: epmstring.h,v 1.2 2001/05/31 19:03:04 mike Exp $".
  */
