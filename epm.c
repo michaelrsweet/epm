@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.24 1999/09/03 21:02:13 mike Exp $"
+ * "$Id: epm.c,v 1.25 1999/09/27 16:50:30 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -389,10 +389,10 @@ main(int  argc,			/* I - Number of command-line arguments */
     return (1);
 
  /*
-  * Create the software distribution file...
+  * Create the non-shared software distribution file...
   */
 
-  puts("Creating software distribution file...");
+  puts("Creating non-shared software distribution file...");
 
   sprintf(swname, "%s.sw", prodname);
   sprintf(filename, "%s/%s", directory, swname);
@@ -409,113 +409,22 @@ main(int  argc,			/* I - Number of command-line arguments */
   tblocks = 0;
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    switch (tolower(file->type))
-    {
-      case 'f' : /* Regular file */
-          if ((file->mode & 0111) && strip)
-	  {
-	   /*
-	    * Strip executables...
-	    */
-
-            sprintf(command, EPM_STRIP " %s 2>&1 >/dev/null", file->src);
-	    system(command);
-	  }
-
-      case 'c' : /* Config file */
-      case 'i' : /* Init script */
-          if (stat(file->src, &srcstat))
-	  {
-	    fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
-	            strerror(errno));
-	    continue;
-	  }
-
-         /*
-	  * Configuration files are extracted to the config file name with
-	  * .N appended; add a bit of script magic to check if the config
-	  * file already exists, and if not we move the .N to the config
-	  * file location...
-	  */
-
-	  if (tolower(file->type) == 'c')
-	    sprintf(filename, "%s.N", file->dst);
-	  else if (tolower(file->type) == 'i')
-	    sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
-	  else
-            strcpy(filename, file->dst);
-
-	  printf("%s -> %s...\n", file->src, filename);
-
-	  if (write_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
-	                   srcstat.st_mtime, file->user, file->group,
-			   filename, NULL) < 0)
-	  {
-	    fprintf(stderr, "epm: Error writing file header - %s\n",
-	            strerror(errno));
-	    return (1);
-	  }
-
-	  if ((blocks = write_file(tarfile, file->src)) < 0)
-	  {
-	    fprintf(stderr, "epm: Error writing file data - %s\n",
-	            strerror(errno));
-	    return (1);
-	  }
-
-	  tblocks += blocks + 1;
-	  break;
-
-      case 'd' : /* Create directory */
-	  printf("%s...\n", file->dst);
-	  break;
-
-      case 'l' : /* Link file */
-	  printf("%s -> %s...\n", file->src, file->dst);
-
-	  if (write_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
-	                   file->user, file->group, file->dst, file->src) < 0)
-	  {
-	    fprintf(stderr, "epm: Error writing link header - %s\n",
-	            strerror(errno));
-	    return (1);
-	  }
-
-	  tblocks ++;
-	  break;
-    }
-
-  write_padding(tarfile, tblocks);
-  fclose(tarfile);
-
- /*
-  * Create the patch distribution file...
-  */
-
-  if (havepatchfiles)
-  {
-    puts("Creating software patch file...");
-
-    sprintf(pswname, "%s.psw", prodname);
-    sprintf(filename, "%s/%s", directory, pswname);
-
-    unlink(filename);
-    if ((tarfile = fopen(filename, "wb")) == NULL)
-    {
-      fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
-              filename, strerror(errno));
-      return (1);
-    }
-
-    fchmod(fileno(tarfile), 0444);
-    tblocks = 0;
-
-    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      switch (file->type)
+    if (strncmp(file->dst, "/usr", 4) != 0)
+      switch (tolower(file->type))
       {
-	case 'C' : /* Config file */
-	case 'F' : /* Regular file */
-        case 'I' : /* Init script */
+	case 'f' : /* Regular file */
+            if ((file->mode & 0111) && strip)
+	    {
+	     /*
+	      * Strip executables...
+	      */
+
+              sprintf(command, EPM_STRIP " %s 2>&1 >/dev/null", file->src);
+	      system(command);
+	    }
+
+	case 'c' : /* Config file */
+	case 'i' : /* Init script */
             if (stat(file->src, &srcstat))
 	    {
 	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
@@ -530,9 +439,9 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    * file location...
 	    */
 
-	    if (file->type == 'C')
+	    if (tolower(file->type) == 'c')
 	      sprintf(filename, "%s.N", file->dst);
-	    else if (file->type == 'I')
+	    else if (tolower(file->type) == 'i')
 	      sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
 	    else
               strcpy(filename, file->dst);
@@ -562,7 +471,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    printf("%s...\n", file->dst);
 	    break;
 
-	case 'L' : /* Link file */
+	case 'l' : /* Link file */
 	    printf("%s -> %s...\n", file->src, file->dst);
 
 	    if (write_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
@@ -576,6 +485,287 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    tblocks ++;
 	    break;
       }
+
+  write_padding(tarfile, tblocks);
+  fclose(tarfile);
+
+ /*
+  * Create the shared software distribution file...
+  */
+
+  puts("Creating non-shared software distribution file...");
+
+  sprintf(swname, "%s.ss", prodname);
+  sprintf(filename, "%s/%s", directory, swname);
+
+  unlink(filename);
+  if ((tarfile = fopen(filename, "wb")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
+            filename, strerror(errno));
+    return (1);
+  }
+
+  fchmod(fileno(tarfile), 0444);
+  tblocks = 0;
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) == 0)
+      switch (tolower(file->type))
+      {
+	case 'f' : /* Regular file */
+            if ((file->mode & 0111) && strip)
+	    {
+	     /*
+	      * Strip executables...
+	      */
+
+              sprintf(command, EPM_STRIP " %s 2>&1 >/dev/null", file->src);
+	      system(command);
+	    }
+
+	case 'c' : /* Config file */
+	case 'i' : /* Init script */
+            if (stat(file->src, &srcstat))
+	    {
+	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
+	              strerror(errno));
+	      continue;
+	    }
+
+           /*
+	    * Configuration files are extracted to the config file name with
+	    * .N appended; add a bit of script magic to check if the config
+	    * file already exists, and if not we move the .N to the config
+	    * file location...
+	    */
+
+	    if (tolower(file->type) == 'c')
+	      sprintf(filename, "%s.N", file->dst);
+	    else if (tolower(file->type) == 'i')
+	      sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
+	    else
+              strcpy(filename, file->dst);
+
+	    printf("%s -> %s...\n", file->src, filename);
+
+	    if (write_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
+	                     srcstat.st_mtime, file->user, file->group,
+			     filename, NULL) < 0)
+	    {
+	      fprintf(stderr, "epm: Error writing file header - %s\n",
+	              strerror(errno));
+	      return (1);
+	    }
+
+	    if ((blocks = write_file(tarfile, file->src)) < 0)
+	    {
+	      fprintf(stderr, "epm: Error writing file data - %s\n",
+	              strerror(errno));
+	      return (1);
+	    }
+
+	    tblocks += blocks + 1;
+	    break;
+
+	case 'd' : /* Create directory */
+	    printf("%s...\n", file->dst);
+	    break;
+
+	case 'l' : /* Link file */
+	    printf("%s -> %s...\n", file->src, file->dst);
+
+	    if (write_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
+	                     file->user, file->group, file->dst, file->src) < 0)
+	    {
+	      fprintf(stderr, "epm: Error writing link header - %s\n",
+	              strerror(errno));
+	      return (1);
+	    }
+
+	    tblocks ++;
+	    break;
+      }
+
+  write_padding(tarfile, tblocks);
+  fclose(tarfile);
+
+ /*
+  * Create the patch distribution files...
+  */
+
+  if (havepatchfiles)
+  {
+    puts("Creating non-shared software patch file...");
+
+    sprintf(pswname, "%s.psw", prodname);
+    sprintf(filename, "%s/%s", directory, pswname);
+
+    unlink(filename);
+    if ((tarfile = fopen(filename, "wb")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
+              filename, strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(tarfile), 0444);
+    tblocks = 0;
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (strncmp(file->dst, "/usr", 4) != 0)
+	switch (file->type)
+	{
+	  case 'C' : /* Config file */
+	  case 'F' : /* Regular file */
+          case 'I' : /* Init script */
+              if (stat(file->src, &srcstat))
+	      {
+		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
+	        	strerror(errno));
+		continue;
+	      }
+
+             /*
+	      * Configuration files are extracted to the config file name with
+	      * .N appended; add a bit of script magic to check if the config
+	      * file already exists, and if not we move the .N to the config
+	      * file location...
+	      */
+
+	      if (file->type == 'C')
+		sprintf(filename, "%s.N", file->dst);
+	      else if (file->type == 'I')
+		sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
+	      else
+        	strcpy(filename, file->dst);
+
+	      printf("%s -> %s...\n", file->src, filename);
+
+	      if (write_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
+	                       srcstat.st_mtime, file->user, file->group,
+			       filename, NULL) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file header - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
+
+	      if ((blocks = write_file(tarfile, file->src)) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file data - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
+
+	      tblocks += blocks + 1;
+	      break;
+
+	  case 'd' : /* Create directory */
+	      printf("%s...\n", file->dst);
+	      break;
+
+	  case 'L' : /* Link file */
+	      printf("%s -> %s...\n", file->src, file->dst);
+
+	      if (write_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
+	                       file->user, file->group, file->dst, file->src) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing link header - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
+
+	      tblocks ++;
+	      break;
+	}
+
+    write_padding(tarfile, tblocks);
+    fclose(tarfile);
+
+    puts("Creating shared software patch file...");
+
+    sprintf(pswname, "%s.pss", prodname);
+    sprintf(filename, "%s/%s", directory, pswname);
+
+    unlink(filename);
+    if ((tarfile = fopen(filename, "wb")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
+              filename, strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(tarfile), 0444);
+    tblocks = 0;
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (strncmp(file->dst, "/usr", 4) == 0)
+	switch (file->type)
+	{
+	  case 'C' : /* Config file */
+	  case 'F' : /* Regular file */
+          case 'I' : /* Init script */
+              if (stat(file->src, &srcstat))
+	      {
+		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
+	        	strerror(errno));
+		continue;
+	      }
+
+             /*
+	      * Configuration files are extracted to the config file name with
+	      * .N appended; add a bit of script magic to check if the config
+	      * file already exists, and if not we move the .N to the config
+	      * file location...
+	      */
+
+	      if (file->type == 'C')
+		sprintf(filename, "%s.N", file->dst);
+	      else if (file->type == 'I')
+		sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
+	      else
+        	strcpy(filename, file->dst);
+
+	      printf("%s -> %s...\n", file->src, filename);
+
+	      if (write_header(tarfile, TAR_NORMAL, file->mode, srcstat.st_size,
+	                       srcstat.st_mtime, file->user, file->group,
+			       filename, NULL) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file header - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
+
+	      if ((blocks = write_file(tarfile, file->src)) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file data - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
+
+	      tblocks += blocks + 1;
+	      break;
+
+	  case 'd' : /* Create directory */
+	      printf("%s...\n", file->dst);
+	      break;
+
+	  case 'L' : /* Link file */
+	      printf("%s -> %s...\n", file->src, file->dst);
+
+	      if (write_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
+	                       file->user, file->group, file->dst, file->src) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing link header - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
+
+	      tblocks ++;
+	      break;
+	}
 
     write_padding(tarfile, tblocks);
     fclose(tarfile);
@@ -1567,6 +1757,9 @@ write_install(dist_t *dist,	/* I - Software distribution */
 
   fputs("echo Installing software...\n", scriptfile);
   fprintf(scriptfile, "$tar %s.sw\n", prodname);
+  fputs("if test -w /usr; then\n", scriptfile);
+  fprintf(scriptfile, "	$tar %s.ss\n", prodname);
+  fputs("fi\n", scriptfile);
 
   fputs("if test -d " EPM_SOFTWARE "; then\n", scriptfile);
   fprintf(scriptfile, "	/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
@@ -1871,6 +2064,9 @@ write_patch(dist_t *dist,	/* I - Software distribution */
 
   fputs("echo Patching software...\n", scriptfile);
   fprintf(scriptfile, "$tar %s.psw\n", prodname);
+  fputs("if test -w /usr; then\n", scriptfile);
+  fprintf(scriptfile, "	$tar %s.pss\n", prodname);
+  fputs("fi\n", scriptfile);
 
   fprintf(scriptfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
   fprintf(scriptfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
@@ -2117,7 +2313,8 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
   fputs("for file in", scriptfile);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'f' || tolower(file->type) == 'l')
+    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+        strncmp(file->dst, "/usr", 4) != 0)
       fprintf(scriptfile, " %s", file->dst);
 
   fputs("; do\n", scriptfile);
@@ -2127,6 +2324,20 @@ write_remove(dist_t *dist,	/* I - Software distribution */
   fputs("	fi\n", scriptfile);
   fputs("done\n", scriptfile);
 
+  fputs("if test -w /usr ; then\n", scriptfile);
+  fputs("	for file in", scriptfile);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+        strncmp(file->dst, "/usr", 4) == 0)
+      fprintf(scriptfile, " %s", file->dst);
+
+  fputs("; do\n", scriptfile);
+  fputs("		rm -f $file\n", scriptfile);
+  fputs("		if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
+  fputs("			/bin/mv $file.O $file\n", scriptfile);
+  fputs("		fi\n", scriptfile);
+  fputs("	done\n", scriptfile);
+  fputs("fi\n", scriptfile);
   fprintf(scriptfile, "rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
 
   fputs("echo Removal is complete.\n", scriptfile);
@@ -2138,5 +2349,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.24 1999/09/03 21:02:13 mike Exp $".
+ * End of "$Id: epm.c,v 1.25 1999/09/27 16:50:30 mike Exp $".
  */
