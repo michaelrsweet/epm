@@ -1,5 +1,5 @@
-README - ESP Package Manager (EPM) 3.2.2
-----------------------------------------
+README - ESP Package Manager (EPM) 3.3
+--------------------------------------
 
 WHAT IS EPM?
 
@@ -86,14 +86,16 @@ OTHER RESOURCES
 
 COPYRIGHT AND LICENSE INFO
 
-    EPM is Copyright 1999-2002 by Easy Software Products, All Rights Reserved.
+    EPM is Copyright 1999-2002 by Easy Software Products, All
+    Rights Reserved.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2, or (at your option)
-    any later version.
- 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is free software; you can redistribute it
+    and/or modify it under the terms of the GNU General Public
+    License as published by the Free Software Foundation; either
+    version 2, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be
+    useful, but WITHOUT ANY WARRANTY; without even the implied
+    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+    PURPOSE.  See the GNU General Public License for more
+    details.
