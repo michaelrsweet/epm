@@ -10,6 +10,27 @@ EPM software.</P>
 
 <UL>
 
+	<LI>No longer install init scripts in run levels 2 and 5
+	under Solaris, which runs all init scripts in each run
+	level.
+
+	<LI>The tar files produced by EPM didn't conform to the
+	POSIX 1003.1 spec.  EPM now puts the POSIX version
+	number (00) and supports "long" filenames up to
+	255 characters in length.
+
+	<LI>AIX packages did not use the correct path for files
+	placed in the root partition.
+
+	<LI>Now install init scripts for *BSD in
+	/usr/local/etc/rc.d.
+
+</UL>
+
+<H2>Changes in EPM v3.3</H2>
+
+<UL>
+
 	<LI>UnixWare 7 needs the absolute path when transferring
 	an AT&amp;T package directory to a .pkg file.
 

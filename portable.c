@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.64 2002/06/04 19:17:31 mike Exp $"
+ * "$Id: portable.c,v 1.65 2002/06/04 19:30:33 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1358,14 +1358,27 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
     fputs("if test \"$rcdir\" = \"\" ; then\n", scriptfile);
-    fputs("	echo Unable to determine location of startup scripts!\n", scriptfile);
+    fputs("	if test -d /usr/local/etc/rc.d; then\n", scriptfile);
+    fputs("		for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(scriptfile, " %s", file->dst);
+    fputs("; do\n", scriptfile);
+    fputs("			rm -f /usr/local/src/rc.d/$file.sh\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
+                        "/usr/local/etc/rc.d/$file.sh\n",
+            SoftwareDir);
+    fputs("		done\n", scriptfile);
+    fputs("	else\n", scriptfile);
+    fputs("		echo Unable to determine location of startup scripts!\n", scriptfile);
+    fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
     fputs("	for file in", scriptfile);
     for (; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
         fprintf(scriptfile, " %s", file->dst);
-
     fputs("; do\n", scriptfile);
+
     fputs("		if test -d $rcdir/init.d; then\n", scriptfile);
     fputs("			rm -f $rcdir/init.d/$file\n", scriptfile);
     fprintf(scriptfile, "			ln -s %s/init.d/$file "
@@ -1616,7 +1629,20 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
     fputs("if test \"$rcdir\" = \"\" ; then\n", scriptfile);
-    fputs("	echo Unable to determine location of startup scripts!\n", scriptfile);
+    fputs("	if test -d /usr/local/etc/rc.d; then\n", scriptfile);
+    fputs("		for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(scriptfile, " %s", file->dst);
+    fputs("; do\n", scriptfile);
+    fputs("			rm -f /usr/local/src/rc.d/$file.sh\n", scriptfile);
+    fprintf(scriptfile, "			ln -s %s/init.d/$file "
+                        "/usr/local/etc/rc.d/$file.sh\n",
+            SoftwareDir);
+    fputs("		done\n", scriptfile);
+    fputs("	else\n", scriptfile);
+    fputs("		echo Unable to determine location of startup scripts!\n", scriptfile);
+    fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
     fputs("	for file in", scriptfile);
     for (; i > 0; i --, file ++)
@@ -1770,7 +1796,17 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
     fputs("if test \"$rcdir\" = \"\" ; then\n", scriptfile);
-    fputs("	echo Unable to determine location of startup scripts!\n", scriptfile);
+    fputs("	if test -d /usr/local/etc/rc.d; then\n", scriptfile);
+    fputs("		for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(scriptfile, " %s", file->dst);
+    fputs("; do\n", scriptfile);
+    fputs("			rm -f /usr/local/src/rc.d/$file.sh\n", scriptfile);
+    fputs("		done\n", scriptfile);
+    fputs("	else\n", scriptfile);
+    fputs("		echo Unable to determine location of startup scripts!\n", scriptfile);
+    fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
     fputs("	for file in", scriptfile);
     for (; i > 0; i --, file ++)
@@ -1975,5 +2011,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.64 2002/06/04 19:17:31 mike Exp $".
+ * End of "$Id: portable.c,v 1.65 2002/06/04 19:30:33 mike Exp $".
  */
