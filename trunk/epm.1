@@ -24,44 +24,44 @@ DDEESSCCRRIIPPTTIIOONN
             Generate a Debian distribution suitable for installa-
             tion on a Debian Linux system.
 
-       inst
+       inst, tardist
             Generate  an IRIX distribution suitable for installa-
             tion on an system running IRIX.
+
+       pkg
+            Generate an AT&T software  package.  These  are  used
+            primarily under Solaris.
 
        portable
             Generate  a  portable  distribution  based  on  shell
             scripts and tar files.  The resulting distribution is
-            installed and removed the same way on  all  operating
+            installed  and  removed the same way on all operating
             systems. [default]
 
        rpm
-            Generate  a Red Hat Package Manager ("RPM") distribu-
-            tion suitable for installation on  a  Red  Hat  Linux
+            Generate a Red Hat Package Manager ("RPM")  distribu-
+            tion  suitable  for  installation  on a Red Hat Linux
             system.
 
+       swinstall, depot
+            Generate a HP-UX software distribution.
+
        Executable files in the distribution are normally stripped
-       of debugging information when packaged.  To  disable  this
+       of  debugging  information  when packaged. To disable this
        functionality use the _-_g option.
 
-       The  _-_s  option ("setup") includes the ESP Software Wizard
-       with the specified XPM image file with  the  distribution.
-       This  option is currently only available for portable dis-
+       The _-_s option ("setup") includes the ESP  Software  Wizard
+       with  the  specified XPM image file with the distribution.
+       This option is currently only available for portable  dis-
        tributions.
 
        The _-_v option ("verbose") increases the amount of informa-
-       tion  that  is reported. Use multiple v's for more verbose
+       tion that is reported. Use multiple v's for  more  verbose
        output.
 
-       Distributions normally are named  "product-version-system-
-       release-machine.ext"  and "product-version-system-release-
-       machine-patch.ext" (for patch distributions.) The "system-
-       release-machine"  information  can be customized or elimi-
-       nated using the _-_n option with  the  appropriate  trailing
-       letters.  Using  _-_n  by  itself  will  remove the "system-
 
 
-
-15 December 1999       ESP Package Manager                      1
+12 January 2000        ESP Package Manager                      1
 
 
 
@@ -70,32 +70,38 @@ DDEESSCCRRIIPPTTIIOONN
 epm(1)                Easy Software Products               epm(1)
 
 
+       Distributions  normally are named "product-version-system-
+       release-machine.ext" and  "product-version-system-release-
+       machine-patch.ext" (for patch distributions.) The "system-
+       release-machine" information can be customized  or  elimi-
+       nated  using  the  _-_n option with the appropriate trailing
+       letters. Using _-_n  by  itself  will  remove  the  "system-
        release-machine" string from the filename entirely.
 
-       Debian, IRIX, portable, and Red Hat distributions use  the
-       extensions   ".deb",   ".tardist",  "tar.gz",  and  ".rpm"
+       Debian,  IRIX, portable, and Red Hat distributions use the
+       extensions  ".deb",  ".tardist",  "tar.gz",   and   ".rpm"
        respectively.
 
 LLIISSTT FFIILLEESS
-       Each product has an associated list  file  that  describes
+       Each  product  has  an associated list file that describes
        the files to include with the product. Comment lines begin
-       with the "#" character and are ignored.   All  other  non-
-       blank  lines  must begin with a letter or the percent sign
+       with  the  "#"  character and are ignored.  All other non-
+       blank lines must begin with a letter or the  percent  sign
        ("%") as follows:
 
        %copyright _c_o_p_y_r_i_g_h_t _n_o_t_i_c_e
             Sets the copyright notice for the file.
 
        %description _d_e_s_c_r_i_p_t_i_o_n _t_e_x_t
-            Adds a line of descriptive text to the  distribution.
+            Adds  a line of descriptive text to the distribution.
             Multiple lines are supported.
 
        %format _f_o_r_m_a_t _[_._._. _f_o_r_m_a_t_]
-            Uses  following files and directives only if the dis-
+            Uses following files and directives only if the  dis-
             tribution format is the same as _f_o_r_m_a_t.
 
        %format !_f_o_r_m_a_t _[_._._. _f_o_r_m_a_t_]
-            Uses following files and directives only if the  dis-
+            Uses  following files and directives only if the dis-
             tribution format is not the same as _f_o_r_m_a_t.
 
        %include _f_i_l_e_n_a_m_e
@@ -104,30 +110,24 @@ LLIISSTT FFIILLEESS
        %incompat _p_r_o_d_u_c_t
 
        %incompat _f_i_l_e_n_a_m_e
-            Indicates  that this product is incompatible with the
+            Indicates that this product is incompatible with  the
             named product or file.
 
        %install _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
-            Specifies a script or program to  be  run  after  all
+            Specifies  a  script  or  program to be run after all
             files are installed.
 
        %license _l_i_c_e_n_s_e _f_i_l_e
-            Specifies   the  file  to  display  as  the  software
+            Specifies  the  file  to  display  as  the   software
             license.
 
        %patch _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
-            Specifies a script or program to  be  run  after  all
+            Specifies  a  script  or  program to be run after all
             files are patched.
 
-       %product _p_r_o_d_u_c_t _n_a_m_e
-            Specifies the product name.
-
-       %readme _r_e_a_d_m_e _f_i_l_e
-            Specifies  a  README  file  to  be  included  in  the
 
 
-
-15 December 1999       ESP Package Manager                      2
+12 January 2000        ESP Package Manager                      2
 
 
 
@@ -136,20 +136,25 @@ LLIISSTT FFIILLEESS
 epm(1)                Easy Software Products               epm(1)
 
 
-            distribution.
+       %product _p_r_o_d_u_c_t _n_a_m_e
+            Specifies the product name.
+
+       %readme _r_e_a_d_m_e _f_i_l_e
+            Specifies a README file to be included in the distri-
+            bution.
 
        %remove _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
             Specifies a script or program to be run before remov-
             ing or patching files.
 
        %replaces _p_r_o_d_u_c_t
-            Indicates  that this product replaces the named prod-
+            Indicates that this product replaces the named  prod-
             uct.
 
        %requires _p_r_o_d_u_c_t
 
        %requires _f_i_l_e_n_a_m_e
-            Indicates that this product requires the named  prod-
+            Indicates  that this product requires the named prod-
             uct or file.
 
        %vendor _v_e_n_d_o_r _o_r _a_u_t_h_o_r _n_a_m_e
@@ -159,8 +164,8 @@ epm(1)                Easy Software Products               epm(1)
             Specifies the version number of the product.
 
        %system _s_y_s_t_e_m_[_-_r_e_l_e_a_s_e_] _[_._._. _s_y_s_t_e_m_[_-_r_e_l_e_a_s_e_]_]
-            Specifies  that  the  following  files should only be
-            used  for  the  specified   operating   systems   and
+            Specifies that the following  files  should  only  be
+            used   for   the   specified  operating  systems  and
             releases.
 
        %system !_s_y_s_t_e_m_[_-_r_e_l_e_a_s_e_] _[_._._. _s_y_s_t_e_m_[_-_r_e_l_e_a_s_e_]_]
@@ -168,32 +173,27 @@ epm(1)                Easy Software Products               epm(1)
             for the specified operating systems and releases.
 
        %system all
-            Specifies that the following files are applicable  to
+            Specifies  that the following files are applicable to
             all operating systems.
 
        f _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
 
        F _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-            Specifies  a  file  for installation. The second form
-            specifies that the file has changed  or  is  new  and
+            Specifies a file for installation.  The  second  form
+            specifies  that  the  file  has changed or is new and
             should be included as part of a patch.
 
        c _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
 
        C _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-            Specifies  a configuration file for installation. The
+            Specifies a configuration file for installation.  The
             second form specifies that the file has changed or is
-            new  and  should be included as part of a patch. Con-
-            figuration files are installed as "destination.N"  if
-            the destination already exists.
-
-       d _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
+            new and should be included as part of a  patch.  Con-
+            figuration  files are installed as "destination.N" if
 
 
 
-
-
-15 December 1999       ESP Package Manager                      3
+12 January 2000        ESP Package Manager                      3
 
 
 
@@ -202,35 +202,39 @@ epm(1)                Easy Software Products               epm(1)
 epm(1)                Easy Software Products               epm(1)
 
 
+            the destination already exists.
+
+       d _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
+
        D _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
-            Specifies   a   directory   should  be  created  when
-            installing the software. The  second  form  specifies
-            that  the  directory is new and should be included as
+            Specifies  a  directory  should   be   created   when
+            installing  the  software.  The second form specifies
+            that the directory is new and should be  included  as
             part of a patch.
 
        i _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
 
        I _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
-            Specifies an initialization script for  installation.
-            The  second  form specifies that the file has changed
-            or is new and should be included as part of a  patch.
-            Initialization      scripts     are     stored     in
-            /etc/software/init.d and are linked to the  appropri-
-            ate  system-specific directories for run levels 0 and
-            3. Initialization scripts mmuusstt accepts at  least  the
+            Specifies  an initialization script for installation.
+            The second form specifies that the file  has  changed
+            or  is new and should be included as part of a patch.
+            Initialization     scripts     are     stored      in
+            /etc/software/init.d  and are linked to the appropri-
+            ate system-specific directories for run levels 0  and
+            3.  Initialization  scripts mmuusstt accepts at least the
             _s_t_a_r_t and _s_t_o_p commands.
 
        l _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
 
        L _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-            Specifies  a  symbolic  link in the installation. The
+            Specifies a symbolic link in  the  installation.  The
             second form specifies that the link has changed or is
             new and should be included as part of a patch.
 
        R _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n
-            Specifies  that the file is to be removed upon patch-
-            ing.  The _u_s_e_r and _g_r_o_u_p  fields  are  ignored.   The
-            _m_o_d_e  field  is  only  used  to  determine if a check
+            Specifies that the file is to be removed upon  patch-
+            ing.   The  _u_s_e_r  and  _g_r_o_u_p fields are ignored.  The
+            _m_o_d_e field is only  used  to  determine  if  a  check
             should be made for a previous version of the file.
 
 KKNNOOWWNN BBUUGGSS
@@ -238,27 +242,23 @@ KKNNOOWWNN BBUUGGSS
        patches.
 
 CCOOPPYYRRIIGGHHTT
-       Copyright  1999  by  Easy  Software  Products,  All Rights
+       Copyright 1999-2000 by Easy Software Products, All  Rights
        Reserved.
 
-       This program is free software;  you  can  redistribute  it
+       This  program  is  free  software; you can redistribute it
        and/or modify it under the terms of the GNU General Public
-       License as published  by  the  Free  Software  Foundation;
+       License  as  published  by  the  Free Software Foundation;
        either version 2, or (at your option) any later version.
 
-       This  program  is  distributed in the hope that it will be
+       This program is distributed in the hope that  it  will  be
        useful, but WITHOUT ANY WARRANTY; without even the implied
-       warranty  of  MERCHANTABILITY  or FITNESS FOR A PARTICULAR
-       PURPOSE.  See the GNU  General  Public  License  for  more
+       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
+       PURPOSE.   See  the  GNU  General  Public License for more
        details.
 
 
 
 
-
-
-
-
-15 December 1999       ESP Package Manager                      4
+12 January 2000        ESP Package Manager                      4
 
 

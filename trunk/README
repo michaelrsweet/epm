@@ -7,10 +7,12 @@ WHAT IS EPM?
     Products.  It is a simple tool that generates software and patch
     distributions in various formats, including:
 
-        - Red Hat Package Manager ("RPM")
+	- AT&T Software Packages ("pkg"), used by Solaris.
 	- Debian Package Manager ("dpkg")
+	- HP-UX Software Packages ("swinstall" or "depot")
 	- IRIX Software Manager ("inst" or "tardist")
 	- Portable (installation and removal scripts with tar files)
+        - Red Hat Package Manager ("RPM")
 
     EPM also includes a graphical "setup" program that can be provided
     with your distributions to make installation of more than one
@@ -19,7 +21,7 @@ WHAT IS EPM?
 
 WHY ANOTHER SOFTWARE PACKAGING TOOL?
 
-    We developed EPM because we are sick of developing and testing N
+    We developed EPM because we are tired of developing and testing N
     different software distributions, each with their own input files
     and setup requirements.
     
@@ -83,17 +85,19 @@ WHAT'S NEW IN EPM 2.0?
     EPM 2.0 adds the following features and fixes to EPM 1.7:
 
 	- New "-f" option to generate vendor-specific software
-	  distributions.
+	  distributions.  Now support AT&T, Debian, HP-UX, IRIX,
+	  and Red Hat software distributions.
 	- New "-s" option to include the ESP Software Wizard (GUI)
 	  with portable distributions.
 	- The "-t" option (test) is no longer supported.
 	- New "-v" option to control the amount of information
 	  that is reported.
-	- Now support "portable" (script-based), Red Hat, Debian,
-	  and IRIX software distributions.
 	- New graphical setup program for portable distributions.
-	- New "replaces" directive.
+	- New "description" directive.
 	- New "format" directive.
+	- New "include" directive.
+	- New "replaces" directive.
+	- Portable distributions should now be more portable.
 
 
 WHAT'S NEW IN EPM 1.7?
