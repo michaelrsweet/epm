@@ -1,15 +1,15 @@
 ----HTML-PRESS-RELEASE---------------------------------------------------
 
-<H1>ESP Package Manager 2.7 Released</H1>
+<H1>ESP Package Manager 2.8 Released</H1>
 
-<P><B>Hollywood, MD (May 22, 2001)</B> -- Easy Software
-Products today announced the 2.7 release of the ESP Package
+<P><B>Hollywood, MD (June 4, 2001)</B> -- Easy Software
+Products today announced the 2.8 release of the ESP Package
 Manager ("EPM"), a cross-platform software distribution
 program for UNIX.
 
-<P>EPM v2.7 adds support for AIX and fixes a bug in the new disk
-space check in portable installation scripts. The new release
-is available on-line at:
+<P>EPM v2.8 fixes a few bugs in the portable distribution
+generation code, setup GUI, and mkepmlist utility. The new
+release is available on-line at:
 
 <UL><PRE>
 <A HREF="http://www.easysw.com/epm">http://www.easysw.com/epm</A>
@@ -48,16 +48,15 @@ commercial support.
 
 ----TEXT-PRESS-RELEASE---------------------------------------------------
 
-ESP Package Manager 2.7 Released
+ESP Package Manager 2.8 Released
 
-Hollywood, MD (May 22, 2001) -- Easy Software Products
-today announced the 2.7 release of the ESP Package Manager
-("EPM"), a cross-platform software distribution program for
-UNIX.
+Hollywood, MD (June 4, 2001) -- Easy Software Products today
+announced the 2.8 release of the ESP Package Manager ("EPM"), a
+cross-platform software distribution program for UNIX.
 
-EPM v2.7 adds support for AIX and fixes a bug in the new disk
-space check in portable installation scripts.  The new release
-is available on-line at:
+EPM v2.8 fixes a few bugs in the portable distribution
+generation code, setup GUI, and mkepmlist utility. The new
+release is available on-line at:
 
     http://www.easysw.com/epm
 
