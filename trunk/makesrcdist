@@ -15,6 +15,12 @@ else
 	set version = $1
 endif
 
+if ($#argv == 2) then
+	set suffix="-$2"
+else
+	set suffix=""
+endif
+
 rm -rf epm-$version
 mv epm epm-$version
 cd epm-$version
@@ -22,7 +28,7 @@ cd epm-$version
 if ("$version" != "snapshot") then
 	echo "Tagging release..."
 
-	set tag = `echo v$version | tr '.' '_'`
+	set tag = `echo v$version$suffix | tr '.' '_'`
 
 	cvs tag -F $tag
 endif
@@ -36,12 +42,12 @@ rm -f ANNOUCEMENT
 echo "Making .tar.gz distribution..."
 
 cd ..
-gtar czf epm-$version-source.tar.gz epm-$version
+gtar czf epm-$version$suffix-source.tar.gz epm-$version
 
 echo "Making .tar.bz2 distribution..."
 
-rm -f epm-$version-source.tar.bz2
-gunzip -c epm-$version-source.tar.gz | bzip2 >epm-$version-source.tar.bz2
+rm -f epm-$version$suffix-source.tar.bz2
+gunzip -c epm-$version$suffix-source.tar.gz | bzip2 >epm-$version$suffix-source.tar.bz2
 
 echo "Removing distribution directory..."
 
