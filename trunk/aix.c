@@ -1,11 +1,7 @@
 /*
- * "$Id: aix.c,v 1.5 2001/08/08 14:26:24 mike Exp $"
+ * "$Id: aix.c,v 1.6 2001/10/26 16:14:30 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
- *
- *   NOTE: AIX SUPPORT IS CURRENTLY NON-FUNCTIONAL!  The backup file
- *         is created, but installp and installp will not read it
- *         for some reason.
  *
  *   Copyright 1999-2001 by Easy Software Products.
  *
@@ -133,7 +129,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   fputs("[\n", fp);
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
     if (d->type == DEPEND_REQUIRES)
-      fprintf(fp, "*prereq %s %s", d->product, aix_version(d->version[0]));
+      fprintf(fp, "*prereq %s %s\n", d->product, aix_version(d->version[0]));
 
  /*
   * Installation sizes...
@@ -650,5 +646,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 }
 
 /*
- * End of "$Id: aix.c,v 1.5 2001/08/08 14:26:24 mike Exp $".
+ * End of "$Id: aix.c,v 1.6 2001/10/26 16:14:30 mike Exp $".
  */
