@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.37 2001/07/03 15:21:08 mike Exp $"
+ * "$Id: dist.c,v 1.38 2001/07/05 16:57:22 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -46,7 +46,7 @@
  */
 
 #ifdef __sun
-extern int	gethostname(char *, size_t);
+extern int	gethostname(char *, int);
 #endif /* __sun */
 
 
@@ -1244,5 +1244,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.37 2001/07/03 15:21:08 mike Exp $".
+ * End of "$Id: dist.c,v 1.38 2001/07/05 16:57:22 mike Exp $".
  */
