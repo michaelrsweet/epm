@@ -1,0 +1,8 @@
+TODO for EPM 2.6:
+
+	- Add AIX packager support.
+	- Add system() replacement.
+	- Add /opt relocation hack (and maybe allow for
+	  relocatable packages in general?)
+	- Add %pre/postinstall/remove <filename
+	- Add %pre/postinstall/remove <<string
