@@ -1,5 +1,14 @@
-CHANGES - ESP Package Manager (EPM) 3.4
----------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.4.1
+-----------------------------------------
+
+WHAT'S NEW IN EPM 3.4.1?
+
+    EPM 3.4.1 adds the following features, fixes, and changes to
+    EPM 3.4:
+
+	- The portable removal scripts didn't correctly write
+	  the list of init scripts to remove.
+
 
 WHAT'S NEW IN EPM 3.4?
 
