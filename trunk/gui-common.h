@@ -1,5 +1,5 @@
 //
-// "$Id: gui-common.h,v 1.4 2005/01/11 21:36:57 mike Exp $"
+// "$Id$"
 //
 //   ESP Software Wizard common header file for the ESP Package Manager (EPM).
 //
@@ -65,7 +65,7 @@ struct dtype_t			//// Installation types
 {
   char		label[80];	// Type name;
   int		num_products;	// Number of products to install (0 = select)
-  int		products[50];	// Products to install
+  int		products[200];	// Products to install
   int		size;		// Size of products in kbytes
 };
 
@@ -109,5 +109,5 @@ int	sort_dists(const dist_t *d0, const dist_t *d1);
 
 
 //
-// End of "$Id: gui-common.h,v 1.4 2005/01/11 21:36:57 mike Exp $".
+// End of "$Id$".
 //
