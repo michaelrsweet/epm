@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.88 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: portable.c,v 1.89 2004/05/26 19:55:30 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -929,13 +929,13 @@ write_dist(const char *title,		/* I - Title to show */
            const char *setup,		/* I - Setup GUI image */
            const char *types)		/* I - Setup GUI install types */
 {
-  int		i;		/* Looping var */
-  tarf_t	*tarfile;	/* Distribution tar file */
-  char		filename[1024],	/* Name of temporary file */
-		srcname[1024],	/* Name of source file in distribution */
-		dstname[1024];	/* Name of destination file in distribution */
-  struct stat	srcstat;	/* Source file information */
-
+  int		i;			/* Looping var */
+  tarf_t	*tarfile;		/* Distribution tar file */
+  char		filename[1024],		/* Name of temporary file */
+		srcname[1024],		/* Name of source file in distribution */
+		dstname[1024];		/* Name of destination file in distribution */
+  struct stat	srcstat;		/* Source file information */
+  const char	*setup_img;		/* Setup image name */
 
   if (Verbosity)
   {
@@ -1196,11 +1196,21 @@ write_dist(const char *title,		/* I - Title to show */
 
     stat(setup, &srcstat);
 #ifdef __APPLE__
+    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
+      setup_img = "Install.app/Contents/Resources/setup.gif";
+    else
+      setup_img = "Install.app/Contents/Resources/setup.xpm";
+
     if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", "Install.app/Contents/Resources/setup.xpm", NULL) < 0)
+	           srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
 #else
+    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
+      setup_img = "setup.gif";
+    else
+      setup_img = "setup.xpm";
+
     if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", "setup.xpm", NULL) < 0)
+	           srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
 #endif /* __APPLE__ */
     {
       if (Verbosity)
@@ -1446,8 +1456,14 @@ write_dist(const char *title,		/* I - Title to show */
     */
 
     stat(setup, &srcstat);
+
+    if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
+      setup_img = "Uninstall.app/Contents/Resources/setup.gif";
+    else
+      setup_img = "Uninstall.app/Contents/Resources/setup.xpm";
+
     if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", "Uninstall.app/Contents/Resources/setup.xpm", NULL) < 0)
+	           srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -2541,5 +2557,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.88 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: portable.c,v 1.89 2004/05/26 19:55:30 mike Exp $".
  */
