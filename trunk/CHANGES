@@ -9,6 +9,9 @@ WHAT'S NEW IN EPM 2.8?
 	- The line breaking code did not include an extra
 	  space, so filenames in the portable install/patch/
 	  remove scripts would be joined instead of separated.
+	- The setup GUI did not allow the user to toggle a
+	  software product for distribution if the product was
+	  selected (nav box around it).
 
 
 WHAT'S NEW IN EPM 2.7?
