@@ -1,36 +1,40 @@
-README - ESP Package Manager (EPM) 2.8
+README - ESP Package Manager (EPM) 3.0
 --------------------------------------
 
 WHAT IS EPM?
 
-    EPM is the software packaging tool that we now use at Easy Software
-    Products.  It is a simple tool that generates software and patch
-    distributions in various formats, including:
+    EPM is the software packaging tool that we now use at Easy
+    Software Products.  It is a simple tool that generates
+    software and patch distributions in various formats,
+    including:
 
-	- AT&T Software Packages ("pkg"), used by Solaris.
+	- AIX software packages ("installp")
+	- AT&T software packages ("pkgadd"), used by Solaris and others
+	- BSD packages ("pkg_create")
 	- Compaq Tru64 UNIX ("setld")
 	- Debian Package Manager ("dpkg")
-	- HP-UX Software Packages ("swinstall" or "depot")
-	- IRIX Software Manager ("inst" or "tardist")
+	- HP-UX software packages ("swinstall")
+	- IRIX software manager ("inst", "swmgr", or "tardist")
 	- Portable (installation and removal scripts with tar files)
-        - Red Hat Package Manager ("RPM")
+        - Red Hat Package Manager ("rpm")
 
-    EPM also includes a graphical "setup" program that can be provided
-    with your distributions to make installation of more than one
-    package a snap.
+    EPM also includes a graphical "setup" program that can be
+    provided with your distributions to make installation of
+    more than one package a snap.
 
 
 WHY ANOTHER SOFTWARE PACKAGING TOOL?
 
-    We developed EPM because we are tired of developing and testing N
-    different software distributions, each with their own input files
-    and setup requirements.
-    
-    Also, when we started looking at selling software for Linux we saw
-    that there are at least four different "standard" distribution
-    formats, and none of them are compatible with the other.  Clearly
-    we needed something that could be used for all platforms, *without*
-    requiring special software packages on the customer's system!
+    We developed EPM because we are tired of developing and
+    testing N different software distributions, each with their
+    own input files and setup requirements.
+
+    Also, when we started looking at selling software for Linux
+    we saw that there are at least four different "standard"
+    distribution formats, and none of them are compatible with
+    the other.  Clearly we needed something that could be used
+    for all platforms, *without* requiring special software
+    packages on the customer's system!
 
 
 HOW DO I COMPILE EPM?
@@ -40,25 +44,19 @@ HOW DO I COMPILE EPM?
 
 HOW DO I USE EPM?
 
-    Please look at the EPM man page; a preformatted copy is included in
-    the file "epm.1":
+    Please look at the EPM manual; preformatted copies are
+    included in the "doc/epm-manual.html" and
+    "doc/epm-manual.pdf" files.
 
-        more epm.1
-
-    An example EPM software list file is provided with this distribution
-    in the file "epm.list".
-
-    There are also several HTML files that should prove useful:
-
-        epm.html       - The EPM man page in HTML format.
-	epm-paper.html - "Software Packaging with the ESP Package Manager".
-	epm-cups.html  - An annotated EPM list file for CUPS.
+    An example EPM software list file is provided with this
+    distribution in the file "epm.list".
 
 
 DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
 
-    No!  EPM is free software and any installations you create are
-    unencumbered by licensing of any kind (not even the GPL.)
+    No!  EPM is free software and any installations you create
+    are unencumbered by licensing of any kind (not even the
+    GPL.)
 
 
 WHAT'S NEW IN EPM?
@@ -68,7 +66,22 @@ WHAT'S NEW IN EPM?
 
 REPORTING PROBLEMS
 
-    Report all problems and submit all patches to "epm@easysw.com".
+    Report all problems and submit all patches to
+    "epm@easysw.com".
+
+
+OTHER RESOURCES
+
+    Easy Software Products maintains a news server for the
+    discussion of ESP and ESP-sponsored software.  The news
+    server is:
+
+        news.easysw.com
+
+    If you don't have NNTP access from your systems, point your
+    web browser at the following URL:
+
+        http://www.easysw.com/espnews.php
 
 
 COPYRIGHT AND LICENSE INFO
