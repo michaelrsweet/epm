@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.68 2002/06/05 15:03:44 mike Exp $"
+ * "$Id: portable.c,v 1.69 2002/06/05 17:51:23 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1410,7 +1410,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
     fputs("	for file in", scriptfile);
-    for (; i > 0; i --, file ++)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
         fprintf(scriptfile, " %s", file->dst);
     fputs("; do\n", scriptfile);
@@ -1704,7 +1704,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("	if test -d /usr/local/etc/rc.d; then\n", scriptfile);
     fputs("		for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
+      if (tolower(file->type) == 'I')
         fprintf(scriptfile, " %s", file->dst);
     fputs("; do\n", scriptfile);
     fputs("			rm -f /usr/local/src/rc.d/$file.sh\n", scriptfile);
@@ -1717,7 +1717,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
     fputs("	for file in", scriptfile);
-    for (; i > 0; i --, file ++)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (file->type == 'I')
         fprintf(scriptfile, " %s", file->dst);
 
@@ -2083,5 +2083,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.68 2002/06/05 15:03:44 mike Exp $".
+ * End of "$Id: portable.c,v 1.69 2002/06/05 17:51:23 mike Exp $".
  */
