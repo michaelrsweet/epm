@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.25 2001/04/15 12:24:03 mike Exp $"
+dnl "$Id: configure.in,v 1.26 2001/04/24 14:25:59 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -192,7 +192,8 @@ if test -n "$GCC"; then
 		fi
 	fi
 
-	CXX="gcc"
+	GXX="$GCC"
+	CXX="$GCC"
 	OPTIM="-Wall -Wno-return-type -fno-rtti $OPTIM"
 
 	# See if GCC supports -fno-exceptions...
@@ -337,5 +338,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.25 2001/04/15 12:24:03 mike Exp $".
+dnl End of "$Id: configure.in,v 1.26 2001/04/24 14:25:59 mike Exp $".
 dnl
