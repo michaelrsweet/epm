@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.17 1999/08/19 16:10:03 mike Exp $"
+ * "$Id: epm.c,v 1.18 1999/08/24 13:01:40 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -1621,11 +1621,11 @@ write_install(dist_t *dist,	/* I - Software distribution */
 
     for (i = 0; i < dist->num_installs; i ++)
       fprintf(scriptfile, "%s\n", dist->installs[i]);
-
-    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
-        fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s start\n", file->dst);
   }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+      fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s start\n", file->dst);
 
   fputs("echo Installation is complete.\n", scriptfile);
 
@@ -1782,13 +1782,13 @@ write_patch(dist_t *dist,	/* I - Software distribution */
   fputs("	exit 1\n", scriptfile);
   fputs("fi\n", scriptfile);
 
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+      fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
+
   if (dist->num_removes)
   {
     fputs("echo Running pre-patch commands...\n", scriptfile);
-
-    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
-        fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
 
     for (i = 0; i < dist->num_removes; i ++)
       fprintf(scriptfile, "%s\n", dist->removes[i]);
@@ -1934,11 +1934,11 @@ write_patch(dist_t *dist,	/* I - Software distribution */
 
     for (i = 0; i < dist->num_patches; i ++)
       fprintf(scriptfile, "%s\n", dist->patches[i]);
-
-    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
-        fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s start\n", file->dst);
   }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+      fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s start\n", file->dst);
 
   fputs("echo Patching is complete.\n", scriptfile);
 
@@ -2022,13 +2022,13 @@ write_remove(dist_t *dist,	/* I - Software distribution */
   * Find any removal commands in the list file...
   */
 
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+      fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
+
   if (dist->num_removes)
   {
     fputs("echo Running pre-removal commands...\n", scriptfile);
-
-    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (tolower(file->type) == 'i')
-        fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
 
     for (i = 0; i < dist->num_removes; i ++)
       fprintf(scriptfile, "%s\n", dist->removes[i]);
@@ -2096,5 +2096,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.17 1999/08/19 16:10:03 mike Exp $".
+ * End of "$Id: epm.c,v 1.18 1999/08/24 13:01:40 mike Exp $".
  */
