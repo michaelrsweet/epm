@@ -1,5 +1,15 @@
-CHANGES - ESP Package Manager (EPM) 3.2.1
------------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.3
+---------------------------------------
+
+WHAT'S NEW IN EPM 3.3?
+
+    EPM 3.3 adds the following features, fixes, and changes to
+    EPM 3.2.1:
+
+
+	- UnixWare 7 needs the absolute path when transferring
+	  an AT&T package directory to a .pkg file.
+
 
 WHAT'S NEW IN EPM 3.2.1?
 
