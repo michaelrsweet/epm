@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Wizard.cxx,v 1.2 2000/01/04 13:45:51 mike Exp $"
+// "$Id: Fl_Wizard.cxx,v 1.3 2000/07/12 18:29:11 mike Exp $"
 //
 //   Fl_Wizard widget routines.
 //
@@ -127,7 +127,7 @@ Fl_Wizard::prev()
     if ((*kids)->visible())
       break;
 
-  if (num_kids > 0 && num_kids < (children() - 1))
+  if (num_kids > 0 && num_kids < children())
     value(kids[-1]);
 }
 
@@ -197,5 +197,5 @@ Fl_Wizard::value(Fl_Widget *kid)
 
 
 //
-// End of "$Id: Fl_Wizard.cxx,v 1.2 2000/01/04 13:45:51 mike Exp $".
+// End of "$Id: Fl_Wizard.cxx,v 1.3 2000/07/12 18:29:11 mike Exp $".
 //
