@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.6 2000/04/26 23:46:31 mike Exp $"
+ * "$Id: tar.c,v 1.7 2000/11/11 20:30:03 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -86,6 +86,15 @@ tar_close(tarf_t *fp)	/* I - File to write to */
   if ((blocks = fp->blocks % TAR_BLOCKS) > 0)
   {
     blocks = TAR_BLOCKS - blocks;
+
+    if (fwrite(padding, TAR_BLOCK, blocks, fp->file) < blocks)
+      status = -1;
+  }
+  else
+  {
+   /*
+    * Sun tar needs at least 2 0 blocks...
+    */
 
     if (fwrite(padding, TAR_BLOCK, blocks, fp->file) < blocks)
       status = -1;
@@ -423,5 +432,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.6 2000/04/26 23:46:31 mike Exp $".
+ * End of "$Id: tar.c,v 1.7 2000/11/11 20:30:03 mike Exp $".
  */
