@@ -6,6 +6,7 @@ WHAT'S NEW IN EPM 3.5?
     EPM 3.5 adds the following features, fixes, and changes to
     EPM 3.4:
 
+	- Added support for MacOS X package generation.
 	- No longer need/use RPMDIR when building RPMs, just
 	  set the "topdir_" variable in the spec file.
 	- The portable removal scripts didn't correctly write
