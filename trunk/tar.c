@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.16 2002/01/02 20:39:41 mike Exp $"
+ * "$Id: tar.c,v 1.17 2002/06/03 16:49:15 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -308,6 +308,8 @@ tar_header(tarf_t     *fp,	/* I - Tar file to write to */
 	   const char *linkname)/* I - File link name (for links only) */
 {
   tar_t		record;		/* TAR header record */
+  int		pathlen;	/* Length of pathname */
+  const char	*pathsep;	/* Path separator */
   int		i,		/* Looping var... */
 		sum;		/* Checksum */
   unsigned char	*sumptr;	/* Pointer into header record */
@@ -331,9 +333,66 @@ tar_header(tarf_t     *fp,	/* I - Tar file to write to */
 
   memset(&record, 0, sizeof(record));
 
-  strncpy(record.header.pathname, pathname, sizeof(record.header.pathname) - 1);
-  if (type == TAR_DIR)
-    strncat(record.header.pathname, "/", sizeof(record.header.pathname) - 1);
+  pathlen = strlen(pathname);
+
+  if ((pathlen < (sizeof(record.header.pathname) - 1) && type != TAR_DIR) ||
+      (pathlen < (sizeof(record.header.pathname) - 2) && type == TAR_DIR))
+  {
+   /*
+    * Pathname is short enough to fit in the initial pathname field...
+    */
+
+    strcpy(record.header.pathname, pathname);
+    if (type == TAR_DIR && pathname[pathlen - 1] != '/')
+      record.header.pathname[pathlen] = '/';
+  }
+  else
+  {
+   /*
+    * Copy directory information to prefix buffer and filename information
+    * to pathname buffer.
+    */
+
+    if ((pathsep = strrchr(pathname, '/')) == NULL)
+    {
+     /*
+      * No directory info...
+      */
+
+      fprintf(stderr, "epm: Pathname \"%s\" is too long for a tar file!\n",
+              pathname);
+      return (-1);
+    }
+
+    if ((pathsep - pathname) > (sizeof(record.header.prefix) - 1))
+    {
+     /*
+      * Directory name too long...
+      */
+
+      fprintf(stderr, "epm: Pathname \"%s\" is too long for a tar file!\n",
+              pathname);
+      return (-1);
+    }
+
+    if ((pathlen - (pathsep - pathname)) > (sizeof(record.header.pathname) - 1))
+    {
+     /*
+      * Filename too long...
+      */
+
+      fprintf(stderr, "epm: Pathname \"%s\" is too long for a tar file!\n",
+              pathname);
+      return (-1);
+    }
+
+    strcpy(record.header.pathname, pathsep + 1);
+    if (type == TAR_DIR && pathname[pathlen - 1] != '/')
+      record.header.pathname[pathlen - (pathsep - pathname + 1)] = '/';
+
+    strncpy(record.header.prefix, pathname, pathsep - pathname);
+  }
+
   sprintf(record.header.mode, "%-6o ", (unsigned)mode);
   sprintf(record.header.uid, "%o ", pwd == NULL ? 0 : (unsigned)pwd->pw_uid);
   sprintf(record.header.gid, "%o ", grp == NULL ? 0 : (unsigned)grp->gr_gid);
@@ -345,8 +404,9 @@ tar_header(tarf_t     *fp,	/* I - Tar file to write to */
     strncpy(record.header.linkname, linkname,
             sizeof(record.header.linkname) - 1);
   strcpy(record.header.magic, TAR_MAGIC);
-  strcpy(record.header.uname, user);
-  strcpy(record.header.gname, group);
+  memcpy(record.header.version, TAR_VERSION, 2);
+  strncpy(record.header.uname, user, sizeof(record.header.uname) - 1);
+  strncpy(record.header.gname, group, sizeof(record.header.uname) - 1);
 
  /*
   * Compute the checksum of the header...
@@ -421,5 +481,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.16 2002/01/02 20:39:41 mike Exp $".
+ * End of "$Id: tar.c,v 1.17 2002/06/03 16:49:15 mike Exp $".
  */

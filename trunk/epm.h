@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.27 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: epm.h,v 1.28 2002/06/03 16:49:15 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -67,7 +67,8 @@ typedef struct direct DIRENT;
 #define TAR_BLOCK	512		/* Number of bytes in a block */
 #define TAR_BLOCKS	10		/* Blocking factor */
 
-#define	TAR_MAGIC	"ustar  "	/* 7 chars and a null */
+#define	TAR_MAGIC	"ustar"		/* 5 chars and a null */
+#define TAR_VERSION	"00"		/* POSIX tar version */
 
 #define	TAR_OLDNORMAL	'\0'		/* Normal disk file, Unix compat */
 #define	TAR_NORMAL	'0'		/* Normal disk file */
@@ -141,11 +142,13 @@ typedef union				/**** TAR record format ****/
 		chksum[8],
 		linkflag,
 		linkname[100],
-		magic[8],
+		magic[6],
+		version[2],
 		uname[32],
 		gname[32],
 		devmajor[8],
-		devminor[8];
+		devminor[8],
+		prefix[155];
   }	header;
 } tar_t;
 
@@ -271,5 +274,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.27 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: epm.h,v 1.28 2002/06/03 16:49:15 mike Exp $".
  */
