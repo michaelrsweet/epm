@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.1 1999/11/04 20:31:08 mike Exp $"
+ * "$Id: swinstall.c,v 1.2 1999/11/05 16:52:52 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -38,10 +38,11 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
                dist_t         *dist,		/* I - Distribution information */
 	       struct utsname *platform)	/* I - Platform information */
 {
+  puts("Sorry, HP-UX swinstall format is not yet supported.");
   return (1);
 }
 
 
 /*
- * End of "$Id: swinstall.c,v 1.1 1999/11/04 20:31:08 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.2 1999/11/05 16:52:52 mike Exp $".
  */

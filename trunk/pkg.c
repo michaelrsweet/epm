@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.1 1999/11/04 20:31:07 mike Exp $"
+ * "$Id: pkg.c,v 1.2 1999/11/05 16:52:52 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -38,10 +38,11 @@ make_pkg(const char     *prodname,	/* I - Product short name */
          dist_t         *dist,		/* I - Distribution information */
 	 struct utsname *platform)	/* I - Platform information */
 {
+  puts("Sorry, AT&T PKG format is not yet supported.");
   return (1);
 }
 
 
 /*
- * End of "$Id: pkg.c,v 1.1 1999/11/04 20:31:07 mike Exp $".
+ * End of "$Id: pkg.c,v 1.2 1999/11/05 16:52:52 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.2 1999/11/05 14:44:40 mike Exp $"
+ * "$Id: deb.c,v 1.3 1999/11/05 16:52:52 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -246,7 +246,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
           sprintf(filename, "%s/%s%s", directory, name, file->dst);
 
 	  if (Verbosity > 1)
-	    printf("Directory %s...\n", file->src, filename);
+	    printf("Directory %s...\n", filename);
 
           make_directory(filename, file->mode, pwd ? pwd->pw_uid : 0,
 			 grp ? grp->gr_gid : 0);
@@ -289,5 +289,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.2 1999/11/05 14:44:40 mike Exp $".
+ * End of "$Id: deb.c,v 1.3 1999/11/05 16:52:52 mike Exp $".
  */
