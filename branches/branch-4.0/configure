@@ -2822,6 +2822,45 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
+# Extract the first word of "rpmbuild", so it can be a program name with args.
+set dummy rpmbuild; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_RPMBUILD+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $RPMBUILD in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_RPMBUILD="$RPMBUILD" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_RPMBUILD="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  ;;
+esac
+fi
+RPMBUILD=$ac_cv_path_RPMBUILD
+
+if test -n "$RPMBUILD"; then
+  echo "$as_me:$LINENO: result: $RPMBUILD" >&5
+echo "${ECHO_T}$RPMBUILD" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
 # Extract the first word of "strip", so it can be a program name with args.
 set dummy strip; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -5025,19 +5064,25 @@ fi
 
 
 if test "x$FLTKCONFIG" = x; then
-	SETUP=""
-	EPMEDITOR=""
+	GUIS=""
 	GUILIBS=""
 	INSTALL_GUIS=""
+	INSTALL_OSX=""
 
-	{ echo "$as_me:$LINENO: WARNING: Sorry, the GUIs require FLTK 1.1.x." >&5
-echo "$as_me: WARNING: Sorry, the GUIs require FLTK 1.1.x." >&2;}
+	{ echo "$as_me:$LINENO: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&5
+echo "$as_me: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&2;}
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
-	SETUP="setup"
-	EPMEDITOR="epmeditor"
+	GUIS="epmeditor setup uninst"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
+
+	if test "$uname" = Darwin; then
+		GUILIBS="$GUILIBS -framework Security"
+		INSTALL_OSX="install-osx"
+	else
+		INSTALL_OSX=""
+	fi
 fi
 
 
@@ -5051,7 +5096,7 @@ if test -n "$GCC"; then
 	# you care about binary portability between Linux distributions,
 	# you need to either 1) build your own GCC with static C++ libraries
 	# or 2) link using gcc and libsupc++.  We choose the latter since
-	# EPM doesn't (currently) use any of the stdc++ library.
+	# CUPS doesn't (currently) use any of the stdc++ library.
 	#
 	# Also, GCC 3.0.x still has problems compiling some code.  You may
 	# or may not have success with it.  USE 3.0.x WITH EXTREME CAUTION!
@@ -5292,6 +5337,14 @@ if test "$exec_prefix" = "NONE"; then
 	exec_prefix="$prefix"
 fi
 
+if test "$libdir" = "\${exec_prefix}/lib"; then
+	libdir="$exec_prefix/lib"
+fi
+
+if test "$datadir" = "\${prefix}/share"; then
+	datadir="$prefix/share"
+fi
+
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
         	*BSD* | Darwin* | Linux*)
@@ -5366,12 +5419,18 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define EPM_LIBDIR "$prefix/lib/epm"
+#define EPM_LIBDIR "$libdir/epm"
 _ACEOF
 
 
 
-if test "x$RPM" != "x"; then
+cat >>confdefs.h <<_ACEOF
+#define EPM_DATADIR "$datadir/epm"
+_ACEOF
+
+
+
+if test "x$RPM" != x; then
 	# It would be nice if Red Hat could make up its mind...
 	rpmversion="`$RPM --version | awk '{print $3}' | awk -F. '{print $1 * 10000 + $2 * 100 + $3}'`"
 
@@ -5418,7 +5477,7 @@ _ACEOF
 	fi
 fi
 
-ac_config_files="$ac_config_files Makefile epm.list doc/Makefile"
+ac_config_files="$ac_config_files Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -5892,6 +5951,8 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "epm.list" ) CONFIG_FILES="$CONFIG_FILES epm.list" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
+  "macosx/setup.plist" ) CONFIG_FILES="$CONFIG_FILES macosx/setup.plist" ;;
+  "macosx/uninst.plist" ) CONFIG_FILES="$CONFIG_FILES macosx/uninst.plist" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
@@ -6000,13 +6061,14 @@ s,@NROFF@,$NROFF,;t t
 s,@GROFF@,$GROFF,;t t
 s,@RM@,$RM,;t t
 s,@RPM@,$RPM,;t t
+s,@RPMBUILD@,$RPMBUILD,;t t
 s,@STRIP@,$STRIP,;t t
 s,@CPP@,$CPP,;t t
 s,@FLTKCONFIG@,$FLTKCONFIG,;t t
-s,@EPMEDITOR@,$EPMEDITOR,;t t
-s,@GUILIBS@,$GUILIBS,;t t
 s,@INSTALL_GUIS@,$INSTALL_GUIS,;t t
-s,@SETUP@,$SETUP,;t t
+s,@INSTALL_OSX@,$INSTALL_OSX,;t t
+s,@GUIS@,$GUIS,;t t
+s,@GUILIBS@,$GUILIBS,;t t
 s,@ARFLAGS@,$ARFLAGS,;t t
 s,@CAT1EXT@,$CAT1EXT,;t t
 s,@MAN1EXT@,$MAN1EXT,;t t
@@ -6017,6 +6079,7 @@ s,@EPM_GZIP@,$EPM_GZIP,;t t
 s,@EPM_STRIP@,$EPM_STRIP,;t t
 s,@EPM_BINDIR@,$EPM_BINDIR,;t t
 s,@EPM_LIBDIR@,$EPM_LIBDIR,;t t
+s,@EPM_DATADIR@,$EPM_DATADIR,;t t
 CEOF
 
 _ACEOF

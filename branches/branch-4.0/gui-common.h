@@ -1,5 +1,5 @@
 //
-// "$Id: gui-common.h,v 1.1 2003/01/30 04:29:34 mike Exp $"
+// "$Id: gui-common.h,v 1.1.2.1 2003/05/30 05:11:26 mike Exp $"
 //
 //   ESP Software Wizard common header file for the ESP Package Manager (EPM).
 //
@@ -109,5 +109,5 @@ int	sort_dists(const dist_t *d0, const dist_t *d1);
 
 
 //
-// End of "$Id: gui-common.h,v 1.1 2003/01/30 04:29:34 mike Exp $".
+// End of "$Id: gui-common.h,v 1.1.2.1 2003/05/30 05:11:26 mike Exp $".
 //

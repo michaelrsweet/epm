@@ -1,7 +1,7 @@
 //
-// "$Id: setup2.cxx,v 1.29.2.4 2003/01/27 16:27:58 mike Exp $"
+// "$Id: setup2.cxx,v 1.29.2.5 2003/05/30 05:11:27 mike Exp $"
 //
-//   ESP Software Wizard main entry for the ESP Package Manager (EPM).
+//   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
 //   Copyright 1999-2003 by Easy Software Products.
 //
@@ -22,19 +22,19 @@
 //   install_dist() - Install a distribution...
 //   list_cb()      - Handle selections in the software list.
 //   load_image()   - Load the setup image file (setup.xpm)...
-//   load_types()   - Load the setup image file (setup.xpm)...
-//   next_cb()      - Show software selections or install software.
-//   sort_dists()   - Compare two distribution names...
-//   add_string()   - Add a command to an array of commands...
+//   load_types()   - Load the installation types from the setup.types file.
 //   log_cb()       - Add one or more lines of text to the installation log.
+//   next_cb()      - Show software selections or install software.
+//   type_cb()      - Handle selections in the type list.
+//   update_size()  - Update the total +/- sizes of the installations.
 //
 
-#define _SETUP2_CXX_
+#define _DEFINE_GLOBALS_
 #include "setup.h"
+#include <FL/Fl_XPM_Image.H>
 #include <FL/x.H>
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
-#include <FL/Fl_XPM_Image.H>
 #include <errno.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -87,8 +87,12 @@ typedef int (*compare_func_t)(const void *, const void *);
 // Local functions...
 //
 
-static void	log_cb(int fd, int *fdptr);
-static void	update_sizes(void);
+void	get_dists(const char *d);
+int	install_dist(const dist_t *dist);
+void	load_image(void);
+void	load_types(void);
+void	log_cb(int fd, int *fdptr);
+void	update_sizes(void);
 
 
 //
@@ -103,10 +107,12 @@ main(int  argc,			// I - Number of command-line arguments
   const char	*distdir;	// Distribution directory
 
 
-#ifdef __APPLE__
-  // MacOS X always gets "plastic" scheme...
+#if !defined(__hpux) && !defined(__sun) && !defined(__osf) && !defined(_AIX)
+  // Use modern "skin" for modern OS's...
   Fl::scheme("plastic");
+#endif // !__hpux && !__sun && !__osf && !_AIX
 
+#ifdef __APPLE__
   // OSX passes an extra command-line option when run from the Finder.
   // If the first command-line argument is "-psn..." then skip it and use the full path
   // to the executable to figure out the distribution directory...
@@ -149,11 +155,25 @@ main(int  argc,			// I - Number of command-line arguments
     distdir = ".";
 #endif // __APPLE__
 
+  w = make_window();
+
+  WelcomePane->show();
+  PrevButton->deactivate();
+  NextButton->deactivate();
+
+  load_image();
+
+  w->show(1, argv);
+
+  while (!w->visible())
+    Fl::wait();
+
 #ifdef __APPLE__
   OSStatus status;
 
-  status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagDefaults,
-				&SetupAuthorizationRef);
+  status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment,
+                               kAuthorizationFlagDefaults,
+			       &SetupAuthorizationRef);
   if (status != errAuthorizationSuccess)
   {
     fl_alert("You must have administrative priviledges to install this software!");
@@ -164,8 +184,10 @@ main(int  argc,			// I - Number of command-line arguments
   AuthorizationRights	rights = { 1, &items };
 
   status = AuthorizationCopyRights(SetupAuthorizationRef, &rights, NULL,
-				    kAuthorizationFlagDefaults |  kAuthorizationFlagInteractionAllowed |
-					kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights, NULL);
+				   kAuthorizationFlagDefaults |
+				       kAuthorizationFlagInteractionAllowed |
+				       kAuthorizationFlagPreAuthorize |
+				       kAuthorizationFlagExtendRights, NULL);
 
   if (status != errAuthorizationSuccess)
   {
@@ -180,18 +202,12 @@ main(int  argc,			// I - Number of command-line arguments
   }
 #endif // __APPLE__
 
-  w = make_window();
-
-  WelcomePane->show();
-  PrevButton->deactivate();
-
   get_installed();
   get_dists(distdir);
 
   load_types();
-  load_image();
 
-  w->show(1, argv);
+  NextButton->activate();
 
   Fl::run();
 
@@ -200,99 +216,6 @@ main(int  argc,			// I - Number of command-line arguments
 #endif // __APPLE__
 
   return (0);
-}
-
-
-//
-// 'add_depend()' - Add a dependency to a distribution.
-//
-
-void
-add_depend(dist_t     *d,	// I - Distribution
-           int        type,	// I - Dependency type
-	   const char *name,	// I - Name of product
-	   int        lowver,	// I - Lower version number
-	   int        hiver)	// I - Highre version number
-{
-  depend_t	*temp;		// Pointer to dependency
-
-
-  if (d->num_depends == 0)
-    temp = (depend_t *)malloc(sizeof(depend_t));
-  else
-    temp = (depend_t *)realloc(d->depends,
-                               sizeof(depend_t) * (d->num_depends + 1));
-
-  if (temp == NULL)
-  {
-    perror("setup: Unable to allocate memory for dependency");
-    exit(1);
-  }
-
-  d->depends     = temp;
-  temp           += d->num_depends;
-  d->num_depends ++;
-
-  memset(temp, 0, sizeof(depend_t));
-  strncpy(temp->product, name, sizeof(temp->product) - 1);
-  temp->type         = type;
-  temp->vernumber[0] = lowver;
-  temp->vernumber[1] = hiver;
-}
-
-
-//
-// 'add_dist()' - Add a distribution.
-//
-
-dist_t *			// O - New distribution
-add_dist(int    *num_d,		// IO - Number of distributions
-         dist_t **d)		// IO - Distributions
-{
-  dist_t	*temp;		// Pointer to current distribution
-
-
-  // Add a new distribution entry...
-  if (*num_d == 0)
-    temp = (dist_t *)malloc(sizeof(dist_t));
-  else
-    temp = (dist_t *)realloc(*d, sizeof(dist_t) * (*num_d + 1));
-
-  if (temp == NULL)
-  {
-    perror("setup: Unable to allocate memory for distribution");
-    exit(1);
-  }
-
-  *d = temp;
-  temp  += *num_d;
-  (*num_d) ++;
-
-  memset(temp, 0, sizeof(dist_t));
-
-  return (temp);
-}
-
-
-//
-// 'find_dist()' - Find a distribution.
-//
-
-dist_t *			// O - Pointer to distribution or NULL
-find_dist(const char *name,	// I - Distribution name
-          int        num_d,	// I - Number of distributions
-	  dist_t     *d)	// I - Distributions
-{
-  while (num_d > 0)
-  {
-    if (strcmp(name, d->product) == 0)
-      return (d);
-
-    d ++;
-    num_d --;
-  }
-
-  return (NULL);
 }
 
 
@@ -391,7 +314,7 @@ get_dists(const char *d)	// I - Directory to look in
 
   if (NumDists == 0)
   {
-    fputs("setup: No distributions to install!\n", stderr);
+    fl_alert("No software found to install!");
     exit(1);
   }
 
@@ -425,80 +348,6 @@ get_dists(const char *d)	// I - Directory to look in
   }
 
   update_sizes();
-}
-
-
-//
-// 'get_installed()' - Get a list of installed software products.
-//
-
-void
-get_installed(void)
-{
-  int		i;		// Looping var
-  int		num_files;	// Number of files
-  dirent	**files;	// Files
-  const char	*ext;		// Extension
-  dist_t	*temp;		// Pointer to current distribution
-  FILE		*fp;		// File to read from
-  char		line[1024];	// Line from file...
-
-
-  // See if there are any installed files...
-  NumInstalled = 0;
-  Installed    = NULL;
-
-  if ((num_files = fl_filename_list(EPM_SOFTWARE, &files)) == 0)
-    return;
-
-  // Build a distribution list...
-  for (i = 0; i < num_files; i ++)
-  {
-    ext = fl_filename_ext(files[i]->d_name);
-    if (strcmp(ext, ".remove") == 0)
-    {
-      // Found a .remove script...
-      snprintf(line, sizeof(line), EPM_SOFTWARE "/%s", files[i]->d_name);
-      if ((fp = fopen(line, "r")) == NULL)
-      {
-        perror("setup: Unable to open removal script");
-	exit(1);
-      }
-
-      // Add a new distribution entry...
-      temp = add_dist(&NumInstalled, &Installed);
-
-      strncpy(temp->product, files[i]->d_name, sizeof(temp->product) - 1);
-      *strrchr(temp->product, '.') = '\0';	// Drop .remove
-
-      // Read info from the removal script...
-      while (fgets(line, sizeof(line), fp) != NULL)
-      {
-        // Only read distribution info lines...
-        if (strncmp(line, "#%", 2))
-	  continue;
-
-        // Drop the trailing newline...
-        line[strlen(line) - 1] = '\0';
-
-        // Copy data as needed...
-	if (strncmp(line, "#%product ", 10) == 0)
-	  strncpy(temp->name, line + 10, sizeof(temp->name) - 1);
-	else if (strncmp(line, "#%version ", 10) == 0)
-	  sscanf(line + 10, "%31s%d", temp->version, &(temp->vernumber));
-	else if (strncmp(line, "#%rootsize ", 11) == 0)
-	  temp->rootsize = atoi(line + 11);
-	else if (strncmp(line, "#%usrsize ", 10) == 0)
-	  temp->usrsize = atoi(line + 10);
-      }
-
-      fclose(fp);
-    }
-
-    free(files[i]);
-  }
-
-  free(files);
 }
 
 
@@ -621,6 +470,9 @@ install_dist(const dist_t *dist)// I - Distribution to install
   // Listen for data on the input pipe...
   Fl::add_fd(fds[0], (void (*)(int, void *))log_cb, fds);
 
+  // Show the user that we're busy...
+  SetupWindow->cursor(FL_CURSOR_WAIT);
+
   // Loop until the child is done...
   while (fds[0])	// log_cb() will close and zero fds[0]...
   {
@@ -647,6 +499,9 @@ install_dist(const dist_t *dist)// I - Distribution to install
     // Get the child's exit status...
     wait(&status);
   }
+
+  // Show the user that we're ready...
+  SetupWindow->cursor(FL_CURSOR_DEFAULT);
 
   // Return...
   return (status);
@@ -869,6 +724,57 @@ load_types(void)
 
 
 //
+// 'log_cb()' - Add one or more lines of text to the installation log.
+//
+
+void
+log_cb(int fd,			// I - Pipe to read from
+       int *fdptr)		// O - Pipe to read from
+{
+  int		bytes;		// Bytes read/to read
+  char		*bufptr;	// Pointer into buffer
+  static int	bufused = 0;	// Number of bytes used
+  static char	buffer[8193];	// Buffer
+
+
+  bytes = 8192 - bufused;
+  if ((bytes = read(fd, buffer + bufused, bytes)) <= 0)
+  {
+    // End of file; zero the FD to tell the install_dist() function to
+    // stop...
+
+    Fl::remove_fd(fd);
+    close(fd);
+    *fdptr = 0;
+
+    if (bufused > 0)
+    {
+      // Add remaining text...
+      buffer[bufused] = '\0';
+      InstallLog->add(buffer);
+      bufused = 0;
+    }
+  }
+  else
+  {
+    // Add bytes to the buffer, then add lines as needed...
+    bufused += bytes;
+    buffer[bufused] = '\0';
+
+    while ((bufptr = strchr(buffer, '\n')) != NULL)
+    {
+      *bufptr++ = '\0';
+      InstallLog->add(buffer);
+      strcpy(buffer, bufptr);
+      bufused -= bufptr - buffer;
+    }
+  }
+
+  InstallLog->bottomline(InstallLog->size());
+}
+
+
+//
 // 'next_cb()' - Show software selections or install software.
 //
 
@@ -963,18 +869,6 @@ next_cb(Fl_Button *, void *)
 
 
 //
-// 'sort_dists()' - Compare two distribution names...
-//
-
-int				// O - Result of comparison
-sort_dists(const dist_t *d0,	// I - First distribution
-           const dist_t *d1)	// I - Second distribution
-{
-  return (strcmp(d0->name, d1->name));
-}
-
-
-//
 // 'type_cb()' - Handle selections in the type list.
 //
 
@@ -1017,61 +911,10 @@ type_cb(Fl_Round_Button *w, void *)	// I - Radio button widget
 
 
 //
-// 'log_cb()' - Add one or more lines of text to the installation log.
-//
-
-static void
-log_cb(int fd,			// I - Pipe to read from
-       int *fdptr)		// O - Pipe to read from
-{
-  int		bytes;		// Bytes read/to read
-  char		*bufptr;	// Pointer into buffer
-  static int	bufused = 0;	// Number of bytes used
-  static char	buffer[8193];	// Buffer
-
-
-  bytes = 8192 - bufused;
-  if ((bytes = read(fd, buffer + bufused, bytes)) <= 0)
-  {
-    // End of file; zero the FD to tell the install_dist() function to
-    // stop...
-
-    Fl::remove_fd(fd);
-    close(fd);
-    *fdptr = 0;
-
-    if (bufused > 0)
-    {
-      // Add remaining text...
-      buffer[bufused] = '\0';
-      InstallLog->add(buffer);
-      bufused = 0;
-    }
-  }
-  else
-  {
-    // Add bytes to the buffer, then add lines as needed...
-    bufused += bytes;
-    buffer[bufused] = '\0';
-
-    while ((bufptr = strchr(buffer, '\n')) != NULL)
-    {
-      *bufptr++ = '\0';
-      InstallLog->add(buffer);
-      strcpy(buffer, bufptr);
-      bufused -= bufptr - buffer;
-    }
-  }
-
-  InstallLog->bottomline(InstallLog->size());
-}
-
-
-//
 // 'update_size()' - Update the total +/- sizes of the installations.
 //
 
-static void
+void
 update_sizes(void)
 {
   int		i;		// Looping var
@@ -1165,5 +1008,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.29.2.4 2003/01/27 16:27:58 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.29.2.5 2003/05/30 05:11:27 mike Exp $".
 //

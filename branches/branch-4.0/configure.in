@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.52.2.10 2003/01/24 03:02:27 mike Exp $"
+dnl "$Id: configure.in,v 1.52.2.11 2003/05/30 05:11:25 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -88,6 +88,7 @@ if test x$NROFF = x; then
 fi
 AC_PATH_PROG(RM,rm)
 AC_PATH_PROG(RPM,rpm)
+AC_PATH_PROG(RPMBUILD,rpmbuild)
 AC_PATH_PROG(STRIP,strip)
 
 dnl Architecture checks...
@@ -124,28 +125,30 @@ AC_SEARCH_LIBS(gethostname, socket)
 AC_PATH_PROG(FLTKCONFIG,fltk-config)
 
 if test "x$FLTKCONFIG" = x; then
-	SETUP=""
-	EPMEDITOR=""
+	GUIS=""
 	GUILIBS=""
 	INSTALL_GUIS=""
+	INSTALL_OSX=""
 
-	AC_MSG_WARN([Sorry, the GUIs require FLTK 1.1.x.])
+	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x.])
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
-	SETUP="setup"
-	EPMEDITOR="epmeditor"
+	GUIS="epmeditor setup uninst"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
 
-	if "$uname" = Darwin; then
-		GUILIBS="$GUILIBS --framework Security"
+	if test "$uname" = Darwin; then
+		GUILIBS="$GUILIBS -framework Security"
+		INSTALL_OSX="install-osx"
+	else
+		INSTALL_OSX=""
 	fi
 fi
 
-AC_SUBST(EPMEDITOR)
-AC_SUBST(GUILIBS)
 AC_SUBST(INSTALL_GUIS)
-AC_SUBST(SETUP)
+AC_SUBST(INSTALL_OSX)
+AC_SUBST(GUIS)
+AC_SUBST(GUILIBS)
 
 dnl Update compiler options...
 if test -n "$GCC"; then
@@ -154,7 +157,7 @@ if test -n "$GCC"; then
 	# you care about binary portability between Linux distributions,
 	# you need to either 1) build your own GCC with static C++ libraries
 	# or 2) link using gcc and libsupc++.  We choose the latter since
-	# EPM doesn't (currently) use any of the stdc++ library.
+	# CUPS doesn't (currently) use any of the stdc++ library.
 	#
 	# Also, GCC 3.0.x still has problems compiling some code.  You may
 	# or may not have success with it.  USE 3.0.x WITH EXTREME CAUTION!
@@ -284,6 +287,16 @@ if test "$exec_prefix" = "NONE"; then
 	exec_prefix="$prefix"
 fi
 
+dnl Fix "libdir" variable if it hasn't been specified...
+if test "$libdir" = "\${exec_prefix}/lib"; then
+	libdir="$exec_prefix/lib"
+fi
+
+dnl Fix "datadir" variable if it hasn't been specified...
+if test "$datadir" = "\${prefix}/share"; then
+	datadir="$prefix/share"
+fi
+
 dnl Fix "mandir" variable if it hasn't been specified...
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
@@ -348,11 +361,14 @@ AC_SUBST(EPM_STRIP)
 AC_DEFINE_UNQUOTED(EPM_BINDIR, "$exec_prefix/bin")
 AC_SUBST(EPM_BINDIR)
 
-AC_DEFINE_UNQUOTED(EPM_LIBDIR, "$prefix/lib/epm")
+AC_DEFINE_UNQUOTED(EPM_LIBDIR, "$libdir/epm")
 AC_SUBST(EPM_LIBDIR)
 
+AC_DEFINE_UNQUOTED(EPM_DATADIR, "$datadir/epm")
+AC_SUBST(EPM_DATADIR)
+
 dnl Figure out the right option to use for the RPM build architecture...
-if test "x$RPM" != "x"; then
+if test "x$RPM" != x; then
 	# It would be nice if Red Hat could make up its mind...
 	rpmversion="`$RPM --version | awk '{print $3}' | awk -F. '{print $1 * 10000 + $2 * 100 + $3}'`"
 
@@ -379,8 +395,8 @@ else
 fi
 
 dnl Output the makefile, list file, and config header...
-AC_OUTPUT(Makefile epm.list doc/Makefile)
+AC_OUTPUT(Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52.2.10 2003/01/24 03:02:27 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52.2.11 2003/05/30 05:11:25 mike Exp $".
 dnl

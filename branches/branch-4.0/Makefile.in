@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.34.2.5 2003/01/03 20:23:16 mike Exp $"
+# "$Id: Makefile.in,v 1.34.2.6 2003/05/30 05:11:18 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -97,8 +97,7 @@ TARGETS		=	libepm.a \
 			epm \
 			epminstall \
 			mkepmlist \
-			@SETUP@ \
-			@EPMEDITOR@
+			@GUIS@
 EPM_OBJS	=	aix.o \
 			bsd.o \
 			deb.o \
@@ -117,7 +116,11 @@ EPM_OBJS	=	aix.o \
 			swinstall.o \
 			tar.o
 SETUP_OBJS	=	setup.o \
-			setup2.o
+			setup2.o \
+			gui-common.o
+UNINST_OBJS	=	uninst.o \
+			uninst2.o \
+			gui-common.o
 LEDIT_OBJS	=	epmeditor.o \
 			ListEditor.o \
 			ListEditor2.o \
@@ -127,6 +130,7 @@ OBJS		=	epm.o \
 			$(EPM_OBJS) \
 			epminstall.o \
 			$(SETUP_OBJS) \
+			$(UNINST_OBJS) \
 			$(LEDIT_OBJS)
 
 
@@ -134,7 +138,7 @@ OBJS		=	epm.o \
 # Make all targets...
 #
 
-all:	$(TARGETS)
+all:	$(TARGETS) Makefile config.h
 
 
 #
@@ -160,7 +164,7 @@ distclean:
 # Install all targets...
 #
 
-install: epm @INSTALL_GUIS@
+install: epm @INSTALL_GUIS@ @INSTALL_OSX@
 	echo Installing EPM programs in $(bindir)
 	-$(MKDIR) $(bindir)
 	$(RM) $(bindir)/epm
@@ -212,19 +216,31 @@ install: epm @INSTALL_GUIS@
 	$(RM) $(docdir)/epm-manual.pdf
 	$(CP) $(srcdir)/doc/epm-manual.pdf $(docdir)
 
-install-guis:	@SETUP@ @EPMEDITOR@
+install-guis:	setup uninst epmeditor
 	echo Installing EPM editor in $(bindir)
 	-$(MKDIR) $(bindir)
 	$(RM) $(bindir)/epmeditor
 	$(CP) epmeditor $(bindir)
 	$(STRIP) $(bindir)/epmeditor
 	$(FLTKCONFIG) --post $(bindir)/epmeditor
-	echo Installing EPM setup in $(libdir)/epm
+	echo Installing EPM setup/uninst in $(libdir)/epm
+	$(RM) -r $(libdir)/epm
 	-$(MKDIR) $(libdir)/epm
-	$(RM) $(libdir)/epm/setup
 	$(CP) setup $(libdir)/epm
-	$(STRIP) $(libdir)/epm/setup
-	$(FLTKCONFIG) --post $(libdir)/epm/setup
+	-$(STRIP) $(libdir)/epm/setup
+	$(CP) uninst $(libdir)/epm
+	-$(STRIP) $(libdir)/epm/uninst
+
+install-osx:
+	echo Installing EPM OSX data files in $(datadir)/epm
+	$(RM) -r $(datadir)/epm
+	-$(MKDIR) $(datadir)/epm
+	$(CP) macosx/setup.icns $(datadir)/epm
+	$(CP) macosx/setup.info $(datadir)/epm
+	$(CP) macosx/setup.plist $(datadir)/epm
+	$(CP) macosx/uninst.icns $(datadir)/epm
+	$(CP) macosx/uninst.info $(datadir)/epm
+	$(CP) macosx/uninst.plist $(datadir)/epm
 
 
 #
@@ -245,8 +261,38 @@ uninstall:
 	$(RM) -r $(docdir)
 	echo Uninstalling EPM editor from $(bindir)
 	$(RM) $(bindir)/epmeditor
-	echo Uninstalling EPM setup from $(libdir)/epm
-	$(RM) $(libdir)/epm/setup
+	echo Uninstalling EPM setup/uninstall from $(libdir)/epm
+	$(RM) -r $(libdir)/epm
+	echo Uninstalling EPM OSX data files from $(datadir)/epm
+	$(RM) -r $(datadir)/epm
+
+#
+# Makefile
+#
+
+Makefile:	Makefile.in configure
+	if test -f config.status; then \
+		./config.status --recheck; \
+		./config.status; \
+	else \
+		./configure; \
+	fi
+	touch config.h
+
+
+#
+# config.h
+#
+
+config.h:	config.h.in configure
+	if test -f config.status; then \
+		./config.status --recheck; \
+		./config.status; \
+	else \
+		./configure; \
+	fi
+	touch config.h
+
 
 #
 # Test EPM...
@@ -357,8 +403,22 @@ setup:	$(SETUP_OBJS) libepm.a
 	echo Linking setup...
 	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) libepm.a $(GUILIBS) $(LIBS)
 
-setup.o:	setup.h setup2.h epmstring.h
-setup2.o:	setup.h setup2.h epmstring.h
+setup.o:	setup.h setup2.h epmstring.h gui-common.h
+setup2.o:	setup.h setup2.h epmstring.h gui-common.h
+gui-common.o:	gui-common.h
+
+
+#
+# uninst
+#
+
+uninst:	$(UNINST_OBJS) libepm.a
+	echo Linking uninst...
+	$(CXX) $(LDFLAGS) -o uninst $(UNINST_OBJS) libepm.a $(GUILIBS) $(LIBS)
+
+uninst.o:	uninst.h epmstring.h gui-common.h
+uninst2.o:	uninst.h epmstring.h gui-common.h
+gui-common.o:	gui-common.h
 
 
 #
@@ -373,9 +433,13 @@ epmeditor:	$(LEDIT_OBJS) libepm.a
 $(LEDIT_OBJS):	ListEditor.h ListManager.h epm.h epmstring.h
 
 
+#
+# Common dependencies...
+#
+
 $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.34.2.5 2003/01/03 20:23:16 mike Exp $".
+# End of "$Id: Makefile.in,v 1.34.2.6 2003/05/30 05:11:18 mike Exp $".
 #
