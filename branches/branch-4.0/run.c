@@ -1,5 +1,5 @@
 /*
- * "$Id: run.c,v 1.2.2.1 2003/01/03 20:23:22 mike Exp $"
+ * "$Id: run.c,v 1.2.2.2 2003/10/28 14:50:45 mike Exp $"
  *
  *   External program function for the ESP Package Manager (EPM).
  *
@@ -147,7 +147,8 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
     */
 
     execvp(argv[0], argv);
-    perror("epm: execvp failed");
+    fprintf(stderr, "epm: Unable to execute \"%s\" program: %s\n", argv[0],
+            strerror(errno));
     exit(errno);
   }
   else if (pid < 0)
@@ -177,5 +178,5 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
 
 
 /*
- * End of "$Id: run.c,v 1.2.2.1 2003/01/03 20:23:22 mike Exp $".
+ * End of "$Id: run.c,v 1.2.2.2 2003/10/28 14:50:45 mike Exp $".
  */
