@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.34.2.6 2003/05/30 05:11:18 mike Exp $"
+# "$Id: Makefile.in,v 1.34.2.7 2003/07/24 14:11:25 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -111,6 +111,7 @@ EPM_OBJS	=	aix.o \
 			rpm.o \
 			run.o \
 			setld.o \
+			slackware.o \
 			snprintf.o \
 			string.o \
 			swinstall.o \
@@ -325,6 +326,9 @@ aix: $(TARGETS)
 bsd: $(TARGETS)
 	./epm -f bsd -v epm
 
+slackware: $(TARGETS)
+	./epm -f slackware -v epm
+
 deb: $(TARGETS)
 	./epm -f deb -v epm
 
@@ -441,5 +445,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.34.2.6 2003/05/30 05:11:18 mike Exp $".
+# End of "$Id: Makefile.in,v 1.34.2.7 2003/07/24 14:11:25 mike Exp $".
 #

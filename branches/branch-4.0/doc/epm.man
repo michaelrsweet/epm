@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.8.2.5 2003/01/04 05:33:16 mike Exp $"
+.\" "$Id: epm.man,v 1.8.2.6 2003/07/24 14:11:27 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -102,6 +102,10 @@ setld
 .br
 Generate a Tru64 (setld) software distribution.
 .TP 5
+slackware
+.br
+Generate a Slackware Linux software distribution.
+.TP 5
 swinstall, depot
 .br
 Generate a HP-UX software distribution.
@@ -173,5 +177,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.8.2.5 2003/01/04 05:33:16 mike Exp $".
+.\" End of "$Id: epm.man,v 1.8.2.6 2003/07/24 14:11:27 mike Exp $".
 .\"

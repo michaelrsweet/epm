@@ -1,5 +1,5 @@
 /*
- * "$Id: slackware.c,v 1.1 2003/07/24 10:54:00 mike Exp $"
+ * "$Id: slackware.c,v 1.1.2.1 2003/07/24 14:11:25 mike Exp $"
  *
  *   Slackware package gateway for the ESP Package Manager (EPM).
  *
@@ -172,7 +172,7 @@ make_slackware(const char     *prodname,/* I - Product short name */
     fprintf(fp, "%s: %s\n%s:\n", prodname, dist->product, prodname);
 
     for (i = 0; i < dist->num_descriptions; i ++)
-      fprintf(fp, "%s: %s\n", prodname, dist->descriptions[i]);
+      fprintf(fp, "%s: %s\n", prodname, dist->descriptions[i].description);
 
     fprintf(fp, "%s:\n", prodname);
     fprintf(fp, "%s: (Vendor: %s, Packager: %s)\n", prodname, dist->vendor,
@@ -255,5 +255,5 @@ make_slackware(const char     *prodname,/* I - Product short name */
 
 
 /*
- * End of "$Id: slackware.c,v 1.1 2003/07/24 10:54:00 mike Exp $".
+ * End of "$Id: slackware.c,v 1.1.2.1 2003/07/24 14:11:25 mike Exp $".
  */
