@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.13 2001/03/03 21:48:34 mike Exp $"
+ * "$Id: pkg.c,v 1.14 2001/03/06 13:50:06 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -353,7 +353,11 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  fprintf(fp, "i copyright=%s/%s\n", current, dist->license);
+  if (dist->license[0] == '/')
+    fprintf(fp, "i copyright=%s\n", dist->license);
+  else
+    fprintf(fp, "i copyright=%s/%s\n", current, dist->license);
+
   fprintf(fp, "i depend=%s/%s/%s.depend\n", current, directory, prodname);
   fprintf(fp, "i pkginfo=%s/%s/%s.pkginfo\n", current, directory, prodname);
 
@@ -476,5 +480,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.13 2001/03/03 21:48:34 mike Exp $".
+ * End of "$Id: pkg.c,v 1.14 2001/03/06 13:50:06 mike Exp $".
  */
