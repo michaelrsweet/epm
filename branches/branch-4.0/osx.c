@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.1.2.12 2004/11/01 12:19:44 mike Exp $"
+ * "$Id: osx.c,v 1.1.2.13 2004/12/06 13:57:07 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -64,10 +64,11 @@ make_osx(const char     *prodname,	/* I - Product short name */
   if (dist->relnumber)
   {
     if (platname[0])
-      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
-              platname);
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version,
+               dist->relnumber, platname);
     else
-      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version,
+               dist->relnumber);
   }
   else if (platname[0])
     snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
@@ -420,5 +421,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.1.2.12 2004/11/01 12:19:44 mike Exp $".
+ * End of "$Id: osx.c,v 1.1.2.13 2004/12/06 13:57:07 mike Exp $".
  */
