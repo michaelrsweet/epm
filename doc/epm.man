@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.6 2001/07/02 14:26:55 mike Exp $"
+.\" "$Id: epm.man,v 1.7 2001/07/02 19:18:04 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -30,6 +30,8 @@ epm \- create software packages.
 .I setup.xpm
 ] [ \--setup-program
 .I /foo/bar/setup
+] [ \--setup-types
+.I setup.types
 ] [ \-v ] [
 .I name=value
 ...
@@ -114,6 +116,10 @@ The \fI--setup-program\fR option specifies the setup executable
 to use with the distribution. This option is currently only
 supported by portable distributions.
 .LP
+The \fI--setup-types\fR option specifies the \fIsetup.types\fR
+file to include with the distribution. This option is currently
+only supported by portable distributions.
+.LP
 The \fI-v\fR option ("verbose") increases the amount of information that is
 reported. Use multiple v's for more verbose output.
 .LP
@@ -159,5 +165,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.6 2001/07/02 14:26:55 mike Exp $".
+.\" End of "$Id: epm.man,v 1.7 2001/07/02 19:18:04 mike Exp $".
 .\"

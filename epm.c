@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.59 2001/07/02 14:26:54 mike Exp $"
+ * "$Id: epm.c,v 1.60 2001/07/02 19:18:03 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -17,9 +17,9 @@
  *
  * Contents:
  *
- *   main()         - Read a product list and produce a distribution.
- *   info()         - Show the EPM copyright and license.
- *   usage()        - Show command-line usage instructions.
+ *   main()  - Read a product list and produce a distribution.
+ *   info()  - Show the EPM copyright and license.
+ *   usage() - Show command-line usage instructions.
  */
 
 /*
@@ -502,11 +502,13 @@ usage(void)
   puts("    Enable the setup GUI and use \"setup.xpm\" for the setup image.");
   puts("--setup-program /foo/bar/setup");
   puts("    Use the named setup program instead of " EPM_LIBDIR "/setup.");
+  puts("--setup-types setup.types");
+  puts("    Include the named setup.types file with the distribution.");
 
   exit(1);
 }
 
 
 /*
- * End of "$Id: epm.c,v 1.59 2001/07/02 14:26:54 mike Exp $".
+ * End of "$Id: epm.c,v 1.60 2001/07/02 19:18:03 mike Exp $".
  */

@@ -9,8 +9,8 @@
 <P><B>epm</B> [ -a <I>architecture</I> ] [ -f <I>format</I> ] [
 -g ] [ -k ] [ -n[mrs] ] [ -s <I>setup.xpm</I> ] [ --setup-image
 <I>setup.xpm</I> ] [ --setup-program <I>/foo/bar/setup</I> ] [
--v ] [ <I>name=value name=value</I> ] product [ <I>listfile</I>
-]</P>
+--setup-types <I>setup.types</I> ] [ -v ] [ <I>name=value
+name=value</I> ] product [ <I>listfile</I> ]</P>
 
 <H3>Description</H3>
 
@@ -101,6 +101,11 @@ supported by portable distributions.</P>
 <P>The <I>--setup-program</I> option specifies the setup
 executable to use with the distribution. This option is
 currently only supported by portable distributions.</P>
+
+<P>The <I>--setup-types</I> option specifies the
+<VAR>setup.types</VAR> file to include with the distribution.
+This option is currently only supported by portable
+distributions.</P>
 
 <P>The <I>-v</I> option ("verbose") increases the amount of
 information that is reported. Use multiple v's for more verbose

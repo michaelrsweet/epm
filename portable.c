@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.48 2001/07/02 14:26:54 mike Exp $"
+ * "$Id: portable.c,v 1.49 2001/07/02 19:18:03 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1146,7 +1146,9 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     return (-1);
   }
 
-  fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
+  fputs("if test \"$*\" = \"now\"; then\n", scriptfile);
+  fputs("	echo Software license silently accepted via command-line option.\n", scriptfile);
+  fputs("else\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
   fprintf(scriptfile, "	echo This installation script will install the \'%s\'\n",
           dist->product);
@@ -1416,7 +1418,9 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     return (-1);
   }
 
-  fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
+  fputs("if test \"$*\" = \"now\"; then\n", scriptfile);
+  fputs("	echo Software license silently accepted via command-line option.\n", scriptfile);
+  fputs("else\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
   fprintf(scriptfile, "	echo This installation script will patch the \'%s\'\n",
           dist->product);
@@ -1894,5 +1898,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.48 2001/07/02 14:26:54 mike Exp $".
+ * End of "$Id: portable.c,v 1.49 2001/07/02 19:18:03 mike Exp $".
  */

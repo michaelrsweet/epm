@@ -1,15 +1,16 @@
 ----HTML-PRESS-RELEASE---------------------------------------------------
 
-<H1>ESP Package Manager 2.8 Released</H1>
+<H1>ESP Package Manager 3.0 Released</H1>
 
-<P><B>Hollywood, MD (June 4, 2001)</B> -- Easy Software
-Products today announced the 2.8 release of the ESP Package
+<P><B>Hollywood, MD (July 1, 2001)</B> -- Easy Software
+Products today announced the 3.0 release of the ESP Package
 Manager ("EPM"), a cross-platform software distribution
 program for UNIX.
 
-<P>EPM v2.8 fixes a few bugs in the portable distribution
-generation code, setup GUI, and mkepmlist utility. The new
-release is available on-line at:
+<P>EPM v3.0 adds support for AIX, FreeBSD, NetBSD, and OpenBSD
+packages, a new graphical setup program, a new packaging manual,
+and a new install command replacement that builds list files.
+The new release is available on-line at:
 
 <UL><PRE>
 <A HREF="http://www.easysw.com/epm">http://www.easysw.com/epm</A>
@@ -21,19 +22,23 @@ including:
 
 <UL>
 
-	<LI>AT&T Software Packages ("pkg"), used by Solaris.
+	<LI>AIX software packages ("installp")
+
+	<LI>AT&T software packages ("pkgadd"), used by Solaris and others
+
+	<LI>BSD packages ("pkg_create")
 
 	<LI>Compaq Tru64 UNIX ("setld")
 
 	<LI>Debian Package Manager ("dpkg")
 
-	<LI>HP-UX Software Packages ("swinstall" or "depot")
+	<LI>HP-UX software packages ("swinstall")
 
-	<LI>IRIX Software Manager ("inst" or "tardist")
+	<LI>IRIX software manager ("inst", "swmgr", or "tardist")
 
 	<LI>Portable (installation and removal scripts with tar files)
 
-	<LI>Red Hat Package Manager ("RPM")
+	<LI>Red Hat Package Manager ("rpm")
 
 </UL>
 
@@ -48,15 +53,16 @@ commercial support.
 
 ----TEXT-PRESS-RELEASE---------------------------------------------------
 
-ESP Package Manager 2.8 Released
+ESP Package Manager 3.0 Released
 
-Hollywood, MD (June 4, 2001) -- Easy Software Products today
-announced the 2.8 release of the ESP Package Manager ("EPM"), a
+Hollywood, MD (July 1, 2001) -- Easy Software Products today
+announced the 3.0 release of the ESP Package Manager ("EPM"), a
 cross-platform software distribution program for UNIX.
 
-EPM v2.8 fixes a few bugs in the portable distribution
-generation code, setup GUI, and mkepmlist utility. The new
-release is available on-line at:
+EPM v3.0 adds support for AIX, FreeBSD, NetBSD, and OpenBSD
+packages, a new graphical setup program, a new packaging manual,
+and a new install command replacement that builds list files.
+The new release is available on-line at:
 
     http://www.easysw.com/epm
 
@@ -64,13 +70,16 @@ EPM is a software packaging tool for all versions of UNIX that
 generates software and patch distributions in various formats,
 including:
 
-    - AT&T Software Packages ("pkg"), used by Solaris.
+    - AIX software packages ("installp")
+    - AT&T software packages ("pkgadd"), used by Solaris and
+      others
+    - BSD packages ("pkg_create")
     - Compaq Tru64 UNIX ("setld")
     - Debian Package Manager ("dpkg")
-    - HP-UX Software Packages ("swinstall" or "depot")
-    - IRIX Software Manager ("inst" or "tardist")
+    - HP-UX software packages ("swinstall")
+    - IRIX software manager ("inst", "swmgr", or "tardist")
     - Portable (installation and removal scripts with tar files)
-    - Red Hat Package Manager ("RPM")
+    - Red Hat Package Manager ("rpm")
 
 EPM also includes a graphical "setup" program that can be
 provided with your distributions to make installation of more

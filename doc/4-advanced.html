@@ -3,9 +3,18 @@
 
 <H1 ALIGN="RIGHT"><A NAME="ADVANCED">Advanced Packaging with EPM</A></H1>
 
-<P>Chapter summary.</P>
+<P>This chapter describes the advanced packaging features of EPM.</P>
 
 <H2>Including Other List Files</H2>
+
+<P>The <CODE>%include</CODE> directive includes another list file:</P>
+
+<UL><PRE>
+%include filename
+</PRE></UL>
+
+<P>Includes can be nested, usually up to 250 levels (depends on the
+host operating system and libraries.)</P>
 
 <H2>Conflicts, Replaces, and Requires</H2>
 
@@ -16,12 +25,16 @@ using the <CODE>%replaces</CODE> directive (<CODE>%replaces</CODE>
 is silently mapped to <CODE>%conflicts</CODE> when the distribution
 format does not support package replacement.)
 
-<P>Dependencies are specified using the package name:
+<P>Dependencies are specified using the package name and optionally the
+lower and upper version numbers:
 
 <UL><PRE>
 %requires foobar
+%requires foobar 1.0
 %incompat foobar
+%incompat foobar 0.9
 %replaces foobar
+%replaces foobar 1.2 3.4
 </PRE></UL>
 
 <P>or the filename:
@@ -41,11 +54,36 @@ portable, and RPM distribution formats.
 
 <H2>Scripts</H2>
 
-<H2>Conditional Directives</H2>
+<P>Bourne shell script commands can be executed before or after
+installation, patching, or removal of the software. The
+<CODE>%preinstall</CODE> and <CODE>%postinstall</CODE>
+directives specify commands to be run before and after
+installation, respectively:</P>
 
-<P>As stated before, the <CODE>%system</CODE> directive can be used
-to conditionally include specific files like the man pages in the EPM
-distribution.
+<UL><PRE>
+%preinstall echo Command before installing
+%postinstall echo Command after installing
+</PRE></UL>
+
+<P>Similarly, the <CODE>%prepatch</CODE> and <CODE>%postpatch</CODE>
+directives specify commands to be executed before and after patching
+the software:</P>
+
+<UL><PRE>
+%prepatch echo Command before patching
+%postpatch echo Command after patching
+</PRE></UL>
+
+<P>Finally, the <CODE>%preremove</CODE> and <CODE>%postremove</CODE>
+directives specify commands that are run before and after removal
+of the software:</P>
+
+<UL><PRE>
+%preremove echo Command before removing
+%postremove echo Command after removing
+</PRE></UL>
+
+<H2>Conditional Directives</H2>
 
 <P>The <CODE>%system</CODE> directive can match or not match
 specific operating system names or versions. The operating
@@ -92,9 +130,22 @@ used:
 
 </DL>
 
-<H2>Using <CODE>epminstall</CODE></H2>
-
 <H2>Software Patches</H2>
+
+<P>EPM supports portable software patch distributions which
+contain only the differences between the original and patch
+release.  Patch files are specified using uppercase letters for
+the affected files. In the following example, the files
+<VAR>/usr/bin/bar</VAR> and <VAR>/etc/foo.conf</VAR> are marked
+as changed since the original release:</P>
+
+<UL><PRE>
+f 755 root sys /usr/bin/foo foo
+F 755 root sys /usr/bin/bar bar
+f 755 root sys /usr/share/man/man1/foo.1 foo.man
+f 755 root sys /usr/share/man/man1/bar.1 bar.man
+C 644 root sys /etc/foo.conf foo.conf
+</PRE></UL>
 
 <H2>Variables</H2>
 
@@ -136,110 +187,23 @@ script, use <CODE>$$</CODE>:
 %install echo Your name is $$name.
 </PRE></UL>
 
-<H3>Files</H3>
+<H2>Init Scripts</H2>
 
-<P>Following the product information is the list of files to be
-included in the distribution:
+<P>Initialization scripts are generally portable between platforms,
+however the location of initialization scripts varies greatly.
 
-<UL><PRE>
-# Executables
-%system all
-f 0555 root sys /usr/bin/epm epm
-f 0555 root sys /usr/lib/epm/setup setup
-f 0444 root sys /usr/share/doc/epm/README README
-f 0444 root sys /usr/share/doc/epm/COPYING COPYING
-f 0444 root sys /usr/share/doc/epm *.html
-
-# Man pages
-%system irix
-f 0444 root sys /usr/share/catman/u_man/cat1/epm.1 epm.1
-%system !irix
-f 0444 root sys /usr/man/man1/epm.1 epm.man
-</PRE></UL>
-
-<P>The <CODE>%system</CODE> directive is one of two conditional
-statements that can be included in software list files. In this
-case we are installing the man pages in one of two directories
-depending on the operating system.
-
-<P>Plain files are indicated by the <CODE>f</CODE> at the
-beginning of each line. Directories, configuration files,
-initialization scripts, and symbolic links are specified using
-the letters <CODE>d</CODE>, <CODE>c</CODE>, <CODE>i</CODE>, and
-<CODE>l</CODE>, respectively. Files that should be included in a
-patch upgrade use uppercase letters instead of lowercase.
-
-<P>The remaining data fields on the line are the file permission
-bits, the owner, the group, the destination filename, and the
-source filename. The source and destination filenames can
-contain references to environment variables and variables passed
-on the EPM command-line. For example, the man page files can
-reference the <CODE>mandir</CODE> variable to relocate the
-installed man pages instead of using the <CODE>%system</CODE>
-conditional directive:
+<P>The <CODE>i</CODE> file type can be used to specify and init
+script that is to be installed on the system. EPM will then
+determine the appropriate init file directories to use and create
+any required symbolic links to support the init script:</P>
 
 <UL><PRE>
-# Man pages
-f 0444 root sys $mandir/cat1/epm.1 epm.1
-f 0444 root sys $mandir/man1/epm.1 epm.man
+i 755 root sys foo foo.sh
 </PRE></UL>
 
-<P>As you can see, variables are referenced using the dollar
-sign (<CODE>$</CODE>). As with most shells, variable names can
-be surrounded by curly braces (<CODE>${variable}</CODE>) to
-explicitly delimit the name.
-
-<P>Variables are specified using using the equal sign (<CODE>=</CODE>)
-on the command-line or in the list file (<CODE>$name=value</CODE>);
-there is no limit on the number of variables you can specify:
-
-<UL><PRE>
-epm mandir=/foo/bar/man epm epm.list
-</PRE></UL>
-
-<P>EPM can also produce vendor-specific distributions using the
-<CODE>-f</CODE> option:
-
-<UL><PRE>
-epm -f format ...
-</PRE></UL>
-
-<P>The <I>format</I> option can be one of:
-
-<UL>
-
-	<LI><CODE>depot</CODE> or <CODE>swinstall</CODE> - HP-UX software
-	distribution.
-
-	<LI><CODE>dpkg</CODE> - Debian software distribution.
-
-	<LI><CODE>inst</CODE> or <CODE>tardist</CODE> - IRIX software
-	distribution.
-
-	<LI><CODE>native</CODE> - "Native" software distribution (RPM,
-	INST, DEPOT, PKG, etc.) for the platform.
-
-	<LI><CODE>pkg</CODE> - Solaris software distribution.
-
-	<LI><CODE>portable</CODE> - Portable software distribution (default).
-
-	<LI><CODE>rpm</CODE> - RedHat software distribution.
-
-	<LI><CODE>setld</CODE> - Tru64 (setld) software distribution.
-
-</UL>
-
-<P>Everything in the software list file stays the same - you just use the
-<CODE>-f</CODE> option to select the format.  For example, to build an RPM
-distribution of EPM, type:
-
-<UL><PRE>
-epm -f rpm epm
-</PRE></UL>
-
-<P>The result will be an RPM distribution file instead of the portable
-distribution file.
-
+<P>The previous example creates an init script named
+<VAR>foo</VAR> on the end-user system and will create symbolic
+links to run levels 0, 2, 3, and 5 as needed.</P>
 
 </BODY>
 </HTML>

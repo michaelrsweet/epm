@@ -11,231 +11,188 @@ packages.</P>
 <P>EPM reads one or more software "list" files that describe a
 single software package. Each list file contains one or more
 lines of ASCII text containing product or file information.
-Comments start with the <CODE>#</CODE> character.
-
-<P>The source field can also use shell wildcards to include
-multiple files on a single line:
-
-<UL><PRE>
-f 0444 root sys /usr/share/doc/epm *.html
-</PRE></UL>
-
-<H2>Creating a List File</H2>
-
-<P><B>EPM 2.6 adds a new <CODE>mkepmlist</CODE> utility that
-recursively scans directories and generates the corresponding
-list file entries.</B>
+Comments start with the <CODE>#</CODE> character, directives
+start with the <CODE>%</CODE> character, variable start with the
+<CODE>$</CODE> character, and files, directories, and symlinks
+start with a letter.</P>
 
 <H3>Product Information</H3>
 
-<P>The following is an excerpt from the EPM software list file
-(<CODE>epm.list</CODE>) provided with the software:
+<P>Every list file needs to define the product name, copyright, description,
+license, README file, vendor, and version:</P>
 
 <UL><PRE>
-# Product information
-%product ESP Package Manager
-%copyright 1999-2001 by Easy Software Products, All Rights Reserved.
-%vendor Easy Software Products
+%product Kung Foo Firewall
+%copyright 1999-2001 by Foo Industries, All Rights Reserved.
+%vendor Foo Industries
 %license COPYING
 %readme README
-%description Universal software packaging tool for UNIX.
-%version 2.2
-%release 0
+%description Kung Foo firewall software for your firewall.
+%version 1.2.3p4 1020304
 </PRE></UL>
 
-<P>As you can see, product information lines (as well as other
-EPM directives) start with the percent (<CODE>%</CODE>)
-character. The attribute name is followed by the value separated
-by whitespace. 
+<P>The <CODE>%license</CODE> and <CODE>%readme</CODE> directives
+specify files for the license agreement and README files for the
+package, respectively.</P>
 
-<H2>Adding Files, Directories, and Symlinks</H2>
+<P>The <CODE>%product</CODE>, <CODE>%copyright</CODE>,
+<CODE>%vendor</CODE>, and <CODE>%description</CODE> directives
+take text directly from the line.
 
-<H3>Files</H3>
+<P>The <CODE>%version</CODE> directive specifies the version
+numbers of the package.  The first number is the human-readable
+version number, while the second number is the integer version
+number. If you omit the integer version number, EPM will
+calculate one for you.</P>
 
-<P>Following the product information is the list of files to be
-included in the distribution:
+<H3>Files, Directories, and Symlinks</H3>
+
+<P>Each file in the distribution is listed on a line starting
+with a letter. The format of all lines is:
 
 <UL><PRE>
-# Executables
-%system all
-f 0555 root sys /usr/bin/epm epm
-f 0555 root sys /usr/lib/epm/setup setup
-f 0444 root sys /usr/share/doc/epm/README README
-f 0444 root sys /usr/share/doc/epm/COPYING COPYING
-f 0444 root sys /usr/share/doc/epm *.html
-
-# Man pages
-%system irix
-f 0444 root sys /usr/share/catman/u_man/cat1/epm.1 epm.1
-%system !irix
-f 0444 root sys /usr/man/man1/epm.1 epm.man
+type mode owner group destination source
 </PRE></UL>
 
-<P>The <CODE>%system</CODE> directive is one of two conditional
-statements that can be included in software list files. In this
-case we are installing the man pages in one of two directories
-depending on the operating system.
-
-<P>Plain files are indicated by the <CODE>f</CODE> at the
-beginning of each line. Directories, configuration files,
-initialization scripts, and symbolic links are specified using
-the letters <CODE>d</CODE>, <CODE>c</CODE>, <CODE>i</CODE>, and
-<CODE>l</CODE>, respectively. Files that should be included in a
-patch upgrade use uppercase letters instead of lowercase.
-
-<P>The remaining data fields on the line are the file permission
-bits, the owner, the group, the destination filename, and the
-source filename. The source and destination filenames can
-contain references to environment variables and variables passed
-on the EPM command-line. For example, the man page files can
-reference the <CODE>mandir</CODE> variable to relocate the
-installed man pages instead of using the <CODE>%system</CODE>
-conditional directive:
+<P>Regular files use the letter <CODE>f</CODE> for the type
+field:</P>
 
 <UL><PRE>
-# Man pages
-f 0444 root sys $mandir/cat1/epm.1 epm.1
-f 0444 root sys $mandir/man1/epm.1 epm.man
+f 755 root sys /usr/bin/foo foo
 </PRE></UL>
 
-<P>As you can see, variables are referenced using the dollar
-sign (<CODE>$</CODE>). As with most shells, variable names can
-be surrounded by curly braces (<CODE>${variable}</CODE>) to
-explicitly delimit the name.
-
-<P>The source field can also use shell wildcards to include
-multiple files on a single line:
+<P>Configuration files use the letter <CODE>c</CODE> for the
+type field:</P>
 
 <UL><PRE>
-f 0444 root sys /usr/share/doc/epm *.html
+c 644 root sys /etc/foo.conf foo.conf
 </PRE></UL>
 
-<H3>Configuration Files</H3>
-
-<P>Configuration files use the same format as regular files; if
-the configuration file exists when the software is installed,
-then the new configuration file is stored as
-<CODE>filename.N</CODE> so it can be merged with the old
-configuration file manually. This is one of the configuration
-files supplied with the CUPS distribution:
+<P>Directories use the letter <CODE>d</CODE> for the type field
+and use a source path of "-":</P>
 
 <UL><PRE>
-c 0644 root sys /etc/cups/cupsd.conf conf/cupsd.conf
+d 755 root sys /var/spool/foo -
 </PRE></UL>
 
-<H3>Directories</H3>
-
-<P>Directories use a source file of <CODE>-</CODE>:
+<P>Finally, symbolic links use the letter <CODE>l</CODE> (lowercase L) for the type field:</P>
 
 <UL><PRE>
-d 0755 root sys /foo/bar/dir -
+l 000 root sys /usr/bin/foobar foo
 </PRE></UL>
 
-<H3>Intialization Scripts</H3>
+<P>The source field specifies the file to link to and can be a
+relative path.</P>
 
-<P>Initialization scripts are scripts or programs that are run
-at boot time, usually to start daemon programs. EPM
-automatically determines the location of initialization files at
-install time, so it can handle the different locations used by
-various Linux distributions. This is the initialization script
-used by CUPS:
+<H3>Wildcards</H3>
+
+<P>Wildcard patterns can be used in the source field to include multiple
+files on a single line:
 
 <UL><PRE>
-i 0555 root sys cups cups.sh
+f 0444 root sys /usr/share/doc/foo *.html
 </PRE></UL>
 
-<P>This specifies that the root name of the initialization
-script is <CODE>cups</CODE>, and the file <CODE>cups.sh</CODE>
-should be used as the source for the script. EPM creates links
-for startup and shutdown at run levels 0, 2, 3, and 5 as
-appropriate.
+<H2>Building a Software Distribution</H2>
 
-<H3>Symbolic Links</H3>
-
-<P>Symbolic links use the source field as the link value. That
-is, if you want to provide a symbolic link from
-<CODE>gzip</CODE> to <CODE>gunzip</CODE> in
-<CODE>/usr/bin</CODE> you'd use:
+<P>The <CODE>epm(1)</CODE> program is used to build software
+distributions from list files. To build a portable software
+distribution for an application called "foo", type the following
+command:</P>
 
 <UL><PRE>
-l 0555 root sys /usr/bin/gunzip gzip
+<KBD>epm foo <I>ENTER</I></KBD>
 </PRE></UL>
 
-<H2>Creating the Software Package</H2>
-
-<P>To build a distribution called "epm" from this list file,
-simply run:
+<P>If your application uses a different base name than the list file,
+you can specify the list filename on the command-line as well:</P>
 
 <UL><PRE>
-epm epm
-</PRE></UL>
-
-<P>EPM will automatically load the file <CODE>epm.list</CODE> for
-the list file; to specify the file directly, use:
-
-<UL><PRE>
-epm epm epm.list
-</PRE></UL>
-
-<P>The first argument is the name of the package, while the
-second is the list filename. The result will be a gzip'd tar
-file containing the distribution files and installation script
-needed to install the software.
-
-<P>Variables are specified using using the equal sign (<CODE>=</CODE>)
-on the command-line or in the list file (<CODE>$name=value</CODE>);
-there is no limit on the number of variables you can specify:
-
-<UL><PRE>
-epm mandir=/foo/bar/man epm epm.list
+<KBD>epm foo bar.list <I>ENTER</I></KBD>
 </PRE></UL>
 
 <P>EPM can also produce vendor-specific distributions using the
 <CODE>-f</CODE> option:
 
 <UL><PRE>
-epm -f format ...
+<KBD>epm -f format foo bar.list <I>ENTER</I></KBD>
 </PRE></UL>
 
-<P>The <I>format</I> option can be one of:
+<P>The <I>format</I> option can be one of the following keywords:
 
 <UL>
 
-	<LI><CODE>depot</CODE> or <CODE>swinstall</CODE> - HP-UX software
-	distribution.
+	<LI><CODE>aix</CODE> - AIX software distribution.
+
+	<LI><CODE>bsd</CODE> - FreeBSD, NetBSD, or OpenBSD
+	software distribution.
+
+	<LI><CODE>depot</CODE> or <CODE>swinstall</CODE> - HP-UX
+	software distribution.
 
 	<LI><CODE>dpkg</CODE> - Debian software distribution.
 
-	<LI><CODE>inst</CODE> or <CODE>tardist</CODE> - IRIX software
-	distribution.
+	<LI><CODE>inst</CODE> or <CODE>tardist</CODE> - IRIX
+	software distribution.
 
-	<LI><CODE>native</CODE> - "Native" software distribution (RPM,
-	INST, DEPOT, PKG, etc.) for the platform.
+	<LI><CODE>native</CODE> - "Native" software distribution
+	(RPM, INST, DEPOT, PKG, etc.) for the platform.
 
 	<LI><CODE>pkg</CODE> - Solaris software distribution.
 
-	<LI><CODE>portable</CODE> - Portable software distribution (default).
+	<LI><CODE>portable</CODE> - Portable software
+	distribution (default).
 
 	<LI><CODE>rpm</CODE> - RedHat software distribution.
 
-	<LI><CODE>setld</CODE> - Tru64 (setld) software distribution.
+	<LI><CODE>setld</CODE> - Tru64 (setld) software
+	distribution.
 
 </UL>
 
 <P>Everything in the software list file stays the same - you just use the
 <CODE>-f</CODE> option to select the format.  For example, to build an RPM
-distribution of EPM, type:
+distribution of EPM, type:</P>
 
 <UL><PRE>
 epm -f rpm epm
 </PRE></UL>
 
 <P>The result will be an RPM distribution file instead of the portable
-distribution file.
+distribution file.</P>
 
 <H2>Installing the Software Package</H2>
 
+<P>Once you have created the software distribution, you can
+install it. Portable distributions create an install script
+called <VAR>product.install</VAR>, where "product" is the name
+of the package:
+
+<UL><PRE>
+<KBD>cd os-release-arch <I>ENTER</I>
+./product.install <I>ENTER</I></KBD>
+</PRE></UL>
+
+<P>After answering a few yes/no questions, the software will be
+installed. To bypass the questions, run the script with the
+<CODE>now</CODE> argument:</P>
+
+<UL><PRE>
+<KBD>cd os-release-arch <I>ENTER</I>
+./product.install now <I>ENTER</I></KBD>
+</PRE></UL>
+
 <H2>Including the Setup GUI</H2>
+
+<P>EPM also provides an optional graphical setup program. To
+include the setup program in your distributions, create a
+product logo image in XPM format and use the
+<CODE>--setup-image</CODE> option when creating your
+distribution:</P>
+
+<UL><PRE>
+<KBD>epm --setup-image foo.xpm foo <I>ENTER</I></KBD>
+</PRE></UL>
 
 </BODY>
 </HTML>
