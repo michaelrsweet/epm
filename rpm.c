@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.6 1999/12/14 22:59:06 mike Exp $"
+ * "$Id: rpm.c,v 1.7 1999/12/30 18:34:13 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -82,9 +82,14 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "BuildRoot: %s/buildroot\n", directory);
   fputs("Group: Applications\n", fp);
   for (i = 0; i < dist->num_requires; i ++)
-    fprintf(fp, "Requires: %s\n", dist->requires[i]);
+    if (dist->requires[i][0] != '/')
+      fprintf(fp, "Requires: %s\n", dist->requires[i]);
+  for (i = 0; i < dist->num_replaces; i ++)
+    if (dist->replaces[i][0] != '/')
+      fprintf(fp, "Conflicts: %s\n", dist->replaces[i]);
   for (i = 0; i < dist->num_incompats; i ++)
-    fprintf(fp, "Conflicts: %s\n", dist->incompats[i]);
+    if (dist->incompats[i][0] != '/')
+      fprintf(fp, "Conflicts: %s\n", dist->incompats[i]);
   fputs("%description\n", fp);
   for (i = 0; i < dist->num_descriptions; i ++)
     fprintf(fp, "%s\n", dist->descriptions[i]);
@@ -272,5 +277,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.6 1999/12/14 22:59:06 mike Exp $".
+ * End of "$Id: rpm.c,v 1.7 1999/12/30 18:34:13 mike Exp $".
  */
