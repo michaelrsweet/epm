@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.63 2003/01/24 02:58:12 mike Exp $"
+dnl "$Id: configure.in,v 1.64 2003/01/30 04:27:45 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -123,26 +123,25 @@ AC_SEARCH_LIBS(gethostname, socket)
 AC_PATH_PROG(FLTKCONFIG,fltk-config)
 
 if test "x$FLTKCONFIG" = x; then
-	SETUP=""
-	SETUP_LIBS=""
-	INSTALL_SETUP=""
+	GUIS=""
+	GUILIBS=""
+	INSTALL_GUIS=""
 
 	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x.])
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
-	SETUP="setup"
-	SETUP_LIBS="`$FLTKCONFIG --ldstaticflags`"
-	INSTALL_SETUP="install-setup"
+	GUIS="setup uninst"
+	GUILIBS="`$FLTKCONFIG --ldstaticflags`"
+	INSTALL_GUIS="install-guis"
 
 	if test "$uname" = Darwin; then
-		SETUP_LIBS="$SETUP_LIBS -framework Security"
+		GUILIBS="$GUILIBS -framework Security"
 	fi
 fi
 
-AC_SUBST(INSTALL_SETUP)
-AC_SUBST(LIST_SETUP)
-AC_SUBST(SETUP)
-AC_SUBST(SETUP_LIBS)
+AC_SUBST(INSTALL_GUIS)
+AC_SUBST(GUIS)
+AC_SUBST(GUILIBS)
 
 dnl Update compiler options...
 if test -n "$GCC"; then
@@ -372,5 +371,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.63 2003/01/24 02:58:12 mike Exp $".
+dnl End of "$Id: configure.in,v 1.64 2003/01/30 04:27:45 mike Exp $".
 dnl

@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.34 2003/01/30 04:27:46 mike Exp $"
+// "$Id: uninst2.cxx,v 1.1 2003/01/30 04:27:46 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -22,19 +22,19 @@
 //   install_dist() - Install a distribution...
 //   list_cb()      - Handle selections in the software list.
 //   load_image()   - Load the setup image file (setup.xpm)...
-//   load_types()   - Load the installation types from the setup.types file.
-//   log_cb()       - Add one or more lines of text to the installation log.
+//   load_types()   - Load the setup image file (setup.xpm)...
 //   next_cb()      - Show software selections or install software.
-//   type_cb()      - Handle selections in the type list.
-//   update_size()  - Update the total +/- sizes of the installations.
+//   sort_dists()   - Compare two distribution names...
+//   add_string()   - Add a command to an array of commands...
+//   log_cb()       - Add one or more lines of text to the installation log.
 //
 
 #define _DEFINE_GLOBALS_
-#include "setup.h"
-#include <FL/Fl_XPM_Image.H>
+#include "uninst.h"
 #include <FL/x.H>
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
+#include <FL/Fl_XPM_Image.H>
 #include <errno.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -75,22 +75,11 @@ AuthorizationRef SetupAuthorizationRef;
 
 
 //
-// Define a C API function type for comparisons...
-//
-
-extern "C" {
-typedef int (*compare_func_t)(const void *, const void *);
-}
-
-
-//
 // Local functions...
 //
 
-void	get_dists(const char *d);
-int	install_dist(const dist_t *dist);
+int	remove_dist(const dist_t *dist);
 void	load_image(void);
-void	load_types(void);
 void	log_cb(int fd, int *fdptr);
 void	update_sizes(void);
 
@@ -104,7 +93,6 @@ main(int  argc,			// I - Number of command-line arguments
      char *argv[])		// I - Command-line arguments
 {
   Fl_Window	*w;		// Main window...
-  const char	*distdir;	// Distribution directory
 
 
 #ifdef __APPLE__
@@ -130,27 +118,13 @@ main(int  argc,			// I - Number of command-line arguments
         // Got the base directory, now add "Resources" to it...
 	*ptr = '\0';
 	strlcat(basedir, "/Resources", sizeof(basedir));
-	distdir = basedir;
 	chdir(basedir);
       }
-      else
-        distdir = ".";
-
     }
-    else
-      distdir = argv[1];
   }
-  else
-    distdir = ".";
 #else
   // Use the default scheme on this system...
   Fl::scheme(NULL);
-
-  // Get the directory that has the software in it...
-  if (argc > 1)
-    distdir = argv[1];
-  else
-    distdir = ".";
 #endif // __APPLE__
 
   w = make_window();
@@ -173,7 +147,7 @@ main(int  argc,			// I - Number of command-line arguments
 				&SetupAuthorizationRef);
   if (status != errAuthorizationSuccess)
   {
-    fl_alert("You must have administrative priviledges to install this software!");
+    fl_alert("You must have administrative priviledges to remove this software!");
     return (1);
   }
 
@@ -186,21 +160,18 @@ main(int  argc,			// I - Number of command-line arguments
 
   if (status != errAuthorizationSuccess)
   {
-    fl_alert("You must have administrative priviledges to install this software!");
+    fl_alert("You must have administrative priviledges to remove this software!");
     return (1);
   }
 #else
   if (getuid() != 0)
   {
-    fl_alert("You must be logged in as root to run setup!");
+    fl_alert("You must be logged in as root to run uninstall!");
     return (1);
   }
 #endif // __APPLE__
 
   get_installed();
-  get_dists(distdir);
-
-  load_types();
 
   NextButton->activate();
 
@@ -215,199 +186,25 @@ main(int  argc,			// I - Number of command-line arguments
 
 
 //
-// 'get_dists()' - Get a list of available software products.
+// 'remove_dist()' - Remove a distribution...
 //
 
-void
-get_dists(const char *d)	// I - Directory to look in
-{
-  int		i;		// Looping var
-  int		num_files;	// Number of files
-  dirent	**files;	// Files
-  const char	*ext;		// Extension
-  dist_t	*temp,		// Pointer to current distribution
-		*installed;	// Pointer to installed product
-  FILE		*fp;		// File to read from
-  char		line[1024],	// Line from file...
-		product[64];	// Product name...
-  int		lowver, hiver;	// Version numbers for dependencies
-
-
-  // Get the files in the specified directory...
-  if (chdir(d))
-  {
-    perror("setup: Unable to change to distribution directory");
-    exit(1);
-  }
-
-  if ((num_files = fl_filename_list(".", &files)) == 0)
-  {
-    fputs("setup: Error - no software products found!\n", stderr);
-    exit(1);
-  }
-
-  // Build a distribution list...
-  NumDists = 0;
-  Dists    = (dist_t *)0;
-
-  for (i = 0; i < num_files; i ++)
-  {
-    ext = fl_filename_ext(files[i]->d_name);
-    if (strcmp(ext, ".install") == 0)
-    {
-      // Found a .install script...
-      if ((fp = fopen(files[i]->d_name, "r")) == NULL)
-      {
-        perror("setup: Unable to open installation script");
-	exit(1);
-      }
-
-      // Add a new distribution entry...
-      temp = add_dist(&NumDists, &Dists);
-
-      strncpy(temp->product, files[i]->d_name, sizeof(temp->product) - 1);
-      *strrchr(temp->product, '.') = '\0';	// Drop .install
-
-      // Read info from the installation script...
-      while (fgets(line, sizeof(line), fp) != NULL)
-      {
-        // Only read distribution info lines...
-        if (strncmp(line, "#%", 2))
-	  continue;
-
-        // Drop the trailing newline...
-        line[strlen(line) - 1] = '\0';
-
-        // Copy data as needed...
-	if (strncmp(line, "#%product ", 10) == 0)
-	  strncpy(temp->name, line + 10, sizeof(temp->name) - 1);
-	else if (strncmp(line, "#%version ", 10) == 0)
-	  sscanf(line + 10, "%31s%d", temp->version, &(temp->vernumber));
-	else if (strncmp(line, "#%rootsize ", 11) == 0)
-	  temp->rootsize = atoi(line + 11);
-	else if (strncmp(line, "#%usrsize ", 10) == 0)
-	  temp->usrsize = atoi(line + 10);
-	else if (strncmp(line, "#%incompat ", 11) == 0 ||
-	         strncmp(line, "#%requires ", 11) == 0)
-	{
-	  lowver = 0;
-	  hiver  = 0;
-
-	  if (sscanf(line + 11, "%s%*s%d%*s%d", product, &lowver, &hiver) > 0)
-	    add_depend(temp, (line[2] == 'i') ? DEPEND_INCOMPAT : DEPEND_REQUIRES,
-	               product, lowver, hiver);
-        }
-      }
-
-      fclose(fp);
-    }
-
-    free(files[i]);
-  }
-
-  free(files);
-
-  if (NumDists == 0)
-  {
-    fputs("setup: No distributions to install!\n", stderr);
-    exit(1);
-  }
-
-  if (NumDists > 1)
-    qsort(Dists, NumDists, sizeof(dist_t), (compare_func_t)sort_dists);
-
-  for (i = 0, temp = Dists; i < NumDists; i ++, temp ++)
-  {
-    sprintf(line, "%s v%s", temp->name, temp->version);
-
-    if ((installed = find_dist(temp->product, NumInstalled, Installed)) == NULL)
-    {
-      strcat(line, " (new)");
-      SoftwareList->add(line, 0);
-    }
-    else if (installed->vernumber > temp->vernumber)
-    {
-      strcat(line, " (downgrade)");
-      SoftwareList->add(line, 0);
-    }
-    else if (installed->vernumber == temp->vernumber)
-    {
-      strcat(line, " (installed)");
-      SoftwareList->add(line, 0);
-    }
-    else
-    {
-      strcat(line, " (upgrade)");
-      SoftwareList->add(line, 1);
-    }
-  }
-
-  update_sizes();
-}
-
-
-//
-// 'install_dist()' - Install a distribution...
-//
-
-int				// O - Install status
-install_dist(const dist_t *dist)// I - Distribution to install
+int				// O - Remove status
+remove_dist(const dist_t *dist)// I - Distribution to remove
 {
   char		command[1024];	// Command string
   int		fds[2];		// Pipe FDs
   int		status;		// Exit status
   int		pid;		// Process ID
-  char		licfile[1024];	// License filename
-  struct stat	licinfo;	// License file info
-  static int	liclength = 0;	// Size of license file
 
 
-  sprintf(command, "**** %s ****", dist->name);
-  InstallLog->add(command);
+  snprintf(command, sizeof(command), "**** %s ****", dist->name);
+  RemoveLog->add(command);
 
-  // See if we need to show the license file...
-  sprintf(licfile, "%s.license", dist->product);
-  if (!stat(licfile, &licinfo) && licinfo.st_size != liclength)
-  {
-    // Save this license's length...
-    liclength = licinfo.st_size;
-
-    // Set the title string...
-    snprintf(command, sizeof(command), "Software License for %s", dist->name);
-    LicenseLabel->label(command);
-
-    // Load the license into the browser...
-    LicenseBrowser->clear();
-    LicenseBrowser->load(licfile);
-
-    // Show the license window and wait for the user...
-    LicensePane->show();
-    LicenseAccept->clear();
-    LicenseDecline->clear();
-    NextButton->deactivate();
-    CancelButton->activate();
-
-    while (LicensePane->visible())
-      Fl::wait();
-
-    CancelButton->deactivate();
-    NextButton->deactivate();
-
-    if (LicenseDecline->value())
-    {
-      // Can't install without acceptance...
-      liclength = 0;
-      snprintf(command, sizeof(command), "License not accepted for %s!",
-               dist->name);
-      InstallLog->add(command);
-      return (1);
-    }
-  }
-
-  sprintf(command, "%s.install", dist->product);
+  snprintf(command, sizeof(command), EPM_SOFTWARE "/%s.remove", dist->product);
 
 #ifdef __APPLE__
-  // Run the install script using Apple's authorization API...
+  // Run the remove script using Apple's authorization API...
   FILE		*fp = NULL;
   char		*args[2] = { "now", NULL };
   OSStatus	astatus;
@@ -418,7 +215,7 @@ install_dist(const dist_t *dist)// I - Distribution to install
 
   if (astatus != errAuthorizationSuccess)
   {
-    InstallLog->add("Failed to execute install script!");
+    RemoveLog->add("Failed to execute remove script!");
     return (1);
   }
 
@@ -446,11 +243,11 @@ install_dist(const dist_t *dist)// I - Distribution to install
   else if (pid < 0)
   {
     // Unable to fork!
-    sprintf(command, "Unable to install %s:", dist->name);
-    InstallLog->add(command);
+    sprintf(command, "Unable to remove %s:", dist->name);
+    RemoveLog->add(command);
 
     sprintf(command, "\t%s", strerror(errno));
-    InstallLog->add(command);
+    RemoveLog->add(command);
 
     close(fds[0]);
     close(fds[1]);
@@ -610,110 +407,80 @@ load_image(void)
 
 
 //
-// 'load_types()' - Load the installation types from the setup.types file.
+// 'next_cb()' - Show software selections or remove software.
 //
 
 void
-load_types(void)
+next_cb(Fl_Button *, void *)
 {
   int		i;		// Looping var
-  FILE		*fp;		// File to read from
-  char		line[1024],	// Line from file
-		*lineptr;	// Pointer into line
-  dtype_t	*dt;		// Current install type
-  dist_t	*dist;		// Distribution
+  int		progress;	// Progress so far...
+  int		error;		// Errors?
+  static char	message[1024];	// Progress message...
+  static int	removing = 0;	// Removing software?
 
 
-  NumInstTypes = 0;
+  Wizard->next();
 
-  if ((fp = fopen("setup.types", "r")) != NULL)
+  PrevButton->deactivate();
+
+  if (Wizard->value() == ConfirmPane)
   {
-    dt = NULL;
+    ConfirmList->clear();
+    PrevButton->activate();
 
-    while (fgets(line, sizeof(line), fp) != NULL)
-    {
-      if (line[0] == '#' || line[0] == '\n')
-        continue;
-
-      lineptr = line + strlen(line) - 1;
-      if (*lineptr == '\n')
-        *lineptr = '\0';
-
-      if (strncasecmp(line, "TYPE", 4) == 0 && isspace(line[4]))
-      {
-        // New type...
-	if (NumInstTypes >= (int)(sizeof(InstTypes) / sizeof(InstTypes[0])))
-	{
-	  fprintf(stderr, "setup: Too many TYPEs (> %d) in setup.types!\n",
-	          (int)(sizeof(InstTypes) / sizeof(InstTypes[0])));
-	  fclose(fp);
-	  exit(1);
-	}
-
-        for (lineptr = line + 5; isspace(*lineptr); lineptr ++);
-
-        dt = InstTypes + NumInstTypes;
-	NumInstTypes ++;
-
-	memset(dt, 0, sizeof(dtype_t));
-	strncpy(dt->label, lineptr, sizeof(dt->label) - 10);
-      }
-      else if (strncasecmp(line, "INSTALL", 7) == 0 && dt && isspace(line[7]))
-      {
-        // Install a product...
-	if (dt->num_products >= (int)(sizeof(dt->products) / sizeof(dt->products[0])))
-	{
-	  fprintf(stderr, "setup: Too many INSTALLs (> %d) in setup.types!\n",
-	          (int)(sizeof(dt->products) / sizeof(dt->products[0])));
-	  fclose(fp);
-	  exit(1);
-	}
-
-        for (lineptr = line + 8; isspace(*lineptr); lineptr ++);
-
-        if ((dist = find_dist(lineptr, NumDists, Dists)) != NULL)
-	{
-          dt->products[dt->num_products] = dist - Dists;
-	  dt->num_products ++;
-	  dt->size += dist->rootsize + dist->usrsize;
-
-          if ((dist = find_dist(lineptr, NumInstalled, Installed)) != NULL)
-	    dt->size -= dist->rootsize + dist->usrsize;
-	}
-	else
-	  fprintf(stderr, "setup: Unable to find product \"%s\" for \"%s\"!\n",
-	          lineptr, dt->label);
-      }
-      else
-      {
-        fprintf(stderr, "setup: Bad line - %s\n", line);
-	fclose(fp);
-	exit(1);
-      }
-    }
-
-    fclose(fp);
+    for (i = 0; i < NumDists; i ++)
+      if (SoftwareList->checked(i + 1))
+        ConfirmList->add(SoftwareList->text(i + 1));
   }
 
-  for (i = 0, dt = InstTypes; i < NumInstTypes; i ++, dt ++)
+  if (Wizard->value() == RemovePane && !removing)
   {
-    if (dt->size >= 1024)
-      sprintf(dt->label + strlen(dt->label), " (+%.1fm disk space)",
-              dt->size / 1024.0);
-    else if (dt->size)
-      sprintf(dt->label + strlen(dt->label), " (+%dk disk space)", dt->size);
+    removing = 1;
 
-    TypeButton[i]->label(dt->label);
-    TypeButton[i]->show();
+    NextButton->deactivate();
+    CancelButton->deactivate();
+    CancelButton->label("Close");
+
+    for (i = 0, progress = 0, error = 0; i < NumDists; i ++)
+      if (SoftwareList->checked(i + 1))
+      {
+        sprintf(message, "Removing %s v%s...", Dists[i].name,
+	        Dists[i].version);
+
+        RemovePercent->value(100.0 * progress / SoftwareList->nchecked());
+	RemovePercent->label(message);
+	RemovePane->redraw();
+
+        if ((error = remove_dist(Dists + i)) != 0)
+	  break;
+
+	progress ++;
+      }
+
+    RemovePercent->value(100.0);
+
+    if (error)
+      RemovePercent->label("Removal Failed!");
+    else
+      RemovePercent->label("Removal Complete");
+
+    RemovePane->redraw();
+
+    CancelButton->activate();
+
+    fl_beep();
+
+    removing = 0;
   }
-
-  for (; i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
-    TypeButton[i]->hide();
+  else if (Wizard->value() == SoftwarePane &&
+           SoftwareList->nchecked() == 0)
+    NextButton->deactivate();
 }
 
 
 //
-// 'log_cb()' - Add one or more lines of text to the installation log.
+// 'log_cb()' - Add one or more lines of text to the removeation log.
 //
 
 void
@@ -729,7 +496,7 @@ log_cb(int fd,			// I - Pipe to read from
   bytes = 8192 - bufused;
   if ((bytes = read(fd, buffer + bufused, bytes)) <= 0)
   {
-    // End of file; zero the FD to tell the install_dist() function to
+    // End of file; zero the FD to tell the remove_dist() function to
     // stop...
 
     Fl::remove_fd(fd);
@@ -740,7 +507,7 @@ log_cb(int fd,			// I - Pipe to read from
     {
       // Add remaining text...
       buffer[bufused] = '\0';
-      InstallLog->add(buffer);
+      RemoveLog->add(buffer);
       bufused = 0;
     }
   }
@@ -753,149 +520,13 @@ log_cb(int fd,			// I - Pipe to read from
     while ((bufptr = strchr(buffer, '\n')) != NULL)
     {
       *bufptr++ = '\0';
-      InstallLog->add(buffer);
+      RemoveLog->add(buffer);
       strcpy(buffer, bufptr);
       bufused -= bufptr - buffer;
     }
   }
 
-  InstallLog->bottomline(InstallLog->size());
-}
-
-
-//
-// 'next_cb()' - Show software selections or install software.
-//
-
-void
-next_cb(Fl_Button *, void *)
-{
-  int		i;		// Looping var
-  int		progress;	// Progress so far...
-  int		error;		// Errors?
-  static char	message[1024];	// Progress message...
-  static int	installing = 0;	// Installing software?
-
-
-  Wizard->next();
-
-  PrevButton->deactivate();
-
-  if (Wizard->value() == TypePane)
-  {
-    if (NumInstTypes == 0)
-      Wizard->next();
-  }
-  else if (Wizard->value() == SoftwarePane)
-  {
-    if (NumInstTypes)
-      PrevButton->activate();
-
-    for (i = 0; i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
-      if (TypeButton[i]->value())
-        break;
-
-    if (i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])) &&
-        InstTypes[i].num_products > 0)
-      Wizard->next();
-  }
-
-  if (Wizard->value() == ConfirmPane)
-  {
-    ConfirmList->clear();
-    PrevButton->activate();
-
-    for (i = 0; i < NumDists; i ++)
-      if (SoftwareList->checked(i + 1))
-        ConfirmList->add(SoftwareList->text(i + 1));
-  }
-  else if (Wizard->value() == LicensePane)
-    Wizard->next();
-
-  if (Wizard->value() == InstallPane && !installing)
-  {
-    installing = 1;
-
-    NextButton->deactivate();
-    CancelButton->deactivate();
-    CancelButton->label("Close");
-
-    for (i = 0, progress = 0, error = 0; i < NumDists; i ++)
-      if (SoftwareList->checked(i + 1))
-      {
-        sprintf(message, "Installing %s v%s...", Dists[i].name,
-	        Dists[i].version);
-
-        InstallPercent->value(100.0 * progress / SoftwareList->nchecked());
-	InstallPercent->label(message);
-	InstallPane->redraw();
-
-        if ((error = install_dist(Dists + i)) != 0)
-	  break;
-
-	progress ++;
-      }
-
-    InstallPercent->value(100.0);
-
-    if (error)
-      InstallPercent->label("Installation Failed!");
-    else
-      InstallPercent->label("Installation Complete");
-
-    InstallPane->redraw();
-
-    CancelButton->activate();
-
-    fl_beep();
-
-    installing = 0;
-  }
-  else if (Wizard->value() == SoftwarePane &&
-           SoftwareList->nchecked() == 0)
-    NextButton->deactivate();
-}
-
-
-//
-// 'type_cb()' - Handle selections in the type list.
-//
-
-void
-type_cb(Fl_Round_Button *w, void *)	// I - Radio button widget
-{
-  int		i;		// Looping var
-  dtype_t	*dt;		// Current install type
-  dist_t	*temp,		// Current software
-		*installed;	// Installed software
-
-
-  for (i = 0; i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
-    if (w == TypeButton[i])
-      break;
-
-  if (i >= (int)(sizeof(TypeButton) / sizeof(TypeButton[0])))
-    return;
-
-  dt = InstTypes + i;
-
-  SoftwareList->check_none();
-
-  // Select all products in the install type
-  for (i = 0; i < dt->num_products; i ++)
-    SoftwareList->checked(dt->products[i] + 1, 1);
-
-  // And then any upgrade products...
-  for (i = 0, temp = Dists; i < NumDists; i ++, temp ++)
-  {
-    if ((installed = find_dist(temp->product, NumInstalled, Installed)) != NULL &&
-        installed->vernumber < temp->vernumber)
-      SoftwareList->checked(i + 1, 1);
-  }
-
-  update_sizes();
-
-  NextButton->activate();
+  RemoveLog->bottomline(RemoveLog->size());
 }
 
 
@@ -995,7 +626,6 @@ update_sizes(void)
 }
 
 
-
 //
-// End of "$Id: setup2.cxx,v 1.34 2003/01/30 04:27:46 mike Exp $".
+// End of "$Id: uninst2.cxx,v 1.1 2003/01/30 04:27:46 mike Exp $".
 //

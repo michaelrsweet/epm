@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.39 2002/12/17 18:57:53 swdev Exp $"
+# "$Id: Makefile.in,v 1.40 2003/01/30 04:27:45 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -39,7 +39,7 @@ STRIP	=	@STRIP@
 ARFLAGS	=	crvs
 CFLAGS	=	@CFLAGS@ $(OPTIM)
 CXXFLAGS =	@CXXFLAGS@ $(OPTIM)
-SETUP_LIBS =	@SETUP_LIBS@
+GUILIBS =	@GUILIBS@
 LDFLAGS	=	@LDFLAGS@ $(OPTIM)
 LIBS	=	@LIBS@
 OPTIM	=	@OPTIM@
@@ -90,12 +90,13 @@ VPATH		=	$(srcdir)
 # Targets...
 #
 
-TARGETS	=	epm epminstall mkepmlist @SETUP@
+TARGETS	=	epm epminstall mkepmlist @GUIS@
 EPM_OBJS =	aix.o bsd.o deb.o dist.o epm.o file.o inst.o osx.o pkg.o \
 		portable.o qprintf.o rpm.o run.o setld.o snprintf.o \
 		string.o swinstall.o tar.o
-SETUP_OBJS =	setup.o setup2.o
-OBJS	=	$(EPM_OBJS) epminstall.o $(SETUP_OBJS)
+SETUP_OBJS =	setup.o setup2.o gui-common.o snprintf.o
+UNINST_OBJS =	uninst.o uninst2.o gui-common.o snprintf.o
+OBJS	=	$(EPM_OBJS) epminstall.o $(SETUP_OBJS) $(UNINST_OBJS)
 
 
 #
@@ -110,7 +111,8 @@ all:	$(TARGETS)	Makefile config.h
 #
 
 clean:
-	rm -f $(OBJS) $(TARGETS)
+	rm -f *.o
+	rm -f $(TARGETS)
 
 
 #
@@ -118,16 +120,16 @@ clean:
 #
 
 distclean:
-	rm -f $(OBJS) $(TARGETS) \
-		config.cache config.h config.log config.status \
-		mkepmlist Makefile
+	rm -f $(OBJS) $(TARGETS)
+	rm -f config.cache config.h config.log config.status
+	rm -f mkepmlist Makefile
 
 
 #
 # Install all targets...
 #
 
-install: epm @INSTALL_SETUP@
+install: epm @INSTALL_GUIS@
 	echo Installing EPM programs in $(bindir)
 	-$(MKDIR) $(bindir)
 	$(RM) $(bindir)/epm
@@ -179,12 +181,15 @@ install: epm @INSTALL_SETUP@
 	$(RM) $(docdir)/epm-manual.pdf
 	$(CP) $(srcdir)/doc/epm-manual.pdf $(docdir)
 
-install-setup:	setup
-	echo Installing EPM setup in $(libdir)/epm
+install-guis:	setup uninst
+	echo Installing EPM setup/uninst in $(libdir)/epm
 	-$(MKDIR) $(libdir)/epm
 	$(RM) $(libdir)/epm/setup
 	$(CP) setup $(libdir)/epm
 	$(STRIP) $(libdir)/epm/setup
+	$(RM) $(libdir)/epm/uninst
+	$(CP) uninst $(libdir)/epm
+	$(STRIP) $(libdir)/epm/uninst
 
 
 #
@@ -203,8 +208,9 @@ uninstall:
 	$(RM) $(mandir)/man5/setup.types.5
 	echo Uninstalling EPM documentation from $(docdir)
 	$(RM) -r $(docdir)
-	echo Uninstalling EPM setup from $(libdir)/epm
-	$(RM) $(libdir)/epm/setup
+	echo Uninstalling EPM setup/uninstall from $(libdir)/epm
+	$(RM) -r $(libdir)/epm
+
 
 #
 # Makefile
@@ -277,6 +283,9 @@ pkg: $(TARGETS)
 native: $(TARGETS)
 	./epm -f native -v epm
 
+osx: $(TARGETS)
+	./epm -f osx -v epm
+
 portable: $(TARGETS)
 	./epm -v epm
 
@@ -324,16 +333,29 @@ mkepmlist.o:	epm.h epmstring.h
 # setup
 #
 
-setup:	$(SETUP_OBJS) snprintf.o
+setup:	$(SETUP_OBJS)
 	echo Linking setup...
-	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) snprintf.o $(SETUP_LIBS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) snprintf.o $(GUILIBS) $(LIBS)
 
-setup.o:	setup.h setup2.h
-setup2.o:	setup.h setup2.h
+setup.o:	setup.h gui-common.h
+setup2.o:	setup.h gui-common.h
+gui-common.o:	gui-common.h
+
+
+#
+# uninst
+#
+
+uninst:	$(UNINST_OBJS)
+	echo Linking uninst...
+	$(CXX) $(LDFLAGS) -o uninst $(UNINST_OBJS) snprintf.o $(GUILIBS) $(LIBS)
+
+uninst.o:	uninst.h gui-common.h
+uninst2.o:	uninst.h gui-common.h
 
 $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.39 2002/12/17 18:57:53 swdev Exp $".
+# End of "$Id: Makefile.in,v 1.40 2003/01/30 04:27:45 mike Exp $".
 #
