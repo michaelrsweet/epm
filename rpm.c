@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.43 2002/12/17 18:57:56 swdev Exp $"
+ * "$Id: rpm.c,v 1.44 2002/12/20 17:27:22 swdev Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -51,9 +51,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   char		current[1024];		/* Current directory */
   const char	*runlevels;		/* Run levels */
   int		number;			/* Start/stop number */
-#ifndef EPM_RPMTOPDIR
-  static char	rpmdir[1024];		/* RPMDIR env var */
-#endif /* EPM_RPMTOPDIR */
+  char		rpmdir[1024];		/* RPMDIR env var */
 
 
   if (Verbosity)
@@ -106,9 +104,19 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 #ifdef EPM_RPMTOPDIR
   fprintf(fp, "%%define _topdir %s/%s\n", current, directory);
+  snprintf(rpmdir, sizeof(rpmdir), "%s/%s", current, directory);
 #else
-  snprintf(rpmdir, sizeof(rpmdir), "RPMDIR=%s/%s", current, directory);
-  putenv(rpmdir);
+  if (getenv("RPMDIR"))
+  {
+    strncpy(rpmdir, getenv("RPMDIR"), sizeof(rpmdir) - 1);
+    rpmdir[sizeof(rpmdir) - 1] = '\0';
+  }
+  else if (!access("/usr/src/redhat", 0))
+    strcpy(rpmdir, "/usr/src/redhat");
+  else if (!access("/usr/src/Mandrake", 0))
+    strcpy(rpmdir, "/usr/src/Mandrake");
+  else
+    strcpy(rpmdir, "/usr/src/RPM");
 #endif /* EPM_RPMTOPDIR */
 
   snprintf(filename, sizeof(filename), "%s/RPMS", directory);
@@ -403,11 +411,11 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   if (strcmp(platform->machine, "intel") == 0)
     run_command(NULL, "/bin/mv %s/RPMS/i386/%s-%s-%d.i386.rpm %s/%s.rpm",
-        	directory, prodname, dist->version, dist->relnumber,
+        	rpmdir, prodname, dist->version, dist->relnumber,
 		directory, name);
   else
     run_command(NULL, "/bin/mv %s/RPMS/%s/%s-%s-%d.%s.rpm %s/%s.rpm",
-        	directory, platform->machine, prodname, dist->version,
+        	rpmdir, platform->machine, prodname, dist->version,
 		dist->relnumber, platform->machine, directory, name);
 
  /*
@@ -430,5 +438,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.43 2002/12/17 18:57:56 swdev Exp $".
+ * End of "$Id: rpm.c,v 1.44 2002/12/20 17:27:22 swdev Exp $".
  */
