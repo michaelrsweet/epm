@@ -4,7 +4,7 @@
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
 <META NAME="copyright" CONTENT="Copyright 1999-2003 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20030213">
+<META NAME="docnumber" CONTENT="ESP-004-20030325">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: serif }
@@ -22,7 +22,7 @@ PRE { font-family: monospace }
 <BODY>
 <CENTER><A HREF="#CONTENTS"><IMG SRC="epmlogo.gif" BORDER="0" WIDTH="256" HEIGHT="256"><BR>
 <H1>Software Distribution Using the ESP Package Manager</H1></A><BR>
-ESP-004-20030213<BR>
+ESP-004-20030325<BR>
 Michael Sweet<BR>
 Copyright 1999-2003 by Easy Software Products<BR>
 </CENTER>
@@ -61,7 +61,7 @@ Copyright 1999-2003 by Easy Software Products<BR>
 <B><A HREF="#ADVANCED">4 - Advanced Packaging with EPM</A></B>
 <UL>
 <LI><A HREF="#5_1">Including Other List Files</A></LI>
-<LI><A HREF="#5_2">Conflicts, Replaces, and Requires</A></LI>
+<LI><A HREF="#5_2">Conflicts, Provides, Replaces, and Requires</A></LI>
 <LI><A HREF="#5_3">Scripts</A></LI>
 <LI><A HREF="#5_4">Conditional Directives</A></LI>
 <LI><A HREF="#5_5">Protecting Object Files from Stripping</A></LI>
@@ -384,9 +384,9 @@ fakeroot</CODE> software, introducing potential security risks and
  will need a C compiler, the <CODE>make(1)</CODE> program (GNU, BSD, and
  most vendor <CODE>make</CODE> programs should work), the Bourne (or
  Korn or Bash) shell (<CODE>sh(1)</CODE>), and <CODE>gzip(1)</CODE>.</P>
-<P>The optional graphical setup program requires a C++ compiler, the X11
- libraries, and the FLTK library, version 1.1.x. FLTK is available at
- the following URL:</P>
+<P>The optional graphical setup program requires a C++ compiler, the
+ FLTK library, version 1.1.x, and (for UNIX/Linux) the X11 libraries.
+ FLTK is available at the following URL:</P>
 <UL>
 <PRE>
 <A HREF="http://www.fltk.org/">http://www.fltk.org/</A>
@@ -456,10 +456,10 @@ setenv CXX /foo/bar/gcc ENTER</KBD>
 </PRE>
 </UL>
 <H3>Options for the Setup GUI</H3>
-<P>The setup GUI requires the X11 and FLTK libraries. The configure
- script will look for the <CODE>fltk-config</CODE> utility that comes
- with FLTK 1.1.x. Set the FLTKCONFIG environment variable to the full
- path of this utility if it cannot be found in the current path:</P>
+<P>The setup GUI requires the FLTK library. The configure script will
+ look for the <CODE>fltk-config</CODE> utility that comes with FLTK
+ 1.1.x. Set the FLTKCONFIG environment variable to the full path of this
+ utility if it cannot be found in the current path:</P>
 <UL>
 <PRE>
 <KBD>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</KBD>
@@ -789,13 +789,15 @@ epm -f rpm epm
 </UL>
 <P>Includes can be nested, usually up to 250 levels (depends on the host
  operating system and libraries.)</P>
-<H2><A NAME="5_2">Conflicts, Replaces, and Requires</A></H2>
+<H2><A NAME="5_2">Conflicts, Provides, Replaces, and Requires</A></H2>
 <P>Software conflicts and requirements are specified using the <CODE>
 %incompat</CODE> and <CODE>%requires</CODE> directives. If your software
  replaces another package, you can specify that using the <CODE>
 %replaces</CODE> directive (<CODE>%replaces</CODE> is silently mapped to
  <CODE>%conflicts</CODE> when the distribution format does not support
- package replacement.)</P>
+ package replacement.) If your package provides certain functionality
+ associated with a standard name, the <CODE>%provides</CODE> directive
+ can be used.</P>
 <P>Dependencies are specified using the package name and optionally the
  lower and upper version numbers:</P>
 <UL>
@@ -806,6 +808,7 @@ epm -f rpm epm
 %incompat foobar 0.9
 %replaces foobar
 %replaces foobar 1.2 3.4
+%provides foobar
 </PRE>
 </UL>
 <P>or the filename:</P>
