@@ -1,9 +1,9 @@
 dnl
-dnl "$Id: configure.in,v 1.7 1999/12/07 13:53:30 mike Exp $"
+dnl "$Id: configure.in,v 1.8 2000/01/05 16:58:01 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
-dnl   Copyright 1999 by Easy Software Products, all rights reserved.
+dnl   Copyright 1999-2000 by Easy Software Products, all rights reserved.
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
@@ -67,6 +67,7 @@ fi
 
 dnl Checks for header files.
 AC_HEADER_STDC
+AC_HEADER_DIRENT
 
 dnl Checks for string functions.
 AC_CHECK_FUNCS(strdup)
@@ -154,5 +155,5 @@ AC_SUBST(EPM_WHOAMI)
 AC_OUTPUT(Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.7 1999/12/07 13:53:30 mike Exp $".
+dnl End of "$Id: configure.in,v 1.8 2000/01/05 16:58:01 mike Exp $".
 dnl

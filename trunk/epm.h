@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.5 2000/01/04 13:45:40 mike Exp $"
+ * "$Id: epm.h,v 1.6 2000/01/05 16:58:01 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -191,6 +191,8 @@ extern dist_t	*read_dist(const char *filename, struct utsname *platform,
 		           const char *format);
 extern void	strip_execs(dist_t *dist);
 extern int	tar_close(tarf_t *tar);
+extern int	tar_directory(tarf_t *tar, const char *srcpath,
+		              const char *dstpath);
 extern int	tar_file(tarf_t *tar, const char *filename);
 extern int	tar_header(tarf_t *tar, char type, int mode, int size,
 		           time_t mtime, const char *user, const char *group,
@@ -198,5 +200,5 @@ extern int	tar_header(tarf_t *tar, char type, int mode, int size,
 extern tarf_t	*tar_open(const char *filename, int compress);
 
 /*
- * End of "$Id: epm.h,v 1.5 2000/01/04 13:45:40 mike Exp $".
+ * End of "$Id: epm.h,v 1.6 2000/01/05 16:58:01 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.6 2000/01/04 13:45:40 mike Exp $"
+ * "$Id: portable.c,v 1.7 2000/01/05 16:58:01 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -566,7 +566,8 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fputs("#\n", fp);
 
   fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", fp);
-  fputs("	echo Sorry, you must be root to install this software.\n", fp);
+  fprintf(fp, "	echo Sorry, you must be root to %s this software.\n",
+          title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
   fputs("	exit 1\n", fp);
   fputs("fi\n", fp);
   fprintf(fp, "echo Copyright %s\n", dist->copyright);
@@ -773,9 +774,9 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
-  fprintf(scriptfile, "	echo This installation script will install the \"%s\"\n",
+  fprintf(scriptfile, "	echo This installation script will install the \'%s\'\n",
           dist->product);
-  fprintf(scriptfile, "	echo software version \"%s\" on your system.\n",
+  fprintf(scriptfile, "	echo software version \'%s\' on your system.\n",
           dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
@@ -1126,9 +1127,9 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
-  fprintf(scriptfile, "	echo This installation script will patch the \"%s\"\n",
+  fprintf(scriptfile, "	echo This installation script will patch the \'%s\'\n",
           dist->product);
-  fprintf(scriptfile, "	echo software to version \"%s\" on your system.\n", dist->version);
+  fprintf(scriptfile, "	echo software to version \'%s\' on your system.\n", dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
 #ifdef HAVE_BROKEN_ECHO
@@ -1415,9 +1416,9 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
-  fprintf(scriptfile, "	echo This removal script will remove the \"%s\"\n",
+  fprintf(scriptfile, "	echo This removal script will remove the \'%s\'\n",
           dist->product);
-  fprintf(scriptfile, "	echo software version \"%s\" from your system.\n",
+  fprintf(scriptfile, "	echo software version \'%s\' from your system.\n",
           dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
@@ -1557,5 +1558,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.6 2000/01/04 13:45:40 mike Exp $".
+ * End of "$Id: portable.c,v 1.7 2000/01/05 16:58:01 mike Exp $".
  */

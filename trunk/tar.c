@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.4 2000/01/04 13:45:41 mike Exp $"
+ * "$Id: tar.c,v 1.5 2000/01/05 16:58:01 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -28,6 +28,24 @@
  */
 
 #include "epm.h"
+
+#if HAVE_DIRENT_H
+#  include <dirent.h>
+typedef struct dirent DIRENT;
+#  define NAMLEN(dirent) strlen((dirent)->d_name)
+#else
+#  if HAVE_SYS_NDIR_H
+#    include <sys/ndir.h>
+#  endif
+#  if HAVE_SYS_DIR_H
+#    include <sys/dir.h>
+#  endif
+#  if HAVE_NDIR_H
+#    include <ndir.h>
+#  endif
+typedef struct direct DIRENT;
+#  define NAMLEN(dirent) (dirent)->d_namlen
+#endif
 
 
 /*
@@ -88,6 +106,126 @@ tar_close(tarf_t *fp)	/* I - File to write to */
   free(fp);
 
   return (status);
+}
+
+
+/*
+ * 'tar_directory()' - Archive a directory.
+ */
+
+int					/* O - 0 on success, -1 on error */
+tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
+              const char *srcpath,	/* I - Source directory */
+              const char *dstpath)	/* I - Destination directory */
+{
+  DIR		*dir;			/* Directory */
+  DIRENT	*dent;			/* Directory entry */
+  char		src[1024],		/* Source file */
+		dst[1024],		/* Destination file */
+		srclink[1024];		/* Symlink value */
+  struct stat	srcinfo;		/* Information on the source file */
+
+
+ /*
+  * Range check input...
+  */
+
+  if (tar == NULL || srcpath == NULL || dstpath == NULL)
+    return (-1);
+
+ /*
+  * Try opening the source directory...
+  */
+
+  if ((dir = opendir(srcpath)) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to open directory \"%s\" - %s.\n", srcpath,
+            strerror(errno));
+
+    return (-1);
+  }
+
+ /*
+  * Read from the directory...
+  */
+
+  while ((dent = readdir(dir)) != NULL)
+  {
+   /*
+    * Skip "." and ".."...
+    */
+
+    if (strcmp(dent->d_name, ".") == 0 ||
+        strcmp(dent->d_name, "..") == 0)
+      continue;
+
+   /*
+    * Get source file info...
+    */
+
+    sprintf(src, "%s/%s", srcpath, dent->d_name);
+    if (dstpath[0])
+      sprintf(dst, "%s/%s", dstpath, dent->d_name);
+    else
+      strcpy(dst, dent->d_name);
+
+    if (stat(src, &srcinfo))
+    {
+      fprintf(stderr, "epm: Unable to stat \"%s\" - %s.\n", src,
+              strerror(errno));
+      continue;
+    }
+
+   /*
+    * Process accordingly...
+    */
+
+    if (Verbosity)
+      puts(dst);
+
+    if (S_ISDIR(srcinfo.st_mode))
+    {
+     /*
+      * Directory...
+      */
+
+      if (tar_header(tar, TAR_DIR, srcinfo.st_mode, srcinfo.st_size,
+                     srcinfo.st_mtime, "root", "sys", dst, NULL))
+        return (-1);
+
+      if (tar_directory(tar, src, dst))
+        return (-1);
+    }
+    else if (S_ISLNK(srcinfo.st_mode))
+    {
+     /*
+      * Symlink...
+      */
+
+      if (readlink(src, srclink, sizeof(srclink)) < 0)
+        return (-1);
+
+      if (tar_header(tar, TAR_SYMLINK, srcinfo.st_mode, srcinfo.st_size,
+                     srcinfo.st_mtime, "root", "sys", dst, srclink))
+        return (-1);
+    }
+    else
+    {
+     /*
+      * Regular file...
+      */
+
+      if (tar_header(tar, TAR_NORMAL, srcinfo.st_mode, srcinfo.st_size,
+                     srcinfo.st_mtime, "root", "sys", dst, NULL))
+        return (-1);
+
+      if (tar_file(tar, src))
+        return (-1);
+    }
+  }
+
+  closedir(dir);
+  return (0);
 }
 
 
@@ -285,5 +423,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.4 2000/01/04 13:45:41 mike Exp $".
+ * End of "$Id: tar.c,v 1.5 2000/01/05 16:58:01 mike Exp $".
  */
