@@ -1,5 +1,15 @@
-CHANGES - ESP Package Manager (EPM) 2.7
+CHANGES - ESP Package Manager (EPM) 2.8
 ---------------------------------------
+
+WHAT'S NEW IN EPM 2.8?
+
+    EPM 2.8 adds the following features, fixes, and changes to
+    EPM 2.7:
+
+	- The line breaking code did not include an extra
+	  space, so filenames in the portable install/patch/
+	  remove scripts would be joined instead of separated.
+
 
 WHAT'S NEW IN EPM 2.7?
 
