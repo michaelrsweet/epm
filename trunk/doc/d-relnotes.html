@@ -10,6 +10,8 @@ EPM software.</P>
 
 <UL>
 
+	<LI>Added support for MacOS X package generation.
+
 	<LI>No longer need/use RPMDIR when building RPMs, just
 	set the "topdir_" variable in the spec file.
 
@@ -35,6 +37,9 @@ EPM software.</P>
 	(file\&nbsp;with\&nbsp;spaces).
 
 	<LI>The mkepmlist utility didn't handle symlinks properly.
+
+	<LI>BSD packages needed to list the directories to remove
+	separately and in reverse order.
 
 </UL>
 

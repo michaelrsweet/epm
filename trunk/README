@@ -15,6 +15,7 @@ WHAT IS EPM?
 	- Debian Package Manager ("dpkg")
 	- HP-UX software packages ("swinstall")
 	- IRIX software manager ("inst", "swmgr", or "tardist")
+	- MacOS X software packages ("name.pkg")
 	- Portable (installation and removal scripts with tar files)
         - Red Hat Package Manager ("rpm")
 
