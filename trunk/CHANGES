@@ -6,6 +6,8 @@ WHAT'S NEW IN EPM 3.7?
     EPM 3.7 adds the following features, fixes, and changes to
     EPM 3.6:
 
+	- RPM dependencies of the form "%requires package >=
+	  version" are now correctly written in the spec file.
 	- AIX output now correctly lists file sizes by directory
 	  and handles /opt properly.
 	- RPM output now correctly handles installing,
