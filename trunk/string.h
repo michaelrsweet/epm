@@ -1,5 +1,5 @@
 /*
- * "$Id: string.h,v 1.1 1999/06/21 14:25:19 mike Exp $"
+ * "$Id: string.h,v 1.2 1999/11/04 20:31:08 mike Exp $"
  *
  *   String definitions for the ESP Package Manager (EPM).
  *
@@ -16,30 +16,43 @@
  *   GNU General Public License for more details.
  */
 
+#ifndef _EPM_STRING_H_
+#  define _EPM_STRING_H_
+
 /*
  * Include necessary headers...
  */
 
-#include "config.h"
-#include <string.h>
+#  include "config.h"
+#  include <string.h>
+
+#  ifdef __cplusplus
+extern "C" {
+#  endif /* __cplusplus */
 
 
 /*
  * Prototypes...
  */
 
-#ifndef HAVE_STRDUP
+#  ifndef HAVE_STRDUP
 extern char	*strdup(const char *);
-#endif /* !HAVE_STRDUP */
+#  endif /* !HAVE_STRDUP */
 
-#ifndef HAVE_STRCASECMP
+#  ifndef HAVE_STRCASECMP
 extern int	strcasecmp(const char *, const char *);
-#endif /* !HAVE_STRCASECMP */
+#  endif /* !HAVE_STRCASECMP */
 
-#ifndef HAVE_STRNCASECMP
+#  ifndef HAVE_STRNCASECMP
 extern int	strncasecmp(const char *, const char *, size_t n);
-#endif /* !HAVE_STRNCASECMP */
+#  endif /* !HAVE_STRNCASECMP */
+
+#  ifdef __cplusplus
+}
+#  endif /* __cplusplus */
+
+#endif /* !_EPM_STRING_H_ */
 
 /*
- * End of "$Id: string.h,v 1.1 1999/06/21 14:25:19 mike Exp $".
+ * End of "$Id: string.h,v 1.2 1999/11/04 20:31:08 mike Exp $".
  */

@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.2 1999/06/21 14:47:18 mike Exp $"
+# "$Id: Makefile.in,v 1.3 1999/11/04 20:31:06 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -23,6 +23,7 @@
 CC	=	@CC@
 CHMOD	=	@CHMOD@
 CP	=	@CP@
+CXX	=	@CXX@
 MKDIR	=	@MKDIR@ -p
 RM	=	@RM@ -f
 SHELL	=	/bin/sh
@@ -35,6 +36,7 @@ SHELL	=	/bin/sh
 
 ARFLAGS	=	crvs
 CFLAGS	=	@CFLAGS@ $(OPTIM)
+CXXFLAGS =	@CXXFLAGS@ $(OPTIM)
 LDFLAGS	=	@LDFLAGS@ $(OPTIM)
 LIBS	=	@LIBS@
 OPTIM	=	@OPTIM@
@@ -54,14 +56,17 @@ prefix		=	@prefix@
 
 .SILENT:
 
-.SUFFIXES:	.c .h .o
+.SUFFIXES:	.c .cxx .h .o
 .c.o:
 	echo Compiling $<...
 	$(CC) $(CFLAGS) -c $<
+.cxx.o:
+	echo Compiling $<...
+	$(CXX) $(CXXFLAGS) -c $<
 
 
-TARGETS	=	epm
-OBJS	=	epm.o string.o
+TARGETS	=	epm @SETUP@
+OBJS	=	epm.o string.o setup.o setup2.o Fl_Wizard.o
 
 #
 # Make all targets...
@@ -80,27 +85,40 @@ clean:
 # Install all targets...
 #
 
-install: epm
+install: $(TARGETS)
 	echo Installing EPM in $(bindir) and $(mandir)/man1
 	-$(MKDIR) $(bindir)
 	$(RM) $(bindir)/epm
-	$(CP) epm $(bindir)/epm
-	$(CHMOD) 755 $(bindir)/epm
+	$(CP) $(TARGETS) $(bindir)
 	-$(MKDIR) $(mandir)/man1
 	$(RM) $(mandir)/man1/epm.1
 	$(CP) epm.man $(mandir)/man1/epm.1
-	$(CHMOD) 644 $(mandir)/man1/epm.1
 
 #
 # epm
 #
 
-epm:	$(OBJS)
+epm:	epm.o string.o
 	echo Linking epm...
-	$(CC) $(LDFLAGS) -o epm $(OBJS)
+	$(CC) $(LDFLAGS) -o epm epm.o string.o
 
-$(OBJS):	Makefile config.h string.h
+epm.o:		string.h
+string.o:	string.h
 
 #
-# End of "$Id: Makefile.in,v 1.2 1999/06/21 14:47:18 mike Exp $".
+# setup
+#
+
+setup:	setup.o setup2.o Fl_Wizard.o
+	echo Linking setup...
+	$(CXX) $(LDFLAGS) -o setup setup.o setup2.o Fl_Wizard.o $(LIBS)
+
+setup.o:	setup.h Fl_Wizard.h
+setup2.o:	setup.h Fl_Wizard.h
+Fl_Wizard.o:	Fl_Wizard.h
+
+$(OBJS):	Makefile config.h
+
+#
+# End of "$Id: Makefile.in,v 1.3 1999/11/04 20:31:06 mike Exp $".
 #
