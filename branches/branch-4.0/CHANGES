@@ -6,12 +6,28 @@ WHAT'S NEW IN EPM 4.0?
     EPM 4.0 adds the following features, fixes, and changes to
     EPM 3.3:
 
+	- New GUI editor for list files.
+	- New subpackage support for creating multiple dependent
+	  packages or a combined package with selectable
+	  subpackages, depending on the package format.
+
+
+WHAT'S NEW IN EPM 3.3.1?
+
+    EPM 3.3.1 adds the following features, fixes, and changes to
+    EPM 3.3:
+
 	- No longer install init scripts in run levels 2 and 5
 	  under Solaris, which runs all init scripts in each run
 	  level.
-	- Tar files created by EPM now conform to the POSIX
-	  standard, including the long filename support (up to
-	  255 chars...)
+	- The tar files produced by EPM didn't conform to the
+	  POSIX 1003.1 spec.  EPM now puts the POSIX version
+	  number (00) and supports "long" filenames up to
+	  255 characters in length.
+	- AIX packages did not use the correct path for files
+	  placed in the root partition.
+	- Now install init scripts for *BSD in
+	  /usr/local/etc/rc.d.
 
 
 WHAT'S NEW IN EPM 3.3?
