@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.22 1999/09/02 14:44:14 mike Exp $"
+ * "$Id: epm.c,v 1.23 1999/09/03 15:46:50 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -51,6 +51,17 @@
 #include <pwd.h>
 #include <grp.h>
 #include <sys/utsname.h>
+
+
+/*
+ * "test" command symlink option...
+ */
+
+#ifdef __hpux
+#  define SYMLINK "-h"
+#else
+#  define SYMLINK "-L"
+#endif /* __hpux */
 
 
 /*
@@ -1521,7 +1532,7 @@ write_install(dist_t *dist,	/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
-    fputs("	if test -d $file -o -f $file -o -h $file; then\n", scriptfile);
+    fputs("	if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
     fputs("		/bin/mv $file $file.O\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1617,11 +1628,11 @@ write_install(dist_t *dist,	/* I - Software distribution */
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
-    fputs("		if test -d $rcdir/rc4.d -o -l $rcdir/rc4.d; then\n", scriptfile);
+    fputs("		if test -d $rcdir/rc4.d -o " SYMLINK " $rcdir/rc4.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/rc4.d/S99$file\n", scriptfile);
     fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc4.d/S99$file\n", scriptfile);
     fputs("		fi\n", scriptfile);
-    fputs("		if test -d $rcdir/rc5.d -o -l $rcdir/rc5.d; then\n", scriptfile);
+    fputs("		if test -d $rcdir/rc5.d -o " SYMLINK " $rcdir/rc5.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
     fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc5.d/S99$file\n", scriptfile);
     fputs("		fi\n", scriptfile);
@@ -1825,7 +1836,7 @@ write_patch(dist_t *dist,	/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
-    fputs("	if test -d $file -o -f $file -o -h $file; then\n", scriptfile);
+    fputs("	if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
     fputs("		/bin/mv $file $file.O\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1899,7 +1910,7 @@ write_patch(dist_t *dist,	/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	rm -f $file\n", scriptfile);
-    fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
+    fputs("	if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
     fputs("		/bin/mv $file.O $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1919,7 +1930,7 @@ write_patch(dist_t *dist,	/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc0.d -o -l $dir/rc0.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc0.d -o " SYMLINK " $dir/rc0.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1938,11 +1949,11 @@ write_patch(dist_t *dist,	/* I - Software distribution */
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
-    fputs("		if test -d $rcdir/rc4.d -o -l $rcdir/rc4.d; then\n", scriptfile);
+    fputs("		if test -d $rcdir/rc4.d -o " SYMLINK " $rcdir/rc4.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/rc4.d/S99$file\n", scriptfile);
     fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc4.d/S99$file\n", scriptfile);
     fputs("		fi\n", scriptfile);
-    fputs("		if test -d $rcdir/rc5.d -o -l $rcdir/rc5.d; then\n", scriptfile);
+    fputs("		if test -d $rcdir/rc5.d -o " SYMLINK " $rcdir/rc5.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
     fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc5.d/S99$file\n", scriptfile);
     fputs("		fi\n", scriptfile);
@@ -2089,10 +2100,10 @@ write_remove(dist_t *dist,	/* I - Software distribution */
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
-    fputs("		if test -d $rcdir/rc4.d -o -l $rcdir/rc4.d; then\n", scriptfile);
+    fputs("		if test -d $rcdir/rc4.d -o " SYMLINK " $rcdir/rc4.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/rc4.d/S99$file\n", scriptfile);
     fputs("		fi\n", scriptfile);
-    fputs("		if test -d $rcdir/rc5.d -o -l $rcdir/rc5.d; then\n", scriptfile);
+    fputs("		if test -d $rcdir/rc5.d -o " SYMLINK " $rcdir/rc5.d; then\n", scriptfile);
     fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
     fputs("		fi\n", scriptfile);
 #ifdef __sgi
@@ -2111,7 +2122,7 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
   fputs("; do\n", scriptfile);
   fputs("	rm -f $file\n", scriptfile);
-  fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
+  fputs("	if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
   fputs("		/bin/mv $file.O $file\n", scriptfile);
   fputs("	fi\n", scriptfile);
   fputs("done\n", scriptfile);
@@ -2127,5 +2138,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.22 1999/09/02 14:44:14 mike Exp $".
+ * End of "$Id: epm.c,v 1.23 1999/09/03 15:46:50 mike Exp $".
  */
