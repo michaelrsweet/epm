@@ -1,7 +1,7 @@
 /*
- * "$Id: bsd.c,v 1.4.2.9 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: bsd.c,v 1.4.2.10 2004/12/05 05:35:28 mike Exp $"
  *
- *   FreeBSD package gateway for the ESP Package Manager (EPM).
+ *   Free/Net/OpenBSD package gateway for the ESP Package Manager (EPM).
  *
  *   Copyright 1999-2004 by Easy Software Products.
  *
@@ -17,7 +17,7 @@
  *
  * Contents:
  *
- *   make_bsd() - Make a FreeBSD software distribution package.
+ *   make_bsd() - Make a Free/Net/OpenBSD software distribution package.
  */
 
 /*
@@ -28,7 +28,16 @@
 
 
 /*
- * 'make_bsd()' - Make a FreeBSD software distribution package.
+ * Local functions...
+ */
+
+static int	bsd_package(const char *prodname, const char *directory,
+		            const char *platname, dist_t *dist,
+			    const char *subpackage);
+
+
+/*
+ * 'make_bsd()' - Make a Free/Net/OpenBSD software distribution package.
  */
 
 int					/* O - 0 = success, 1 = fail */
@@ -39,7 +48,34 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 	 struct utsname *platform)	/* I - Platform information */
 {
   int		i;			/* Looping var */
+
+
+  if (bsd_package(prodname, directory, platname, dist, NULL))
+    return (1);
+
+  for (i = 0; i < dist->num_subpackages; i ++)
+    if (bsd_package(prodname, directory, platname, dist,
+                    dist->subpackages[i]))
+      return (1);
+
+  return (0);
+}
+
+
+/*
+ * 'bsd_package()' - Create a subpackage...
+ */
+
+static int				/* O - 0 = success, 1 = fail */
+bsd_package(const char     *prodname,	/* I - Product short name */
+            const char     *directory,	/* I - Directory for distribution files */
+            const char     *platname,	/* I - Platform name */
+	    dist_t         *dist,	/* I - Distribution information */
+	    const char     *subpackage)	/* I - Subpackage name */
+{
+  int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
+  char		prodfull[1024];		/* Full subpackage name */
   char		name[1024];		/* Full product name */
   char		commentname[1024];	/* pkg comment filename */
   char		descrname[1024];	/* pkg descr filename */
@@ -56,34 +92,38 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   char		current[1024];		/* Current directory */
 
 
-  REF(platform);
+  getcwd(current, sizeof(current));
+
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
 
   if (Verbosity)
-    puts("Creating FreeBSD pkg distribution...");
-
-  getcwd(current, sizeof(current));
+    printf("Creating %s FreeBSD pkg distribution...\n", prodfull);
 
   if (dist->relnumber)
   {
     if (platname[0])
-      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
-              platname);
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodfull, dist->version,
+               dist->relnumber, platname);
     else
-      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodfull, dist->version,
+               dist->relnumber);
   }
   else if (platname[0])
-    snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
+    snprintf(name, sizeof(name), "%s-%s-%s", prodfull, dist->version, platname);
   else
-    snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
+    snprintf(name, sizeof(name), "%s-%s", prodfull, dist->version);
 
  /*
   * Write the descr file for pkg...
   */
 
   if (Verbosity)
-    puts("Creating descr file...");
+    printf("Creating %s.descr file...\n", prodfull);
 
-  snprintf(descrname, sizeof(descrname), "%s/%s.descr", directory, prodname);
+  snprintf(descrname, sizeof(descrname), "%s/%s.descr", directory, prodfull);
 
   if ((fp = fopen(descrname, "w")) == NULL)
   {
@@ -101,9 +141,10 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   */
 
   if (Verbosity)
-    puts("Creating comment file...");
+    printf("Creating %s.comment file...\n", prodfull);
 
-  snprintf(commentname, sizeof(commentname), "%s/%s.comment", directory, prodname);
+  snprintf(commentname, sizeof(commentname), "%s/%s.comment", directory,
+           prodfull);
 
   if ((fp = fopen(commentname, "w")) == NULL)
   {
@@ -113,7 +154,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   }
 
   fprintf(fp, "Summary: %s\n", dist->product);
-  fprintf(fp, "Name: %s\n", prodname);
+  fprintf(fp, "Name: %s\n", prodfull);
   fprintf(fp, "Version: %s\n", dist->version);
   fprintf(fp, "Release: %d\n", dist->relnumber);
   fprintf(fp, "Copyright: %s\n", dist->copyright);
@@ -124,7 +165,8 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
   fputs("Description:\n\n", fp);
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(fp, "%s\n", dist->descriptions[i].description);
+    if (dist->descriptions[i].subpackage == subpackage)
+      fprintf(fp, "%s\n", dist->descriptions[i].description);
 
   fclose(fp);
 
@@ -133,9 +175,9 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   */
 
   if (Verbosity)
-    puts("Creating plist file...");
+    printf("Creating %s.plist file...\n", prodfull);
 
-  snprintf(plistname, sizeof(plistname), "%s/%s.plist", directory, prodname);
+  snprintf(plistname, sizeof(plistname), "%s/%s.plist", directory, prodfull);
 
   if ((fp = fopen(plistname, "w")) == NULL)
   {
@@ -149,17 +191,20 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
   {
+    if (d->subpackage != subpackage)
+      continue;
+
     if (d->type == DEPEND_REQUIRES)
       fprintf(fp, "@pkgdep %s", d->product);
     else
 #ifdef __FreeBSD__
      /*
-      * FreeBSD doesn't have @pkgcfl command...
+      * FreeBSD uses @conflicts...
       */
-      fprintf(fp, "@comment conflicts with: %s", d->product);
+      fprintf(fp, "@conflicts %s", d->product);
 #else
       fprintf(fp, "@pkgcfl %s", d->product);
-#endif /* __FreeBSD */
+#endif /* __FreeBSD__ */
     if (d->vernumber[0] == 0)
     {
       if (d->vernumber[1] < INT_MAX)
@@ -172,26 +217,27 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   }
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    switch (c->type)
-    {
-      case COMMAND_PRE_INSTALL :
-          fputs("WARNING: Package contains pre-install commands which are not supported\n"
-	        "         by the BSD packager.\n", stderr);
-          break;
-      case COMMAND_POST_INSTALL :
-          fprintf(fp, "@exec %s\n", c->command);
-	  break;
-      case COMMAND_PRE_REMOVE :
-          fprintf(fp, "@unexec %s\n", c->command);
-	  break;
-      case COMMAND_POST_REMOVE :
-          fputs("WARNING: Package contains post-removal commands which are not supported\n"
-	        "         by the BSD packager.\n", stderr);
-          break;
-    }
+    if (c->subpackage == subpackage)
+      switch (c->type)
+      {
+	case COMMAND_PRE_INSTALL :
+            fputs("WARNING: Package contains pre-install commands which are not supported\n"
+	          "         by the BSD packager.\n", stderr);
+            break;
+	case COMMAND_POST_INSTALL :
+            fprintf(fp, "@exec %s\n", c->command);
+	    break;
+	case COMMAND_PRE_REMOVE :
+            fprintf(fp, "@unexec %s\n", c->command);
+	    break;
+	case COMMAND_POST_REMOVE :
+            fputs("WARNING: Package contains post-removal commands which are not supported\n"
+	          "         by the BSD packager.\n", stderr);
+            break;
+      }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'd')
+    if (tolower(file->type) == 'd' && file->subpackage == subpackage)
     {
      /*
       * We create and update directories as postinstall commands to
@@ -216,7 +262,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
     * postinstall script...
     */
 
-    if (tolower(file->type) == 'd')
+    if (tolower(file->type) == 'd' || file->subpackage != subpackage)
       continue;
 
     if (file->mode != old_mode)
@@ -247,7 +293,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   for (i = dist->num_files, file = dist->files + i - 1;
        i > 0;
        i --, file --)
-    if (tolower(file->type) == 'd')
+    if (tolower(file->type) == 'd' && file->subpackage == subpackage)
       qprintf(fp, "@dirrm %s\n", file->dst + 1);
 
   fclose(fp);
@@ -261,6 +307,9 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
   {
+    if (file->subpackage != subpackage)
+      continue;
+
    /*
     * Find the username and groupname IDs...
     */
@@ -324,7 +373,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   */
 
   if (Verbosity)
-    puts("Building FreeBSD pkg binary distribution...");
+    printf("Building %s FreeBSD pkg binary distribution...\n", prodfull);
 
   if (run_command(NULL, "pkg_create -p / -s %s -c %s -d %s -f %s %s",
                   current, commentname, descrname, plistname, name))
@@ -354,5 +403,5 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: bsd.c,v 1.4.2.9 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: bsd.c,v 1.4.2.10 2004/12/05 05:35:28 mike Exp $".
  */
