@@ -1,14 +1,7 @@
 TODO for EPM:
 
-	- Add support for more vendor-specific formats; specifically
-	  AIX and BSD packaging formats.
-	- Add system() replacement.
 	- Add /opt relocation hack (and maybe allow for
 	  relocatable packages in general?)
-	- Add %pre/postinstall/remove <filename
-	- Add %pre/postinstall/remove ... %end
-	- Add epminstall command for building a list file from
-	  a "make INSTALL=epminstall install".
 	- Add support for executables and libraries created with
 	  libtool.
 	- Add a small script that can be installed with every
@@ -21,3 +14,4 @@ TODO for EPM:
 	  packages; that is, a portable package could check its
 	  dependencies against portable, RPM, Debian, etc.
 	  packages, rather than just packages of the same format.
+	- Support filenames with spaces.
