@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.79 2002/12/17 18:57:56 swdev Exp $"
+ * "$Id: portable.c,v 1.80 2003/01/13 21:02:09 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1449,17 +1449,24 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 	  else
 	    number = get_start(file, 99);
 
-	  qprintf(scriptfile, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
-	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
-	  qprintf(scriptfile, "	/bin/ln -s %s/init.d/%s "
-                      "$rcdir/rc%c.d/%c%02d%s\n", SoftwareDir, file->dst,
-		  *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
+          fprintf(scriptfile, "	if test -d $rcdir/rc%c.d; then\n", *runlevels);
+	  qprintf(scriptfile, "		/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n",
+	          *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
+	  qprintf(scriptfile, "		/bin/ln -s %s/init.d/%s "
+                              "$rcdir/rc%c.d/%c%02d%s\n",
+                  SoftwareDir, file->dst, *runlevels,
+		  *runlevels == '0' ? 'K' : 'S', number, file->dst);
+	  fputs("	fi\n", scriptfile);
         }
+
+#ifdef __sgi
+        fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
+        qprintf(scriptfile, "		/etc/chkconfig -f %s on\n", file->dst);
+        fputs("	fi\n", scriptfile);
+#endif /* __sgi */
+
       }
 
-    fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
-    qprintf(scriptfile, "		/etc/chkconfig -f %s on\n", file->dst);
-    fputs("	fi\n", scriptfile);
     fputs("fi\n", scriptfile);
   }
 
@@ -1750,17 +1757,23 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 	  else
 	    number = get_start(file, 99);
 
-	  qprintf(scriptfile, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
-	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
-	  qprintf(scriptfile, "	/bin/ln -s %s/init.d/%s "
-                      "$rcdir/rc%c.d/%c%02d%s\n", SoftwareDir, file->dst,
-		  *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
+          fprintf(scriptfile, "	if test -d $rcdir/rc%c.d; then\n", *runlevels);
+	  qprintf(scriptfile, "		/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n",
+	          *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
+	  qprintf(scriptfile, "		/bin/ln -s %s/init.d/%s "
+                              "$rcdir/rc%c.d/%c%02d%s\n",
+		  SoftwareDir, file->dst, *runlevels,
+		  *runlevels == '0' ? 'K' : 'S', number, file->dst);
+	  fputs("	fi\n", scriptfile);
         }
+
+#ifdef __sgi
+        fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
+        qprintf(scriptfile, "		/etc/chkconfig -f %s on\n", file->dst);
+        fputs("	fi\n", scriptfile);
+#endif /* __sgi */
       }
 
-    fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
-    qprintf(scriptfile, "		/etc/chkconfig -f %s on\n", file->dst);
-    fputs("	fi\n", scriptfile);
     fputs("fi\n", scriptfile);
   }
 
@@ -1905,14 +1918,19 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 	  else
 	    number = get_start(file, 99);
 
-	  qprintf(scriptfile, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
-	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
+          fprintf(scriptfile, "	if test -d $rcdir/rc%c.d; then\n", *runlevels);
+	  qprintf(scriptfile, "		/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n",
+	          *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
+	  fputs("	fi\n", scriptfile);
         }
+
+#ifdef __sgi
+        fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
+        qprintf(scriptfile, "		rm -f /etc/config/%s\n", file->dst);
+        fputs("	fi\n", scriptfile);
+#endif /* __sgi */
       }
 
-    fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
-    qprintf(scriptfile, "		rm -f /etc/config/%s\n", file->dst);
-    fputs("	fi\n", scriptfile);
     fputs("fi\n", scriptfile);
   }
 
@@ -2115,5 +2133,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.79 2002/12/17 18:57:56 swdev Exp $".
+ * End of "$Id: portable.c,v 1.80 2003/01/13 21:02:09 mike Exp $".
  */
