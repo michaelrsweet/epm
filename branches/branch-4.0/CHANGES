@@ -4,12 +4,22 @@ CHANGES - ESP Package Manager (EPM) 4.0
 WHAT'S NEW IN EPM 4.0?
 
     EPM 4.0 adds the following features, fixes, and changes to
-    EPM 3.3:
+    EPM 3.6.1:
 
 	- New GUI editor for list files.
 	- New subpackage support for creating multiple dependent
 	  packages or a combined package with selectable
 	  subpackages, depending on the package format.
+
+
+WHAT'S NEW IN EPM 3.6.1?
+
+    EPM 3.6.1 adds the following features, fixes, and changes to
+    EPM 3.6:
+
+	- RPM building did not work properly when --output-dir
+	  was specified using an absolute path.
+	- Made cosmetic changes to the setup/uninstall GUIs.
 
 
 WHAT'S NEW IN EPM 3.6?
