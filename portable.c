@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.84 2003/02/13 21:34:00 mike Exp $"
+ * "$Id: portable.c,v 1.85 2003/02/13 21:36:31 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -955,7 +955,7 @@ write_dist(const char *title,		/* I - Title to show */
     * Create directories for the setup application...
     */
 
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Setup.app", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -965,7 +965,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Setup.app/Contents", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app/Contents", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -975,7 +975,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Setup.app/Contents/MacOS", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app/Contents/MacOS", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -985,7 +985,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Setup.app/Contents/Resources", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Install.app/Contents/Resources", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -1004,7 +1004,7 @@ write_dist(const char *title,		/* I - Title to show */
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Setup.app/Contents/Resources/setup.icns", NULL) < 0)
+		   "Install.app/Contents/Resources/setup.icns", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -1029,7 +1029,7 @@ write_dist(const char *title,		/* I - Title to show */
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Setup.app/Contents/PkgInfo", NULL) < 0)
+		   "Install.app/Contents/PkgInfo", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -1054,7 +1054,7 @@ write_dist(const char *title,		/* I - Title to show */
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Setup.app/Contents/Info.plist", NULL) < 0)
+		   "Install.app/Contents/Info.plist", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -1082,7 +1082,7 @@ write_dist(const char *title,		/* I - Title to show */
 
 #ifdef __APPLE__
     if (setup)
-      snprintf(dstname, sizeof(dstname), "Setup.app/Contents/Resources/%s.%s", prodname, files[i]);
+      snprintf(dstname, sizeof(dstname), "Install.app/Contents/Resources/%s.%s", prodname, files[i]);
     else
 #endif /* __APPLE__ */
     snprintf(dstname, sizeof(dstname), "%s.%s", prodname, files[i]);
@@ -1140,7 +1140,7 @@ write_dist(const char *title,		/* I - Title to show */
 #ifdef __APPLE__
     if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
 	           srcstat.st_mtime, "root", "root",
-		   "Setup.app/Contents/MacOS/setup", NULL) < 0)
+		   "Install.app/Contents/MacOS/setup", NULL) < 0)
 #else
     if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
 	           srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
@@ -1177,7 +1177,7 @@ write_dist(const char *title,		/* I - Title to show */
     stat(setup, &srcstat);
 #ifdef __APPLE__
     if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", "Setup.app/Contents/Resources/setup.xpm", NULL) < 0)
+	           srcstat.st_mtime, "root", "root", "Install.app/Contents/Resources/setup.xpm", NULL) < 0)
 #else
     if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
 	           srcstat.st_mtime, "root", "root", "setup.xpm", NULL) < 0)
@@ -1216,7 +1216,7 @@ write_dist(const char *title,		/* I - Title to show */
       stat(types, &srcstat);
 #ifdef __APPLE__
       if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-		     srcstat.st_mtime, "root", "root", "Setup.app/Contents/Resources/setup.types", NULL) < 0)
+		     srcstat.st_mtime, "root", "root", "Install.app/Contents/Resources/setup.types", NULL) < 0)
 #else
       if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
 		     srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
@@ -2500,5 +2500,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.84 2003/02/13 21:34:00 mike Exp $".
+ * End of "$Id: portable.c,v 1.85 2003/02/13 21:36:31 mike Exp $".
  */
