@@ -18,5 +18,3 @@ TODO for EPM:
 	  format.
 	- Add support for checksums (probably just "sum"
 	  command) to verify the tar files and installed files.
-	- Don't install the root/usr tar files unless they are >
-	  0 bytes.
