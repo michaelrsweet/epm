@@ -2296,6 +2296,7 @@ else
 			if test -z "$OPTIM"; then
 				OPTIM="+O2"
 			fi
+			OPTIM="$OPTIM +DAportable"
 			;;
 		SunOS*)
 			# Solaris
