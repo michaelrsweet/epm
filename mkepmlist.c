@@ -1,5 +1,5 @@
 /*
- * "$Id: mkepmlist.c,v 1.2 2002/08/30 02:00:42 mike Exp $"
+ * "$Id: mkepmlist.c,v 1.3 2002/09/15 03:09:35 mike Exp $"
  *
  *   List file generation utility for the ESP Package Manager (EPM).
  *
@@ -429,9 +429,10 @@ process_dir(const char *srcpath,/* I - Source path */
   DIR		*dir;		/* Directory to read from */
   struct dirent *dent;		/* Current directory entry */
   int		srclen,		/* Length of source path */
+		linklen,	/* Length of link path */
 		dstlen;		/* Length of destination path */
   char		src[1024],	/* Temporary source path */
-		srclink[1024],	/* Link for source */
+		link[1024],	/* Link for source */
 		dst[1024];	/* Temporary destination path */
   struct stat	srcinfo;	/* Information on the source file */
 
@@ -479,7 +480,7 @@ process_dir(const char *srcpath,/* I - Source path */
     else
       snprintf(dst, sizeof(dst), "%s/%s", dstpath, dent->d_name);
 
-    if (stat(src, &srcinfo))
+    if (lstat(src, &srcinfo))
     {
       fprintf(stderr, "mkepmlist: Unable to stat \"%s\" - %s.\n", src,
               strerror(errno));
@@ -508,16 +509,18 @@ process_dir(const char *srcpath,/* I - Source path */
       * Symlink...
       */
 
-      if (readlink(src, srclink, sizeof(srclink)) < 0)
+      if ((linklen = readlink(src, link, sizeof(link) - 1)) < 0)
       {
         fprintf(stderr, "mkepmlist: Unable to read symlink \"%s\" - %s.\n",
 	        src, strerror(errno));
         continue;
       }
 
+      link[linklen] = '\0';
+
       qprintf(stdout, "l %o %s %s %s %s\n",
               (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid),
-	      get_group(srcinfo.st_gid), dst, srclink);
+	      get_group(srcinfo.st_gid), dst, link);
     }
     else if (S_ISREG(srcinfo.st_mode))
     {
@@ -556,5 +559,5 @@ usage(void)
 
 
 /*
- * End of "$Id: mkepmlist.c,v 1.2 2002/08/30 02:00:42 mike Exp $".
+ * End of "$Id: mkepmlist.c,v 1.3 2002/09/15 03:09:35 mike Exp $".
  */

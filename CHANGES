@@ -20,6 +20,7 @@ WHAT'S NEW IN EPM 3.5?
 	- Filenames can now contain spaces, either by putting
 	  the full name in quotes ("file with spaces") or using
 	  the backslash character (file\ with\ spaces).
+	- The mkepmlist utility didn't handle symlinks properly.
 
 
 WHAT'S NEW IN EPM 3.4?
