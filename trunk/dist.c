@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.13 2001/01/03 20:41:33 mike Exp $"
+ * "$Id: dist.c,v 1.14 2001/01/10 16:29:30 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -23,6 +23,7 @@
  *   free_strings() - Free memory used by the array of strings.
  *   get_line()     - Get a line from a file, filtering for uname lines...
  *   expand_name()  - Expand a filename with environment variables.
+ *   patmatch()     - Pattern matching...
  */
 
 /*
@@ -682,6 +683,8 @@ patmatch(const char *s,		/* I - String to match against */
       while (*pat != ']' && *pat != '\0')
         if (*s == *pat)
 	  break;
+	else if (pat[1] == '-' && *s >= pat[0] && *s <= pat[2])
+	  break;
 	else
 	  pat ++;
 
@@ -723,5 +726,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.13 2001/01/03 20:41:33 mike Exp $".
+ * End of "$Id: dist.c,v 1.14 2001/01/10 16:29:30 mike Exp $".
  */
