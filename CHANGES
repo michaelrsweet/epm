@@ -6,6 +6,8 @@ WHAT'S NEW IN EPM 3.7.1?
     EPM 3.7.1 adds the following features, fixes, and changes to
     EPM 3.7:
 
+	- Solaris packages were not created when the output
+	  directory was absolute.
 	- EPM no longer tries to strip empty files.
 	- Solaris 7 and higher no longer have the "2." prefix in
 	  the version number.
