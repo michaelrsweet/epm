@@ -1,5 +1,5 @@
 /*
- * "$Id: string.h,v 1.4 2001/01/03 20:41:34 mike Exp $"
+ * "$Id: epmstring.h,v 1.1 2001/01/19 16:16:51 mike Exp $"
  *
  *   String definitions for the ESP Package Manager (EPM).
  *
@@ -54,5 +54,5 @@ extern int	strncasecmp(const char *, const char *, size_t n);
 #endif /* !_EPM_STRING_H_ */
 
 /*
- * End of "$Id: string.h,v 1.4 2001/01/03 20:41:34 mike Exp $".
+ * End of "$Id: epmstring.h,v 1.1 2001/01/19 16:16:51 mike Exp $".
  */

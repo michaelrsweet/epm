@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.14 2001/01/10 16:29:30 mike Exp $"
+ * "$Id: dist.c,v 1.15 2001/01/19 16:16:50 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -157,7 +157,8 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
       * Do variable substitution...
       */
 
-      expand_name(line, buf);
+      line[0] = buf[0]; /* Don't expand initial $ */
+      expand_name(line + 1, buf + 1);
 
      /*
       * Check line for config stuff...
@@ -274,6 +275,15 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  fprintf(stderr, "epm: Unknown directive \"%s\" ignored!\n", line);
 	  fprintf(stderr, "     %s %s\n", line, temp);
 	}
+      }
+      else if (line[0] == '$')
+      {
+       /*
+        * Define a variable...
+	*/
+
+        if ((temp = strdup(line + 1)) != NULL)
+	  putenv(temp);
       }
       else if (sscanf(line, "%c%o%15s%15s%254s%254s", &type, &mode, user, group,
         	      dst, src) < 5)
@@ -726,5 +736,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.14 2001/01/10 16:29:30 mike Exp $".
+ * End of "$Id: dist.c,v 1.15 2001/01/19 16:16:50 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: string.c,v 1.3 2001/01/03 20:41:34 mike Exp $"
+ * "$Id: string.c,v 1.4 2001/01/19 16:16:51 mike Exp $"
  *
  *   String functions for the ESP Package Manager (EPM).
  *
@@ -26,7 +26,7 @@
  * Include necessary headers...
  */
 
-#include "string.h"
+#include "epmstring.h"
 
 
 /*
@@ -115,5 +115,5 @@ strncasecmp(const char *s,	/* I - First string */
 
 
 /*
- * End of "$Id: string.c,v 1.3 2001/01/03 20:41:34 mike Exp $".
+ * End of "$Id: string.c,v 1.4 2001/01/19 16:16:51 mike Exp $".
  */

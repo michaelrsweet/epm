@@ -96,7 +96,8 @@ WHAT'S NEW IN EPM 2.3?
 
 	- Fix for an incredibly stupid bug in the portable
 	  distribution code - was using ! instead of ~ to mask
-	  off the write bits in the distribution archive.
+	  off the write permission bits in the distribution
+	  archive.
 	- Now use getpwuid() instead of getlogin() to get the
 	  username of the packager.
 	- The RPM distributions now use the same init.d script
@@ -107,6 +108,10 @@ WHAT'S NEW IN EPM 2.3?
 	  directories or config files.
 	- The [] wildcard matching rule did not accept ranges
           (e.g. "[a-z]", "[0-9]", etc.)
+	- Added VPATH support and distribution targets to
+	  Makefile.
+	- Added support for defining variables in list files;
+	  the format is "$name=value".
 
 
 WHAT'S NEW IN EPM 2.2?

@@ -1,9 +1,9 @@
 dnl
-dnl "$Id: configure.in,v 1.15 2000/12/07 14:10:59 mike Exp $"
+dnl "$Id: configure.in,v 1.16 2001/01/19 16:16:50 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
-dnl   Copyright 1999-2000 by Easy Software Products, all rights reserved.
+dnl   Copyright 1999-2001 by Easy Software Products, all rights reserved.
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
@@ -109,10 +109,12 @@ AC_CHECK_LIB(fltk,numericsort)
 if test "$ac_cv_lib_fltk_numericsort" = yes -a "$ac_cv_prog_CXX" != ""; then
 	SETUP="setup"
 	INSTALL_SETUP="install-setup"
+	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 	LIBS="$LIBS -lXext -lX11"
 else
 	SETUP=""
 	INSTALL_SETUP=""
+	LIST_SETUP=""
 	AC_MSG_WARN(C++ compiler or FLTK not available so setup GUI will not be built.)
 fi
 
@@ -131,6 +133,7 @@ fi)
 
 AC_SUBST(SETUP)
 AC_SUBST(INSTALL_SETUP)
+AC_SUBST(LIST_SETUP)
 
 dnl See if the echo command supports the \c escape; if not, then it's broken!
 if test "x$ac_c" = "x"; then
@@ -215,6 +218,41 @@ if test "$prefix" = "NONE"; then
 	prefix="/usr"
 fi
 
+dnl Fix "mandir" variable if it hasn't been specified...
+if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
+	case "$uname" in
+        	FreeBSD* | NetBSD* | OpenBSD*)
+        		# *BSD
+        		mandir="/usr/share/man"
+        		;;
+        	IRIX*)
+        		# SGI IRIX
+        		mandir="/usr/share/catman/u_man"
+        		;;
+        	*)
+        		# All others
+        		mandir="/usr/man"
+        		;;
+	esac
+fi
+
+dnl More manpage stuff...
+case "$uname" in
+        FreeBSD* | NetBSD* | OpenBSD*)
+        	# *BSD
+        	CAT1EXT="0"
+        	MAN1EXT="1"
+        	;;
+        *)
+        	# All others
+        	CAT1EXT="1"
+        	MAN1EXT="1"
+        	;;
+esac
+
+AC_SUBST(CAT1EXT)
+AC_SUBST(MAN1EXT)
+
 dnl EPM_SOFTWARE needs special attention for the default location...
 if test "$prefix" = "/usr"; then
 	EPM_SOFTWARE="/etc/software"
@@ -251,9 +289,9 @@ if test "x$RPM" != "x"; then
 	fi
 fi
 
-dnl Output the makefile and config header...
-AC_OUTPUT(Makefile)
+dnl Output the makefile, list file, and config header...
+AC_OUTPUT(Makefile epm.list)
 
 dnl
-dnl End of "$Id: configure.in,v 1.15 2000/12/07 14:10:59 mike Exp $".
+dnl End of "$Id: configure.in,v 1.16 2001/01/19 16:16:50 mike Exp $".
 dnl

@@ -3,7 +3,7 @@
 	<TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 	<META NAME="Author" CONTENT="Michael Sweet">
 	<META NAME="Copyright" CONTENT="Copyright 1999-2001 by Easy Software Products">
-	<META NAME="DocNumber" CONTENT="ESP-004-20001211">
+	<META NAME="DocNumber" CONTENT="ESP-004-20010119">
 </HEAD>
 <BODY>
 
@@ -11,11 +11,11 @@
 Using the<BR>
 ESP Package Manager</H1>
 
-<P ALIGN="CENTER">11 December 2000</P>
+<P ALIGN="CENTER">19 January 2001</P>
 
 <P ALIGN="CENTER">Michael Sweet, Easy Software Products</P>
 
-<P ALIGN="CENTER">ESP-004-20001211</P>
+<P ALIGN="CENTER">ESP-004-20010119</P>
 
 <H2>Contents</H2>
 
@@ -305,6 +305,31 @@ EPM directives) start with the percent (<CODE>%</CODE>)
 character. The attribute name is followed by the value separated
 by whitespace. 
 
+<H3>Variables</H3>
+
+<P>EPM imports the current environment variables for use in your
+list file. You can also define new variable in the list file or
+on the command-line when running EPM.
+
+<P>Variables are defined by starting the line with the dollar
+sign (<CODE>$</CODE>) followed by the name and value:
+
+<UL><PRE>
+$name=value
+$prefix=/usr
+$exec_prefix=${prefix}
+$bindir=$exec_prefix/bin
+</PRE></UL>
+
+<P>Variable substitution is performed when the variable is
+defined, so be careful with the ordering of your variable
+definitions.
+
+<P>As you can see, variables are referenced using the dollar
+sign (<CODE>$</CODE>). As with most shells, variable names can
+be surrounded by curly braces (<CODE>${variable}</CODE>) to
+explicitly delimit the name.
+
 <H3>Files</H3>
 
 <P>Following the product information is the list of files to be
@@ -520,7 +545,8 @@ second is the list filename. The result will be a gzip'd tar
 file containing the distribution files and installation script
 needed to install the software.
 
-<P>Variables are specified using using the equal sign (<CODE>=</CODE>);
+<P>Variables are specified using using the equal sign (<CODE>=</CODE>)
+on the command-line or in the list file (<CODE>$name=value</CODE>);
 there is no limit on the number of variables you can specify:
 
 <UL><PRE>

@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile.in,v 1.9 2000/12/11 04:00:36 mike Exp $"
+# "$Id: Makefile.in,v 1.10 2001/01/19 16:16:50 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
-#   Copyright 1999-2000 by Easy Software Products, all rights reserved.
+#   Copyright 1999-2001 by Easy Software Products, all rights reserved.
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -44,6 +44,14 @@ OPTIM	=	@OPTIM@
 
 
 #
+# Manpage extensions...
+#
+
+CAT1EXT	=	@CAT1EXT@
+MAN1EXT	=	@MAN1EXT@
+
+
+#
 # Directories...
 #
 
@@ -53,6 +61,9 @@ exec_prefix	=	@exec_prefix@
 mandir		=	@mandir@
 prefix		=	@prefix@
 libdir		=	@prefix@/lib/epm
+srcdir		=	@srcdir@
+
+VPATH		=	$(srcdir)
 
 
 #
@@ -64,10 +75,10 @@ libdir		=	@prefix@/lib/epm
 .SUFFIXES:	.c .cxx .h .o
 .c.o:
 	echo Compiling $<...
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -I. -I$(srcdir) -c $<
 .cxx.o:
 	echo Compiling $<...
-	$(CXX) $(CXXFLAGS) -c $<
+	$(CXX) $(CXXFLAGS) -I. -I$(srcdir) -c $<
 
 
 #
@@ -116,23 +127,51 @@ install: epm @INSTALL_SETUP@
 	$(CP) epm $(bindir)
 	echo Installing EPM manpage in $(mandir)/man1
 	-$(MKDIR) $(mandir)/man1
+	$(RM) $(mandir)/cat1/epm.$(CAT1EXT)
+	$(CP) $(srcdir)/epm.1 $(mandir)/cat1/epm.$(CAT1EXT)
 	$(RM) $(mandir)/man1/epm.1
-	$(CP) epm.man $(mandir)/man1/epm.1
+	$(CP) $(srcdir)/epm.man $(mandir)/man1/epm.1
 	echo Installing EPM documentation in $(datadir)/doc/epm
 	-$(MKDIR) $(datadir)/doc
 	-$(MKDIR) $(datadir)/doc/epm
 	$(RM) $(datadir)/doc/epm/COPYING
-	$(CP) COPYING $(datadir)/doc/epm
+	$(CP) $(srcdir)/COPYING $(datadir)/doc/epm
 	$(RM) $(datadir)/doc/epm/README
-	$(CP) README $(datadir)/doc/epm
+	$(CP) $(srcdir)/README $(datadir)/doc/epm
 	$(RM) $(datadir)/doc/epm/*.html
-	$(CP) *.html $(datadir)/doc/epm
+	$(CP) $(srcdir)/*.html $(datadir)/doc/epm
 
 install-setup:	setup
 	echo Installing EPM setup in $(libdir)/setup
 	-$(MKDIR) $(libdir)
 	$(RM) $(libdir)/setup
 	$(CP) setup $(libdir)
+
+
+#
+# Make distributions using EPM...
+#
+
+portable: $(TARGETS)
+	./epm -v epm
+
+native: $(TARGETS)
+	./epm -f native -v epm
+
+rpm: $(TARGETS)
+	./epm -f rpm -v epm
+
+deb: $(TARGETS)
+	./epm -f deb -v epm
+
+pkg: $(TARGETS)
+	./epm -f pkg -v epm
+
+depot: $(TARGETS)
+	./epm -f depot -v epm
+
+tardist: $(TARGETS)
+	./epm -f tardist -v epm
 
 
 #
@@ -143,7 +182,7 @@ epm:	$(EPM_OBJS)
 	echo Linking epm...
 	$(CC) $(LDFLAGS) -o epm $(EPM_OBJS)
 
-$(EPM_OBJS):	epm.h string.h
+$(EPM_OBJS):	epm.h epmstring.h
 
 
 #
@@ -162,5 +201,5 @@ Fl_Check_Browser.o:	Fl_Check_Browser.h
 $(OBJS):	Makefile config.h
 
 #
-# End of "$Id: Makefile.in,v 1.9 2000/12/11 04:00:36 mike Exp $".
+# End of "$Id: Makefile.in,v 1.10 2001/01/19 16:16:50 mike Exp $".
 #

@@ -2225,15 +2225,17 @@ fi
 if test "$ac_cv_lib_fltk_numericsort" = yes -a "$ac_cv_prog_CXX" != ""; then
 	SETUP="setup"
 	INSTALL_SETUP="install-setup"
+	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 	LIBS="$LIBS -lXext -lX11"
 else
 	SETUP=""
 	INSTALL_SETUP=""
+	LIST_SETUP=""
 	echo "configure: warning: C++ compiler or FLTK not available so setup GUI will not be built." 1>&2
 fi
 
 echo $ac_n "checking for socket in -lsocket""... $ac_c" 1>&6
-echo "configure:2237: checking for socket in -lsocket" >&5
+echo "configure:2239: checking for socket in -lsocket" >&5
 ac_lib_var=`echo socket'_'socket | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -2241,7 +2243,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2245 "configure"
+#line 2247 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -2252,7 +2254,7 @@ int main() {
 socket()
 ; return 0; }
 EOF
-if { (eval echo configure:2256: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2258: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -2277,7 +2279,7 @@ else
 fi
 
 echo $ac_n "checking for gethostbyaddr in -lnsl""... $ac_c" 1>&6
-echo "configure:2281: checking for gethostbyaddr in -lnsl" >&5
+echo "configure:2283: checking for gethostbyaddr in -lnsl" >&5
 ac_lib_var=`echo nsl'_'gethostbyaddr | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -2285,7 +2287,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2289 "configure"
+#line 2291 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 /* We use char because int might match the return type of a gcc2
@@ -2296,7 +2298,7 @@ int main() {
 gethostbyaddr()
 ; return 0; }
 EOF
-if { (eval echo configure:2300: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2302: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -2319,6 +2321,7 @@ fi
 else
   echo "$ac_t""no" 1>&6
 fi
+
 
 
 
@@ -2348,14 +2351,14 @@ if test -n "$GCC"; then
 	OLDCFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -fno-exceptions"
 	cat > conftest.$ac_ext <<EOF
-#line 2352 "configure"
+#line 2355 "configure"
 #include "confdefs.h"
 
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:2359: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2362: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   OPTIM="$OPTIM -fno-exceptions"
 		echo "Congratulations - your GCC supports exceptions; disabling them..."
@@ -2375,14 +2378,14 @@ rm -f conftest*
 		OLDCFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS -fpermissive"
 		cat > conftest.$ac_ext <<EOF
-#line 2379 "configure"
+#line 2382 "configure"
 #include "confdefs.h"
 
 int main() {
 
 ; return 0; }
 EOF
-if { (eval echo configure:2386: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2389: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   OPTIM="$OPTIM -fpermissive"
 			echo "Enabling -fpermissive to work around X header bugs..."
@@ -2436,6 +2439,39 @@ fi
 if test "$prefix" = "NONE"; then
 	prefix="/usr"
 fi
+
+if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
+	case "$uname" in
+        	FreeBSD* | NetBSD* | OpenBSD*)
+        		# *BSD
+        		mandir="/usr/share/man"
+        		;;
+        	IRIX*)
+        		# SGI IRIX
+        		mandir="/usr/share/catman/u_man"
+        		;;
+        	*)
+        		# All others
+        		mandir="/usr/man"
+        		;;
+	esac
+fi
+
+case "$uname" in
+        FreeBSD* | NetBSD* | OpenBSD*)
+        	# *BSD
+        	CAT1EXT="0"
+        	MAN1EXT="1"
+        	;;
+        *)
+        	# All others
+        	CAT1EXT="1"
+        	MAN1EXT="1"
+        	;;
+esac
+
+
+
 
 if test "$prefix" = "/usr"; then
 	EPM_SOFTWARE="/etc/software"
@@ -2595,7 +2631,7 @@ done
 
 ac_given_srcdir=$srcdir
 
-trap 'rm -fr `echo "Makefile config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+trap 'rm -fr `echo "Makefile epm.list config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -2641,6 +2677,9 @@ s%@WHOAMI@%$WHOAMI%g
 s%@CPP@%$CPP%g
 s%@SETUP@%$SETUP%g
 s%@INSTALL_SETUP@%$INSTALL_SETUP%g
+s%@LIST_SETUP@%$LIST_SETUP%g
+s%@CAT1EXT@%$CAT1EXT%g
+s%@MAN1EXT@%$MAN1EXT%g
 s%@EPM_SOFTWARE@%$EPM_SOFTWARE%g
 s%@EPM_GZIP@%$EPM_GZIP%g
 s%@EPM_STRIP@%$EPM_STRIP%g
@@ -2688,7 +2727,7 @@ EOF
 
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"Makefile"}
+CONFIG_FILES=\${CONFIG_FILES-"Makefile epm.list"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
