@@ -106,7 +106,7 @@ void Fl_Check_Browser::item_draw(void *v, int x, int y, int, int) const {
 	}
 	fl_font(textfont(), size);
 	if (i->selected) {
-		col = contrast(col, selection_color());
+		col = fl_contrast(col, selection_color());
 	}
 	fl_color(col);
 	fl_draw(s, x + CHECK_SIZE + 8, y + size - 1);
