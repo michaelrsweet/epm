@@ -80,6 +80,8 @@ WHAT'S NEW IN EPM 1.3?
 	- Now use the "p" option to tar to ensure that file permissions
 	  are created properly.  This is normally the default for the
 	  super-user, but not under Digital UNIX!
+	- Initialization scripts are now linked to run levels 0, 2, 3, 4,
+	  and 5.
 
 
 WHAT'S NEW IN EPM 1.2?
