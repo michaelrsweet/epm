@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.7 1999/12/30 18:34:13 mike Exp $"
+ * "$Id: rpm.c,v 1.8 1999/12/30 21:09:24 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -116,17 +116,20 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     switch (tolower(file->type))
     {
       case 'c' :
-          fprintf(fp, "%%config %s\n", file->dst);
+          fprintf(fp, "%%attr(%04o,%s,%s) %%config %s\n", file->mode,
+	          file->user, file->group, file->dst);
           break;
       case 'd' :
-          fprintf(fp, "%%dir %s\n", file->dst);
+          fprintf(fp, "%%attr(%04o,%s,%s) %%dir %s\n", file->mode, file->user,
+	          file->group, file->dst);
           break;
       case 'f' :
       case 'l' :
-          fprintf(fp, "%s\n", file->dst);
+          fprintf(fp, "%%attr(%04o,%s,%s) %s\n", file->mode, file->user,
+	          file->group, file->dst);
           break;
       case 'i' :
-          fprintf(fp, "/etc/rc.d/init.d/%s\n", file->dst);
+          fprintf(fp, "%%attr(0555,root,root) /etc/rc.d/init.d/%s\n", file->dst);
           break;
     }
 
@@ -277,5 +280,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.7 1999/12/30 18:34:13 mike Exp $".
+ * End of "$Id: rpm.c,v 1.8 1999/12/30 21:09:24 mike Exp $".
  */
