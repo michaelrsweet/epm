@@ -1,25 +1,19 @@
 /*
- * "$Id: makedist.c,v 1.11 1999/06/16 16:30:42 mike Exp $"
+ * "$Id: epm.c,v 1.1 1999/06/21 14:25:16 mike Exp $"
  *
- *   Makedist, a simple binary distribution generator for UNIX.
+ *   Main program source for the ESP Package Manager (EPM).
  *
- *   Copyright 1993-1999 by Easy Software Products.
+ *   Copyright 1999 by Easy Software Products.
  *
- *   These coded instructions, statements, and computer programs are the
- *   property of Easy Software Products and are protected by Federal
- *   copyright law.  Distribution and use rights are outlined in the file
- *   "LICENSE.txt" which should have been included with this file.  If this
- *   file is missing or damaged please contact Easy Software Products
- *   at:
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2, or (at your option)
+ *   any later version.
  *
- *       Attn: Makedist Licensing Information
- *       Easy Software Products
- *       44141 Airport View Drive, Suite 204
- *       Hollywood, Maryland 20636-3111 USA
- *
- *       Voice: (301) 373-9603
- *       EMail: info@easysw.com
- *         WWW: http://www.easysw.com
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
  *
  * Contents:
  *
@@ -31,7 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "string.h"
 #include <ctype.h>
 #include <errno.h>
 #include <sys/types.h>
@@ -61,12 +55,6 @@
 #define	TAR_FIFO	'6'		/* FIFO special file */
 #define	TAR_CONTIG	'7'		/* Contiguous file */
 
-#ifdef __sgi
-#  define STRIP		"/bin/strip -f -s -k -l -h %s"
-#else
-#  define STRIP		"strip %s"
-#endif /* __sgi */
-
 
 /*
  * Structures...
@@ -74,7 +62,7 @@
 
 typedef union				/**** TAR record format ****/
 {
-  char	all[TAR_BLOCK];
+  unsigned char	all[TAR_BLOCK];
   struct
   {
     char	pathname[100],
@@ -101,12 +89,13 @@ typedef union				/**** TAR record format ****/
 
 static char	*get_line(char *buffer, int size, FILE *fp,
 		          struct utsname *platform, int *skip);
+static void	get_platform(struct utsname *platform);
 static void	expand_name(char *buffer, char *name);
+static void	usage(void);
+static int	write_file(FILE *fp, char *filename);
 static int	write_header(FILE *fp, char type, int mode, int size,
 		             time_t mtime, char *user, char *group,
 			     char *pathname, char *linkname);
-static int	write_file(FILE *fp, char *filename);
-static void	usage(void);
 
 
 /*
@@ -160,57 +149,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 
 
  /*
-  * Figure out the hardware platform and version...
+  * Get platform information...
   */
 
-  uname(&platform);
-
-#ifdef __sgi
-  strcpy(platform.machine, "mips");
-#elif defined(__hpux)
-  strcpy(platform.machine, "hppa");
-#else
-  if (strstr(platform.machine, "86") != NULL)
-    strcpy(platform.machine, "intel");
-  else if (strncmp(platform.machine, "sun", 3) == 0)
-    strcpy(platform.machine, "sparc");
-#endif /* __sgi */
-
-  while (!isdigit(platform.release[0]) && platform.release[0])
-    strcpy(platform.release, platform.release + 1);
-
-  for (temp = platform.sysname; *temp != '\0'; temp ++)
-    if (*temp == '-' || *temp == '_')
-    {
-      strcpy(temp, temp + 1);
-      temp --;
-    }
-    else
-      *temp = tolower(*temp);
-
-  if (strcmp(platform.sysname, "sunos") == 0 &&
-      platform.release[0] >= '5')
-  {
-    strcpy(platform.sysname, "solaris");
-    platform.release[0] -= 3;
-  }
-  else if (strcmp(platform.sysname, "osf1") == 0)
-    strcpy(platform.sysname, "dunix"); /* AKA Compaq Tru64 UNIX */
-
-  for (temp = platform.machine; *temp != '\0'; temp ++)
-    if (*temp == '-' || *temp == '_')
-    {
-      strcpy(temp, temp + 1);
-      temp --;
-    }
-    else
-      *temp = tolower(*temp);
-
-#ifdef DEBUG
-  printf("sysname = %s\n", platform.sysname);
-  printf("release = %s\n", platform.release);
-  printf("machine = %s\n", platform.machine);
-#endif /* DEBUG */
+  get_platform(&platform);
 
  /*
   * Check arguments...
@@ -345,7 +287,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   if ((listfile = fopen(listname, "r")) == NULL)
   {
-    fprintf(stderr, "makedist: Unable to open list file \"%s\" -\n          %s\n",
+    fprintf(stderr, "epm: Unable to open list file \"%s\" -\n          %s\n",
             listname, strerror(errno));
     return (1);
   }
@@ -365,35 +307,35 @@ main(int  argc,			/* I - Number of command-line arguments */
         if (!product[0])
           strcpy(product, line + 9);
 	else
-	  fputs("makedist: Ignoring %product line in list file.\n", stderr);
+	  fputs("epm: Ignoring %product line in list file.\n", stderr);
       }
       else if (strncmp(line, "%copyright ", 11) == 0)
       {
         if (!copyright[0])
           strcpy(copyright, line + 11);
 	else
-	  fputs("makedist: Ignoring %copyright line in list file.\n", stderr);
+	  fputs("epm: Ignoring %copyright line in list file.\n", stderr);
       }
       else if (strncmp(line, "%vendor ", 8) == 0)
       {
         if (!vendor[0])
           strcpy(vendor, line + 8);
 	else
-	  fputs("makedist: Ignoring %vendor line in list file.\n", stderr);
+	  fputs("epm: Ignoring %vendor line in list file.\n", stderr);
       }
       else if (strncmp(line, "%license ", 9) == 0)
       {
         if (!license[0])
           strcpy(license, line + 9);
 	else
-	  fputs("makedist: Ignoring %license line in list file.\n", stderr);
+	  fputs("epm: Ignoring %license line in list file.\n", stderr);
       }
       else if (strncmp(line, "%readme ", 8) == 0)
       {
         if (!readme[0])
           strcpy(readme, line + 8);
 	else
-	  fputs("makedist: Ignoring %readme line in list file.\n", stderr);
+	  fputs("epm: Ignoring %readme line in list file.\n", stderr);
       }
       else if (strncmp(line, "%version ", 9) == 0)
       {
@@ -414,7 +356,7 @@ main(int  argc,			/* I - Number of command-line arguments */
           }
 	}
 	else
-	  fputs("makedist: Ignoring %version line in list file.\n", stderr);
+	  fputs("epm: Ignoring %version line in list file.\n", stderr);
       }
     }
 
@@ -427,7 +369,7 @@ main(int  argc,			/* I - Number of command-line arguments */
       !readme[0] ||
       !version[0])
   {
-    fputs("makedist: Error - missing %product, %copyright, %vendor, %license,\n", stderr);
+    fputs("epm: Error - missing %product, %copyright, %vendor, %license,\n", stderr);
     fputs("          %readme, or %version attributes in list file!\n", stderr);
 
     fclose(listfile);
@@ -436,7 +378,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   }
 
  /*
-  * Create the output files...
+  * Remove any old files that we have...
   */
 
   puts("Removing old product files...");
@@ -445,14 +387,14 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   sprintf(command, "rm -rf %s", directory);
   system(command);
-  sprintf(command, "rm -f %s.tar.gz", directory);
-  system(command);
-  sprintf(command, "rm -f %s.tar.bz2", directory);
-  system(command);
-  sprintf(command, "rm -f %s-patch-%s-%s.tar.gz", prodname, version, platname);
-  system(command);
-  sprintf(command, "rm -f %s-patch-%s-%s.tar.bz2", prodname, version, platname);
-  system(command);
+  sprintf(command, "%s.tar.gz", directory);
+  unlink(command);
+  sprintf(command, "%s-patch-%s-%s.tar.gz", prodname, version, platname);
+  unlink(command);
+
+ /*
+  * Create the output files...
+  */
 
   puts("Creating product files...");
 
@@ -463,7 +405,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   if ((swfile = fopen(line, "wb")) == NULL)
   {
-    fprintf(stderr, "makedist: Unable to create file \"%s\" -\n        %s\n",
+    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
             line, strerror(errno));
     return (1);
   }
@@ -475,7 +417,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   if ((pswfile = fopen(line, "wb")) == NULL)
   {
-    fprintf(stderr, "makedist: Unable to create file \"%s\" -\n        %s\n",
+    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
             line, strerror(errno));
     return (1);
   }
@@ -486,7 +428,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   if ((installfile = fopen(line, "w")) == NULL)
   {
-    fprintf(stderr, "makedist: Unable to create file \"%s\" -\n        %s\n",
+    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
             line, strerror(errno));
     return (1);
   }
@@ -497,7 +439,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   if ((removefile = fopen(line, "w")) == NULL)
   {
-    fprintf(stderr, "makedist: Unable to create file \"%s\" -\n        %s\n",
+    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
             line, strerror(errno));
     return (1);
   }
@@ -508,7 +450,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   if ((patchfile = fopen(line, "w")) == NULL)
   {
-    fprintf(stderr, "makedist: Unable to create file \"%s\" -\n        %s\n",
+    fprintf(stderr, "epm: Unable to create file \"%s\" -\n        %s\n",
             line, strerror(errno));
     return (1);
   }
@@ -535,7 +477,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("#!/bin/sh\n", installfile);
   fprintf(installfile, "# Installation script for %s version %s.\n", product,
           version);
-  fputs("# Produced using ESP packager 1.0; report problems to mike@easysw.com.\n",
+  fputs("# Produced using " EPM_VERSION "; report problems to mike@easysw.com.\n",
         installfile);
   fprintf(installfile, "#%%product %s\n", product);
   fprintf(installfile, "#%%copyright %s\n", copyright);
@@ -557,11 +499,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(installfile, "	echo \"software version %s on your system.\"\n", version);
   fputs("	echo \"\"\n", installfile);
   fputs("	while true ; do\n", installfile);
-#ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
+#ifdef HAVE_BROKEN_ECHO
   fputs("		echo -n \"Do you wish to continue? \"\n", installfile);
 #else
   fputs("		echo \"Do you wish to continue? \\c\"\n", installfile);
-#endif /* __linux */
+#endif /* HAVE_BROKEN_ECHO */
   fputs("		read yesno\n", installfile);
   fputs("		case \"$yesno\" in\n", installfile);
   fputs("			y | yes | Y | Yes | YES)\n", installfile);
@@ -578,11 +520,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(installfile, "	more %s.license\n", prodname);
   fputs("	echo \"\"\n", installfile);
   fputs("	while true ; do\n", installfile);
-#ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
+#ifdef HAVE_BROKEN_ECHO
   fputs("		echo -n \"Do you agree with the terms of this license? \"\n", installfile);
 #else
   fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", installfile);
-#endif /* __linux */
+#endif /* HAVE_BROKEN_ECHO */
   fputs("		read yesno\n", installfile);
   fputs("		case \"$yesno\" in\n", installfile);
   fputs("			y | yes | Y | Yes | YES)\n", installfile);
@@ -597,8 +539,8 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("		esac\n", installfile);
   fputs("	done\n", installfile);
   fputs("fi\n", installfile);
-  fprintf(installfile, "if test -x /etc/software/%s.remove; then\n", prodname);
-  fprintf(installfile, "	echo \"Please run /etc/software/%s.remove before installing the software.\"\n",
+  fprintf(installfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n", prodname);
+  fprintf(installfile, "	echo \"Please run " EPM_SOFTWARE "/%s.remove before installing the software.\"\n",
           prodname);
   fputs("	exit 1\n", installfile);
   fputs("fi\n", installfile);
@@ -611,7 +553,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   fputs("#!/bin/sh\n", patchfile);
   fprintf(patchfile, "# Patch script for %s version %s.\n", product, version);
-  fputs("# Produced using ESP packager 1.0; report problems to mike@easysw.com.\n",
+  fputs("# Produced using " EPM_VERSION "; report problems to mike@easysw.com.\n",
         patchfile);
   fprintf(patchfile, "#%%product %s\n", product);
   fprintf(patchfile, "#%%copyright %s\n", copyright);
@@ -633,11 +575,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(patchfile, "	echo \"software to version %s on your system.\"\n", version);
   fputs("	echo \"\"\n", patchfile);
   fputs("	while true ; do\n", patchfile);
-#ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
+#ifdef HAVE_BROKEN_ECHO
   fputs("		echo -n \"Do you wish to continue? \"\n", patchfile);
 #else
   fputs("		echo \"Do you wish to continue? \\c\"\n", patchfile);
-#endif /* __linux */
+#endif /* HAVE_BROKEN_ECHO */
   fputs("		read yesno\n", patchfile);
   fputs("		case \"$yesno\" in\n", patchfile);
   fputs("			y | yes | Y | Yes | YES)\n", patchfile);
@@ -654,11 +596,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(patchfile, "	more %s.license\n", prodname);
   fputs("	echo \"\"\n", patchfile);
   fputs("	while true ; do\n", patchfile);
-#ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
+#ifdef HAVE_BROKEN_ECHO
   fputs("		echo -n \"Do you agree with the terms of this license? \"\n", patchfile);
 #else
   fputs("		echo \"Do you agree with the terms of this license? \\c\"\n", patchfile);
-#endif /* __linux */
+#endif /* HAVE_BROKEN_ECHO */
   fputs("		read yesno\n", patchfile);
   fputs("		case \"$yesno\" in\n", patchfile);
   fputs("			y | yes | Y | Yes | YES)\n", patchfile);
@@ -674,7 +616,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("	done\n", patchfile);
   fputs("fi\n", patchfile);
 
-  fprintf(patchfile, "if test ! -x /etc/software/%s.remove; then\n", prodname);
+  fprintf(patchfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n", prodname);
   fputs("	echo \"You do not appear to have the base software installed!\"\n",
         patchfile);
   fputs("	echo \"Please install the full distribution instead.\"\n", patchfile);
@@ -703,7 +645,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("#!/bin/sh\n", removefile);
   fprintf(removefile, "# Removal script for %s version %s.\n", product,
           version);
-  fputs("# Produced using ESP packager 1.0; report problems to mike@easysw.com.\n",
+  fputs("# Produced using " EPM_VERSION "; report problems to mike@easysw.com.\n",
         removefile);
   fprintf(removefile, "#%%product %s\n", product);
   fprintf(removefile, "#%%copyright %s\n", copyright);
@@ -720,11 +662,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(removefile, "	echo \"software version %s from your system.\"\n", version);
   fputs("	echo \"\"\n", removefile);
   fputs("	while true ; do\n", removefile);
-#ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
+#ifdef HAVE_BROKEN_ECHO
   fputs("		echo -n \"Do you wish to continue? \"\n", removefile);
 #else
   fputs("		echo \"Do you wish to continue? \\c\"\n", removefile);
-#endif /* __linux */
+#endif /* HAVE_BROKEN_ECHO */
   fputs("		read yesno\n", removefile);
   fputs("		case \"$yesno\" in\n", removefile);
   fputs("			y | yes | Y | Yes | YES)\n", removefile);
@@ -773,14 +715,14 @@ main(int  argc,			/* I - Number of command-line arguments */
         sscanf(line + 10, "%s", src);
 
         fprintf(installfile, "#%s\n", line);
-        fprintf(installfile, "if test ! -f /etc/software/%s.remove; then\n", src);
+        fprintf(installfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n", src);
 	fprintf(installfile, "	echo Sorry, you must first install \\'%s\\'!\n",
 	        src);
 	fputs("	exit 1\n", installfile);
 	fputs("fi\n", installfile);
 
         fprintf(patchfile, "#%s\n", line);
-        fprintf(patchfile, "if test ! -f /etc/software/%s.remove; then\n", src);
+        fprintf(patchfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n", src);
 	fprintf(patchfile, "	echo Sorry, you must first install \\'%s\\'!\n",
 	        src);
 	fputs("	exit 1\n", patchfile);
@@ -791,14 +733,14 @@ main(int  argc,			/* I - Number of command-line arguments */
         sscanf(line + 10, "%s", src);
 
         fprintf(installfile, "#%s\n", line);
-        fprintf(installfile, "if test -f /etc/software/%s.remove; then\n", src);
+        fprintf(installfile, "if test -f " EPM_SOFTWARE "/%s.remove; then\n", src);
 	fprintf(installfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
 	        src);
 	fputs("	exit 1\n", installfile);
 	fputs("fi\n", installfile);
 
         fprintf(patchfile, "#%s\n", line);
-        fprintf(patchfile, "if test ! -f /etc/software/%s.remove; then\n",
+        fprintf(patchfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n",
 	        line + 10);
 	fprintf(patchfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
 	        line + 10);
@@ -812,7 +754,7 @@ main(int  argc,			/* I - Number of command-line arguments */
     if (sscanf(line, "%c%o%s%s%s%s", &type, &mode, user, group,
                tempdst, tempsrc) < 5)
     {
-      fprintf(stderr, "makedist: Bad line - %s\n", line);
+      fprintf(stderr, "epm: Bad line - %s\n", line);
       continue;
     }
 
@@ -852,13 +794,13 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    * Strip executables...
 	    */
 
-            sprintf(command, STRIP " 2>&1 >/dev/null", src);
+            sprintf(command, EPM_STRIP " %s 2>&1 >/dev/null", src);
 	    system(command);
 	  }
 
           if (stat(src, &srcstat))
 	  {
-	    fprintf(stderr, "makedist: Cannot stat %s - %s\n", src,
+	    fprintf(stderr, "epm: Cannot stat %s - %s\n", src,
 	            strerror(errno));
 	    continue;
 	  }
@@ -870,14 +812,14 @@ main(int  argc,			/* I - Number of command-line arguments */
 	  if (write_header(swfile, TAR_NORMAL, mode, srcstat.st_size,
 	                   srcstat.st_mtime, user, group, dst, NULL) < 0)
 	  {
-	    fprintf(stderr, "makedist: Error writing file header - %s\n",
+	    fprintf(stderr, "epm: Error writing file header - %s\n",
 	            strerror(errno));
 	    return (1);
 	  }
 
 	  if (write_file(swfile, src) < 0)
 	  {
-	    fprintf(stderr, "makedist: Error writing file data - %s\n",
+	    fprintf(stderr, "epm: Error writing file data - %s\n",
 	            strerror(errno));
 	    return (1);
 	  }
@@ -887,14 +829,14 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    if (write_header(pswfile, TAR_NORMAL, mode, srcstat.st_size,
 	                     srcstat.st_mtime, user, group, dst, NULL) < 0)
 	    {
-	      fprintf(stderr, "makedist: Error writing file header - %s\n",
+	      fprintf(stderr, "epm: Error writing file header - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
 
 	    if (write_file(pswfile, src) < 0)
 	    {
-	      fprintf(stderr, "makedist: Error writing file data - %s\n",
+	      fprintf(stderr, "epm: Error writing file data - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
@@ -908,7 +850,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	  if (write_header(swfile, TAR_DIR, mode, 0, deftime, user, group,
 	                   dst, NULL) < 0)
 	  {
-	    fprintf(stderr, "makedist: Error writing directory header - %s\n",
+	    fprintf(stderr, "epm: Error writing directory header - %s\n",
 	            strerror(errno));
 	    return (1);
 	  }
@@ -918,7 +860,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    if (write_header(pswfile, TAR_DIR, mode, 0, deftime, user, group,
 	                     dst, NULL) < 0)
 	    {
-	      fprintf(stderr, "makedist: Error writing directory header - %s\n",
+	      fprintf(stderr, "epm: Error writing directory header - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
@@ -934,7 +876,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	  if (write_header(swfile, TAR_SYMLINK, mode, 0, deftime, user, group,
 	                   dst, src) < 0)
 	  {
-	    fprintf(stderr, "makedist: Error writing link header - %s\n",
+	    fprintf(stderr, "epm: Error writing link header - %s\n",
 	            strerror(errno));
 	    return (1);
 	  }
@@ -944,7 +886,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    if (write_header(pswfile, TAR_SYMLINK, mode, 0, deftime, user, group,
 	                     dst, src) < 0)
 	    {
-	      fprintf(stderr, "makedist: Error writing link header - %s\n",
+	      fprintf(stderr, "epm: Error writing link header - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
@@ -998,7 +940,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   puts("Finishing removal script...");
 
-  fprintf(removefile, "rm -f /etc/software/%s.remove\n", prodname);
+  fprintf(removefile, "rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
 
  /*
   * Find any installation commands in the list file...
@@ -1008,18 +950,18 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   fputs("echo \"Installing software...\"\n", installfile);
   fprintf(installfile, "$tar %s.sw\n", prodname);
-  fputs("if test -d /etc/software; then\n", installfile);
-  fprintf(installfile, "	/bin/rm -f /etc/software/%s.remove\n", prodname);
+  fputs("if test -d " EPM_SOFTWARE "; then\n", installfile);
+  fprintf(installfile, "	/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
   fputs("else\n", installfile);
-  fputs("	/bin/mkdir -p /etc/software\n", installfile);
+  fputs("	/bin/mkdir -p " EPM_SOFTWARE "\n", installfile);
   fputs("fi\n", installfile);
-  fprintf(installfile, "/bin/cp %s.remove /etc/software\n", prodname);
+  fprintf(installfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
   fputs("echo \"Running post-installation commands...\"\n", installfile);
 
   fputs("echo \"Patching software...\"\n", patchfile);
   fprintf(patchfile, "$tar %s.psw\n", prodname);
-  fprintf(patchfile, "/bin/rm -f /etc/software/%s.remove\n", prodname);
-  fprintf(patchfile, "/bin/cp %s.remove /etc/software\n", prodname);
+  fprintf(patchfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  fprintf(patchfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
   fputs("echo \"Running post-installation commands...\"\n", patchfile);
 
   skip = 0;
@@ -1047,6 +989,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   printf("Creating distribution archive...");
   fflush(stdout);
+
   sprintf(command, "/bin/tar cf %s.tar %s/%s.install %s/%s.license "
                    "%s/%s.readme %s/%s.remove %s/%s.sw", directory,
 		   directory, prodname, directory, prodname,
@@ -1063,22 +1006,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   printf("Gzipping distribution archive...");
   fflush(stdout);
-  sprintf(command, "gzip -9 <%s.tar >%s.tar.gz", directory, directory);
+  sprintf(command, "gzip -9 %s.tar", directory);
   system(command);
 
   sprintf(line, "%s-%s-%s.tar.gz", prodname, version, platname);
-  stat(line, &srcstat);
-  if (srcstat.st_size > (1024 * 1024))
-    printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
-  else
-    printf(" %.0fk\n", srcstat.st_size / 1024.0);
-
-  printf("Bzipping distribution archive...");
-  fflush(stdout);
-  sprintf(command, "bzip2 -9 %s.tar", directory);
-  system(command);
-
-  sprintf(line, "%s-%s-%s.tar.bz2", prodname, version, platname);
   stat(line, &srcstat);
   if (srcstat.st_size > (1024 * 1024))
     printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
@@ -1110,23 +1041,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 
     printf("Gzipping patch archive...");
     fflush(stdout);
-    sprintf(command, "gzip -9 <%s-patch-%s-%s.tar >%s-patch-%s-%s.tar.gz",
-            prodname, version, platname, prodname, version, platname);
+    sprintf(command, "gzip -9 %s-patch-%s-%s.tar", prodname, version, platname);
     system(command);
 
     sprintf(line, "%s-patch-%s-%s.tar.gz", prodname, version, platname);
-    stat(line, &srcstat);
-    if (srcstat.st_size > (1024 * 1024))
-      printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
-    else
-      printf(" %.0fk\n", srcstat.st_size / 1024.0);
-
-    printf("Bzipping patch archive...");
-    fflush(stdout);
-    sprintf(command, "bzip2 -9 %s-patch-%s-%s.tar", prodname, version, platname);
-    system(command);
-
-    sprintf(line, "%s-patch-%s-%s.tar.bz2", prodname, version, platname);
     stat(line, &srcstat);
     if (srcstat.st_size > (1024 * 1024))
       printf(" %.1fM\n", srcstat.st_size / 1024.0 / 1024.0);
@@ -1157,12 +1075,12 @@ main(int  argc,			/* I - Number of command-line arguments */
  * 'get_line()' - Get a line from a file, filtering for uname lines...
  */
 
-static char *
-get_line(char           *buffer,
-         int            size,
-	 FILE           *fp,
-	 struct utsname *platform,
-	 int            *skip)
+static char *				/* O - String read or NULL at EOF */
+get_line(char           *buffer,	/* I - Buffer to read into */
+         int            size,		/* I - Size of buffer */
+	 FILE           *fp,		/* I - File to read from */
+	 struct utsname *platform,	/* I - Platform information */
+	 int            *skip)		/* IO - Skip lines? */
 {
   while (fgets(buffer, size, fp) != NULL)
   {
@@ -1174,7 +1092,7 @@ get_line(char           *buffer,
       continue;
 
    /*
-    * See if this is a %sysname line...
+    * See if this is a %system line...
     */
 
     if (strncmp(buffer, "%system ", 8) == 0)
@@ -1191,6 +1109,10 @@ get_line(char           *buffer,
     }
     else if (!*skip)
     {
+     /*
+      * Otherwise strip any trailing newlines and return the string!
+      */
+
       if (buffer[strlen(buffer) - 1] == '\n')
         buffer[strlen(buffer) - 1] = '\0';
 
@@ -1199,6 +1121,90 @@ get_line(char           *buffer,
   }
 
   return (NULL);
+}
+
+
+/*
+ * 'get_platform()' - Get the operating system information...
+ */
+
+static void
+get_platform(struct utsname *platform)	/* O - Platform info */
+{
+  char	*temp;				/* Temporary pointer */
+
+
+ /*
+  * Get the system identification information...
+  */
+
+  uname(platform);
+
+ /*
+  * Adjust the CPU type accordingly...
+  */
+
+#ifdef __sgi
+  strcpy(platform->machine, "mips");
+#elif defined(__hpux)
+  strcpy(platform->machine, "hppa");
+#else
+  for (temp = platform->machine; *temp != '\0'; temp ++)
+    if (*temp == '-' || *temp == '_')
+    {
+      strcpy(temp, temp + 1);
+      temp --;
+    }
+    else
+      *temp = tolower(*temp);
+
+  if (strstr(platform->machine, "86") != NULL)
+    strcpy(platform->machine, "intel");
+  else if (strncmp(platform->machine, "sun", 3) == 0)
+    strcpy(platform->machine, "sparc");
+#endif /* __sgi */
+
+ /*
+  * Remove any extra junk from the beginning of the release number -
+  * we just want the numbers thank you...
+  */
+
+  while (!isdigit(platform->release[0]) && platform->release[0])
+    strcpy(platform->release, platform->release + 1);
+
+ /*
+  * Convert the operating system name to lowercase, and strip out
+  * hyphens and underscores...
+  */
+
+  for (temp = platform->sysname; *temp != '\0'; temp ++)
+    if (*temp == '-' || *temp == '_')
+    {
+      strcpy(temp, temp + 1);
+      temp --;
+    }
+    else
+      *temp = tolower(*temp);
+
+ /*
+  * SunOS 5.x is really Solaris 2.x, and OSF1 is really Digital UNIX a.k.a.
+  * Compaq Tru64 UNIX...
+  */
+
+  if (strcmp(platform->sysname, "sunos") == 0 &&
+      platform->release[0] >= '5')
+  {
+    strcpy(platform->sysname, "solaris");
+    platform->release[0] -= 3;
+  }
+  else if (strcmp(platform->sysname, "osf1") == 0)
+    strcpy(platform->sysname, "dunix"); /* AKA Compaq Tru64 UNIX */
+
+#ifdef DEBUG
+  printf("sysname = %s\n", platform->sysname);
+  printf("release = %s\n", platform->release);
+  printf("machine = %s\n", platform->machine);
+#endif /* DEBUG */
 }
 
 
@@ -1239,24 +1245,104 @@ expand_name(char *buffer,	/* O - Output string */
 
 
 /*
+ * 'usage()' - Show command-line usage instructions.
+ */
+
+static void
+usage(void)
+{
+  puts("Usage: epm [-n[mrs]] [-g] [-p product-name] [-c copyright] [-l license]");
+  puts("           [-r readme] [-v version] [-V vendor] product [list-file]");
+  exit(1);
+}
+
+
+/*
+ * 'write_file()' - Write the contents of a file...
+ */
+
+static int			/* O - Number of bytes written */
+write_file(FILE *fp,		/* I - Tar file to write to */
+           char *filename)	/* I - File to write */
+{
+  FILE	*file;			/* File to write */
+  int	nbytes,			/* Number of bytes read */
+	tbytes,			/* Total bytes read/written */
+	fill;			/* Number of fill bytes needed */
+  char	buffer[8192];		/* Copy buffer */
+
+
+ /*
+  * Try opening the file...
+  */
+
+  if ((file = fopen(filename, "rb")) == NULL)
+    return (-1);
+
+ /*
+  * Copy the file to the tar file...
+  */
+
+  tbytes = 0;
+
+  while ((nbytes = fread(buffer, 1, sizeof(buffer), file)) > 0)
+  {
+   /*
+    * Zero fill the file to a 512 byte record as needed.
+    */
+
+    if (nbytes < sizeof(buffer))
+    {
+      fill = TAR_BLOCK - (nbytes & (TAR_BLOCK - 1));
+
+      if (fill < TAR_BLOCK)
+      {
+        memset(buffer + nbytes, 0, fill);
+        nbytes += fill;
+      }
+    }
+
+   /*
+    * Write the buffer to the file...
+    */
+
+    if (fwrite(buffer, 1, nbytes, fp) < nbytes)
+    {
+      fclose(file);
+      return (-1);
+    }
+
+    tbytes += nbytes;
+  }
+
+ /*
+  * Close the file and return...
+  */
+
+  fclose(file);
+  return (tbytes);
+}
+
+
+/*
  * 'write_header()' - Write a TAR header for the specified file...
  */
 
-static int
-write_header(FILE   *fp,
-             char   type,
-	     int    mode,
-	     int    size,
-             time_t mtime,
-	     char   *user,
-	     char   *group,
-	     char   *pathname,
-	     char   *linkname)
+static int			/* O - 0 on failure, 1 on success */
+write_header(FILE   *fp,	/* I - Tar file to write to */
+             char   type,	/* I - File type */
+	     int    mode,	/* I - File permissions */
+	     int    size,	/* I - File size */
+             time_t mtime,	/* I - File modification time */
+	     char   *user,	/* I - File owner */
+	     char   *group,	/* I - File group */
+	     char   *pathname,	/* I - File name */
+	     char   *linkname)	/* I - File link name (for links only) */
 {
   tar_t		record;		/* TAR header record */
   int		i,		/* Looping var... */
 		sum;		/* Checksum */
-  char		*sumptr;	/* Pointer into header record */
+  unsigned char	*sumptr;	/* Pointer into header record */
   struct passwd	*pwd;		/* Pointer to user record */
   struct group	*grp;		/* Pointer to group record */
 
@@ -1306,59 +1392,5 @@ write_header(FILE   *fp,
 
 
 /*
- * 'write_file()' - Write the contents of a file...
- */
-
-static int
-write_file(FILE *fp,
-           char *filename)
-{
-  FILE	*file;
-  int	nbytes, tbytes, fill;
-  char	buffer[8192];
-
-
-  if ((file = fopen(filename, "rb")) == NULL)
-    return (-1);
-
-  tbytes = 0;
-
-  while ((nbytes = fread(buffer, 1, sizeof(buffer), file)) > 0)
-  {
-    tbytes += nbytes;
-
-    if (nbytes < sizeof(buffer))
-    {
-      fill = TAR_BLOCK - (nbytes & (TAR_BLOCK - 1));
-
-      if (fill < TAR_BLOCK)
-      {
-        memset(buffer + nbytes, 0, fill);
-        nbytes += fill;
-      }
-    }
-
-    if (fwrite(buffer, 1, nbytes, fp) < nbytes)
-    {
-      fclose(file);
-      return (-1);
-    }
-  }
-
-  fclose(file);
-  return (tbytes);
-}
-
-
-static void
-usage(void)
-{
-  puts("Usage: makedist [-n[mrs]] [-g] [-p product-name] [-c copyright] [-l license]");
-  puts("                [-r readme] [-v version] [-V vendor] product [list-file]");
-  exit(1);
-}
-
-
-/*
- * End of "$Id: makedist.c,v 1.11 1999/06/16 16:30:42 mike Exp $".
+ * End of "$Id: epm.c,v 1.1 1999/06/21 14:25:16 mike Exp $".
  */

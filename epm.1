@@ -1,0 +1,198 @@
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
+
+NNAAMMEE
+       epm - create software packages
+
+SSYYNNOOPPSSIISS
+       eeppmm  [  -c _c_o_p_y_r_i_g_h_t ] [ -g ] [ -l _l_i_c_e_n_s_e ] -r _r_e_a_d_m_e ] [
+       -v _v_e_r_s_i_o_n ] [ -V _v_e_n_d_o_r ] product [ _l_i_s_t_f_i_l_e ]
+
+DDEESSCCRRIIPPTTIIOONN
+       eeppmm generates software packages  complete  with  installa-
+       tion,  removal,  and  (if necessary) patch scripts. Unless
+       otherwise specified, the files required  for  _p_r_o_d_u_c_t  are
+       read from a file named "_p_r_o_d_u_c_t.list".
+
+       Executable files in the distribution are normally stripped
+       of debugging information when packaged.  To  disable  this
+       functionality use the _-_g option.
+
+LLIISSTT FFIILLEESS
+       Each  product  has  an associated list file that describes
+       the files to include with the product. Comment lines begin
+       with  the  "#"  character and are ignored.  All other non-
+       blank lines must begin with a letter or the  percent  sign
+       ("%") as follows:
+
+       %copyright _c_o_p_y_r_i_g_h_t _n_o_t_i_c_e
+              Sets the copyright notice for the file.
+
+       %incompat _p_r_o_d_u_c_t
+              Indicates  that  this  product is incompatible with
+              the named product.
+
+       %install _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies a script or program to  be  run  after  all
+            files are installed.
+
+       %license _l_i_c_e_n_s_e _f_i_l_e
+            Specifies   the  file  to  display  as  the  software
+            license.
+
+       %patch _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies a script or program to  be  run  after  all
+            files are patched.
+
+       %product _p_r_o_d_u_c_t _n_a_m_e
+            Specifies the product name.
+
+       %readme _r_e_a_d_m_e _f_i_l_e
+            Specifies a README file to be included in the distri-
+            bution.
+
+       %remove _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
+            Specifies a script or program to be run before remov-
+            ing or patching files.
+
+
+
+
+21 June 1999           ESP Package Manager                      1
+
+
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
+
+       %vendor _v_e_n_d_o_r _o_r _a_u_t_h_o_r _n_a_m_e
+            Specifies the vendor or author of the product.
+
+       %version _v_e_r_s_i_o_n _n_u_m_b_e_r
+            Specifies the version number of the product.
+
+       %system _o_p_e_r_a_t_i_n_g _s_y_s_t_e_m _n_a_m_e_(_s_)
+            Specifies  that  the  following  files should only be
+            used for the specified operating system names.
+
+       %system all
+            Specifies that the following files are applicable  to
+            all operating systems.
+
+       f _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+
+       F _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+            Specifies  a  file  for installation. The second form
+            specifies that the file has changed  or  is  new  and
+            should be included as part of a patch.
+
+       c _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+
+       C _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+            Specifies  a configuration file for installation. The
+            second form specifies that the file has changed or is
+            new  and  should be included as part of a patch. Con-
+            figuration files are installed as "destination.N"  if
+            the destination already exists.
+
+       d _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
+
+       D _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
+            Specifies   a   directory   should  be  created  when
+            installing the software. The  second  form  specifies
+            that  the  directory is new and should be included as
+            part of a patch.
+
+       l _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+
+       L _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+            Specifies a symbolic link in  the  installation.  The
+            second form specifies that the link has changed or is
+            new and should be included as part of a patch.
+
+CCOOPPYYRRIIGGHHTT
+       Copyright 1999  by  Easy  Software  Products,  All  Rights
+       Reserved.
+
+       This  program  is  free  software; you can redistribute it
+       and/or modify it under the terms of the GNU General Public
+       License  as  published  by  the  Free Software Foundation;
+       either version 2, or (at your option) any later version.
+
+
+
+
+21 June 1999           ESP Package Manager                      2
+
+
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
+
+       This program is distributed in the hope that  it  will  be
+       useful, but WITHOUT ANY WARRANTY; without even the implied
+       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
+       PURPOSE.   See  the  GNU  General  Public License for more
+       details.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+21 June 1999           ESP Package Manager                      3
+
+
