@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.13 2001/09/02 12:44:03 mike Exp $"
+ * "$Id: deb.c,v 1.14 2001/09/19 15:52:17 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -38,7 +38,8 @@ make_deb(const char     *prodname,	/* I - Product short name */
          dist_t         *dist,		/* I - Distribution information */
 	 struct utsname *platform)	/* I - Platform information */
 {
-  int			i;		/* Looping var */
+  int			i, j;		/* Looping vars */
+  const char		*header;	/* Dependency header string */
   FILE			*fp;		/* Control file */
   char			name[1024];	/* Full product name */
   char			filename[1024];	/* Destination filename */
@@ -49,10 +50,10 @@ make_deb(const char     *prodname,	/* I - Product short name */
   struct group		*grp;		/* Pointer to group record */
   static const char	*depends[] =	/* Dependency names */
 			{
-			  "Depends",
-			  "Conflicts",
-			  "Replaces",
-			  "Provides"
+			  "Depends:",
+			  "Conflicts:",
+			  "Replaces:",
+			  "Provides:"
 			};
 
 
@@ -113,19 +114,30 @@ make_deb(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_descriptions; i ++)
     fprintf(fp, " %s\n", dist->descriptions[i]);
 
-  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+  for (j = DEPEND_REQUIRES; j <= DEPEND_PROVIDES; j ++)
   {
-    fprintf(fp, "%s: %s", depends[(int)d->type], d->product);
+    for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+      if (d->type == j)
+	break;
 
-    if (d->vernumber[0] == 0)
+    if (i)
     {
-      if (d->vernumber[1] < INT_MAX)
-        fprintf(fp, " (<= %s)\n", d->version[1]);
-      else
-        putc('\n', fp);
+      for (header = depends[j]; i > 0; i --, d ++, header = ",")
+	if (d->type == j)
+	{
+          fprintf(fp, "%s %s", header, d->product);
+
+	  if (d->vernumber[0] == 0)
+	  {
+	    if (d->vernumber[1] < INT_MAX)
+              fprintf(fp, " (<= %s)", d->version[1]);
+	  }
+	  else
+	    fprintf(fp, " (>= %s, <= %s)", d->version[0], d->version[1]);
+	}
+
+      putc('\n', fp);
     }
-    else
-      fprintf(fp, " (>= %s, <= %s)\n", d->version[0], d->version[1]);
   }
 
   fclose(fp);
@@ -411,5 +423,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.13 2001/09/02 12:44:03 mike Exp $".
+ * End of "$Id: deb.c,v 1.14 2001/09/19 15:52:17 mike Exp $".
  */
