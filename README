@@ -88,10 +88,12 @@ WHAT'S NEW IN EPM 2.1.1?
     EPM 2.1.1 adds the following features, fixes, and changes to
     EPM 2.1:
 
-        - Updated the BuildRoot directive in RPM spec files to be an
-	  absolute path; RedHat 6.2's version of RPM adds a leading
-	  slash otherwise.
+	- Updated the BuildRoot directive in RPM spec files to
+	  be an absolute path; RedHat 6.2's version of RPM adds
+	  a leading slash otherwise.
 	- IRIX defaults to run level 2...
+	- The setup GUI now displays an error message if run by
+	  a non-root user.
 
 
 WHAT'S NEW IN EPM 2.1?
@@ -99,8 +101,8 @@ WHAT'S NEW IN EPM 2.1?
     EPM 2.1 adds the following features, fixes, and changes to
     EPM 2.0:
 
-	- Moved setup program to /usr/lib/epm ($prefix/lib/epm) to
-	  avoid name clash with RedHat setup program.
+	- Moved setup program to /usr/lib/epm ($prefix/lib/epm)
+	  to avoid name clash with RedHat setup program.
 	- Added Debian distribution files from Jeff Licquia.
 	- Configure script changes for GCC 2.95.x and Solaris.
 	- Portability fixes.
