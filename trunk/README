@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 1.3
+README - ESP Package Manager (EPM) 1.4
 --------------------------------------
 
 WHAT IS EPM?
@@ -71,6 +71,16 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
 
     No!  EPM is free software and any installations you create are
     unencumbered by licensing of any kind (not even the GPL.)
+
+
+WHAT'S NEW IN EPM 1.4?
+
+    EPM 1.4 adds the following features and fixes to EPM 1.3:
+
+	- Now map group "sys" to "system" for Digital UNIX and "root" for
+	  Linux.
+	- The initialization script installation now checks for the presence
+	  of run levels 4 and 5.
 
 
 WHAT'S NEW IN EPM 1.3?
