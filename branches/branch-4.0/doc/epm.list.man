@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.list.man,v 1.5.2.2 2003/01/03 20:23:25 mike Exp $"
+.\" "$Id: epm.list.man,v 1.5.2.3 2003/01/04 05:33:16 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM) list file format.
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm.list 5 "ESP Package Manager" "18 October 2003" "Easy Software Products"
+.TH epm.list 5 "ESP Package Manager" "18 October 2002" "Easy Software Products"
 .SH NAME
 epm.list \- epm list file format.
 .SH DESCRIPTION
@@ -339,5 +339,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.list.man,v 1.5.2.2 2003/01/03 20:23:25 mike Exp $".
+.\" End of "$Id: epm.list.man,v 1.5.2.3 2003/01/04 05:33:16 mike Exp $".
 .\"
