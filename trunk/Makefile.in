@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.12 2001/02/28 22:30:55 mike Exp $"
+# "$Id: Makefile.in,v 1.13 2001/03/11 15:01:51 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -27,6 +27,7 @@ CXX	=	@CXX@
 MKDIR	=	@MKDIR@ -p
 RM	=	@RM@ -f
 SHELL	=	/bin/sh
+STRIP	=	@STRIP@
 
 
 #
@@ -204,5 +205,5 @@ Fl_Check_Browser.o:	Fl_Check_Browser.h
 $(OBJS):	Makefile config.h
 
 #
-# End of "$Id: Makefile.in,v 1.12 2001/02/28 22:30:55 mike Exp $".
+# End of "$Id: Makefile.in,v 1.13 2001/03/11 15:01:51 mike Exp $".
 #
