@@ -1,5 +1,7 @@
 TODO for EPM:
 
+	- Support long filenames (>100 chars) + warning when
+	  creating the tar file.
 	- "%subpackage foo" to tag files, descriptions,
 	  dependencies etc. for a subpackage.
 	- "epm --build ..." to build software from source and
