@@ -104,7 +104,7 @@ To select software for installation, please click on the "Next" button below.}
         }
       }
       Fl_Group SoftwarePane {open
-        xywh {10 10 560 285} box FLAT_BOX
+        xywh {10 10 560 285} box FLAT_BOX hide
       } {
         Fl_Box {} {
           label {Software Selection}
@@ -136,6 +136,21 @@ list_cb(0,0);}
         Fl_Box SoftwareSize {
           label {0k marked for installation.}
           xywh {40 260 320 35} box FLAT_BOX align 20
+        }
+      }
+      Fl_Group ConfirmPane {open
+        xywh {10 10 560 280} box FLAT_BOX
+      } {
+        Fl_Box {} {
+          label {Confirm Installation}
+          xywh {10 10 560 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+        }
+        Fl_Box {} {
+          label {You have selected the software below for installation. Click on the "Next" button to start the software installation. Click on the "Back" button to change your selections.} selected
+          xywh {40 55 500 50} align 149
+        }
+        Fl_Browser ConfirmList {
+          xywh {40 110 500 180}
         }
       }
       Fl_Group LicensePane {open
@@ -183,7 +198,7 @@ list_cb(0,0);}
     }
     Fl_Button PrevButton {
       label {prev.xbm}
-      callback {Wizard->prev();} selected
+      callback {Wizard->prev();}
       xywh {380 310 55 25} labeltype image
     }
   }
