@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.15 2004/03/05 05:24:34 mike Exp $"
+.\" "$Id: epm.man,v 1.16 2004/04/21 19:25:19 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -81,7 +81,7 @@ for MacOS X. All other operating systems default to the
 .TP 5
 osx
 .br
-Generate a MacOS X software package. These are used primarily under Solaris.
+Generate a MacOS X software package.
 .TP 5
 pkg
 .br
@@ -175,5 +175,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.15 2004/03/05 05:24:34 mike Exp $".
+.\" End of "$Id: epm.man,v 1.16 2004/04/21 19:25:19 mike Exp $".
 .\"
