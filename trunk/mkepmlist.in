@@ -1,11 +1,11 @@
 #!@PERL@
 #
-# "$Id: mkepmlist.in,v 1.4 2001/12/28 23:07:44 mike Exp $"
+# "$Id: mkepmlist.in,v 1.5 2002/01/02 20:39:40 mike Exp $"
 #
 #   List file generation utility for the ESP Package Manager (EPM).
 #
-#   Copyright 2001 by Christian Lademann (lademann@zls.de) and
-#   Easy Software Products.
+#   Copyright 2001-2002 by Easy Software Products.
+#   Copyright 2001 by Christian Lademann (lademann@zls.de)
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -226,5 +226,5 @@ if ($basedir eq "")
 }
 
 #
-# End of "$Id: mkepmlist.in,v 1.4 2001/12/28 23:07:44 mike Exp $".
+# End of "$Id: mkepmlist.in,v 1.5 2002/01/02 20:39:40 mike Exp $".
 #

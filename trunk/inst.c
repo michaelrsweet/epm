@@ -1,9 +1,9 @@
 /*
- * "$Id: inst.c,v 1.19 2001/10/31 20:31:08 mike Exp $"
+ * "$Id: inst.c,v 1.20 2002/01/02 20:39:40 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2001 by Easy Software Products.
+ *   Copyright 1999-2002 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -591,5 +591,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.19 2001/10/31 20:31:08 mike Exp $".
+ * End of "$Id: inst.c,v 1.20 2002/01/02 20:39:40 mike Exp $".
  */
