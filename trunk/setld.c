@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.6 2001/04/27 12:18:37 mike Exp $"
+ * "$Id: setld.c,v 1.7 2001/04/27 12:21:43 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -148,6 +148,13 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
  /*
   * Build package directories...
+  *
+  * Note: The src/scps directory and the key, inventory, and
+  *       subset control programs below should actually go in
+  *       a data subdirectory according to the Tru64
+  *       documentation, but (at least under 4.0d) the invcutter
+  *       program will not be able to find the distribution files
+  *       if they are not colocated with these data files.
   */
 
   if (Verbosity)
@@ -417,5 +424,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.6 2001/04/27 12:18:37 mike Exp $".
+ * End of "$Id: setld.c,v 1.7 2001/04/27 12:21:43 mike Exp $".
  */
