@@ -2312,7 +2312,7 @@ if test x$fltklibs != x -a x$ac_cv_prog_CXX != x; then
 	INSTALL_SETUP="install-setup"
 	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 	SETUP="setup"
-	SETUPLIBS="$fltklibs/libfltk.a -lXext -lX11"
+	SETUPLIBS="$fltklibs/libfltk.a -lX11"
 else
 	INSTALL_SETUP=""
 	LIST_SETUP=""

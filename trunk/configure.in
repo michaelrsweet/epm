@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.24 2001/03/26 20:11:08 mike Exp $"
+dnl "$Id: configure.in,v 1.25 2001/04/15 12:24:03 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -163,7 +163,7 @@ if test x$fltklibs != x -a x$ac_cv_prog_CXX != x; then
 	INSTALL_SETUP="install-setup"
 	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 	SETUP="setup"
-	SETUPLIBS="$fltklibs/libfltk.a -lXext -lX11"
+	SETUPLIBS="$fltklibs/libfltk.a -lX11"
 else
 	INSTALL_SETUP=""
 	LIST_SETUP=""
@@ -337,5 +337,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.24 2001/03/26 20:11:08 mike Exp $".
+dnl End of "$Id: configure.in,v 1.25 2001/04/15 12:24:03 mike Exp $".
 dnl
