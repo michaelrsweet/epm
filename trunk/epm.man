@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.14 2000/11/10 18:12:48 mike Exp $"
+.\" "$Id: epm.man,v 1.15 2000/12/01 14:44:16 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "10 November 2000" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "31 November 2000" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -139,6 +139,10 @@ Specifies a script or program to be run after all files are installed.
 .br
 Specifies the file to display as the software license.
 .TP 5
+%packager \fIname of packager\fR
+.br
+Specifies the name of the packager.
+.TP 5
 %patch \fIscript or program\fR
 .br
 Specifies a script or program to be run after all files are patched.
@@ -253,5 +257,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.14 2000/11/10 18:12:48 mike Exp $".
+.\" End of "$Id: epm.man,v 1.15 2000/12/01 14:44:16 mike Exp $".
 .\"

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.6 2000/01/05 16:58:01 mike Exp $"
+ * "$Id: epm.h,v 1.7 2000/12/01 14:44:16 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -129,6 +129,7 @@ typedef struct				/**** Distribution Structure ****/
 		version[256],		/* Product version string */
 		copyright[256],		/* Product copyright */
 		vendor[256],		/* Vendor name */
+		packager[256],		/* Packager name */
 		license[256],		/* License file to copy */
 		readme[256];		/* README file to copy */
   int		num_descriptions;	/* Number of description strings */
@@ -200,5 +201,5 @@ extern int	tar_header(tarf_t *tar, char type, int mode, int size,
 extern tarf_t	*tar_open(const char *filename, int compress);
 
 /*
- * End of "$Id: epm.h,v 1.6 2000/01/05 16:58:01 mike Exp $".
+ * End of "$Id: epm.h,v 1.7 2000/12/01 14:44:16 mike Exp $".
  */

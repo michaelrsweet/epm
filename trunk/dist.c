@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.8 2000/08/22 13:41:07 mike Exp $"
+ * "$Id: dist.c,v 1.9 2000/12/01 14:44:16 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -212,6 +212,13 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  else
 	    fputs("epm: Ignoring %vendor line in list file.\n", stderr);
 	}
+	else if (strcmp(line, "%packager") == 0)
+	{
+          if (!dist->packager[0])
+            strcpy(dist->packager, temp);
+	  else
+	    fputs("epm: Ignoring %packager line in list file.\n", stderr);
+	}
 	else if (strcmp(line, "%license") == 0)
 	{
           if (!dist->license[0])
@@ -292,6 +299,16 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
     listlevel --;
   }
   while (listlevel >= 0);
+
+  if (!dist->packager[0])
+  {
+   /*
+    * Assign a default packager name...
+    */
+
+    gethostname(buf, sizeof(buf));
+    sprintf(dist->packager, "%s@%s", getlogin(), buf);
+  }
 
   return (dist);
 }
@@ -515,5 +532,5 @@ expand_name(char *buffer,	/* O - Output string */
 
 
 /*
- * End of "$Id: dist.c,v 1.8 2000/08/22 13:41:07 mike Exp $".
+ * End of "$Id: dist.c,v 1.9 2000/12/01 14:44:16 mike Exp $".
  */
