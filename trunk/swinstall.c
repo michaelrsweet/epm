@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.12 2001/03/26 16:18:47 mike Exp $"
+ * "$Id: swinstall.c,v 1.13 2001/03/26 20:11:09 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -60,7 +60,15 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating swinstall distribution...");
 
-  if (platname[0])
+  if (dist->relnumber)
+  {
+    if (platname[0])
+      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+              platname);
+    else
+      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+  }
+  else if (platname[0])
     sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
   else
     sprintf(name, "%s-%s", prodname, dist->version);
@@ -490,5 +498,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.12 2001/03/26 16:18:47 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.13 2001/03/26 20:11:09 mike Exp $".
  */

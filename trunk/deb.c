@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.8 2001/03/26 16:18:46 mike Exp $"
+ * "$Id: deb.c,v 1.9 2001/03/26 20:11:08 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -59,7 +59,15 @@ make_deb(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating DEB distribution...");
 
-  if (platname[0])
+  if (dist->relnumber)
+  {
+    if (platname[0])
+      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+              platname);
+    else
+      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+  }
+  else if (platname[0])
     sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
   else
     sprintf(name, "%s-%s", prodname, dist->version);
@@ -405,5 +413,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.8 2001/03/26 16:18:46 mike Exp $".
+ * End of "$Id: deb.c,v 1.9 2001/03/26 20:11:08 mike Exp $".
  */

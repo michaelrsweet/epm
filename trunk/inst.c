@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.14 2001/03/26 16:18:47 mike Exp $"
+ * "$Id: inst.c,v 1.15 2001/03/26 20:11:09 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -78,7 +78,15 @@ make_inst(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating inst distribution...");
 
-  if (platname[0])
+  if (dist->relnumber)
+  {
+    if (platname[0])
+      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+              platname);
+    else
+      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+  }
+  else if (platname[0])
     sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
   else
     sprintf(name, "%s-%s", prodname, dist->version);
@@ -599,5 +607,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.14 2001/03/26 16:18:47 mike Exp $".
+ * End of "$Id: inst.c,v 1.15 2001/03/26 20:11:09 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.27 2001/03/20 17:16:13 mike Exp $"
+ * "$Id: dist.c,v 1.28 2001/03/26 20:11:08 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -444,7 +444,18 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	    }
 	    else
 	      dist->vernumber = get_vernumber(dist->version);
+
+            if ((temp = strrchr(dist->version, '-')) != NULL)
+	    {
+	      *temp++ = '\0';
+	      dist->relnumber = atoi(temp);
+	    }
 	  }
+	}
+	else if (strcmp(line, "%release") == 0 && dist->relnumber == 0)
+	{
+	  dist->relnumber = atoi(temp);
+	  dist->vernumber += dist->relnumber;
 	}
 	else if (strcmp(line, "%incompat") == 0)
 	  add_depend(dist, DEPEND_INCOMPAT, temp);
@@ -1049,5 +1060,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.27 2001/03/20 17:16:13 mike Exp $".
+ * End of "$Id: dist.c,v 1.28 2001/03/26 20:11:08 mike Exp $".
  */
