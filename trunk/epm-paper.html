@@ -325,6 +325,12 @@ $bindir=$exec_prefix/bin
 defined, so be careful with the ordering of your variable
 definitions.
 
+<P>Also, any variables you specify in your list file will be
+overridden by variables defined on the command-line or in your
+environment, just like with <CODE>make</CODE>. This can be a
+useful feature or a curse, depending on your choice of variable
+names.
+
 <P>As you can see, variables are referenced using the dollar
 sign (<CODE>$</CODE>). As with most shells, variable names can
 be surrounded by curly braces (<CODE>${variable}</CODE>) to
