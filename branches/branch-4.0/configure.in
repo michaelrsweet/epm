@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.52.2.3 2002/05/06 04:11:06 mike Exp $"
+dnl "$Id: configure.in,v 1.52.2.4 2002/06/04 20:34:53 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -282,6 +282,11 @@ if test "$prefix" = "NONE"; then
 	prefix="/usr"
 fi
 
+dnl Fix "exec_prefix" variable if it hasn't been specified...
+if test "$exec_prefix" = "NONE"; then
+	exec_prefix="$prefix"
+fi
+
 dnl Fix "mandir" variable if it hasn't been specified...
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
@@ -369,5 +374,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52.2.3 2002/05/06 04:11:06 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52.2.4 2002/06/04 20:34:53 mike Exp $".
 dnl
