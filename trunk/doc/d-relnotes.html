@@ -15,8 +15,8 @@ EPM software.</P>
 	architectures (e.g. i586, i686, ultrasparc, etc.)
 	<LI>Added support for the *BSD package format using
 	pkg_create.
-	<LI>Added experimental support for the AIX package format
-	using backup.
+	<LI>Added support for the AIX package format using
+	the backup program.
 	<LI>Added new epminstall utility to build list files
 	from "make install" targets.
 	<LI>Added snprintf/vsnprintf functions for systems that
@@ -24,6 +24,11 @@ EPM software.</P>
 	for all formatted strings that aren't just numbers.
 	<LI>Added new run_command() function to replace use of
 	system() function.
+	<LI>Added new %provides directive.
+	<LI>Revamped the setup GUI, including support for
+	installation types in the setup GUI, so that you can
+	select groups of products or choose a custom
+	installation.
 	<LI>The mkepmlist utility had a bad regular expression
 	that thought that any argument (directory names, etc.)
 	with a dash ("-") in it was an unsupported option.
@@ -33,7 +38,7 @@ EPM software.</P>
 	config file (instead of moving it), so that an
 	unchanged config file can be detected and removed.
 	This provides the best of both worlds: unchanged
-	config files are updated automatically by an
+	config files are update automatically by an
 	upgrade/install, while changed ones are preserved.
 
 </UL>
