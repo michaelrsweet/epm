@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.62 2002/12/17 18:57:54 swdev Exp $"
+dnl "$Id: configure.in,v 1.63 2003/01/24 02:58:12 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=3.5.2
-VERNUMBER=352
+VERSION=3.6.0
+VERNUMBER=360
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -133,6 +133,10 @@ else
 	SETUP="setup"
 	SETUP_LIBS="`$FLTKCONFIG --ldstaticflags`"
 	INSTALL_SETUP="install-setup"
+
+	if test "$uname" = Darwin; then
+		SETUP_LIBS="$SETUP_LIBS -framework Security"
+	fi
 fi
 
 AC_SUBST(INSTALL_SETUP)
@@ -368,5 +372,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.62 2002/12/17 18:57:54 swdev Exp $".
+dnl End of "$Id: configure.in,v 1.63 2003/01/24 02:58:12 mike Exp $".
 dnl
