@@ -83,6 +83,29 @@ of the software:</P>
 %postremove echo Command after removing
 </PRE></UL>
 
+<P>To include an external script file, use the
+<CODE>&lt;filename</CODE> notation:</P>
+
+<UL><PRE>
+%postinstall &lt;filename
+</PRE></UL>
+
+<P>To include multiple lines directly, use the
+<CODE>&lt;&lt;string</CODE> notation:</P>
+
+<UL><PRE>
+%postinstall &lt;&lt;EOF
+echo Command before installing
+/usr/bin/foo
+EOF
+</PRE></UL>
+
+<P>Note that all commands specified in the list file will use
+the variable expansion provided by EPM, so be sure to quote any
+dollar sign (<CODE>$</CODE>) characters in your commands. For
+example, "$foo" is replaced by the value of "foo", but "$$foo"
+becomes "$foo".</P>
+
 <H2>Conditional Directives</H2>
 
 <P>The <CODE>%system</CODE> directive can match or not match
@@ -129,6 +152,15 @@ used:
 	<DD>Include the following files for all types of distributions.
 
 </DL>
+
+<P>Finally, EPM can conditionally include lines using the
+<CODE>%if</CODE>, <CODE>%elseif</CODE>, <CODE>%ifdef</CODE>,
+<CODE>%elseifdef</CODE>, <CODE>%else</CODE>, and
+<CODE>%endif</CODE> directives. <CODE>%if</CODE> directives
+include the text that follows if the named variable(s) are
+defined to a non-empty string, while <CODE>%ifdef</CODE>
+directives only include the text if the named variable(s) are
+defined to any value.</P>
 
 <H2>Software Patches</H2>
 

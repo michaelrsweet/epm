@@ -6,6 +6,45 @@
 <P>This appendix lists the change log for each release of the
 EPM software.</P>
 
+<H2>Changes in EPM v3.1</H2>
+
+<UL>
+
+	<LI>Added support for "&lt;&lt;end ... end" and "&lt;filename" to
+	insert descriptions and commands in-line and from a
+	file.
+
+	<LI>Added new --software-dir option which specifies the
+	location of the EPM software directory (default
+	/etc/software).
+
+	<LI>Added new %if, %ifdef, %elseif, %elseifdef, %else, and
+	%endif directives for list files (addition contributed
+	by J. Nordell.)
+
+	<LI>The GUI setup program left the "Next" button enabled
+	after the license check.
+
+	<LI>Fixed the dependency strings created for HP-UX
+	swinstall (fix contributed by R. Begg.)
+
+	<LI>Wasn't installing the man pages in section 5.
+
+	<LI>When generating Debian packages, the DEBIAN directory
+	might not have the correct permissions due to a
+	restrictive umask.  EPM now forces the correct
+	permissions for the package archive.
+
+	<LI>HP-UX swinstall packages now use the prerequisites
+	rule instead of corequisites to ensure that the
+	%requires dependency is enforced.
+
+	<LI>Dependencies for Debian packages are now listed on a
+	single line per type rather than one line per
+	dependency.
+
+</UL>
+
 <H2>Changes in EPM v3.0</H2>
 
 <UL>

@@ -48,6 +48,24 @@ supported by <I>EPM</I>:</P>
 	distribution format is not the same as
 	<I>format</I>.</DD>
 
+	<DT>%if <I>variable</I> [... variable]</I><BR>
+	%if !<I>variable</I> [... variable]</I><BR>
+	%ifdef <I>variable</I> [... variable]</I><BR>
+	%ifdef !<I>variable</I> [... variable]</I><BR>
+	%elseif <I>variable</I> [... variable]</I><BR>
+	%elseif !<I>variable</I> [... variable]</I><BR>
+	%elseifdef <I>variable</I> [... variable]</I><BR>
+	%elseifdef !<I>variable</I> [... variable]</I><BR>
+	%else<BR>
+	%endif</DT>
+
+	<DD>Conditionally includes lines in the list file. The
+	<I>%if</I> lines include the lines that follow if the
+	named variables are (not) defined with a value. The
+	<I>%ifdef</I> lines include the lines that follow if the
+	named variables are (not) defined with any value. These
+	conditional lines cannot be nested.</DT>
+
 	<DT>%include <I>filename</I></DT>
 
 	<DD>Includes files listed in <I>filename</I>.</DD>
@@ -80,31 +98,43 @@ supported by <I>EPM</I>:</P>
 	files are patched. (This has been obsoleted by the
 	%postpatch directive)</DD>
 
-	<DT>%postinstall <I>script or program</I></DT>
+	<DT>%postinstall <I>script or program</I><BR>
+	%postinstall &lt;<I>scriptfile</I><BR>
+	%postinstall &lt;&lt;<I>string</I></DT>
 
 	<DD>Specifies a script or program to be run after all
 	files are installed.</DD>
 
-	<DT>%postpatch <I>script or program</I></DT>
+	<DT>%postpatch <I>script or program</I><BR>
+	%postpatch &lt;<I>scriptfile</I><BR>
+	%postpatch &lt;&lt;<I>string</I></DT>
 
 	<DD>Specifies a script or program to be run after all
 	files are patched.</DD>
 
-	<DT>%postremove <I>script or program</I></DT>
+	<DT>%postremove <I>script or program</I><BR>
+	%postremove &lt;<I>scriptfile</I><BR>
+	%postremove &lt;&lt;<I>string</I></DT>
 
 	<DD>Specifies a script or program to be run after removing files.</DD>
 
-	<DT>%preinstall <I>script or program</I></DT>
+	<DT>%preinstall <I>script or program</I><BR>
+	%preinstall &lt;<I>scriptfile</I><BR>
+	%preinstall &lt;&lt;<I>string</I></DT>
 
 	<DD>Specifies a script or program to be run before all
 	files are installed.</DD>
 
-	<DT>%prepatch <I>script or program</I></DT>
+	<DT>%prepatch <I>script or program</I><BR>
+	%prepatch &lt;<I>scriptfile</I><BR>
+	%prepatch &lt;&lt;<I>string</I></DT>
 
 	<DD>Specifies a script or program to be run before all
 	files are patched.</DD>
 
-	<DT>%preremove <I>script or program</I></DT>
+	<DT>%preremove <I>script or program</I><BR>
+	%preremove &lt;<I>scriptfile</I><BR>
+	%preremove &lt;&lt;<I>string</I></DT>
 
 	<DD>Specifies a script or program to be run before removing files.</DD>
 
@@ -239,9 +269,11 @@ occur when the variable name is referenced with the dollar sign
 ($):</P>
 
 <UL><PRE>
-%install echo What is your name:
-%install read $$name
-%install echo Your name is $$name
+%postinstall &lt;&lt;EOF
+echo What is your name:
+read $$name
+echo Your name is $$name
+EOF
 
 f 0555 root sys ${bindir}/foo foo
 f 0555 root sys $datadir/foo/foo.dat foo.dat

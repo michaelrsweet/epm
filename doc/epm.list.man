@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.list.man,v 1.3 2001/07/02 14:26:55 mike Exp $"
+.\" "$Id: epm.list.man,v 1.4 2001/09/19 17:02:45 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM) list file format.
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm.list 5 "ESP Package Manager" "20 June 2001" "Easy Software Products"
+.TH epm.list 5 "ESP Package Manager" "19 September 2001" "Easy Software Products"
 .SH NAME
 epm.list \- epm list file format.
 .SH DESCRIPTION
@@ -50,6 +50,32 @@ the same as \fIformat\fR.
 Uses following files and directives only if the distribution format is
 not the same as \fIformat\fR.
 .TP 5
+%if \fIvariable\fR [... variable]\fR
+.TP 5
+%if !\fIvariable\fR [... variable]\fR
+.TP 5
+%ifdef \fIvariable\fR [... variable]\fR
+.TP 5
+%ifdef !\fIvariable\fR [... variable]\fR
+.TP 5
+%elseif \fIvariable\fR [... variable]\fR
+.TP 5
+%elseif !\fIvariable\fR [... variable]\fR
+.TP 5
+%elseifdef \fIvariable\fR [... variable]\fR
+.TP 5
+%elseifdef !\fIvariable\fR [... variable]\fR
+.TP 5
+%else
+.TP 5
+%endif
+.br
+Conditionally includes lines in the list file. The \fI%if\fR
+lines include the lines that follow if the named variables are
+(not) defined with a value. The \fI%ifdef\fR lines include the
+lines that follow if the named variables are (not) defined with
+any value. These conditional lines cannot be nested.
+.TP 5
 %include \fIfilename\fR
 .br
 Includes files listed in \fIfilename\fR.
@@ -80,26 +106,50 @@ Specifies a script or program to be run after all files are patched.
 (This has been obsoleted by the %postpatch directive)
 .TP 5
 %postinstall \fIscript or program\fR
+.TP 5
+%postinstall <\fIscriptfile\fR
+.TP 5
+%postinstall <<\fIstring\fR
 .br
 Specifies a script or program to be run after all files are installed.
 .TP 5
 %postpatch \fIscript or program\fR
+.TP 5
+%postpatch <\fIscriptfile\fR
+.TP 5
+%postpatch <<\fIstring\fR
 .br
 Specifies a script or program to be run after all files are patched.
 .TP 5
 %postremove \fIscript or program\fR
+.TP 5
+%postremove <\fIscriptfile\fR
+.TP 5
+%postremove <<\fIstring\fR
 .br
 Specifies a script or program to be run after removing files.
 .TP 5
 %preinstall \fIscript or program\fR
+.TP 5
+%preinstall <\fIscriptfile\fR
+.TP 5
+%preinstall <<\fIstring\fR
 .br
 Specifies a script or program to be run before all files are installed.
 .TP 5
 %prepatch \fIscript or program\fR
+.TP 5
+%prepatch <\fIscriptfile\fR
+.TP 5
+%prepatch <<\fIstring\fR
 .br
 Specifies a script or program to be run before all files are patched.
 .TP 5
 %preremove \fIscript or program\fR
+.TP 5
+%preremove <\fIscriptfile\fR
+.TP 5
+%preremove <<\fIstring\fR
 .br
 Specifies a script or program to be run before removing files.
 .TP 5
@@ -216,9 +266,11 @@ Substitutions occur when the variable name is referenced with the dollar sign
 .nf
 .br
 
-    %install echo What is your name:
-    %install read $$name
-    %install echo Your name is $$name
+    %postinstall <<EOF
+    echo What is your name:
+    read $$name
+    Your name is $$name
+    EOF
 
     f 0555 root sys ${bindir}/foo foo
     f 0555 root sys $datadir/foo/foo.dat foo.dat
@@ -247,5 +299,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.list.man,v 1.3 2001/07/02 14:26:55 mike Exp $".
+.\" End of "$Id: epm.list.man,v 1.4 2001/09/19 17:02:45 mike Exp $".
 .\"
