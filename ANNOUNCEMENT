@@ -1,14 +1,16 @@
 ----HTML-PRESS-RELEASE---------------------------------------------------
 
-<H1>ESP Package Manager 3.5.1 Released</H1>
+<H1>ESP Package Manager 3.6 Released</H1>
 
-<P><B>Hollywood, MD (October 18, 2002)</B> -- Easy Software
-Products today announced the 3.5.1 release of the ESP Package
+<P><B>Hollywood, MD (March 25, 2003)</B> -- Easy Software
+Products today announced the 3.6 release of the ESP Package
 Manager ("EPM"), a cross-platform software distribution program
 for UNIX.
 
-<P>EPM v3.5.1 fixes some bugs discovered in the MacOS X packaging
-support. The new release is available on-line at:
+<P>EPM v3.6 adds a new uninstall GUI and enhanced MacOS X
+packaging functionality. The new release also fixes some bugs
+discovered in the portable, RPM, and BSD package generation. The
+new release is available on-line at:
 
 <UL><PRE>
 <A HREF="http://www.easysw.com/epm">http://www.easysw.com/epm</A>
@@ -42,9 +44,9 @@ including:
 
 </UL>
 
-<P>EPM also includes a graphical "setup" program that can be
-provided with your distributions to make installation of more
-than one package a snap.
+<P>EPM also includes graphical "setup" and "uninstall" programs
+that can be provided with your distributions to make
+installation and removal of more than one package a snap.
 
 <P>EPM is provided under the terms of the GNU General Public
 License.  Please contact Easy Software Products at
@@ -53,14 +55,16 @@ commercial support.
 
 ----TEXT-PRESS-RELEASE---------------------------------------------------
 
-ESP Package Manager 3.5.1 Released
+ESP Package Manager 3.6 Released
 
-Hollywood, MD (October 18, 2002) -- Easy Software Products today
-announced the 3.5.1 release of the ESP Package Manager ("EPM"), a
+Hollywood, MD (March 25, 2003) -- Easy Software Products today
+announced the 3.6 release of the ESP Package Manager ("EPM"), a
 cross-platform software distribution program for UNIX.
 
-EPM v3.5.1 fixes some bugs discovered in the MacOS X packaging
-support.  The new release is available on-line at:
+EPM v3.6 adds a new uninstall GUI and enhanced MacOS X packaging
+functionality.  The new release also fixes some bugs discovered
+in the portable, RPM, and BSD package generation.  The new
+release is available on-line at:
 
     http://www.easysw.com/epm
 
@@ -80,9 +84,9 @@ including:
     - Portable (installation and removal scripts with tar files)
     - Red Hat Package Manager ("rpm")
 
-EPM also includes a graphical "setup" program that can be
-provided with your distributions to make installation of more
-than one package a snap.
+EPM also includes graphical "setup" and "uninstall" programs
+that can be provided with your distributions to make
+installation and removal of more than one package a snap.
 
 EPM is provided under the terms of the GNU General Public
 License.  Please contact Easy Software Products at
