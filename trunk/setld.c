@@ -1,10 +1,10 @@
 /*
- * "$Id: setld.c,v 1.3 2001/04/26 12:58:48 mike Exp $"
+ * "$Id: setld.c,v 1.4 2001/04/26 14:21:48 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
  *   Copyright 2001 by Easy Software Products and Aneesh
- *   Kumar (aneesh.kumar@digital.com) at Digital Inida.
+ *   Kumar (aneesh.kumar@digital.com) at Digital India.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -409,5 +409,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.3 2001/04/26 12:58:48 mike Exp $".
+ * End of "$Id: setld.c,v 1.4 2001/04/26 14:21:48 mike Exp $".
  */
