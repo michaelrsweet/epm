@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.27 1999/09/30 19:44:28 mike Exp $"
+ * "$Id: epm.c,v 1.28 1999/10/01 17:51:47 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -1644,7 +1644,7 @@ write_install(dist_t *dist,	/* I - Software distribution */
   fputs("			break\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			n | no | N | No | NO)\n", scriptfile);
-  fputs("			exit 0\n", scriptfile);
+  fputs("			exit 1\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			*)\n", scriptfile);
   fputs("			echo Please enter yes or no.\n", scriptfile);
@@ -1665,7 +1665,7 @@ write_install(dist_t *dist,	/* I - Software distribution */
   fputs("			break\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			n | no | N | No | NO)\n", scriptfile);
-  fputs("			exit 0\n", scriptfile);
+  fputs("			exit 1\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			*)\n", scriptfile);
   fputs("			echo Please enter yes or no.\n", scriptfile);
@@ -1993,7 +1993,7 @@ write_patch(dist_t *dist,	/* I - Software distribution */
   fputs("			break\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			n | no | N | No | NO)\n", scriptfile);
-  fputs("			exit 0\n", scriptfile);
+  fputs("			exit 1\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			*)\n", scriptfile);
   fputs("			echo Please enter yes or no.\n", scriptfile);
@@ -2014,7 +2014,7 @@ write_patch(dist_t *dist,	/* I - Software distribution */
   fputs("			break\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			n | no | N | No | NO)\n", scriptfile);
-  fputs("			exit 0\n", scriptfile);
+  fputs("			exit 1\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			*)\n", scriptfile);
   fputs("			echo Please enter yes or no.\n", scriptfile);
@@ -2295,7 +2295,7 @@ write_remove(dist_t *dist,	/* I - Software distribution */
   fputs("			break\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			n | no | N | No | NO)\n", scriptfile);
-  fputs("			exit 0\n", scriptfile);
+  fputs("			exit 1\n", scriptfile);
   fputs("			;;\n", scriptfile);
   fputs("			*)\n", scriptfile);
   fputs("			echo Please enter yes or no.\n", scriptfile);
@@ -2419,5 +2419,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.27 1999/09/30 19:44:28 mike Exp $".
+ * End of "$Id: epm.c,v 1.28 1999/10/01 17:51:47 mike Exp $".
  */
