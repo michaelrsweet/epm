@@ -20,6 +20,11 @@ WHAT'S NEW IN EPM 2.5?
 	  script names to match reality.
 	- Updated the Debian packager to support the Replaces
 	  dependency.
+	- Updated the portable and RPM distributions to check
+	  for the new SuSE 7.1 init.d directories.
+	- RPM distributions now use %config(noreplace) for
+	  config files, to duplicate the behavior that is
+	  expected.
 
 
 WHAT'S NEW IN EPM 2.4?
