@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.15 2000/12/01 14:44:16 mike Exp $"
+.\" "$Id: epm.man,v 1.16 2000/12/10 15:40:20 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "31 November 2000" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "10 December 2000" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -23,7 +23,11 @@ epm \- create software packages
 [ \-f
 .I format
 ] [ \-g ] [ \-n[mrs] ] [ \-s
-.I xpmfile
+.I setup.xpm
+] [ \--setup-image
+.I setup.xpm
+] [ \--setup-program
+.I /foo/bar/setup
 ] [ \-v ] [
 .I name=value
 ...
@@ -77,9 +81,14 @@ Executable files in the distribution are normally stripped of debugging
 information when packaged. To disable this functionality use the
 \fI\-g\fR option.
 .LP
-The \fI-s\fR option ("setup") includes the ESP Software Wizard with the
-specified XPM image file with the distribution. This option is currently
-only available for portable distributions.
+The \fI-s\fR and \fI--setup-image\fR options ("setup") include
+the ESP Software Wizard with the specified XPM image file with
+the distribution. This option is currently only supported by
+portable distributions.
+.LP
+The \fI--setup-program\fR option specifies the setup executable
+to use with the distribution. This option is currently only
+supported by portable distributions.
 .LP
 The \fI-v\fR option ("verbose") increases the amount of information that is
 reported. Use multiple v's for more verbose output.
@@ -257,5 +266,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.15 2000/12/01 14:44:16 mike Exp $".
+.\" End of "$Id: epm.man,v 1.16 2000/12/10 15:40:20 mike Exp $".
 .\"

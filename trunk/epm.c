@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.41 2000/11/10 18:12:48 mike Exp $"
+ * "$Id: epm.c,v 1.42 2000/12/10 15:40:19 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -34,7 +34,8 @@
  * Globals...
  */
 
-int	Verbosity = 0;
+int		Verbosity = 0;
+const char	*SetupProgram = EPM_LIBDIR "/setup";
 
 
 /*
@@ -195,6 +196,27 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    Verbosity ++;
 	    break;
 
+        case '-' : /* --option */
+	    if (strcmp(argv[i], "--setup-image") == 0)
+	    {
+	      i ++;
+	      if (i < argc)
+	        setup = argv[i];
+	      else
+	        usage();
+            }
+	    else if (strcmp(argv[i], "--setup-program") == 0)
+	    {
+	      i ++;
+	      if (i < argc)
+	        SetupProgram = argv[i];
+	      else
+	        usage();
+            }
+	    else
+	      usage();
+	    break;
+
         default :
 	    usage();
 	    break;
@@ -286,6 +308,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	                  setup);
 	break;
     case PACKAGE_DEB :
+        if (geteuid())
+	  fputs("epm: Warning - file permissions and ownership may not be correct\n"
+	        "     in Debian packages unless you run EPM as root!\n", stderr);
+
         i = make_deb(prodname, directory, platname, dist, &platform);
 	break;
     case PACKAGE_INST :
@@ -429,11 +455,27 @@ usage(void)
 {
   info();
 
-  puts("Usage: epm [-g] [-f format] [-n[mrs]] [-v] product [list-file]");
+  puts("Usage: epm [options] [name=value ... name=value] product [list-file]");
+  puts("Options:");
+  puts("-g");
+  puts("    Don't strip executables in distributions.");
+  puts("-f {deb,depot,inst,native,pkg,portable,rpm,swinstall,tardist}");
+  puts("    Set distribution format.");
+  puts("-n[mrs]");
+  puts("    Set distribution filename to include machine (m), OS release (r),");
+  puts("    and/or OS name (s).");
+  puts("-v");
+  puts("    Be verbose.");
+  puts("-s setup.xpm");
+  puts("--setup-image setup.xpm");
+  puts("    Enable the setup GUI and use \"setup.xpm\" for the setup image.");
+  puts("--setup-program /foo/bar/setup");
+  puts("    Use the named setup program instead of " EPM_LIBDIR "/setup.");
+
   exit(1);
 }
 
 
 /*
- * End of "$Id: epm.c,v 1.41 2000/11/10 18:12:48 mike Exp $".
+ * End of "$Id: epm.c,v 1.42 2000/12/10 15:40:19 mike Exp $".
  */

@@ -108,6 +108,11 @@ WHAT'S NEW IN EPM 2.2?
 	- Added support for a new %packager directive.
 	- The strip command used was redirecting stderr before
 	  redirecting stdout.
+	- The portable distributions now set the umask to avoid
+	  problems with buggy tar programs and Linux
+	  distributions.
+	- Added command-line option to specify the location of
+	  the setup program.
 
 
 WHAT'S NEW IN EPM 2.1?
