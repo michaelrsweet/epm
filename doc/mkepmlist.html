@@ -1,0 +1,56 @@
+<HTML>
+<H2>mkepmlist</H2>
+<HR>
+<P>Make an EPM list file from a directory.</P>
+
+<H3>SYNOPSIS</H3>
+
+<P><B>mkepmlist</B> [ -g <I>group</I> ] [ -u <I>user</I> ] [
+--prefix <I>directory</I> ] <I>directory</I> [ ...
+<I>directory</I> ]</P>
+
+<H3>DESCRIPTION</H3>
+
+<P><B>mkepmlist</B> recursively generates file list entries for
+files, links, and directories. The file list is send to the
+standard output.</P>
+
+<P>The <I>-g</I> option overrides the group ownership of the
+files in the specified directories with the specified group
+name.</P>
+
+<P>The <I>-u</I> option overrides the user ownership of the
+files in the specified directories with the specified user
+name.</P>
+
+<P>The <I>--prefix</I> option adds the specified directory to
+the destination path. For example, if you installed files to
+/opt/foo and wanted to build a distribution that installed the
+files in /usr/local, the following command would gener- ate a
+file list that is installed in /usr/local:</P>
+
+<UL><PRE>
+<KBD>mkepmlist --prefix=/usr/local /opt/foo &gt;foo.list ENTER</KBD>
+</PRE></UL>
+
+<H3>SEE ALSO</H3>
+
+<P>epm(1) - create software packages.</P>
+
+<H3>COPYRIGHT</H3>
+
+<P>Copyright 1999-2001 by Easy Software Products, All Rights
+Reserved.</P>
+
+<P>This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2, or
+(at your option) any later version.</P>
+
+<P>This program is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.</P>
+
+</BODY>
+</HTML>

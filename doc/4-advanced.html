@@ -1,0 +1,245 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="ADVANCED">Advanced Packaging with EPM</A></H1>
+
+<P>Chapter summary.</P>
+
+<H2>Including Other List Files</H2>
+
+<H2>Conflicts, Replaces, and Requires</H2>
+
+<P>Software conflicts and requirements are specified using the
+<CODE>%incompat</CODE> and <CODE>%requires</CODE> directives. If
+your software replaces another package, you can specify that
+using the <CODE>%replaces</CODE> directive (<CODE>%replaces</CODE>
+is silently mapped to <CODE>%conflicts</CODE> when the distribution
+format does not support package replacement.)
+
+<P>Dependencies are specified using the package name:
+
+<UL><PRE>
+%requires foobar
+%incompat foobar
+%replaces foobar
+</PRE></UL>
+
+<P>or the filename:
+
+<UL><PRE>
+%requires /usr/lib/libfoobar.so
+%incompat /usr/lib/libfoobar.so.1.2
+</PRE></UL>
+
+<P>Package dependencies are currently enforced only for the same
+package format, so a portable distribution that requires package
+"foobar" will only look for an installed "foobar" package in
+portable format.
+
+<P>Filename dependencies are only supported by the Debian,
+portable, and RPM distribution formats.
+
+<H2>Scripts</H2>
+
+<H2>Conditional Directives</H2>
+
+<P>As stated before, the <CODE>%system</CODE> directive can be used
+to conditionally include specific files like the man pages in the EPM
+distribution.
+
+<P>The <CODE>%system</CODE> directive can match or not match
+specific operating system names or versions. The operating
+system name is the name reported by <CODE>uname</CODE> in
+lowercase, while the operating system version is the major and
+minor version number reported by <CODE>uname -r</CODE>:
+
+<DL>
+
+	<DT><CODE>%system irix</CODE>
+	<DD>Only include the following files when building a distribution
+	for the IRIX operating system.
+
+	<DT><CODE>%system linux-2.0</CODE>
+	<DD>Only include the following files when building a distribution
+	for Linux 2.0.x.
+
+	<DT><CODE>%system !irix !linux-2.0</CODE>
+	<DD>Only include the following files when building a distribution
+	for operating systems other than IRIX and Linux 2.0.x.
+
+</DL>
+
+<P>The special name <CODE>all</CODE> is used to match all operating systems:
+
+<UL><PRE>
+%system all
+</PRE></UL>
+
+<P>For format-specific files, the <CODE>%format</CODE> directive can be
+used:
+
+<DL>
+
+	<DT><CODE>%format rpm</CODE>
+	<DD>Only include the following files when building an RPM distribution.
+
+	<DT><CODE>%format !rpm</CODE>
+	<DD>Only include the following files when not building an RPM
+	distribution.x.
+
+	<DT><CODE>%format all</CODE>
+	<DD>Include the following files for all types of distributions.
+
+</DL>
+
+<H2>Using <CODE>epminstall</CODE></H2>
+
+<H2>Software Patches</H2>
+
+<H2>Variables</H2>
+
+<P>EPM imports the current environment variables for use in your
+list file. You can also define new variable in the list file or
+on the command-line when running EPM.
+
+<P>Variables are defined by starting the line with the dollar
+sign (<CODE>$</CODE>) followed by the name and value:
+
+<UL><PRE>
+$name=value
+$prefix=/usr
+$exec_prefix=${prefix}
+$bindir=$exec_prefix/bin
+</PRE></UL>
+
+<P>Variable substitution is performed when the variable is
+defined, so be careful with the ordering of your variable
+definitions.
+
+<P>Also, any variables you specify in your list file will be
+overridden by variables defined on the command-line or in your
+environment, just like with <CODE>make</CODE>. This can be a
+useful feature or a curse, depending on your choice of variable
+names.
+
+<P>As you can see, variables are referenced using the dollar
+sign (<CODE>$</CODE>). As with most shells, variable names can
+be surrounded by curly braces (<CODE>${variable}</CODE>) to
+explicitly delimit the name.
+
+<P>If you need to insert a <CODE>$</CODE> in a filename or a
+script, use <CODE>$$</CODE>:
+
+<UL><PRE>
+%install echo Enter your name:
+%install read $$name
+%install echo Your name is $$name.
+</PRE></UL>
+
+<H3>Files</H3>
+
+<P>Following the product information is the list of files to be
+included in the distribution:
+
+<UL><PRE>
+# Executables
+%system all
+f 0555 root sys /usr/bin/epm epm
+f 0555 root sys /usr/lib/epm/setup setup
+f 0444 root sys /usr/share/doc/epm/README README
+f 0444 root sys /usr/share/doc/epm/COPYING COPYING
+f 0444 root sys /usr/share/doc/epm *.html
+
+# Man pages
+%system irix
+f 0444 root sys /usr/share/catman/u_man/cat1/epm.1 epm.1
+%system !irix
+f 0444 root sys /usr/man/man1/epm.1 epm.man
+</PRE></UL>
+
+<P>The <CODE>%system</CODE> directive is one of two conditional
+statements that can be included in software list files. In this
+case we are installing the man pages in one of two directories
+depending on the operating system.
+
+<P>Plain files are indicated by the <CODE>f</CODE> at the
+beginning of each line. Directories, configuration files,
+initialization scripts, and symbolic links are specified using
+the letters <CODE>d</CODE>, <CODE>c</CODE>, <CODE>i</CODE>, and
+<CODE>l</CODE>, respectively. Files that should be included in a
+patch upgrade use uppercase letters instead of lowercase.
+
+<P>The remaining data fields on the line are the file permission
+bits, the owner, the group, the destination filename, and the
+source filename. The source and destination filenames can
+contain references to environment variables and variables passed
+on the EPM command-line. For example, the man page files can
+reference the <CODE>mandir</CODE> variable to relocate the
+installed man pages instead of using the <CODE>%system</CODE>
+conditional directive:
+
+<UL><PRE>
+# Man pages
+f 0444 root sys $mandir/cat1/epm.1 epm.1
+f 0444 root sys $mandir/man1/epm.1 epm.man
+</PRE></UL>
+
+<P>As you can see, variables are referenced using the dollar
+sign (<CODE>$</CODE>). As with most shells, variable names can
+be surrounded by curly braces (<CODE>${variable}</CODE>) to
+explicitly delimit the name.
+
+<P>Variables are specified using using the equal sign (<CODE>=</CODE>)
+on the command-line or in the list file (<CODE>$name=value</CODE>);
+there is no limit on the number of variables you can specify:
+
+<UL><PRE>
+epm mandir=/foo/bar/man epm epm.list
+</PRE></UL>
+
+<P>EPM can also produce vendor-specific distributions using the
+<CODE>-f</CODE> option:
+
+<UL><PRE>
+epm -f format ...
+</PRE></UL>
+
+<P>The <I>format</I> option can be one of:
+
+<UL>
+
+	<LI><CODE>depot</CODE> or <CODE>swinstall</CODE> - HP-UX software
+	distribution.
+
+	<LI><CODE>dpkg</CODE> - Debian software distribution.
+
+	<LI><CODE>inst</CODE> or <CODE>tardist</CODE> - IRIX software
+	distribution.
+
+	<LI><CODE>native</CODE> - "Native" software distribution (RPM,
+	INST, DEPOT, PKG, etc.) for the platform.
+
+	<LI><CODE>pkg</CODE> - Solaris software distribution.
+
+	<LI><CODE>portable</CODE> - Portable software distribution (default).
+
+	<LI><CODE>rpm</CODE> - RedHat software distribution.
+
+	<LI><CODE>setld</CODE> - Tru64 (setld) software distribution.
+
+</UL>
+
+<P>Everything in the software list file stays the same - you just use the
+<CODE>-f</CODE> option to select the format.  For example, to build an RPM
+distribution of EPM, type:
+
+<UL><PRE>
+epm -f rpm epm
+</PRE></UL>
+
+<P>The result will be an RPM distribution file instead of the portable
+distribution file.
+
+
+</BODY>
+</HTML>
