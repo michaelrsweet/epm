@@ -538,8 +538,8 @@ fi
 
 
 
-VERSION=3.1
-VERNUMBER=310
+VERSION=3.2
+VERNUMBER=320
 
 
 cat >> confdefs.h <<EOF
