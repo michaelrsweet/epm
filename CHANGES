@@ -15,7 +15,9 @@ WHAT'S NEW IN EPM 3.3?
 	  of the distribution files in portable distributions.
 	- New C implementation of mkepmlist, based on a
 	  contribution from Andreas Voegele.
-
+	- The portable install and patch scripts now change the
+	  permissions of the installed "remove" script to 544.
+	  
 
 WHAT'S NEW IN EPM 3.2.1?
 
