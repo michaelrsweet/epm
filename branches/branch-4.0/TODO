@@ -1,5 +1,6 @@
 TODO for EPM:
 
+	- Use dpkg-shlibdeps when generating Debian packages.
 	- "%subpackage foo" to tag files, descriptions,
 	  dependencies etc. for a subpackage.
 	- "epm --build ..." to build software from source and
