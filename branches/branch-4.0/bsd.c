@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.4.2.11 2004/12/07 14:35:19 mike Exp $"
+ * "$Id: bsd.c,v 1.4.2.12 2004/12/13 19:08:39 mike Exp $"
  *
  *   Free/Net/OpenBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -105,7 +105,7 @@ make_subpackage(const char     *prodname,
     strlcpy(prodfull, prodname, sizeof(prodfull));
 
   if (Verbosity)
-    printf("Creating %s FreeBSD pkg distribution...\n", prodfull);
+    printf("Creating %s *BSD pkg distribution...\n", prodfull);
 
   if (dist->relnumber)
   {
@@ -165,7 +165,7 @@ make_subpackage(const char     *prodname,
   fprintf(fp, "Copyright: %s\n", dist->copyright);
   fprintf(fp, "Packager: %s\n", dist->packager);
   fprintf(fp, "Vendor: %s\n", dist->vendor);
-  fprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
+  fprintf(fp, "BuildRoot: %s/%s/%s.buildroot\n", current, directory, prodfull);
   fputs("Group: Applications\n", fp);
 
   fputs("Description:\n\n", fp);
@@ -191,8 +191,18 @@ make_subpackage(const char     *prodname,
     return (1);
   }
 
-  fprintf(fp, "@srcdir %s/%s/buildroot\n", current, directory);
+ /*
+  * FreeBSD and NetBSD support both "source directory" and "preserve files"
+  * options, OpenBSD does not...
+  */
+
+#ifdef __FreeBSD__
+  fprintf(fp, "@srcdir %s/%s/%s.buildroot\n", current, directory, prodfull);
   fputs("@option preserve\n", fp);
+#elif defined(__NetBSD__)
+  fprintf(fp, "@src %s/%s/%s.buildroot\n", current, directory, prodfull);
+  fputs("@option preserve\n", fp);
+#endif /* __FreeBSD__ */
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
   {
@@ -333,7 +343,8 @@ make_subpackage(const char     *prodname,
     {
       case 'c' :
       case 'f' :
-          snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s.buildroot%s",
+	           directory, prodfull, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -343,8 +354,8 @@ make_subpackage(const char     *prodname,
 	    return (1);
           break;
       case 'i' :
-          snprintf(filename, sizeof(filename), "%s/buildroot/etc/rc.d/%s", directory,
-	          file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s.buildroot/etc/rc.d/%s",
+	           directory, prodfull, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -354,7 +365,8 @@ make_subpackage(const char     *prodname,
 	    return (1);
           break;
       case 'd' :
-          snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s.buildroot%s",
+	           directory, prodfull, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", filename);
@@ -363,7 +375,8 @@ make_subpackage(const char     *prodname,
 			 grp ? grp->gr_gid : 0);
           break;
       case 'l' :
-          snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s.buildroot%s",
+	           directory, prodfull, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -378,11 +391,32 @@ make_subpackage(const char     *prodname,
   */
 
   if (Verbosity)
-    printf("Building %s FreeBSD pkg binary distribution...\n", prodfull);
+    printf("Building %s *BSD pkg binary distribution...\n", prodfull);
 
-  if (run_command(NULL, "pkg_create -p / -s %s -c %s -d %s -f %s %s",
-                  current, commentname, descrname, plistname, name))
+#ifdef __OpenBSD__
+  if (run_command(NULL, "pkg_create -p / -B %s/%s.buildroot "
+                        "-c %s "
+			"-d %s "
+                        "-f %s "
+			"%s",
+                  directory, prodfull,
+		  commentname,
+		  descrname,
+		  plistname,
+		  name))
     return (1);
+#else
+  if (run_command(NULL, "pkg_create -p / "
+                        "-c %s "
+			"-d %s "
+                        "-f %s "
+			"%s",
+		  commentname,
+		  descrname,
+		  plistname,
+		  name))
+    return (1);
+#endif /* __OpenBSD__ */
 
   if (run_command(NULL, "mv %s.tgz %s", name, directory))
     return (1);
@@ -396,7 +430,7 @@ make_subpackage(const char     *prodname,
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    run_command(NULL, "/bin/rm -rf %s/buildroot", directory);
+    run_command(NULL, "/bin/rm -rf %s/%s.buildroot", directory, prodfull);
 
     unlink(plistname);
     unlink(commentname);
@@ -408,5 +442,5 @@ make_subpackage(const char     *prodname,
 
 
 /*
- * End of "$Id: bsd.c,v 1.4.2.11 2004/12/07 14:35:19 mike Exp $".
+ * End of "$Id: bsd.c,v 1.4.2.12 2004/12/13 19:08:39 mike Exp $".
  */
