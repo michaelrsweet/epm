@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.72 2002/08/29 02:10:41 mike Exp $"
+ * "$Id: portable.c,v 1.73 2002/08/29 11:44:48 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -75,17 +75,17 @@ make_portable(const char     *prodname,	/* I - Product short name */
               const char     *setup,	/* I - Setup GUI image */
               const char     *types)	/* I - Setup GUI install types */
 {
-  int		i;		/* Looping var */
-  int		havepatchfiles;	/* 1 if we have patch files, 0 otherwise */
-  tarf_t	*tarfile;	/* Distribution tar file */
-  char		swname[255],	/* Name of distribution tar file */
-		pswname[255],	/* Name of patch tar file */
-		filename[1024];	/* Name of temporary file */
-  time_t	deftime;	/* File creation time */
-  struct stat	srcstat;	/* Source file information */
-  file_t	*file;		/* Software file */
-  int		rootsize,	/* Size of files in root partition */
-		usrsize;	/* Size of files in /usr partition */
+  int		i;			/* Looping var */
+  int		havepatchfiles;		/* 1 if we have patch files, 0 otherwise */
+  tarf_t	*tarfile;		/* Distribution tar file */
+  char		swname[255],		/* Name of distribution tar file */
+		pswname[255],		/* Name of patch tar file */
+		filename[1024];		/* Name of temporary file */
+  time_t	deftime;		/* File creation time */
+  struct stat	srcstat;		/* Source file information */
+  file_t	*file;			/* Software file */
+  int		rootsize,		/* Size of files in root partition */
+		usrsize;		/* Size of files in /usr partition */
   static const char	*distfiles[] =	/* Distribution files */
 		{
 		  "install",
@@ -1146,11 +1146,13 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 	      int        usrsize,	/* I - Size of /usr files in kbytes */
 	      const char *directory)	/* I - Directory */
 {
-  int		i;		/* Looping var */
-  int		col;		/* Column in the output */
-  FILE		*scriptfile;	/* Install script */
-  char		filename[1024];	/* Name of temporary file */
-  file_t	*file;		/* Software file */
+  int		i;			/* Looping var */
+  int		col;			/* Column in the output */
+  FILE		*scriptfile;		/* Install script */
+  char		filename[1024];		/* Name of temporary file */
+  file_t	*file;			/* Software file */
+  const char	*runlevels;		/* Run levels */
+  int		number;			/* Start/stop number */
 
 
   if (Verbosity)
@@ -1413,56 +1415,49 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("		echo Unable to determine location of startup scripts!\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
-    fputs("	for file in", scriptfile);
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
-        fprintf(scriptfile, " %s", file->dst);
-    fputs("; do\n", scriptfile);
-
-    fputs("		if test -d $rcdir/init.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/init.d/$file\n", scriptfile);
-    fprintf(scriptfile, "			ln -s %s/init.d/$file "
-                        "$rcdir/init.d/$file\n", SoftwareDir);
-    fputs("		else\n", scriptfile);
-    fputs("			if test -d /etc/init.d; then\n", scriptfile);
-    fputs("				rm -f /etc/init.d/$file\n", scriptfile);
-    fprintf(scriptfile, "				ln -s %s/init.d/$file "
-                        "/etc/init.d/$file\n", SoftwareDir);
-    fputs("			fi\n", scriptfile);
-    fputs("		fi\n", scriptfile);
-
-    fputs("		if test -d $rcdir/rc0.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
-    fprintf(scriptfile, "			ln -s %s/init.d/$file "
-                        "$rcdir/rc0.d/K00$file\n", SoftwareDir);
-    fputs("		fi\n", scriptfile);
+      {
+	fputs("	if test -d $rcdir/init.d; then\n", scriptfile);
+	fprintf(scriptfile, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
+	fprintf(scriptfile, "		/bin/ln -s %s/init.d/%s "
+                    "$rcdir/init.d/%s\n", SoftwareDir, file->dst, file->dst);
+	fputs("	else\n", scriptfile);
+	fputs("		if test -d /etc/init.d; then\n", scriptfile);
+	fprintf(scriptfile, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
+	fprintf(scriptfile, "			/bin/ln -s %s/init.d/%s "
+                    "/etc/init.d/%s\n", SoftwareDir, file->dst, file->dst);
+	fputs("		fi\n", scriptfile);
+	fputs("	fi\n", scriptfile);
 
 #ifndef __sun
-    fputs("		if test -d $rcdir/rc2.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "			ln -s %s/init.d/$file "
-                        "$rcdir/rc2.d/S99$file\n", SoftwareDir);
-    fputs("		fi\n", scriptfile);
+	for (runlevels = get_runlevels(dist->files + i, "0235");
+             isdigit(*runlevels);
+	     runlevels ++)
+#else
+	for (runlevels = get_runlevels(dist->files + i, "03");
+             isdigit(*runlevels);
+	     runlevels ++)
 #endif /* !__sun */
+	{
+	  if (*runlevels == '0')
+            number = get_stop(file, 0);
+	  else
+	    number = get_start(file, 99);
 
-    fputs("		if test -d $rcdir/rc3.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "			ln -s %s/init.d/$file "
-                        "$rcdir/rc3.d/S99$file\n", SoftwareDir);
-    fputs("		fi\n", scriptfile);
+	  fprintf(scriptfile, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
+	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
+	  fprintf(scriptfile, "	/bin/ln -s %s/init.d/%s "
+                      "$rcdir/rc%c.d/%c%02d%s\n", SoftwareDir, file->dst,
+		  *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
+        }
 
-#ifndef __sun
-    fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "		ln -s %s/init.d/$file "
-                        "$rcdir/rc5.d/S99$file\n", SoftwareDir);
-    fputs("		fi\n", scriptfile);
-#endif /* !__sun */
+        fprintf(scriptfile, "	%s/init.d/%s start\n", SoftwareDir, file->dst);
+      }
 
-    fputs("		if test -x /etc/chkconfig; then\n", scriptfile);
-    fputs("			/etc/chkconfig -f $file on\n", scriptfile);
-    fputs("		fi\n", scriptfile);
-    fputs("	done\n", scriptfile);
+    fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
+    fprintf(scriptfile, "		/etc/chkconfig -f %s on\n", file->dst);
+    fputs("	fi\n", scriptfile);
     fputs("fi\n", scriptfile);
   }
 
@@ -1491,10 +1486,12 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 	    int        usrsize,		/* I - Size of /usr files in kbytes */
 	    const char *directory)	/* I - Directory */
 {
-  int		i;		/* Looping var */
-  FILE		*scriptfile;	/* Patch script */
-  char		filename[1024];	/* Name of temporary file */
-  file_t	*file;		/* Software file */
+  int		i;			/* Looping var */
+  FILE		*scriptfile;		/* Patch script */
+  char		filename[1024];		/* Name of temporary file */
+  file_t	*file;			/* Software file */
+  const char	*runlevels;		/* Run levels */
+  int		number;			/* Start/stop number */
 
 
   if (Verbosity)
@@ -1720,56 +1717,49 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     fputs("		echo Unable to determine location of startup scripts!\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
-    fputs("	for file in", scriptfile);
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-      if (file->type == 'I')
-        fprintf(scriptfile, " %s", file->dst);
-
-    fputs("; do\n", scriptfile);
-    fputs("		if test -d $rcdir/init.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/init.d/$file\n", scriptfile);
-    fprintf(scriptfile, "			ln -s %s/init.d/$file "
-                        "$rcdir/init.d/$file\n", SoftwareDir);
-    fputs("		else\n", scriptfile);
-    fputs("			if test -d /etc/init.d; then\n", scriptfile);
-    fputs("				rm -f /etc/init.d/$file\n", scriptfile);
-    fprintf(scriptfile, "				ln -s %s/init.d/$file "
-                        "/etc/init.d/$file\n", SoftwareDir);
-    fputs("			fi\n", scriptfile);
-    fputs("		fi\n", scriptfile);
-
-    fputs("		if test -d $rcdir/rc0.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
-    fprintf(scriptfile, "			ln -s %s/init.d/$file "
-                        "$rcdir/rc0.d/K00$file\n", SoftwareDir);
-    fputs("		fi\n", scriptfile);
+      if (tolower(file->type) == 'i')
+      {
+	fputs("	if test -d $rcdir/init.d; then\n", scriptfile);
+	fprintf(scriptfile, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
+	fprintf(scriptfile, "		/bin/ln -s %s/init.d/%s "
+                    "$rcdir/init.d/%s\n", SoftwareDir, file->dst, file->dst);
+	fputs("	else\n", scriptfile);
+	fputs("		if test -d /etc/init.d; then\n", scriptfile);
+	fprintf(scriptfile, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
+	fprintf(scriptfile, "			/bin/ln -s %s/init.d/%s "
+                    "/etc/init.d/%s\n", SoftwareDir, file->dst, file->dst);
+	fputs("		fi\n", scriptfile);
+	fputs("	fi\n", scriptfile);
 
 #ifndef __sun
-    fputs("		if test -d $rcdir/rc2.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "			ln -s %s/init.d/$file "
-                        "$rcdir/rc2.d/S99$file\n", SoftwareDir);
-    fputs("		fi\n", scriptfile);
+	for (runlevels = get_runlevels(dist->files + i, "0235");
+             isdigit(*runlevels);
+	     runlevels ++)
+#else
+	for (runlevels = get_runlevels(dist->files + i, "03");
+             isdigit(*runlevels);
+	     runlevels ++)
 #endif /* !__sun */
+	{
+	  if (*runlevels == '0')
+            number = get_stop(file, 0);
+	  else
+	    number = get_start(file, 99);
 
-    fputs("		if test -d $rcdir/rc3.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "			ln -s %s/init.d/$file "
-                        "$rcdir/rc3.d/S99$file\n", SoftwareDir);
-    fputs("		fi\n", scriptfile);
+	  fprintf(scriptfile, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
+	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
+	  fprintf(scriptfile, "	/bin/ln -s %s/init.d/%s "
+                      "$rcdir/rc%c.d/%c%02d%s\n", SoftwareDir, file->dst,
+		  *runlevels, *runlevels == '0' ? 'K' : 'S', number, file->dst);
+        }
 
-#ifndef __sun
-    fputs("		if test -d $rcdir/rc5.d; then\n", scriptfile);
-    fputs("			rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
-    fprintf(scriptfile, "		ln -s %s/init.d/$file "
-                        "$rcdir/rc5.d/S99$file\n", SoftwareDir);
-    fputs("		fi\n", scriptfile);
-#endif /* !__sun */
+        fprintf(scriptfile, "	%s/init.d/%s start\n", SoftwareDir, file->dst);
+      }
 
-    fputs("		if test -x /etc/chkconfig; then\n", scriptfile);
-    fputs("			/etc/chkconfig -f $file on\n", scriptfile);
-    fputs("		fi\n", scriptfile);
-    fputs("	done\n", scriptfile);
+    fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
+    fprintf(scriptfile, "		/etc/chkconfig -f %s on\n", file->dst);
+    fputs("	fi\n", scriptfile);
     fputs("fi\n", scriptfile);
   }
 
@@ -1798,11 +1788,13 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 	     int        usrsize,	/* I - Size of /usr files in kbytes */
 	     const char *directory)	/* I - Directory */
 {
-  int		i;		/* Looping var */
-  int		col;		/* Current column */
-  FILE		*scriptfile;	/* Remove script */
-  char		filename[1024];	/* Name of temporary file */
-  file_t	*file;		/* Software file */
+  int		i;			/* Looping var */
+  int		col;			/* Current column */
+  FILE		*scriptfile;		/* Remove script */
+  char		filename[1024];		/* Name of temporary file */
+  file_t	*file;			/* Software file */
+  const char	*runlevels;		/* Run levels */
+  int		number;			/* Start/stop number */
 
 
   if (Verbosity)
@@ -1884,21 +1876,42 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("		echo Unable to determine location of startup scripts!\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("else\n", scriptfile);
-    fputs("	for file in", scriptfile);
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
-        fprintf(scriptfile, " %s", file->dst);
+      {
+        fprintf(scriptfile, "	%s/init.d/%s stop\n", SoftwareDir, file->dst);
 
-    fputs("; do\n", scriptfile);
-    fputs("		rm -f $rcdir/init.d/$file\n", scriptfile);
-    fputs("		rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
-    fputs("		rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
-    fputs("		rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
-    fputs("		rm -f $rcdir/rc5.d/S99$file\n", scriptfile);
-    fputs("		if test -x /etc/chkconfig; then\n", scriptfile);
-    fputs("			rm -f /etc/config/$file\n", scriptfile);
-    fputs("		fi\n", scriptfile);
-    fputs("	done\n", scriptfile);
+	fputs("	if test -d $rcdir/init.d; then\n", scriptfile);
+	fprintf(scriptfile, "		/bin/rm -f $rcdir/init.d/%s\n", file->dst);
+	fputs("	else\n", scriptfile);
+	fputs("		if test -d /etc/init.d; then\n", scriptfile);
+	fprintf(scriptfile, "			/bin/rm -f /etc/init.d/%s\n", file->dst);
+	fputs("		fi\n", scriptfile);
+	fputs("	fi\n", scriptfile);
+
+#ifndef __sun
+	for (runlevels = get_runlevels(dist->files + i, "0235");
+             isdigit(*runlevels);
+	     runlevels ++)
+#else
+	for (runlevels = get_runlevels(dist->files + i, "03");
+             isdigit(*runlevels);
+	     runlevels ++)
+#endif /* !__sun */
+	{
+	  if (*runlevels == '0')
+            number = get_stop(file, 0);
+	  else
+	    number = get_start(file, 99);
+
+	  fprintf(scriptfile, "	/bin/rm -f $rcdir/rc%c.d/%c%02d%s\n", *runlevels,
+	          *runlevels == '0' ? 'K' : 'S', number, file->dst);
+        }
+      }
+
+    fputs("	if test -x /etc/chkconfig; then\n", scriptfile);
+    fprintf(scriptfile, "		rm -f /etc/config/%s\n", file->dst);
+    fputs("	fi\n", scriptfile);
     fputs("fi\n", scriptfile);
   }
 
@@ -2087,5 +2100,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.72 2002/08/29 02:10:41 mike Exp $".
+ * End of "$Id: portable.c,v 1.73 2002/08/29 11:44:48 mike Exp $".
  */
