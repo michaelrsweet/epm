@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.31 2005/02/08 21:29:57 swdev Exp $"
+ * "$Id: pkg.c,v 1.32 2005/02/09 19:54:11 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -481,6 +481,13 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     return (1);
 
  /*
+  * Compress the package stream file...
+  */
+
+  if (run_command(directory, EPM_GZIP " -v9 %s.pkg", name))
+    return (1);
+
+ /*
   * Remove temporary files...
   */
 
@@ -529,5 +536,5 @@ pkg_path(const char *filename,		/* I - Source filename */
 
 
 /*
- * End of "$Id: pkg.c,v 1.31 2005/02/08 21:29:57 swdev Exp $".
+ * End of "$Id: pkg.c,v 1.32 2005/02/09 19:54:11 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.55 2005/01/11 21:36:57 mike Exp $"
+ * "$Id: rpm.c,v 1.56 2005/02/09 19:54:11 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -54,8 +54,10 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 {
   int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
+  tarf_t	*tarfile;		/* Distribution tar file */
   char		specname[1024];		/* Spec filename */
-  char		filename[1024];		/* Destination filename */
+  char		name[1024],		/* Product filename */
+		filename[1024];		/* Destination filename */
   file_t	*file;			/* Current distribution file */
   struct passwd	*pwd;			/* Pointer to user record */
   struct group	*grp;			/* Pointer to group record */
@@ -240,6 +242,60 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_subpackages; i ++)
     move_rpms(prodname, directory, platname, dist, platform, rpmdir,
               dist->subpackages[i]);
+
+ /*
+  * Build a compressed tar file to hold all of the subpackages...
+  */
+
+  if (dist->num_subpackages)
+  {
+   /*
+    * Figure out the full name of the distribution...
+    */
+
+    if (dist->relnumber)
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version,
+               dist->relnumber);
+    else
+      snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
+
+    if (platname[0])
+    {
+      strlcat(name, "-", sizeof(name));
+      strlcat(name, platname, sizeof(name));
+    }
+
+   /*
+    * Create a compressed tar file...
+    */
+
+    snprintf(filename, sizeof(filename), "%s/%s.rpm.tgz", directory, name);
+
+    if ((tarfile = tar_open(filename, 1)) == NULL)
+      return (1);
+
+   /*
+    * Archive the main package and subpackages...
+    */
+
+    if (tar_package(tarfile, "rpm", prodname, directory, platname, dist, NULL))
+    {
+      tar_close(tarfile);
+      return (1);
+    }
+
+    for (i = 0; i < dist->num_subpackages; i ++)
+    {
+      if (tar_package(tarfile, "rpm", prodname, directory, platname, dist,
+                      dist->subpackages[i]))
+      {
+	tar_close(tarfile);
+	return (1);
+      }
+    }
+    
+    tar_close(tarfile);
+  }
 
  /*
   * Remove temporary files...
@@ -599,5 +655,5 @@ write_spec(const char *prodname,	/* I - Product name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.55 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id: rpm.c,v 1.56 2005/02/09 19:54:11 mike Exp $".
  */
