@@ -99,6 +99,10 @@ WHAT'S NEW IN EPM 2.1.1?
 	- Added a "native" distribution format to select the
 	  native format for a particular OS (Linux defaults to
 	  RPM format...)
+	- The tar file generation code now always appends at
+	  least 2 zeroed blocks to the end of the archive.  This
+	  eliminates error messages from Solaris tar and seems
+	  to be compatible with all other tar programs.
 
 
 WHAT'S NEW IN EPM 2.1?
