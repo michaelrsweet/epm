@@ -29,6 +29,7 @@ WHAT'S NEW IN EPM 3.2?
 	  in portable packages (sudo ./foo.install :)
 	- IRIX inst packages incorrectly had the postinstall commands
 	  in the preinstall and removal scripts.
+	- The setup GUI now requires FLTK 1.1.x.
 
 
 WHAT'S NEW IN EPM 3.1?

@@ -6,6 +6,46 @@
 <P>This appendix lists the change log for each release of the
 EPM software.</P>
 
+<H2>Changes in EPM v3.2</H2>
+
+<UL>
+
+	<LI>Added "SHELL=/bin/sh" line to portable installation,
+	patch, and remove scripts in case the root shell is
+	not /bin/sh or a compatible shell.
+
+	<LI>The epminstall utility didn't support the EPMLIST
+	environment variable as documented.
+
+	<LI>The "native" distribution format is now "deb" if
+	the "dpkg" command is installed in /usr/bin.
+
+	<LI>Debian packages did not use the release number in
+	the Version: keyword.
+
+	<LI>Changed the portable installation script support
+	for init scripts to look for scripts in both rc2.d
+	and rc3.d, and to check for the existence of all
+	rc directories before installing into them.
+
+	<LI>Changed the portable installation script to prepend
+	/bin, /usr/bin, and /usr/ucb to the beginning of the
+	PATH variable so the "tar", "rm", and "mv" commands
+	can be found in whatever directory the local system
+	uses.
+
+	<LI>AIX packaging now works.
+
+	<LI>Added support for the Darwin (MacOS X) tar command
+	in portable packages (sudo ./foo.install :)
+
+	<LI>IRIX inst packages incorrectly had the postinstall commands
+	in the preinstall and removal scripts.
+
+	<LI>The setup GUI now requires FLTK 1.1.x.
+
+</UL>
+
 <H2>Changes in EPM v3.1</H2>
 
 <UL>

@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.44 2001/10/17 12:16:08 mike Exp $"
+dnl "$Id: configure.in,v 1.45 2001/11/01 16:43:07 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -83,12 +83,12 @@ AC_PATH_PROG(HTMLDOC,htmldoc)
 AC_PATH_PROG(MKDIR,mkdir)
 AC_PATH_PROG(NROFF,nroff)
 if test x$NROFF = x; then
-    AC_PATH_PROG(GROFF,groff)
-    if test x$GROFF = x; then
-        NROFF="echo"
-    else
-        NROFF="$GROFF -T ascii"
-    fi
+	AC_PATH_PROG(GROFF,groff)
+	if test x$GROFF = x; then
+        	NROFF="echo"
+	else
+        	NROFF="$GROFF -T ascii"
+	fi
 fi
 AC_PATH_PROG(PERL,perl)
 AC_PATH_PROG(RM,rm)
@@ -119,103 +119,61 @@ AC_CHECK_FUNCS(strdup)
 AC_CHECK_FUNCS(strcasecmp)
 AC_CHECK_FUNCS(strncasecmp)
 if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
-	echo Forcing snprintf emulation for HP-UX.
+	AC_MSG_WARN(Forcing snprintf emulation for HP-UX.)
 else
 	AC_CHECK_FUNCS(snprintf)
 	AC_CHECK_FUNCS(vsnprintf)
 fi
 
-dnl Check for libraries...
+AC_PATH_PROG(FLTKCONFIG,fltk-config)
 
-AC_CHECK_LIB(m,pow)
-AC_CHECK_LIB(socket,socket,
-if test "$uname" != "IRIX"; then
-	LIBS="$LIBS -lsocket"
-else
-	echo "Not using -lsocket since you are running IRIX."
-fi)
-AC_CHECK_LIB(nsl,gethostbyaddr,
-if test "$uname" != "IRIX"; then
-	LIBS="$LIBS -lnsl"
-else
-	echo "Not using -lnsl since you are running IRIX."
-fi)
-
-AC_PATH_X
-if test "$x_libraries" = "/usr/lib"; then
-	echo "Ignoring X library directory \"$x_libraries\" requested by configure."
-	x_libraries="NONE"
-fi
-if test "$x_libraries" != "NONE" -a "x$x_libraries" != "x"; then
-	LDFLAGS="$LDFLAGS -L$x_libraries"
-	if test "$uname" = "SunOS"; then
-		LDFLAGS="$LDFLAGS -R$x_libraries"
-	fi
-fi
-if test "$x_includes" = "/usr/include"; then
-	echo "Ignoring X include directory \"$x_includes\" requested by configure."
-	x_includes="NONE"
-fi
-if test "$x_includes" != "NONE" -a "x$x_includes" != "x"; then
-	CFLAGS="$CFLAGS -I$x_includes"
-	CXXFLAGS="$CXXFLAGS -I$x_includes"
-fi
-
-dnl Try to find the static FLTK library...
-AC_MSG_CHECKING(for static FLTK library)
-
-if test x$fltklibs = x; then
-	for dir in "" /usr /usr/openwin /usr/X11R6 /usr/local; do
-		if test -f $dir/lib32/libfltk.a; then
-			fltklibs=$dir/lib32
-			if test x$dir != x/usr -a x$dir/include != x$x_includes; then
-				CFLAGS="-I$dir/include $CFLAGS"
-				CXXFLAGS="-I$dir/include $CXXFLAGS"
-			fi
-			break
-		fi
-		if test -f $dir/lib/libfltk.a; then
-			fltklibs=$dir/lib
-			if test x$dir != x/usr -a x$dir/include != x$x_includes; then
-				CFLAGS="-I$dir/include $CFLAGS"
-				CXXFLAGS="-I$dir/include $CXXFLAGS"
-			fi
-			break
-		fi
-	done
-fi
-
-if test x$fltklibs = x; then
-	AC_MSG_RESULT(no)
-else
-	AC_MSG_RESULT($fltklibs/libfltk.a)
-fi
-
-if test x$fltklibs != x -a x$ac_cv_prog_CXX != x; then
-	INSTALL_SETUP="install-setup"
-	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
-	SETUP="setup"
-	SETUPLIBS="$fltklibs/libfltk.a -lX11"
-else
+if test "x$FLTKCONFIG" = x; then
 	INSTALL_SETUP=""
 	LIST_SETUP=""
 	SETUP=""
-	SETUPLIBS=""
+	SETUP_LIBS=""
 
-	if test x$ac_cv_prog_CXX = x; then
-		AC_MSG_WARN(Setup GUI requires C++ compiler.)
-	else
-		AC_MSG_WARN(Setup GUI requires static FLTK library.)
-	fi
+	AC_MSG_WARN(Sorry, setup GUI requires FLTK 1.1.x.)
+else
+	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
+	SETUP="setup"
+	SETUP_LIBS="`$FLTKCONFIG --ldstaticflags`"
+	INSTALL_SETUP="install-setup"
+	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 fi
 
 AC_SUBST(INSTALL_SETUP)
 AC_SUBST(LIST_SETUP)
 AC_SUBST(SETUP)
-AC_SUBST(SETUPLIBS)
+AC_SUBST(SETUP_LIBS)
 
 dnl Update compiler options...
 if test -n "$GCC"; then
+	# Starting with GCC 3.0, you must link C++ programs against either
+	# libstdc++ (shared by default), or libsupc++ (always static).  If
+	# you care about binary portability between Linux distributions,
+	# you need to either 1) build your own GCC with static C++ libraries
+	# or 2) link using gcc and libsupc++.  We choose the latter since
+	# EPM doesn't (currently) use any of the stdc++ library.
+	#
+	# Also, GCC 3.0.x still has problems compiling some code.  You may
+	# or may not have success with it.  USE 3.0.x WITH EXTREME CAUTION!
+	#
+	# Previous versions of GCC do not have the reliance on the stdc++
+	# or g++ libraries, so the extra supc++ library is not needed.
+
+	case "`$CXX --version`" in
+    		3*)
+			AC_MSG_WARN(GCC 3.0.x is known to produce incorrect code - use with caution!)
+			LIBS="$LIBS -lsupc++"
+			;;
+    		3.1*)
+			LIBS="$LIBS -lsupc++"
+			;;
+	esac
+
+	CXX="$CC"
+
 	if test -z "$OPTIM"; then
 		if test "$uname" = "HP-UX"; then
 			OPTIM="-O1 -fforce-mem -fforce-addr -fcaller-saves"
@@ -225,28 +183,38 @@ if test -n "$GCC"; then
 	fi
 
 	CXX="$CC"
-	OPTIM="-Wall -Wno-return-type -fno-rtti $OPTIM"
+	OPTIM="-Wall -Wno-return-type $OPTIM"
+
+	# See if GCC supports -fno-rtti...
+	AC_MSG_CHECKING(if GCC supports -fno-rtti)
+	OLDCFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -fno-rtti"
+	AC_TRY_COMPILE(,,
+		OPTIM="$OPTIM -fno-rtti"
+		AC_MSG_RESULT(yes),
+		AC_MSG_RESULT(no))
+	CFLAGS="$OLDCFLAGS"
 
 	# See if GCC supports -fno-exceptions...
-	echo "Testing if GCC supports -fno-exceptions..."
+	AC_MSG_CHECKING(if GCC supports -fno-exceptions)
 	OLDCFLAGS="$CFLAGS"
 	CFLAGS="$CFLAGS -fno-exceptions"
 	AC_TRY_COMPILE(,,
 		OPTIM="$OPTIM -fno-exceptions"
-		echo "Congratulations - your GCC supports exceptions; disabling them...",
-		echo "GCC does not support exceptions...")
+		AC_MSG_RESULT(yes),
+		AC_MSG_RESULT(no))
 	CFLAGS="$OLDCFLAGS"
 
 	# See if we are running Solaris; if so, try the -fpermissive option...
 	if test "$uname" = SunOS; then
-		echo "Testing if GCC supports -fpermissive..."
+		AC_MSG_CHECKING(if GCC supports -fpermissive)
 
 		OLDCFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS -fpermissive"
 		AC_TRY_COMPILE(,,
 			OPTIM="$OPTIM -fpermissive"
-			echo "Enabling -fpermissive to work around X header bugs...",
-			echo "The -fpermissive option is not required by your GCC...")
+			AC_MSG_RESULT(yes),
+			AC_MSG_RESULT(no))
 		CFLAGS="$OLDCFLAGS"
 	fi
 else
@@ -300,8 +268,8 @@ fi
 dnl Fix "mandir" variable if it hasn't been specified...
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
-        	FreeBSD* | NetBSD* | OpenBSD*)
-        		# *BSD
+        	*BSD* | Darwin* | Linux*)
+        		# BSD, Darwin (MacOS X), and Linux
         		mandir="/usr/share/man"
         		;;
         	IRIX*)
@@ -317,7 +285,7 @@ fi
 
 dnl More manpage stuff...
 case "$uname" in
-        FreeBSD* | NetBSD* | OpenBSD*)
+        *BSD* | Darwin*)
         	# *BSD
         	CAT1EXT="0"
         	MAN1EXT="1"
@@ -386,5 +354,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist doc/Makefile)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.44 2001/10/17 12:16:08 mike Exp $".
+dnl End of "$Id: configure.in,v 1.45 2001/11/01 16:43:07 mike Exp $".
 dnl
