@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.2 1999/11/05 16:52:52 mike Exp $"
+ * "$Id: epm.h,v 1.3 1999/12/02 22:27:41 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -144,6 +144,8 @@ typedef struct				/**** Distribution Structure ****/
   char		**incompats;		/* Incompatible products/files */
   int		num_requires;		/* Number of requires products */
   char		**requires;		/* Required products/files */
+  int		num_replaces;		/* Number of replaces products */
+  char		**replaces;		/* Replaced products/files */
   int		num_files;		/* Number of files */
   file_t	*files;			/* Files */
 } dist_t;
@@ -178,7 +180,7 @@ extern int	make_pkg(const char *prodname, const char *directory,
 			 struct utsname *platform);
 extern int	make_portable(const char *prodname, const char *directory,
 		              const char *platname, dist_t *dist,
-			      struct utsname *platform);
+			      struct utsname *platform, const char *setup);
 extern int	make_rpm(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform);
@@ -195,5 +197,5 @@ extern int	tar_header(tarf_t *tar, char type, int mode, int size,
 extern tarf_t	*tar_open(const char *filename, int compress);
 
 /*
- * End of "$Id: epm.h,v 1.2 1999/11/05 16:52:52 mike Exp $".
+ * End of "$Id: epm.h,v 1.3 1999/12/02 22:27:41 mike Exp $".
  */

@@ -1656,7 +1656,7 @@ fi
 done
 
 
-LDFLAGS="$CXXFLAGS"
+LDFLAGS="${LDFLAGS:=}"
 
 
 # If we find X, set shell vars x_includes and x_libraries to the
@@ -2005,6 +2005,12 @@ EOF
 
 
 cat >> confdefs.h <<EOF
+#define EPM_BINDIR "$prefix/lib"
+EOF
+
+
+
+cat >> confdefs.h <<EOF
 #define EPM_WHOAMI "$WHOAMI"
 EOF
 
@@ -2157,6 +2163,7 @@ s%@SETUP@%$SETUP%g
 s%@EPM_SOFTWARE@%$EPM_SOFTWARE%g
 s%@EPM_GZIP@%$EPM_GZIP%g
 s%@EPM_STRIP@%$EPM_STRIP%g
+s%@EPM_BINDIR@%$EPM_BINDIR%g
 s%@EPM_WHOAMI@%$EPM_WHOAMI%g
 
 CEOF

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.2 1999/11/04 22:36:09 mike Exp $"
+ * "$Id: portable.c,v 1.3 1999/12/02 22:27:41 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -39,7 +39,8 @@ static FILE	*write_common(dist_t *dist, const char *title,
 		              const char *filename);
 static int	write_dist(const char *title, const char *directory,
 		           const char *prodname, const char *platname,
-			   dist_t *dist, const char **files);
+			   dist_t *dist, const char **files,
+			   const char *setup);
 static int	write_install(dist_t *dist, const char *prodname,
 		              const char *directory);
 static int	write_patch(dist_t *dist, const char *prodname,
@@ -57,7 +58,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
               const char     *directory,/* I - Directory for distribution files */
               const char     *platname,	/* I - Platform name */
               dist_t         *dist,	/* I - Distribution information */
-	      struct utsname *platform)	/* I - Platform information */
+	      struct utsname *platform,	/* I - Platform information */
+              const char     *setup)	/* I - Setup GUI image */
 {
   int		i;		/* Looping var */
   int		havepatchfiles;	/* 1 if we have patch files, 0 otherwise */
@@ -495,14 +497,15 @@ make_portable(const char     *prodname,	/* I - Product short name */
   * Create the distribution archives...
   */
 
-  write_dist("distribution", directory, prodname, platname, dist, distfiles);
+  write_dist("distribution", directory, prodname, platname, dist, distfiles,
+             setup);
 
   if (havepatchfiles)
   {
     sprintf(filename, "%s-patch", dist->version);
     strcpy(dist->version, filename);
 
-    write_dist("patch", directory, prodname, platname, dist, patchfiles);
+    write_dist("patch", directory, prodname, platname, dist, patchfiles, setup);
   }
 
  /*
@@ -586,7 +589,8 @@ write_dist(const char *title,		/* I - Title to show */
 	   const char *prodname,	/* I - Product name */
            const char *platname,	/* I - Platform name */
 	   dist_t     *dist,		/* I - Distribution */
-	   const char **files)		/* I - Filenames */
+	   const char **files,		/* I - Filenames */
+           const char *setup)		/* I - Setup GUI image file */
 {
   int		i;		/* Looping var */
   tarf_t	*tarfile;	/* Distribution tar file */
@@ -648,6 +652,73 @@ write_dist(const char *title,		/* I - Title to show */
     if (Verbosity)
     {
       printf(" %s", files[i]);
+      fflush(stdout);
+    }
+  }
+
+  if (setup)
+  {
+   /*
+    * Include the ESP Software Wizard (setup)...
+    */
+
+    stat(EPM_BINDIR "/setup", &srcstat);
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, EPM_BINDIR "/setup") < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for setup -\n    %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (Verbosity)
+    {
+      printf(" setup");
+      fflush(stdout);
+    }
+
+   /*
+    * And the image file...
+    */
+
+    stat(setup, &srcstat);
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "setup.xpm", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, setup) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for setup.xpm -\n    %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (Verbosity)
+    {
+      printf(" setup.xpm");
       fflush(stdout);
     }
   }
@@ -757,7 +828,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   for (i = 0; i < dist->num_requires; i ++)
   {
-    fprintf(scriptfile, "#%%requires: %s\n", dist->requires[i]);
+    fprintf(scriptfile, "#%%requires %s\n", dist->requires[i]);
 
     if (dist->requires[i][0] == '/')
     {
@@ -795,7 +866,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   for (i = 0; i < dist->num_incompats; i ++)
   {
-    fprintf(scriptfile, "#%%incompats: %s\n", dist->incompats[i]);
+    fprintf(scriptfile, "#%%incompat %s\n", dist->incompats[i]);
 
     if (dist->incompats[i][0] == '/')
     {
@@ -825,6 +896,23 @@ write_install(dist_t     *dist,		/* I - Software distribution */
       fputs("	exit 1\n", scriptfile);
       fputs("fi\n", scriptfile);
     }
+  }
+
+  for (i = 0; i < dist->num_replaces; i ++)
+  {
+   /*
+    * Replaces a product...
+    */
+
+    fprintf(scriptfile, "#%%replaces %s\n", dist->replaces[i]);
+
+    fprintf(scriptfile, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
+            dist->replaces[i]);
+    fprintf(scriptfile, "	echo Automatically replacing \\'%s\\'...\n",
+	    dist->replaces[i]);
+    fprintf(scriptfile, "	" EPM_SOFTWARE "/%s.remove now\n",
+	    dist->replaces[i]);
+    fputs("fi\n", scriptfile);
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
@@ -1469,5 +1557,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.2 1999/11/04 22:36:09 mike Exp $".
+ * End of "$Id: portable.c,v 1.3 1999/12/02 22:27:41 mike Exp $".
  */

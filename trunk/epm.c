@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.34 1999/11/05 16:52:52 mike Exp $"
+ * "$Id: epm.c,v 1.35 1999/12/02 22:27:41 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -63,7 +63,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 		directory[255],	/* Name of install directory */
 		filename[1024],	/* Name of temporary file */
 		command[1024],	/* Command to run */
-		*temp;		/* Temporary string pointer */
+		*temp,		/* Temporary string pointer */
+		*setup;		/* Setup GUI image */
   dist_t	*dist;		/* Software distribution */
   int		format;		/* Distribution format */
 
@@ -83,6 +84,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   strip  = 1;
   format = PACKAGE_PORTABLE;
+  setup  = NULL;
 
   sprintf(platname, "%s-%s-%s", platform.sysname, platform.release,
           platform.machine);
@@ -151,6 +153,18 @@ main(int  argc,			/* I - Number of command-line arguments */
 	        usage();
 	    }
 	    break;
+
+        case 's' : /* Use setup GUI */
+	    if (argv[i][2])
+	      setup = argv[i] + 2;
+	    else
+	    {
+	      i ++;
+	      if (i >= argc)
+	        usage();
+
+              setup = argv[i];
+	    }
 
         case 't' : /* Test scripts */
 	    fputs("epm: Sorry, the \"test\" option is no longer available!\n",
@@ -246,7 +260,8 @@ main(int  argc,			/* I - Number of command-line arguments */
   switch (format)
   {
     case PACKAGE_PORTABLE :
-        i = make_portable(prodname, directory, platname, dist, &platform);
+        i = make_portable(prodname, directory, platname, dist, &platform,
+	                  setup);
 	break;
     case PACKAGE_DEB :
         i = make_deb(prodname, directory, platname, dist, &platform);
@@ -398,5 +413,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.34 1999/11/05 16:52:52 mike Exp $".
+ * End of "$Id: epm.c,v 1.35 1999/12/02 22:27:41 mike Exp $".
  */

@@ -1,13 +1,13 @@
-/* A Check_Browser is a Hold_Browser with a checkbox at the beginning of
+/* A Fl_Check_Browser is a Hold_Browser with a checkbox at the beginning of
 each item. */
 
-#ifndef Check_Browser_h
-#define Check_Browser_h
+#ifndef Fl_Check_Browser_h
+#define Fl_Check_Browser_h
 
 #include <FL/Fl.H>
 #include <FL/Fl_Browser_.H>
 
-class Check_Browser : public Fl_Browser_ {
+class Fl_Check_Browser : public Fl_Browser_ {
 
 	/* required routines for Fl_Browser_ subclass: */
 
@@ -40,7 +40,7 @@ class Check_Browser : public Fl_Browser_ {
 	int lineno(cb_item *) const;
 
 public:
-	Check_Browser(int x, int y, int w, int h, const char *l = 0);
+	Fl_Check_Browser(int x, int y, int w, int h, const char *l = 0);
 
 	int add(char *s);               // add an (unchecked) item
 	int add(char *s, int b);        // add an item and set checked
