@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.47 2001/03/27 14:41:09 mike Exp $"
+ * "$Id: epm.c,v 1.48 2001/04/25 13:35:02 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -74,6 +74,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 		  "inst",
 		  "pkg",
 		  "rpm",
+		  "setld",
 		  "swinstall"
 		};
 
@@ -137,6 +138,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      format = PACKAGE_PKG;
 	    else if (strcasecmp(temp, "rpm") == 0)
 	      format = PACKAGE_RPM;
+	    else if (strcasecmp(temp, "setld") == 0)
+	      format = PACKAGE_SETLD;
 	    else if (strcasecmp(temp, "swinstall") == 0 ||
 	             strcasecmp(temp, "depot") == 0)
 	      format = PACKAGE_SWINSTALL;
@@ -147,6 +150,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      format = PACKAGE_INST;
 #elif defined(__sun)
 	      format = PACKAGE_PKG;
+#elif defined(__osf__)
+	      format = PACKAGE_SETLD;
 #elif defined(__hpux)
 	      format = PACKAGE_SWINSTALL;
 #else
@@ -330,6 +335,9 @@ main(int  argc,			/* I - Number of command-line arguments */
     case PACKAGE_RPM :
         i = make_rpm(prodname, directory, platname, dist, &platform);
 	break;
+    case PACKAGE_SETLD :
+        i = make_setld(prodname, directory, platname, dist, &platform);
+	break;
     case PACKAGE_SWINSTALL :
         if (geteuid())
 	{
@@ -482,7 +490,7 @@ usage(void)
   puts("Options:");
   puts("-g");
   puts("    Don't strip executables in distributions.");
-  puts("-f {deb,depot,inst,native,pkg,portable,rpm,swinstall,tardist}");
+  puts("-f {deb,depot,inst,native,pkg,portable,rpm,setld,swinstall,tardist}");
   puts("    Set distribution format.");
   puts("-k");
   puts("    Keep intermediate files (spec files, etc.)");
@@ -502,5 +510,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.47 2001/03/27 14:41:09 mike Exp $".
+ * End of "$Id: epm.c,v 1.48 2001/04/25 13:35:02 mike Exp $".
  */
