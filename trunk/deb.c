@@ -1,9 +1,9 @@
 /*
- * "$Id: deb.c,v 1.20 2002/12/11 14:45:23 mike Exp $"
+ * "$Id: deb.c,v 1.21 2002/12/17 18:57:54 swdev Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2002 by Easy Software Products.
+ *   Copyright 1999-2003 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -442,5 +442,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.20 2002/12/11 14:45:23 mike Exp $".
+ * End of "$Id: deb.c,v 1.21 2002/12/17 18:57:54 swdev Exp $".
  */

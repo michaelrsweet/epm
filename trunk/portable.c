@@ -1,9 +1,9 @@
 /*
- * "$Id: portable.c,v 1.78 2002/12/03 16:35:14 mike Exp $"
+ * "$Id: portable.c,v 1.79 2002/12/17 18:57:56 swdev Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2002 by Easy Software Products.
+ *   Copyright 1999-2003 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -2115,5 +2115,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.78 2002/12/03 16:35:14 mike Exp $".
+ * End of "$Id: portable.c,v 1.79 2002/12/17 18:57:56 swdev Exp $".
  */

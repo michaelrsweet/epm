@@ -1,9 +1,9 @@
 /*
- * "$Id: osx.c,v 1.7 2002/10/18 14:57:49 mike Exp $"
+ * "$Id: osx.c,v 1.8 2002/12/17 18:57:56 swdev Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 2002 by Easy Software Products.
+ *   Copyright 2003 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -406,5 +406,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.7 2002/10/18 14:57:49 mike Exp $".
+ * End of "$Id: osx.c,v 1.8 2002/12/17 18:57:56 swdev Exp $".
  */

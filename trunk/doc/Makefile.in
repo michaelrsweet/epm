@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile.in,v 1.2 2002/01/02 20:39:41 mike Exp $"
+# "$Id: Makefile.in,v 1.3 2002/12/17 18:57:58 swdev Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM) documentation.
 #
-#   Copyright 1999-2002 by Easy Software Products, all rights reserved.
+#   Copyright 1999-2003 by Easy Software Products, all rights reserved.
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -57,5 +57,5 @@ epm-manual.ps:	$(HTMLFILES) epm-manual.book
 
 
 #
-# End of "$Id: Makefile.in,v 1.2 2002/01/02 20:39:41 mike Exp $".
+# End of "$Id: Makefile.in,v 1.3 2002/12/17 18:57:58 swdev Exp $".
 #
