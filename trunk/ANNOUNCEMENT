@@ -2,14 +2,14 @@
 
 <H1>ESP Package Manager 3.7 Released</H1>
 
-<P><B>Hollywood, MD (August 12, 2003)</B> -- Easy Software
+<P><B>Hollywood, MD (December 22, 2003)</B> -- Easy Software
 Products today announced the 3.7 release of the ESP Package
 Manager ("EPM"), a cross-platform software distribution program
 for UNIX.
 
 <P>EPM v3.7 adds Slackware package support and fixes some bugs
-discovered in the portable, RPM, OSX, and BSD package
-generation. The new release is available on-line at:
+discovered in package generation for several operating systems.
+The new release is available on-line at:
 
 <UL><PRE>
 <A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
@@ -58,13 +58,14 @@ commercial support.
 
 ESP Package Manager 3.7 Released
 
-Hollywood, MD (August 12, 2003) -- Easy Software Products today
-announced the 3.7 release of the ESP Package Manager ("EPM"), a
-cross-platform software distribution program for UNIX.
+Hollywood, MD (December 22, 2003) -- Easy Software Products
+today announced the 3.7 release of the ESP Package Manager
+("EPM"), a cross-platform software distribution program for
+UNIX.
 
 EPM v3.7 adds Slackware package support and fixes some bugs
-discovered in the portable, RPM, OSX, and BSD package
-generation.  The new release is available on-line at:
+discovered in package generation for several operating systems. 
+The new release is available on-line at:
 
     http://www.easysw.com/epm/
 
