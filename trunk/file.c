@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.1 1999/11/04 20:31:07 mike Exp $"
+ * "$Id: file.c,v 1.2 1999/11/04 22:36:08 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -57,7 +57,7 @@ copy_file(const char *dst,	/* I - Destination file */
   if ((slash = strrchr(buffer, '/')) != NULL)
     *slash = '\0';
 
-  if (access(buffer, X_OK))
+  if (access(buffer, F_OK))
     make_directory(buffer, 0755, owner, group);
 
  /*
@@ -134,18 +134,24 @@ make_directory(const char *directory,	/* I - Directory */
     {
       *bufptr = '\0';
 
-      if (access(buffer, X_OK))
+      if (access(buffer, F_OK))
       {
-        if (mkdir(buffer, 0777))
-	  return (-1);
-	if (chmod(buffer, mode))
-	  return (-1);
-        if (chown(buffer, owner, group))
-	  return (-1);
+	mkdir(buffer, 0777);
+	chmod(buffer, mode);
+	chown(buffer, owner, group);
       }
     }
 
     *bufptr++ = *directory++;
+  }
+
+  *bufptr = '\0';
+
+  if (access(buffer, F_OK))
+  {
+    mkdir(buffer, 0777);
+    chmod(buffer, mode);
+    chown(buffer, owner, group);
   }
 
   return (0);
@@ -172,7 +178,7 @@ make_link(const char *dst,	/* I - Destination file */
   if ((slash = strrchr(buffer, '/')) != NULL)
     *slash = '\0';
 
-  if (access(buffer, X_OK))
+  if (access(buffer, F_OK))
     make_directory(buffer, 0755, 0, 0);
 
  /* 
@@ -214,5 +220,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.1 1999/11/04 20:31:07 mike Exp $".
+ * End of "$Id: file.c,v 1.2 1999/11/04 22:36:08 mike Exp $".
  */
