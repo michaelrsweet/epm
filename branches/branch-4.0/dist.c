@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.17 2004/10/25 18:51:03 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.18 2004/10/26 20:29:24 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -17,26 +17,31 @@
  *
  * Contents:
  *
- *   add_command()     - Add a command to the distribution...
- *   add_depend()      - Add a dependency to the distribution...
- *   add_file()        - Add a file to the distribution.
- *   free_dist()       - Free memory used by a distribution.
- *   getoption()       - Get an option from a file.
- *   get_platform()    - Get the operating system information...
- *   get_runlevels()   - Get the run levels for the specified init script.
- *   get_start()       - Get the start number for an init script.
- *   get_stop()        - Get the stop number for an init script.
- *   read_dist()       - Read a software distribution.
- *   sort_dist_files() - Sort the files in the distribution.
- *   write_dist()      - Write a distribution list file...
- *   compare_files()   - Compare the destination filenames.
- *   expand_name()     - Expand a filename with environment variables.
- *   get_file()        - Read a file into a string...
- *   get_inline()      - Read inline lines into a string...
- *   get_line()        - Get a line from a file, filtering for uname lines...
- *   get_string()      - Get a delimited string from a line.
- *   get_vernumber()   - Convert a version string to a number...
- *   patmatch()        - Pattern matching...
+ *   add_command()      - Add a command to the distribution...
+ *   add_depend()       - Add a dependency to the distribution...
+ *   add_description()  - Add a description to the distribution.
+ *   add_file()         - Add a file to the distribution.
+ *   add_subpackage()   - Add a subpackage to the distribution.
+ *   find_subpackage()  - Find a subpackage in the distribution.
+ *   free_dist()        - Free memory used by a distribution.
+ *   getoption()        - Get an option from a file.
+ *   get_platform()     - Get the operating system information...
+ *   get_runlevels()    - Get the run levels for the specified init script.
+ *   get_start()        - Get the start number for an init script.
+ *   get_stop()         - Get the stop number for an init script.
+ *   new_dist()         - Create a new, empty software distribution.
+ *   read_dist()        - Read a software distribution.
+ *   sort_dist_files()  - Sort the files in the distribution.
+ *   write_dist()       - Write a distribution list file...
+ *   compare_files()    - Compare the destination filenames.
+ *   expand_name()      - Expand a filename with environment variables.
+ *   get_file()         - Read a file into a string...
+ *   get_inline()       - Read inline lines into a string...
+ *   get_line()         - Get a line from a file, filtering for uname lines...
+ *   get_string()       - Get a delimited string from a line.
+ *   get_vernumber()    - Convert a version string to a number...
+ *   patmatch()         - Pattern matching...
+ *   sort_subpackages() - Compare two subpackage names.
  */
 
 /*
@@ -387,6 +392,16 @@ add_subpackage(dist_t     *dist,	/* I - Distribution */
   if (dist->num_subpackages > 1)
     qsort(dist->subpackages, dist->num_subpackages, sizeof(char *),
           (int (*)(const void *, const void *))sort_subpackages);
+
+ /*
+  * Add a dependency on the base package...
+  */
+
+  add_depend(dist, DEPEND_REQUIRES, "_self", s);
+
+ /*
+  * Return the new string...
+  */
 
   return (s);
 }
@@ -2320,5 +2335,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.17 2004/10/25 18:51:03 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.18 2004/10/26 20:29:24 mike Exp $".
  */

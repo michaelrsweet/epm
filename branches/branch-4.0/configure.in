@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.52.2.14 2004/08/29 04:17:44 mike Exp $"
+dnl "$Id: configure.in,v 1.52.2.15 2004/10/26 20:29:24 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -111,14 +111,11 @@ AC_CHECK_HEADER(sys/statfs.h,AC_DEFINE(HAVE_SYS_STATFS_H))
 AC_CHECK_HEADER(sys/vfs.h,AC_DEFINE(HAVE_SYS_VFS_H))
 
 dnl Checks for string functions.
-AC_CHECK_FUNCS(strdup)
-AC_CHECK_FUNCS(strcasecmp)
-AC_CHECK_FUNCS(strncasecmp)
+AC_CHECK_FUNCS(strcasecmp strdup strlcat strlcpy strncasecmp)
 if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
 	AC_MSG_WARN(Forcing snprintf emulation for HP-UX.)
 else
-	AC_CHECK_FUNCS(snprintf)
-	AC_CHECK_FUNCS(vsnprintf)
+	AC_CHECK_FUNCS(snprintf vsnprintf)
 fi
 AC_SEARCH_LIBS(gethostname, socket)
 
@@ -398,5 +395,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52.2.14 2004/08/29 04:17:44 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52.2.15 2004/10/26 20:29:24 mike Exp $".
 dnl

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63.2.24 2004/10/26 02:44:56 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.25 2004/10/26 20:29:24 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -49,9 +49,10 @@ static int	write_commands(dist_t *dist, FILE *fp, int type,
 		               const char *subpackage);
 static FILE	*write_common(dist_t *dist, const char *title,
 			      int rootsize, int usrsize,
-		              const char *filename);
+		              const char *filename, const char *subpackage);
 static int	write_confcheck(FILE *fp);
-static int	write_depends(dist_t *dist, FILE *fp, const char *subpackage);
+static int	write_depends(const char *prodname, dist_t *dist, FILE *fp,
+		              const char *subpackage);
 static int	write_distfiles(const char *directory, const char *prodname,
 		                const char *platname, dist_t *dist,
 				time_t deftime, const char *subpackage);
@@ -221,7 +222,7 @@ write_combined(const char *title,	/* I - Title */
   }
 
   if (Verbosity)
-    printf("Writing %s archive %s:\n", title, filename);
+    printf("Writing %s archive:\n", title);
 
   destdir = "";
 
@@ -293,7 +294,8 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    printf("    %7.2fM setup.icns\n", srcstat.st_size / 1024.0 / 1024.0);
+    if (Verbosity)
+      printf("    %7.0fk setup.icns\n", srcstat.st_size / 1024.0);
 
     snprintf(srcname, sizeof(srcname), "%s/setup.info", DataDir);
     stat(srcname, &srcstat);
@@ -316,7 +318,8 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    printf("    %7.2fM PkgInfo\n", srcstat.st_size / 1024.0 / 1024.0);
+    if (Verbosity)
+      printf("    %7.0fk PkgInfo\n", srcstat.st_size / 1024.0);
 
     snprintf(srcname, sizeof(srcname), "%s/setup.plist", DataDir);
     stat(srcname, &srcstat);
@@ -339,7 +342,8 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    printf("    %7.2fM Info.plist\n", srcstat.st_size / 1024.0 / 1024.0);
+    if (Verbosity)
+      printf("    %7.0fk Info.plist\n", srcstat.st_size / 1024.0);
   }
 
   destdir = "Install.app/Contents/Resources/";
@@ -406,7 +410,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.2fM setup\n", srcstat.st_size / 1024.0 / 1024.0);
+      printf("    %7.0fk setup\n", srcstat.st_size / 1024.0);
 
    /*
     * And the image file...
@@ -439,7 +443,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.2fM %s\n", srcstat.st_size / 1024.0 / 1024.0, setup_img);
+      printf("    %7.0fk %s\n", srcstat.st_size / 1024.0, setup_img);
 
    /*
     * And the types file...
@@ -468,7 +472,7 @@ write_combined(const char *title,	/* I - Title */
       }
 
       if (Verbosity)
-        printf("    %7.2fM setup.types\n", srcstat.st_size / 1024.0 / 1024.0);
+        printf("    %7.0fk setup.types\n", srcstat.st_size / 1024.0);
     }
 
    /*
@@ -538,7 +542,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.2fM uninst.icns\n", srcstat.st_size / 1024.0 / 1024.0);
+      printf("    %7.0fk uninst.icns\n", srcstat.st_size / 1024.0);
 
     snprintf(srcname, sizeof(srcname), "%s/uninst.info", DataDir);
     stat(srcname, &srcstat);
@@ -562,7 +566,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.2fM PkgInfo\n", srcstat.st_size / 1024.0 / 1024.0);
+      printf("    %7.0fk PkgInfo\n", srcstat.st_size / 1024.0);
 
     snprintf(srcname, sizeof(srcname), "%s/uninst.plist", DataDir);
     stat(srcname, &srcstat);
@@ -586,7 +590,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.2fM Info.plist\n", srcstat.st_size / 1024.0 / 1024.0);
+      printf("    %7.0fk Info.plist\n", srcstat.st_size / 1024.0);
 #endif /* __APPLE__ */
 
    /*
@@ -625,7 +629,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.2fM uninst\n", srcstat.st_size / 1024.0 / 1024.0);
+      printf("    %7.0fk uninst\n", srcstat.st_size / 1024.0);
 
 #ifdef __APPLE__
    /*
@@ -655,8 +659,21 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.2fM %s\n", srcstat.st_size / 1024.0 / 1024.0, setup_img);
+      printf("    %7.0fk %s\n", srcstat.st_size / 1024.0, setup_img);
 #endif /* __APPLE__ */
+  }
+
+  if (Verbosity)
+  {
+    puts("     ------- ----------------------------------------");
+    printf("    %7.0fk %s-%s", tarfile->blocks * 0.5f, prodname, dist->version);
+    if (dist->relnumber)
+      printf("-%d", dist->relnumber);
+    if (!strcmp(title, "patch"))
+      fputs("-patch", stdout);
+    if (platname[0])
+      printf("-%s", platname);
+    puts(".tar");
   }
 
   tar_close(tarfile);
@@ -665,8 +682,9 @@ write_combined(const char *title,	/* I - Title */
   {
     stat(filename, &srcstat);
 
-    if (Verbosity)
-      printf("    %7.2fM (total)\n", srcstat.st_size / 1024.0 / 1024.0);
+    puts("     ------- ----------------------------------------");
+    printf("    %7.0fk %s\n", srcstat.st_size / 1024.0,
+           filename);
   }
 
   return (0);
@@ -726,7 +744,8 @@ write_common(dist_t     *dist,		/* I - Distribution */
              const char *title,		/* I - "Installation", etc... */
              int        rootsize,	/* I - Size of root files in kbytes */
 	     int        usrsize,	/* I - Size of /usr files in kbytes */
-             const char *filename)	/* I - Script to create */
+             const char *filename,	/* I - Script to create */
+	     const char *subpackage)	/* I - Subpackage name */
 {
   int	i;				/* Looping var */
   FILE	*fp;				/* File pointer */
@@ -765,7 +784,30 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fprintf(fp, "#%%copyright %s\n", dist->copyright);
   fprintf(fp, "#%%version %s %d\n", dist->version, dist->vernumber);
   for (i = 0; i < dist->num_descriptions; i ++)
-    fprintf(fp, "#%%description %s\n", dist->descriptions[i].description);
+    if (dist->descriptions[i].subpackage == subpackage)
+      break;
+
+  if (i < dist->num_descriptions)
+  {
+   /*
+    * Just do descriptions for this subpackage...
+    */
+
+    for (; i < dist->num_descriptions; i ++)
+      if (dist->descriptions[i].subpackage == subpackage)
+	fprintf(fp, "#%%description %s\n", dist->descriptions[i].description);
+  }
+  else
+  {
+   /*
+    * Just do descriptions for the main package...
+    */
+
+    for (i = 0; i < dist->num_descriptions; i ++)
+      if (dist->descriptions[i].subpackage == NULL)
+	fprintf(fp, "#%%description %s\n", dist->descriptions[i].description);
+  }
+
   fprintf(fp, "#%%rootsize %d\n", rootsize);
   fprintf(fp, "#%%usrsize %d\n", usrsize);
   fputs("#\n", fp);
@@ -858,12 +900,14 @@ write_confcheck(FILE *fp)		/* I - Script file */
  */
 
 static int				/* O - 0 on success, - 1 on failure */
-write_depends(dist_t     *dist,		/* I - Distribution */
+write_depends(const char *prodname,	/* I - Product name */
+              dist_t     *dist,		/* I - Distribution */
               FILE       *fp,		/* I - File pointer */
 	      const char *subpackage)	/* I - Subpackage */
 {
   int			i;		/* Looping var */
   depend_t		*d;		/* Current dependency */
+  const char		*product;	/* Product/file to depend on */
   static const char	*depends[] =	/* Dependency strings */
 			{
 			  "requires",
@@ -876,22 +920,27 @@ write_depends(dist_t     *dist,		/* I - Distribution */
   for (i = 0, d = dist->depends; i < dist->num_depends; i ++, d ++)
     if (d->subpackage == subpackage)
     {
-      fprintf(fp, "#%%%s %s %d %d\n", depends[(int)d->type], d->product,
+      if (!strcmp(d->product, "_self"))
+        product = prodname;
+      else
+        product = d->product;
+
+      fprintf(fp, "#%%%s %s %d %d\n", depends[(int)d->type], product,
               d->vernumber[0], d->vernumber[1]);
 
       switch (d->type)
       {
 	case DEPEND_REQUIRES :
-            if (d->product[0] == '/')
+            if (product[0] == '/')
             {
              /*
               * Require a file...
               */
 
               qprintf(fp, "if test ! -r %s -a ! -h %s; then\n",
-                      d->product, d->product);
+                      product, product);
               qprintf(fp, "	echo Sorry, you must first install \\'%s\\'!\n",
-	              d->product);
+	              product);
               fputs("	exit 1\n", fp);
               fputs("fi\n", fp);
             }
@@ -902,15 +951,15 @@ write_depends(dist_t     *dist,		/* I - Distribution */
               */
 
               fprintf(fp, "if test ! -x %s/%s.remove; then\n",
-                      SoftwareDir, d->product);
+                      SoftwareDir, product);
               fprintf(fp, "	if test -x %s.install; then\n",
-                      d->product);
+                      product);
               fprintf(fp, "		echo Installing required %s software...\n",
-                      d->product);
-              fprintf(fp, "		./%s.install now\n", d->product);
+                      product);
+              fprintf(fp, "		./%s.install now\n", product);
               fputs("	else\n", fp);
               fprintf(fp, "		echo Sorry, you must first install \\'%s\\'!\n",
-	              d->product);
+	              product);
               fputs("		exit 1\n", fp);
               fputs("	fi\n", fp);
               fputs("fi\n", fp);
@@ -923,7 +972,7 @@ write_depends(dist_t     *dist,		/* I - Distribution */
 
         	fprintf(fp, "installed=`grep \'^#%%version\' "
 	                    "%s/%s.remove | awk \'{print $3}\'`\n",
-                	SoftwareDir, d->product);
+                	SoftwareDir, product);
 
         	fputs("if test x$installed = x; then\n", fp);
 		fputs("	installed=0\n", fp);
@@ -932,13 +981,13 @@ write_depends(dist_t     *dist,		/* I - Distribution */
 		fprintf(fp, "if test $installed -lt %d -o $installed -gt %d; then\n",
 	        	d->vernumber[0], d->vernumber[1]);
         	fprintf(fp, "	if test -x %s.install; then\n",
-                	d->product);
+                	product);
         	fprintf(fp, "		echo Installing required %s software...\n",
-                	d->product);
-        	fprintf(fp, "		./%s.install now\n", d->product);
+                	product);
+        	fprintf(fp, "		./%s.install now\n", product);
         	fputs("	else\n", fp);
         	fprintf(fp, "		echo Sorry, you must first install \\'%s\\' version %s to %s!\n",
-	        	d->product, d->version[0], d->version[1]);
+	        	product, d->version[0], d->version[1]);
         	fputs("		exit 1\n", fp);
         	fputs("	fi\n", fp);
         	fputs("fi\n", fp);
@@ -947,16 +996,16 @@ write_depends(dist_t     *dist,		/* I - Distribution */
 	    break;
 
 	case DEPEND_INCOMPAT :
-            if (d->product[0] == '/')
+            if (product[0] == '/')
             {
              /*
               * Incompatible with a file...
               */
 
               qprintf(fp, "if test -r %s -o -h %s; then\n",
-                      d->product, d->product);
+                      product, product);
               qprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	              d->product);
+	              product);
               fputs("	echo Please remove it first.\n", fp);
               fputs("	exit 1\n", fp);
               fputs("fi\n", fp);
@@ -968,7 +1017,7 @@ write_depends(dist_t     *dist,		/* I - Distribution */
               */
 
               fprintf(fp, "if test -x %s/%s.remove; then\n",
-                      SoftwareDir, d->product);
+                      SoftwareDir, product);
 
               if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
 	      {
@@ -978,7 +1027,7 @@ write_depends(dist_t     *dist,		/* I - Distribution */
 
         	fprintf(fp, "	installed=`grep \'^#%%version\' "
 	                    "%s/%s.remove | awk \'{print $3}\'`\n",
-			SoftwareDir, d->product);
+			SoftwareDir, product);
 
         	fputs("	if test x$installed = x; then\n", fp);
 		fputs("		installed=0\n", fp);
@@ -987,18 +1036,18 @@ write_depends(dist_t     *dist,		/* I - Distribution */
 		fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
 	        	d->vernumber[0], d->vernumber[1]);
         	fprintf(fp, "		echo Sorry, this software is incompatible with \\'%s\\' version %s to %s!\n",
-	        	d->product, d->version[0], d->version[1]);
+	        	product, d->version[0], d->version[1]);
         	fprintf(fp, "		echo Please remove it first by running \\'%s/%s.remove\\'.\n",
-	        	SoftwareDir, d->product);
+	        	SoftwareDir, product);
         	fputs("		exit 1\n", fp);
         	fputs("	fi\n", fp);
 	      }
 	      else
 	      {
         	fprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	        	d->product);
+	        	product);
         	fprintf(fp, "	echo Please remove it first by running \\'%s/%s.remove\\'.\n",
-	        	SoftwareDir, d->product);
+	        	SoftwareDir, product);
         	fputs("	exit 1\n", fp);
 	      }
 
@@ -1008,7 +1057,7 @@ write_depends(dist_t     *dist,		/* I - Distribution */
 
 	case DEPEND_REPLACES :
             fprintf(fp, "if test -x %s/%s.remove; then\n", SoftwareDir,
-	            d->product);
+	            product);
 
             if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
 	    {
@@ -1018,7 +1067,7 @@ write_depends(dist_t     *dist,		/* I - Distribution */
 
               fprintf(fp, "	installed=`grep \'^#%%version\' "
 	                  "%s/%s.remove | awk \'{print $3}\'`\n",
-                      SoftwareDir, d->product);
+                      SoftwareDir, product);
 
               fputs("	if test x$installed = x; then\n", fp);
 	      fputs("		installed=0\n", fp);
@@ -1027,17 +1076,17 @@ write_depends(dist_t     *dist,		/* I - Distribution */
 	      fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
 	              d->vernumber[0], d->vernumber[1]);
               fprintf(fp, "		echo Automatically replacing \\'%s\\'...\n",
-	              d->product);
+	              product);
               fprintf(fp, "		%s/%s.remove now\n",
-	              SoftwareDir, d->product);
+	              SoftwareDir, product);
               fputs("	fi\n", fp);
 	    }
 	    else
 	    {
               fprintf(fp, "	echo Automatically replacing \\'%s\\'...\n",
-	              d->product);
+	              product);
               fprintf(fp, "	%s/%s.remove now\n",
-	              SoftwareDir, d->product);
+	              SoftwareDir, product);
             }
 
             fputs("fi\n", fp);
@@ -1515,14 +1564,14 @@ write_distfiles(const char *directory,	/* I - Directory */
   * Create the scripts...
   */
 
-  if (write_install(dist, prodfull, rootsize, usrsize, directory, subpackage))
+  if (write_install(dist, prodname, rootsize, usrsize, directory, subpackage))
     return (1);
 
   if (havepatchfiles)
-    if (write_patch(dist, prodfull, prootsize, pusrsize, directory, subpackage))
+    if (write_patch(dist, prodname, prootsize, pusrsize, directory, subpackage))
       return (1);
 
-  if (write_remove(dist, prodfull, rootsize, usrsize, directory, subpackage))
+  if (write_remove(dist, prodname, rootsize, usrsize, directory, subpackage))
     return (1);
 
  /*
@@ -1548,6 +1597,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   int		i;			/* Looping var */
   int		col;			/* Column in the output */
   FILE		*scriptfile;		/* Install script */
+  char		prodfull[255];		/* Full product name */
   char		filename[1024];		/* Name of temporary file */
   file_t	*file;			/* Software file */
   const char	*runlevels;		/* Run levels */
@@ -1557,10 +1607,15 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   if (Verbosity)
     puts("Writing installation script...");
 
-  snprintf(filename, sizeof(filename), "%s/%s.install", directory, prodname);
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
+  snprintf(filename, sizeof(filename), "%s/%s.install", directory, prodfull);
 
   if ((scriptfile = write_common(dist, "Installation", rootsize, usrsize,
-                                 filename)) == NULL)
+                                 filename, subpackage)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create installation script \"%s\" -\n"
                     "     %s\n", filename, strerror(errno));
@@ -1592,7 +1647,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
 
-  fprintf(scriptfile, "	more %s.license\n", prodname);
+  fprintf(scriptfile, "	more %s.license\n", prodfull);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
   fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
@@ -1610,15 +1665,15 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
   fputs("fi\n", scriptfile);
-  fprintf(scriptfile, "if test -x %s/%s.remove; then\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "if test -x %s/%s.remove; then\n", SoftwareDir, prodfull);
   fprintf(scriptfile, "	echo Removing old versions of %s software...\n",
-          prodname);
-  fprintf(scriptfile, "	%s/%s.remove now\n", SoftwareDir, prodname);
+          prodfull);
+  fprintf(scriptfile, "	%s/%s.remove now\n", SoftwareDir, prodfull);
   fputs("fi\n", scriptfile);
 
-  write_space_checks(prodname, scriptfile, rootsize ? "sw" : NULL,
+  write_space_checks(prodfull, scriptfile, rootsize ? "sw" : NULL,
                      usrsize ? "ss" : NULL);
-  write_depends(dist, scriptfile, subpackage);
+  write_depends(prodname, dist, scriptfile, subpackage);
   write_commands(dist, scriptfile, COMMAND_PRE_INSTALL, subpackage);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
@@ -1708,23 +1763,23 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   if (rootsize)
   {
-    fprintf(scriptfile, "$ac_tar %s.sw\n", prodname);
+    fprintf(scriptfile, "$ac_tar %s.sw\n", prodfull);
   }
 
   if (usrsize)
   {
     fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-    fprintf(scriptfile, "	$ac_tar %s.ss\n", prodname);
+    fprintf(scriptfile, "	$ac_tar %s.ss\n", prodfull);
     fputs("fi\n", scriptfile);
   }
 
   fprintf(scriptfile, "if test -d %s; then\n", SoftwareDir);
-  fprintf(scriptfile, "	rm -f %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "	rm -f %s/%s.remove\n", SoftwareDir, prodfull);
   fputs("else\n", scriptfile);
   fprintf(scriptfile, "	mkdir -p %s\n", SoftwareDir);
   fputs("fi\n", scriptfile);
-  fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
-  fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "cp %s.remove %s\n", prodfull, SoftwareDir);
+  fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodfull);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c' && file->subpackage == subpackage)
@@ -1936,7 +1991,7 @@ write_instfiles(tarf_t     *tarfile,	/* I - Distribution tar file */
     }
 
     if (Verbosity)
-      printf("    %7.2fM %s.%s\n", srcstat.st_size / 1024.0 / 1024.0,
+      printf("    %7.0fk %s.%s\n", srcstat.st_size / 1024.0,
 	     prodfull, files[i]);
   }
 
@@ -1959,6 +2014,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   int		i;			/* Looping var */
   FILE		*scriptfile;		/* Patch script */
   char		filename[1024];		/* Name of temporary file */
+  char		prodfull[255];		/* Full product name */
   file_t	*file;			/* Software file */
   const char	*runlevels;		/* Run levels */
   int		number;			/* Start/stop number */
@@ -1967,10 +2023,15 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   if (Verbosity)
     puts("Writing patch script...");
 
-  snprintf(filename, sizeof(filename), "%s/%s.patch", directory, prodname);
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
+  snprintf(filename, sizeof(filename), "%s/%s.patch", directory, prodfull);
 
   if ((scriptfile = write_common(dist, "Patch", rootsize, usrsize,
-                                 filename)) == NULL)
+                                 filename, subpackage)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create patch script \"%s\" -\n"
                     "     %s\n", filename, strerror(errno));
@@ -2001,7 +2062,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
 
-  fprintf(scriptfile, "	more %s.license\n", prodname);
+  fprintf(scriptfile, "	more %s.license\n", prodfull);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
   fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
@@ -2020,12 +2081,12 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("	done\n", scriptfile);
   fputs("fi\n", scriptfile);
 
-  write_space_checks(prodname, scriptfile, rootsize ? "psw" : NULL,
+  write_space_checks(prodfull, scriptfile, rootsize ? "psw" : NULL,
                      usrsize ? "pss" : NULL);
-  write_depends(dist, scriptfile, subpackage);
+  write_depends(prodname, dist, scriptfile, subpackage);
 
   fprintf(scriptfile, "if test ! -x %s/%s.remove; then\n",
-          SoftwareDir, prodname);
+          SoftwareDir, prodfull);
   fputs("	echo You do not appear to have the base software installed!\n",
         scriptfile);
   fputs("	echo Please install the full distribution instead.\n", scriptfile);
@@ -2069,19 +2130,19 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   if (rootsize)
   {
-    fprintf(scriptfile, "$ac_tar %s.psw\n", prodname);
+    fprintf(scriptfile, "$ac_tar %s.psw\n", prodfull);
   }
 
   if (usrsize)
   {
     fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-    fprintf(scriptfile, "	$ac_tar %s.pss\n", prodname);
+    fprintf(scriptfile, "	$ac_tar %s.pss\n", prodfull);
     fputs("fi\n", scriptfile);
   }
 
-  fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
-  fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
-  fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodfull);
+  fprintf(scriptfile, "cp %s.remove %s\n", prodfull, SoftwareDir);
+  fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodfull);
 
   fputs("echo Updating file permissions...\n", scriptfile);
 
@@ -2268,6 +2329,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   int		col;			/* Current column */
   FILE		*scriptfile;		/* Remove script */
   char		filename[1024];		/* Name of temporary file */
+  char		prodfull[255];		/* Full product name */
   file_t	*file;			/* Software file */
   const char	*runlevels;		/* Run levels */
   int		number;			/* Start/stop number */
@@ -2276,10 +2338,15 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   if (Verbosity)
     puts("Writing removal script...");
 
-  snprintf(filename, sizeof(filename), "%s/%s.remove", directory, prodname);
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
+  snprintf(filename, sizeof(filename), "%s/%s.remove", directory, prodfull);
 
   if ((scriptfile = write_common(dist, "Removal", rootsize, usrsize,
-                                 filename)) == NULL)
+                                 filename, subpackage)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create removal script \"%s\" -\n"
                     "     %s\n", filename, strerror(errno));
@@ -2498,7 +2565,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   write_commands(dist, scriptfile, COMMAND_POST_REMOVE, subpackage);
 
-  fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
+  fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodfull);
 
   fputs("echo Removal is complete.\n", scriptfile);
 
@@ -2612,5 +2679,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63.2.24 2004/10/26 02:44:56 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.25 2004/10/26 20:29:24 mike Exp $".
  */

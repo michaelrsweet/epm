@@ -1,5 +1,5 @@
 /*
- * "$Id: run.c,v 1.2.2.3 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: run.c,v 1.2.2.4 2004/10/26 20:29:24 mike Exp $"
  *
  *   External program function for the ESP Package Manager (EPM).
  *
@@ -124,7 +124,7 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
     * if !Verbosity...
     */
 
-    if (!Verbosity)
+    if (Verbosity < 2)
     {
       close(0);
       close(1);
@@ -178,5 +178,5 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
 
 
 /*
- * End of "$Id: run.c,v 1.2.2.3 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: run.c,v 1.2.2.4 2004/10/26 20:29:24 mike Exp $".
  */
