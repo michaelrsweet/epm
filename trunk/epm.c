@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.20 1999/08/28 18:59:32 mike Exp $"
+ * "$Id: epm.c,v 1.21 1999/08/30 21:22:26 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -1589,7 +1589,7 @@ write_install(dist_t *dist,	/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
-    fputs("	if test -d $dir/init.d ; then\n", scriptfile);
+    fputs("	if test -d $dir/rc0.d ; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1908,7 +1908,7 @@ write_patch(dist_t *dist,	/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
-    fputs("	if test -d $dir/init.d ; then\n", scriptfile);
+    fputs("	if test -d $dir/rc0.d ; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -2060,7 +2060,7 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
-    fputs("	if test -d $dir/init.d ; then\n", scriptfile);
+    fputs("	if test -d $dir/rc0.d ; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -2111,5 +2111,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.20 1999/08/28 18:59:32 mike Exp $".
+ * End of "$Id: epm.c,v 1.21 1999/08/30 21:22:26 mike Exp $".
  */
