@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.57 2001/06/26 19:47:36 mike Exp $"
+ * "$Id: epm.c,v 1.58 2001/06/27 06:24:17 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -91,7 +91,10 @@ main(int  argc,			/* I - Number of command-line arguments */
   */
 
   if (argc < 2)
+  {
+    puts("epm: Too few arguments!");
     usage();
+  }
 
   strip       = 1;
   format      = PACKAGE_PORTABLE;
@@ -116,7 +119,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    {
 	      i ++;
 	      if (i >= argc)
+              {
+                puts("epm: Expected architecture name.");
 	        usage();
+              }
 
               temp = argv[i];
 	    }
@@ -132,7 +138,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    {
 	      i ++;
 	      if (i >= argc)
-	        usage();
+	      {
+                puts("epm: Expected format name.");
+                usage();
+              }
 
               temp = argv[i];
 	    }
@@ -176,7 +185,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      format = PACKAGE_PORTABLE;
 #endif
 	    else
+            {
+              printf("epm: Unknown format \"%s\".\n", temp);
 	      usage();
+            }
 	    break;
 
         case 'g' : /* Don't strip */
@@ -188,16 +200,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    break;
 
         case 'n' : /* Name with sysname, machine, and/or release */
-	    if (argv[i][2])
-	      namefmt = argv[i] + 2;
-	    else
-	    {
-	      i ++;
-	      if (i >= argc)
-	        usage();
-
-              namefmt = argv[i];
-	    }
+	    namefmt = argv[i] + 2;
 	    break;
 
         case 's' : /* Use setup GUI */
@@ -207,7 +210,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    {
 	      i ++;
 	      if (i >= argc)
+              {
+                puts("epm: Expected setup image.");
 	        usage();
+              }
 
               setup = argv[i];
 	    }
@@ -231,7 +237,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      if (i < argc)
 	        setup = argv[i];
 	      else
+              {
+                puts("epm: Expected setup image.");
 	        usage();
+              }
             }
 	    else if (strcmp(argv[i], "--setup-program") == 0)
 	    {
@@ -239,13 +248,20 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      if (i < argc)
 	        SetupProgram = argv[i];
 	      else
+              {
+                puts("epm: Expected setup program.");
 	        usage();
+              }
             }
 	    else
+            {
+              printf("epm: Unknown option \"%s\".\n", argv[i]);
 	      usage();
+            }
 	    break;
 
         default :
+            printf("epm: Unknown option \"%s\".\n", argv[i]);
 	    usage();
 	    break;
       }
@@ -257,14 +273,20 @@ main(int  argc,			/* I - Number of command-line arguments */
     else if (listname[0] == '\0')
       strcpy(listname, argv[i]);
     else
+    {
+      printf("epm: Unknown argument \"%s\".\n", argv[i]);
       usage();
+    }
 
  /* 
   * Check for product name and list file...
   */
 
   if (!prodname[0])
+  {
+    puts("epm: No product name specified!");
     usage();
+  }
 
   if (!listname[0])
     snprintf(listname, sizeof(listname), "%s.list", prodname);
@@ -290,7 +312,11 @@ main(int  argc,			/* I - Number of command-line arguments */
     else if (*temp == 's')
       strcat(platname, platform.sysname);
     else
+    {
+      printf("epm: Bad name format character \"%c\" in \"%s\".\n", *temp,
+             namefmt);
       usage();
+    }
   }
 
 
@@ -469,5 +495,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.57 2001/06/26 19:47:36 mike Exp $".
+ * End of "$Id: epm.c,v 1.58 2001/06/27 06:24:17 mike Exp $".
  */
