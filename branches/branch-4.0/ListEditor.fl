@@ -1,0 +1,146 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0100 
+header_name {.h} 
+code_name {.cxx}
+class ListEditor {open
+} {} 
+
+Function {ListEditor(const char *listfile)} {open
+} {
+  Fl_Window window {
+    label {EPM List Editor 4.0} open
+    private xywh {312 20 503 495} resizable visible
+  } {
+    Fl_Menu_Bar menubar {open
+      private xywh {0 0 505 25}
+    } {
+      submenu {} {
+        label {&File} open
+        private xywh {0 0 100 20}
+      } {
+        menuitem {} {
+          label {&New}
+          private xywh {0 0 100 20} shortcut 0x4006e
+        }
+        menuitem {} {
+          label {&Open...}
+          private xywh {10 10 100 20} shortcut 0x4006f
+        }
+        submenu {} {
+          label {Open &Previous} open selected
+          private xywh {0 0 100 20} deactivate
+        } {
+          menuitem {history_items[0]} {
+            private xywh {0 0 100 20}
+          }
+          menuitem {history_items[1]} {
+            private xywh {10 10 100 20}
+          }
+          menuitem {history_items[2]} {
+            private xywh {20 20 100 20}
+          }
+          menuitem {history_items[3]} {
+            private xywh {30 30 100 20}
+          }
+          menuitem {history_items[4]} {
+            private xywh {40 40 100 20}
+          }
+          menuitem {history_items[5]} {
+            private xywh {50 50 100 20}
+          }
+          menuitem {history_items[6]} {
+            private xywh {60 60 100 20}
+          }
+          menuitem {history_items[7]} {
+            private xywh {70 70 100 20}
+          }
+          menuitem {history_items[8]} {
+            private xywh {80 80 100 20}
+          }
+          menuitem {history_items[9]} {
+            private xywh {90 90 100 20}
+          }
+        }
+        menuitem {} {
+          label {&Close}
+          private xywh {20 20 100 20} shortcut 0x40077 divider
+        }
+        menuitem {} {
+          label {&Save}
+          private xywh {30 30 100 20} shortcut 0x40073
+        }
+        menuitem {} {
+          label {Save &As...}
+          private xywh {40 40 100 20} shortcut 0x50073 divider
+        }
+        menuitem {} {
+          label {&Build Package...}
+          private xywh {50 50 100 20} shortcut 0x40062 divider
+        }
+        menuitem {} {
+          label {&Quit}
+          private xywh {60 60 100 20} shortcut 0x40071
+        }
+      }
+      submenu {} {
+        label {&Edit} open
+        private xywh {0 0 100 20}
+      } {
+        menuitem {} {
+          label {&Copy}
+          private xywh {0 0 100 20} shortcut 0x40063
+        }
+        menuitem {} {
+          label {Cu&t}
+          private xywh {10 10 100 20} shortcut 0x40078
+        }
+        menuitem {} {
+          label {&Delete}
+          private xywh {40 40 100 20} shortcut 0xffff
+        }
+        menuitem {} {
+          label {&Paste}
+          private xywh {20 20 100 20} shortcut 0x40076 divider
+        }
+        menuitem {} {
+          label {&File Settings...}
+          private xywh {30 30 100 20} shortcut 0x40066
+        }
+        menuitem {} {
+          label {P&roject Settings...}
+          private xywh {40 40 100 20} shortcut 0x40070
+        }
+      }
+      submenu {} {
+        label {&Help} open
+        private xywh {0 0 100 20}
+      } {
+        menuitem {} {
+          label {&Contents...}
+          private xywh {0 0 100 20} shortcut 0xffbe divider
+        }
+        menuitem {} {
+          label {&Introduction...}
+          private xywh {40 40 100 20}
+        }
+        menuitem {} {
+          label {&Basic...}
+          private xywh {20 20 100 20}
+        }
+        menuitem {} {
+          label {&Advanced...}
+          private xywh {30 30 100 20} divider
+        }
+        menuitem {} {
+          label {&Version...}
+          private xywh {10 10 100 20}
+        }
+      }
+    }
+    Fl_Browser {} {
+      private xywh {0 25 505 470} type Multi resizable
+      code0 {\#include "ListBrowser.h"}
+      class ListBrowser
+    }
+  }
+} 
