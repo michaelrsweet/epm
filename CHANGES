@@ -11,6 +11,12 @@ WHAT'S NEW IN EPM 2.9?
 	  with a dash ("-") in it was an unsupported option.
 	- Fixed a bug in the removal script - config files were
 	  removed by the remove script...
+	- Changed the config file install logic to copy the new
+	  config file (instead of moving it), so that an
+	  unchanged config file can be detected and removed.
+	  This provides the best of both worlds - unchanged
+	  config files are update automatically by an
+	  upgrade/install, while changed ones are preserved.
 
 
 WHAT'S NEW IN EPM 2.8?

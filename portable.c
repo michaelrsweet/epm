@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.42 2001/06/07 13:00:34 mike Exp $"
+ * "$Id: portable.c,v 1.43 2001/06/07 13:14:14 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -182,7 +182,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
            /*
 	    * Configuration files are extracted to the config file name with
 	    * .N appended; add a bit of script magic to check if the config
-	    * file already exists, and if not we move the .N to the config
+	    * file already exists, and if not we copy the .N to the config
 	    * file location...
 	    */
 
@@ -269,7 +269,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
            /*
 	    * Configuration files are extracted to the config file name with
 	    * .N appended; add a bit of script magic to check if the config
-	    * file already exists, and if not we move the .N to the config
+	    * file already exists, and if not we copy the .N to the config
 	    * file location...
 	    */
 
@@ -358,7 +358,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
              /*
 	      * Configuration files are extracted to the config file name with
 	      * .N appended; add a bit of script magic to check if the config
-	      * file already exists, and if not we move the .N to the config
+	      * file already exists, and if not we copy the .N to the config
 	      * file location...
 	      */
 
@@ -441,7 +441,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
              /*
 	      * Configuration files are extracted to the config file name with
 	      * .N appended; add a bit of script magic to check if the config
-	      * file already exists, and if not we move the .N to the config
+	      * file already exists, and if not we copy the .N to the config
 	      * file location...
 	      */
 
@@ -1232,7 +1232,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	if test ! -f $file; then\n", scriptfile);
-    fputs("		/bin/mv -f $file.N $file\n", scriptfile);
+    fputs("		/bin/cp $file.N $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1441,7 +1441,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	if test ! -f $file; then\n", scriptfile);
-    fputs("		/bin/mv -f $file.N $file\n", scriptfile);
+    fputs("		/bin/cp $file.N $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
@@ -1460,7 +1460,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
-    fputs("	rm -f $file\n", scriptfile);
+    fputs("	/bin/rm -f $file\n", scriptfile);
     fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
     fputs("		/bin/mv -f $file.O $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
@@ -1638,8 +1638,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   fputs("echo Removing/restoring installed files...\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l' ||
-         tolower(file->type) == 'c') &&
+    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
         strncmp(file->dst, "/usr", 4) != 0)
       break;
 
@@ -1655,17 +1654,9 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 	else
           col += fprintf(scriptfile, " %s", file->dst);
       }
-      else if (tolower(file->type) == 'c' &&
-               strncmp(file->dst, "/usr", 4) != 0)
-      {
-        if (col > 80)
-	  col = fprintf(scriptfile, " \\\n%s.N", file->dst) - 2;
-	else
-          col += fprintf(scriptfile, " %s.N", file->dst);
-      }
 
     fputs("; do\n", scriptfile);
-    fputs("	rm -f $file\n", scriptfile);
+    fputs("	/bin/rm -f $file\n", scriptfile);
     fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
     fputs("		/bin/mv -f $file.O $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
@@ -1673,8 +1664,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l' ||
-         tolower(file->type) == 'c') &&
+    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
         strncmp(file->dst, "/usr", 4) == 0)
       break;
 
@@ -1691,17 +1681,9 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 	else
           col += fprintf(scriptfile, " %s", file->dst);
       }
-      else if (tolower(file->type) == 'c' &&
-               strncmp(file->dst, "/usr", 4) == 0)
-      {
-        if (col > 80)
-	  col = fprintf(scriptfile, " \\\n%s.N", file->dst) - 2;
-	else
-          col += fprintf(scriptfile, " %s.N", file->dst);
-      }
 
     fputs("; do\n", scriptfile);
-    fputs("		rm -f $file\n", scriptfile);
+    fputs("		/bin/rm -f $file\n", scriptfile);
     fputs("		if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
     fputs("			/bin/mv -f $file.O $file\n", scriptfile);
     fputs("		fi\n", scriptfile);
@@ -1709,9 +1691,36 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("fi\n", scriptfile);
   }
 
+  fputs("echo Removing/restoring installed files...\n", scriptfile);
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'c')
+      break;
+
+  if (i)
+  {
+    col = fputs("for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'c')
+      {
+        if (col > 80)
+	  col = fprintf(scriptfile, " \\\n%s", file->dst) - 2;
+	else
+          col += fprintf(scriptfile, " %s", file->dst);
+      }
+
+    fputs("; do\n", scriptfile);
+    fputs("	if cmp -s $file $file.N; then\n", scriptfile);
+    fputs("		# Config file not changed\n", scriptfile);
+    fputs("		/bin/rm -f $file\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("	/bin/rm -f $file.N\n", scriptfile);
+    fputs("done\n", scriptfile);
+  }
+
   write_commands(dist, scriptfile, COMMAND_POST_REMOVE);
 
-  fprintf(scriptfile, "rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  fprintf(scriptfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
 
   fputs("echo Removal is complete.\n", scriptfile);
 
@@ -1797,5 +1806,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.42 2001/06/07 13:00:34 mike Exp $".
+ * End of "$Id: portable.c,v 1.43 2001/06/07 13:14:14 mike Exp $".
  */
