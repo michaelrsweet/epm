@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.1 1999/11/04 20:31:07 mike Exp $"
+ * "$Id: portable.c,v 1.2 1999/11/04 22:36:09 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -17,6 +17,11 @@
  *
  * Contents:
  *
+ *   make_portable() - Make a portable software distribution package.
+ *   write_dist()    - Write a software distribution...
+ *   write_install() - Write the installation script.
+ *   write_patch()   - Write the patch script.
+ *   write_remove()  - Write the removal script.
  */
 
 /*
@@ -30,6 +35,8 @@
  * Local functions...
  */
 
+static FILE	*write_common(dist_t *dist, const char *title,
+		              const char *filename);
 static int	write_dist(const char *title, const char *directory,
 		           const char *prodname, const char *platname,
 			   dist_t *dist, const char **files);
@@ -199,7 +206,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 
 	case 'd' : /* Create directory */
             if (Verbosity > 1)
-	      printf("%s...\n", file->dst);
+	      printf("Directory %s...\n", file->dst);
 	    break;
 
 	case 'l' : /* Link file */
@@ -507,6 +514,69 @@ make_portable(const char     *prodname,	/* I - Product short name */
 
 
 /*
+ * 'write_common()' - Write the common shell script header.
+ */
+
+static FILE *				/* O - File pointer */
+write_common(dist_t     *dist,		/* I - Distribution */
+             const char *title,		/* I - "Installation", etc... */
+             const char *filename)	/* I - Script to create */
+{
+  int	i;				/* Looping var */
+  FILE	*fp;				/* File pointer */
+
+
+ /*
+  * Remove any existing copy of the file...
+  */
+
+  unlink(filename);
+
+ /*
+  * Create the script file...
+  */
+
+  if ((fp = fopen(filename, "w")) == NULL)
+    return (NULL);
+
+ /*
+  * Update the permissions on the file...
+  */
+
+  fchmod(fileno(fp), 0555);
+
+ /*
+  * Write the standard header...
+  */
+
+  fputs("#!/bin/sh\n", fp);
+  fprintf(fp, "# %s script for %s version %s.\n", title,
+          dist->product, dist->version);
+  fputs("# Produced using " EPM_VERSION "; report problems to epm@easysw.com.\n",
+        fp);
+  fprintf(fp, "#%%product %s\n", dist->product);
+  fprintf(fp, "#%%vendor %s\n", dist->vendor);
+  fprintf(fp, "#%%copyright %s\n", dist->copyright);
+  fprintf(fp, "#%%version %s %d\n", dist->version, dist->vernumber);
+  for (i = 0; i < dist->num_descriptions; i ++)
+    fprintf(fp, "#%%description %s\n", dist->descriptions[i]);
+  fputs("#\n", fp);
+
+  fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", fp);
+  fputs("	echo Sorry, you must be root to install this software.\n", fp);
+  fputs("	exit 1\n", fp);
+  fputs("fi\n", fp);
+  fprintf(fp, "echo Copyright %s\n", dist->copyright);
+
+ /*
+  * Return the file pointer...
+  */
+
+  return(fp);
+}
+
+
+/*
  * 'write_dist()' - Write a software distribution...
  */
 
@@ -617,34 +687,19 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   sprintf(filename, "%s/%s.install", directory, prodname);
 
-  unlink(filename);
-  if ((scriptfile = fopen(filename, "w")) == NULL)
+  if ((scriptfile = write_common(dist, "Installation", filename)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create installation script \"%s\" -\n"
                     "     %s\n", filename, strerror(errno));
     return (-1);
   }
 
-  fchmod(fileno(scriptfile), 0555);
-
-  fputs("#!/bin/sh\n", scriptfile);
-  fprintf(scriptfile, "# Installation script for %s version %s.\n",
-          dist->product, dist->version);
-  fputs("# Produced using " EPM_VERSION "; report problems to epm@easysw.com.\n",
-        scriptfile);
-  fprintf(scriptfile, "#%%product %s\n", dist->product);
-  fprintf(scriptfile, "#%%copyright %s\n", dist->copyright);
-  fprintf(scriptfile, "#%%version %s %d\n", dist->version, dist->vernumber);
   fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", scriptfile);
   fputs("	tar=\"/bin/tar -xpf\"\n", scriptfile);
   fputs("else\n", scriptfile);
   fputs("	tar=\"/bin/tar -xpPf\"\n", scriptfile);
   fputs("fi\n", scriptfile);
-  fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", scriptfile);
-  fputs("	echo Sorry, you must be root to install this software.\n", scriptfile);
-  fputs("	exit 1\n", scriptfile);
-  fputs("fi\n", scriptfile);
-  fprintf(scriptfile, "echo Copyright %s\n", dist->copyright);
+
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
   fprintf(scriptfile, "	echo This installation script will install the %s\n",
@@ -671,6 +726,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("			;;\n", scriptfile);
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
+
   fprintf(scriptfile, "	more %s.license\n", prodname);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
@@ -967,35 +1023,19 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   sprintf(filename, "%s/%s.patch", directory, prodname);
 
-  unlink(filename);
-  if ((scriptfile = fopen(filename, "w")) == NULL)
+  if ((scriptfile = write_common(dist, "Patch", filename)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create patch script \"%s\" -\n"
                     "     %s\n", filename, strerror(errno));
     return (-1);
   }
 
-  fchmod(fileno(scriptfile), 0555);
-
-  fputs("#!/bin/sh\n", scriptfile);
-  fprintf(scriptfile, "# Patch script for %s version %s.\n", dist->product,
-          dist->version);
-  fputs("# Produced using " EPM_VERSION "; report problems to epm@easysw.com.\n",
-        scriptfile);
-  fprintf(scriptfile, "#%%product %s\n", dist->product);
-  fprintf(scriptfile, "#%%copyright %s\n", dist->copyright);
-  fprintf(scriptfile, "#%%version %s %d\n", dist->version, dist->vernumber);
   fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", scriptfile);
   fputs("	tar=\"/bin/tar -xpf\"\n", scriptfile);
   fputs("else\n", scriptfile);
   fputs("	tar=\"/bin/tar -xpPf\"\n", scriptfile);
   fputs("fi\n", scriptfile);
-  fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", scriptfile);
-  fputs("	echo Sorry, you must be root to install this software.\n",
-        scriptfile);
-  fputs("	exit 1\n", scriptfile);
-  fputs("fi\n", scriptfile);
-  fprintf(scriptfile, "echo Copyright %s\n", dist->copyright);
+
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
   fprintf(scriptfile, "	echo This installation script will patch the %s\n",
@@ -1021,6 +1061,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("			;;\n", scriptfile);
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
+
   fprintf(scriptfile, "	more %s.license\n", prodname);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
@@ -1277,29 +1318,13 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   sprintf(filename, "%s/%s.remove", directory, prodname);
 
-  unlink(filename);
-  if ((scriptfile = fopen(filename, "w")) == NULL)
+  if ((scriptfile = write_common(dist, "Removal", filename)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create removal script \"%s\" -\n"
                     "     %s\n", filename, strerror(errno));
     return (-1);
   }
 
-  fchmod(fileno(scriptfile), 0555);
-
-  fputs("#!/bin/sh\n", scriptfile);
-  fprintf(scriptfile, "# Removal script for %s version %s.\n", dist->product,
-          dist->version);
-  fputs("# Produced using " EPM_VERSION "; report problems to epm@easysw.com.\n",
-        scriptfile);
-  fprintf(scriptfile, "#%%product %s\n", dist->product);
-  fprintf(scriptfile, "#%%copyright %s\n", dist->copyright);
-  fprintf(scriptfile, "#%%version %s %d\n", dist->version, dist->vernumber);
-  fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", scriptfile);
-  fputs("	echo Sorry, you must be root to remove this software.\n", scriptfile);
-  fputs("	exit 1\n", scriptfile);
-  fputs("fi\n", scriptfile);
-  fprintf(scriptfile, "echo Copyright %s\n", dist->copyright);
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
   fprintf(scriptfile, "	echo This removal script will remove the %s\n",
@@ -1444,5 +1469,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.1 1999/11/04 20:31:07 mike Exp $".
+ * End of "$Id: portable.c,v 1.2 1999/11/04 22:36:09 mike Exp $".
  */

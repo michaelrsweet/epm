@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.1 1999/11/04 20:31:07 mike Exp $"
+ * "$Id: rpm.c,v 1.2 1999/11/04 22:36:09 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -38,10 +38,134 @@ make_rpm(const char     *prodname,	/* I - Product short name */
          dist_t         *dist,		/* I - Distribution information */
 	 struct utsname *platform)	/* I - Platform information */
 {
-  return (1);
+  int		i;			/* Looping var */
+  FILE		*fp;			/* Spec file */
+  char		specname[1024];		/* Spec filename */
+  char		filename[1024];		/* Destination filename */
+  char		command[1024];		/* RPM command to run */
+  file_t	*file;			/* Current distribution file */
+  struct passwd	*pwd;			/* Pointer to user record */
+  struct group	*grp;			/* Pointer to group record */
+
+
+  if (Verbosity)
+    puts("Creating RPM distribution...");
+
+ /*
+  * Write the spec file for RPM...
+  */
+
+  if (Verbosity)
+    puts("Creating spec file...");
+
+  sprintf(specname, "%s/%s.spec", directory, prodname);
+
+  if ((fp = fopen(specname, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create spec file \"%s\" - %s\n", filename,
+            strerror(errno));
+    return (1);
+  }
+
+  fprintf(fp, "Summary: %s\n", dist->product);
+  fprintf(fp, "Name: %s\n", prodname);
+  fprintf(fp, "Version: %s\n", dist->version);
+  fputs("Release: 1\n", fp);
+  fprintf(fp, "Copyright: %s\n", dist->copyright);
+  fprintf(fp, "Packager: %s\n", dist->vendor);
+  fprintf(fp, "BuildRoot: %s\n", directory);
+  fputs("Group: Applications\n", fp);
+  fputs("%description\n", fp);
+  for (i = 0; i < dist->num_descriptions; i ++)
+    fprintf(fp, "%s\n", dist->descriptions[i]);
+  fputs("%files\n", fp);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) != 'i')
+      fprintf(fp, "%s\n", file->dst);
+    else
+      fprintf(fp, "/etc/rc.d/init.d/%s\n", file->dst);
+
+  fclose(fp);
+
+ /*
+  * Copy the files over...
+  */
+
+  if (Verbosity)
+    puts("Copying distribution files...");
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+  {
+   /*
+    * Find the username and groupname IDs...
+    */
+
+    pwd = getpwnam(file->user);
+    grp = getgrnam(file->group);
+
+    endpwent();
+    endgrent();
+
+   /*
+    * Copy the file or make the directory or make the symlink as needed...
+    */
+
+    switch (tolower(file->type))
+    {
+      case 'c' :
+      case 'f' :
+          sprintf(filename, "%s%s", directory, file->dst);
+
+	  if (Verbosity > 1)
+	    printf("%s -> %s...\n", file->src, filename);
+
+	  if (copy_file(filename, file->src, file->mode, pwd ? pwd->pw_uid : 0,
+			grp ? grp->gr_gid : 0))
+	    return (1);
+          break;
+      case 'i' :
+          sprintf(filename, "%s/etc/rc.d/init.d/%s", directory, file->dst);
+
+	  if (Verbosity > 1)
+	    printf("%s -> %s...\n", file->src, filename);
+
+	  if (copy_file(filename, file->src, file->mode, pwd ? pwd->pw_uid : 0,
+			grp ? grp->gr_gid : 0))
+	    return (1);
+          break;
+      case 'd' :
+          sprintf(filename, "%s%s", directory, file->dst);
+
+	  if (Verbosity > 1)
+	    printf("Directory %s...\n", file->src, filename);
+
+          make_directory(filename, file->mode, pwd ? pwd->pw_uid : 0,
+			 grp ? grp->gr_gid : 0);
+          break;
+      case 'l' :
+          sprintf(filename, "%s%s", directory, file->dst);
+
+	  if (Verbosity > 1)
+	    printf("%s -> %s...\n", file->src, filename);
+
+          make_link(filename, file->src);
+          break;
+    }
+  }
+
+ /*
+  * Build the distribution from the spec file...
+  */
+
+  if (Verbosity)
+    puts("Building RPM binary distribution...");
+
+  sprintf(command, "rpm -bb %s", specname);
+
+  return (system(command));
 }
 
 
 /*
- * End of "$Id: rpm.c,v 1.1 1999/11/04 20:31:07 mike Exp $".
+ * End of "$Id: rpm.c,v 1.2 1999/11/04 22:36:09 mike Exp $".
  */
