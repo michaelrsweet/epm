@@ -1,5 +1,5 @@
 #
-# "$Id: epm.list,v 1.1 2000/04/26 14:27:06 mike Exp $"
+# "$Id: epm.list,v 1.2 2000/12/01 14:44:16 mike Exp $"
 #
 #   Sample software list file for the ESP Package Manager (EPM).
 #
@@ -27,15 +27,21 @@
 %product ESP Package Manager
 %copyright 1999-2000 by Easy Software Products, All Rights Reserved.
 %vendor Easy Software Products
+%packager Dirk Datzert <Dirk@Datzert.de>
 %license COPYING
 %readme README
 %description Universal software packaging tool for UNIX.
-%version 2.0.1
+%version 2.1
 
 # Executables
 %system all
 f 0555 root sys /usr/bin/epm epm
-f 0555 root sys /usr/lib/epm/setup setup
+f 0544 root sys /usr/bin/epmworkdir epmworkdir
+#f 0555 root sys /usr/lib/epm/setup setup
+f 0444 root sys /usr/share/doc/packages/epm/README README
+f 0444 root sys /usr/share/doc/packages/epm/COPYING COPYING
+f 0444 root sys /usr/share/doc/packages/epm/epm.list epm.list
+f 0444 root sys /usr/share/doc/packages/epm/epm.html epm.html
 
 # Man pages
 %system irix
@@ -44,5 +50,5 @@ f 0444 root sys /usr/share/catman/u_man/cat1/epm.1 epm.1
 f 0444 root sys /usr/man/man1/epm.1 epm.man
 
 #
-# End of "$Id: epm.list,v 1.1 2000/04/26 14:27:06 mike Exp $".
+# End of "$Id: epm.list,v 1.2 2000/12/01 14:44:16 mike Exp $".
 #

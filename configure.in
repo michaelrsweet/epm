@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.13 2000/08/01 17:50:19 mike Exp $"
+dnl "$Id: configure.in,v 1.14 2000/12/01 14:44:16 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -23,6 +23,8 @@ AC_PREFIX_DEFAULT(/usr)
 dnl Get the operating system...
 
 uname=`uname`
+uversion=`uname -r | sed -e '1,$s/[[^0-9]]//g'`
+
 if test "$uname" = "IRIX64"; then
     uname="IRIX"
 fi
@@ -97,6 +99,11 @@ if test "$x_includes" != "NONE" -a "x$x_includes" != "x"; then
 	CXXFLAGS="$CXXFLAGS -I$x_includes"
 fi
 AC_CHECK_LIB(m,pow)
+
+if test "$uname" = Linux; then
+	AC_CHECK_LIB(GL,glEnable)
+fi
+
 AC_CHECK_LIB(fltk,numericsort)
 
 if test "$ac_cv_lib_fltk_numericsort" = yes -a "$ac_cv_prog_CXX" != ""; then
@@ -165,6 +172,41 @@ if test -n "$GCC"; then
 			echo "The -fpermissive option is not required by your GCC...")
 		CFLAGS="$OLDCFLAGS"
 	fi
+else
+	case $uname in
+        	IRIX*)
+			if test -z "$OPTIM"; then
+        			OPTIM="-O2"
+			fi
+			if test $uversion -ge 62; then
+				OPTIM="$OPTIM -n32 -mips3"
+				OPTIM="$OPTIM -OPT:Olimit=3000"
+				OPTIM="-fullwarn -woff 1209,1506,1692 $OPTIM"
+			else
+				OPTIM="-fullwarn $OPTIM"
+			fi
+			;;
+		HP-UX*)
+			if test -z "$OPTIM"; then
+				OPTIM="+O2"
+			fi
+			;;
+		SunOS*)
+			# Solaris
+			if test -z "$OPTIM"; then
+				OPTIM="-xO4"
+			fi
+			;;
+		*)
+			# Running some other operating system; inform the user they
+			# should contribute the necessary options to
+			# epm@easysw.com...
+			echo "Building EPM with default compiler optimizations; contact"
+			echo "epm@easysw.com with the uname and compiler options needed for"
+			echo "your platform, or set the CFLAGS and CXXFLAGS environment"
+			echo "variable before running configure."
+			;;
+	esac
 fi
 
 dnl Fix "prefix" variable if it hasn't been specified...
@@ -212,5 +254,5 @@ dnl Output the makefile and config header...
 AC_OUTPUT(Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.13 2000/08/01 17:50:19 mike Exp $".
+dnl End of "$Id: configure.in,v 1.14 2000/12/01 14:44:16 mike Exp $".
 dnl

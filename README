@@ -1,5 +1,5 @@
-README - ESP Package Manager (EPM) 2.1.1
-----------------------------------------
+README - ESP Package Manager (EPM) 2.2
+--------------------------------------
 
 WHAT IS EPM?
 
@@ -83,9 +83,9 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
     unencumbered by licensing of any kind (not even the GPL.)
 
 
-WHAT'S NEW IN EPM 2.1.1?
+WHAT'S NEW IN EPM 2.2?
 
-    EPM 2.1.1 adds the following features, fixes, and changes to
+    EPM 2.2 adds the following features, fixes, and changes to
     EPM 2.1:
 
 	- Updated the BuildRoot directive in RPM spec files to
@@ -103,6 +103,11 @@ WHAT'S NEW IN EPM 2.1.1?
 	  least 2 zeroed blocks to the end of the archive.  This
 	  eliminates error messages from Solaris tar and seems
 	  to be compatible with all other tar programs.
+	- Added the SuSE RPM directory to the standard search
+	  path.
+	- Added support for a new %packager directive.
+	- The strip command used was redirecting stderr before
+	  redirecting stdout.
 
 
 WHAT'S NEW IN EPM 2.1?

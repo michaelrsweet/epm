@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.20 2000/10/04 20:36:39 mike Exp $"
+ * "$Id: rpm.c,v 1.21 2000/12/01 14:44:16 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -83,7 +83,8 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "Version: %s\n", dist->version);
   fputs("Release: 1\n", fp);
   fprintf(fp, "Copyright: %s\n", dist->copyright);
-  fprintf(fp, "Packager: %s\n", dist->vendor);
+  fprintf(fp, "Packager: %s\n", dist->packager);
+  fprintf(fp, "Vendor: %s\n", dist->vendor);
   fprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
   fputs("Group: Applications\n", fp);
   for (i = 0; i < dist->num_requires; i ++)
@@ -269,6 +270,8 @@ make_rpm(const char     *prodname,	/* I - Product short name */
       rpmdir = "/usr/src/redhat";
     else if (!access("/usr/src/RPM/RPMS", 0))
       rpmdir = "/usr/src/RPM";
+    else if (!access("/usr/src/packages/RPMS", 0)) /* SuSE */
+      rpmdir = "/usr/src/packages";
     else
       rpmdir = "/usr/local/src/RPM";
   }
@@ -305,5 +308,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.20 2000/10/04 20:36:39 mike Exp $".
+ * End of "$Id: rpm.c,v 1.21 2000/12/01 14:44:16 mike Exp $".
  */
