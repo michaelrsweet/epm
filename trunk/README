@@ -100,6 +100,8 @@ WHAT'S NEW IN EPM 2.3?
 	  logic as portable distributions. This should make them
 	  portable to all known Linux distributions as well as
 	  avoid a *very* nasty installer bug in RedHat 7.0.
+	- The HP-UX swinstall code did not properly handle
+	  directories or config files.
 
 
 WHAT'S NEW IN EPM 2.2?
