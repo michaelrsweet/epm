@@ -1,5 +1,5 @@
 /*
- * "$Id: slackware.c,v 1.1 2003/07/24 10:54:00 mike Exp $"
+ * "$Id: slackware.c,v 1.2 2003/10/28 14:48:30 mike Exp $"
  *
  *   Slackware package gateway for the ESP Package Manager (EPM).
  *
@@ -159,13 +159,13 @@ make_slackware(const char     *prodname,/* I - Product short name */
 
   if (dist->num_descriptions)
   {
-    snprintf(filename, sizeof(filename), "%s/%s/install/slack-desc", prodname,
-             directory);
+    snprintf(filename, sizeof(filename), "%s/%s/install/slack-desc",
+             directory, prodname);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "ERROR: Couldn't create Slackware description file - %s\n",
-              strerror(errno));
+      fprintf(stderr, "ERROR: Couldn't create Slackware description file \"%s\" - %s\n",
+              filename, strerror(errno));
       return (1);
     }
 
@@ -184,13 +184,13 @@ make_slackware(const char     *prodname,/* I - Product short name */
 
   if (dist->num_commands)
   {
-    snprintf(filename, sizeof(filename), "%s/%s/install/doinst.sh", prodname,
-             directory);
+    snprintf(filename, sizeof(filename), "%s/%s/install/doinst.sh",
+             directory, prodname);
 
     if (!(fp = fopen(filename, "w")))
     {
-      fprintf(stderr, "ERROR: Couldn't create post install script - %s\n",
-              strerror(errno));
+      fprintf(stderr, "ERROR: Couldn't create post install script \"%s\" - %s\n",
+              filename, strerror(errno));
       return (1);
     }
 
@@ -255,5 +255,5 @@ make_slackware(const char     *prodname,/* I - Product short name */
 
 
 /*
- * End of "$Id: slackware.c,v 1.1 2003/07/24 10:54:00 mike Exp $".
+ * End of "$Id: slackware.c,v 1.2 2003/10/28 14:48:30 mike Exp $".
  */
