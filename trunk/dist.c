@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.4 1999/12/15 14:09:38 mike Exp $"
+ * "$Id: dist.c,v 1.5 1999/12/15 15:10:54 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -368,7 +368,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
       * Yes, do filtering based on the OS (+version)...
       */
 
-      *skip = 0;
+      *skip &= 2;
 
       if (strcmp(buffer + 8, "all\n") != 0)
       {
@@ -409,7 +409,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
           if (op)
 	    *skip |= match;
 	  else
-	    *skip &= !match;
+	    *skip &= ~match;
         }
       }
     }
@@ -419,7 +419,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
       * Yes, do filtering based on the distribution format...
       */
 
-      *skip = 0;
+      *skip &= 1;
 
       if (strcmp(buffer + 8, "all\n") != 0)
       {
@@ -444,12 +444,12 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	  while (isspace(*bufptr))
 	    bufptr ++;
 
-	  match = strcasecmp(value, format) == 0;
+	  match = (strcasecmp(value, format) == 0) * 2;
 
           if (op)
 	    *skip |= match;
 	  else
-	    *skip &= !match;
+	    *skip &= ~match;
         }
       }
     }
@@ -507,5 +507,5 @@ expand_name(char *buffer,	/* O - Output string */
 
 
 /*
- * End of "$Id: dist.c,v 1.4 1999/12/15 14:09:38 mike Exp $".
+ * End of "$Id: dist.c,v 1.5 1999/12/15 15:10:54 mike Exp $".
  */
