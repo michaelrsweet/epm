@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.40 2002/10/17 16:36:31 mike Exp $"
+ * "$Id: rpm.c,v 1.41 2002/10/31 14:17:52 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -398,9 +398,9 @@ make_rpm(const char     *prodname,	/* I - Product short name */
         	directory, prodname, dist->version, dist->relnumber,
 		directory, name);
   else
-    run_command(NULL, "/bin/mv %s/RPMS/%s/%s-%s-1.%s.rpm %s/%s.rpm",
+    run_command(NULL, "/bin/mv %s/RPMS/%s/%s-%s-%d.%s.rpm %s/%s.rpm",
         	directory, platform->machine, prodname, dist->version,
-		platform->machine, directory, name);
+		dist->relnumber, platform->machine, directory, name);
 
  /*
   * Remove temporary files...
@@ -422,5 +422,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.40 2002/10/17 16:36:31 mike Exp $".
+ * End of "$Id: rpm.c,v 1.41 2002/10/31 14:17:52 mike Exp $".
  */
