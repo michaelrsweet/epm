@@ -1,9 +1,9 @@
 /*
- * "$Id: aix.c,v 1.7 2001/10/26 17:32:04 mike Exp $"
+ * "$Id: aix.c,v 1.8 2002/01/02 20:39:39 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2001 by Easy Software Products.
+ *   Copyright 1999-2002 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -646,5 +646,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 }
 
 /*
- * End of "$Id: aix.c,v 1.7 2001/10/26 17:32:04 mike Exp $".
+ * End of "$Id: aix.c,v 1.8 2002/01/02 20:39:39 mike Exp $".
  */

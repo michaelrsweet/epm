@@ -1,9 +1,9 @@
 dnl
-dnl "$Id: configure.in,v 1.48 2001/12/30 12:58:41 mike Exp $"
+dnl "$Id: configure.in,v 1.49 2002/01/02 20:39:39 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
-dnl   Copyright 1999-2001 by Easy Software Products, all rights reserved.
+dnl   Copyright 1999-2002 by Easy Software Products, all rights reserved.
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
@@ -354,5 +354,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist doc/Makefile)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.48 2001/12/30 12:58:41 mike Exp $".
+dnl End of "$Id: configure.in,v 1.49 2002/01/02 20:39:39 mike Exp $".
 dnl

@@ -1,9 +1,9 @@
 /*
- * "$Id: tar.c,v 1.15 2001/06/26 16:22:22 mike Exp $"
+ * "$Id: tar.c,v 1.16 2002/01/02 20:39:41 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2001 by Easy Software Products.
+ *   Copyright 1999-2002 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -421,5 +421,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.15 2001/06/26 16:22:22 mike Exp $".
+ * End of "$Id: tar.c,v 1.16 2002/01/02 20:39:41 mike Exp $".
  */

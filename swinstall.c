@@ -1,9 +1,9 @@
 /*
- * "$Id: swinstall.c,v 1.16 2001/09/02 12:44:03 mike Exp $"
+ * "$Id: swinstall.c,v 1.17 2002/01/02 20:39:41 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2001 by Easy Software Products.
+ *   Copyright 1999-2002 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -506,5 +506,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.16 2001/09/02 12:44:03 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.17 2002/01/02 20:39:41 mike Exp $".
  */
