@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.41 2003/02/06 20:28:43 swdev Exp $"
+# "$Id: Makefile.in,v 1.42 2003/02/13 16:52:28 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -129,7 +129,7 @@ distclean:
 # Install all targets...
 #
 
-install: epm @INSTALL_GUIS@
+install: epm @INSTALL_GUIS@ @INSTALL_OSX@
 	echo Installing EPM programs in $(bindir)
 	-$(MKDIR) $(bindir)
 	$(RM) $(bindir)/epm
@@ -183,13 +183,23 @@ install: epm @INSTALL_GUIS@
 
 install-guis:	setup uninst
 	echo Installing EPM setup/uninst in $(libdir)/epm
+	$(RM) -r $(libdir)/epm
 	-$(MKDIR) $(libdir)/epm
-	$(RM) $(libdir)/epm/setup
 	$(CP) setup $(libdir)/epm
 	$(STRIP) $(libdir)/epm/setup
-	$(RM) $(libdir)/epm/uninst
 	$(CP) uninst $(libdir)/epm
 	$(STRIP) $(libdir)/epm/uninst
+
+install-osx:
+	echo Installing EPM OSX data files in $(datadir)/epm
+	$(RM) -r $(datadir)/epm
+	-$(MKDIR) $(datadir)/epm
+	$(CP) macosx/setup.icns $(datadir)/epm
+	$(CP) macosx/setup.info $(datadir)/epm
+	$(CP) macosx/setup.plist $(datadir)/epm
+	$(CP) macosx/uninst.icns $(datadir)/epm
+	$(CP) macosx/uninst.info $(datadir)/epm
+	$(CP) macosx/uninst.plist $(datadir)/epm
 
 
 #
@@ -210,6 +220,8 @@ uninstall:
 	$(RM) -r $(docdir)
 	echo Uninstalling EPM setup/uninstall from $(libdir)/epm
 	$(RM) -r $(libdir)/epm
+	echo Uninstalling EPM OSX data files from $(datadir)/epm
+	$(RM) -r $(datadir)/epm
 
 
 #
@@ -357,5 +369,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.41 2003/02/06 20:28:43 swdev Exp $".
+# End of "$Id: Makefile.in,v 1.42 2003/02/13 16:52:28 mike Exp $".
 #

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.81 2003/01/24 02:58:12 mike Exp $"
+ * "$Id: portable.c,v 1.82 2003/02/13 16:52:30 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -948,9 +948,143 @@ write_dist(const char *title,		/* I - Title to show */
     return (-1);
   }
 
+#ifdef __APPLE__
+  if (setup)
+  {
+   /*
+    * Create directories for the setup application...
+    */
+
+    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Setup.app", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Setup.app/Contents", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Setup.app/Contents/MacOS", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Setup.app/Contents/Resources", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+   /*
+    * Then copy the data files...
+    */
+
+    snprintf(srcname, sizeof(srcname), "%s/setup.icns", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Setup.app/Contents/Resources/setup.icns", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    snprintf(srcname, sizeof(srcname), "%s/setup.info", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Setup.app/Contents/PkgInfo", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    snprintf(srcname, sizeof(srcname), "%s/setup.plist", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Setup.app/Contents/Info.plist", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+  }
+#endif /* __APPLE__ */
+
   for (i = 0; files[i] != NULL; i ++)
   {
     snprintf(srcname, sizeof(srcname), "%s/%s.%s", directory, prodname, files[i]);
+
+#ifdef __APPLE__
+    if (setup)
+      snprintf(dstname, sizeof(dstname), "Setup.app/Contents/Resources/%s.%s", prodname, files[i]);
+    else
+#endif /* __APPLE__ */
     snprintf(dstname, sizeof(dstname), "%s.%s", prodname, files[i]);
 
     stat(srcname, &srcstat);
@@ -1003,8 +1137,14 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
+#ifdef __APPLE__
+    snprintf(dstname, sizeof(dstname), "Setup.app/Contents/MacOS/setup");
+#else
+    strcpy(dstname, "setup");
+#endif /* __APPLE__ */
+
     if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
+	           srcstat.st_mtime, "root", "root", dstname, NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -1035,8 +1175,13 @@ write_dist(const char *title,		/* I - Title to show */
     */
 
     stat(setup, &srcstat);
+#ifdef __APPLE__
+    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "Setup.app/Contents/Resources/setup.xpm", NULL) < 0)
+#else
     if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
 	           srcstat.st_mtime, "root", "root", "setup.xpm", NULL) < 0)
+#endif /* __APPLE__ */
     {
       if (Verbosity)
         puts("");
@@ -1069,8 +1214,13 @@ write_dist(const char *title,		/* I - Title to show */
     if (types)
     {
       stat(types, &srcstat);
+#ifdef __APPLE__
       if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	             srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
+		     srcstat.st_mtime, "root", "root", "Setup.app/Contents/Resources/setup.types", NULL) < 0)
+#else
+      if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+		     srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
+#endif /* __APPLE__ */
       {
 	if (Verbosity)
           puts("");
@@ -1096,6 +1246,13 @@ write_dist(const char *title,		/* I - Title to show */
 	fflush(stdout);
       }
     }
+
+#ifdef __APPLE__
+   /*
+    * And finally the uninstall stuff...
+    */
+
+#endif /* __APPLE__ */
   }
 
   tar_close(tarfile);
@@ -2149,5 +2306,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.81 2003/01/24 02:58:12 mike Exp $".
+ * End of "$Id: portable.c,v 1.82 2003/02/13 16:52:30 mike Exp $".
  */

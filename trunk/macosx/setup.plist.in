@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="0.9">
+    <dict>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+
+	<key>CFBundleExecutable</key>
+	<string>setup</string>
+
+	<key>CFBundleIdentifier</key>
+	<string>com.easysw.epm.setup</string>
+
+	<key>CFBundleVersion</key>
+	<string>@VERSION@</string>
+
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright 1997-2003 by Easy Software Products (http://www.easysw.com/epm/)</string>
+
+	<key>CFAppleHelpAnchor</key>
+	<string>help</string>
+
+	<key>CFBundleName</key>
+	<string>ESP Package Manager Setup Program</string>
+
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+
+	<key>CFBundleSignature</key>
+	<string>FLTK</string>
+
+	<key>CFBundleIconFile</key>
+	<string>setup.icns</string>
+
+	<key>CFBundleShortVersionString</key>
+	<string>@VERSION@</string>
+
+	<key>CFBundleGetInfoString</key>
+	<string>@VERSION@, Copyright Easy Software Products 1997-2003</string>
+
+    </dict>
+</plist>
