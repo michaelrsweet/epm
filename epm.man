@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.8 1999/12/06 16:36:15 mike Exp $"
+.\" "$Id: epm.man,v 1.9 1999/12/15 14:15:59 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "5 November 1999" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "15 December 1999" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -91,6 +91,16 @@ Sets the copyright notice for the file.
 .br
 Adds a line of descriptive text to the distribution. Multiple lines are
 supported.
+.TP 5
+%format \fIformat [... format]\fR
+.br
+Uses following files and directives only if the distribution format is
+the same as \fIformat\fR.
+.TP 5
+%format !\fIformat [... format]\fR
+.br
+Uses following files and directives only if the distribution format is
+not the same as \fIformat\fR.
 .TP 5
 %include \fIfilename\fR
 .br
@@ -221,5 +231,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.8 1999/12/06 16:36:15 mike Exp $".
+.\" End of "$Id: epm.man,v 1.9 1999/12/15 14:15:59 mike Exp $".
 .\"
