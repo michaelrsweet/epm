@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.40 2003/01/30 04:27:45 mike Exp $"
+# "$Id: Makefile.in,v 1.41 2003/02/06 20:28:43 swdev Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -335,7 +335,7 @@ mkepmlist.o:	epm.h epmstring.h
 
 setup:	$(SETUP_OBJS)
 	echo Linking setup...
-	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) snprintf.o $(GUILIBS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) $(GUILIBS) $(LIBS)
 
 setup.o:	setup.h gui-common.h
 setup2.o:	setup.h gui-common.h
@@ -348,7 +348,7 @@ gui-common.o:	gui-common.h
 
 uninst:	$(UNINST_OBJS)
 	echo Linking uninst...
-	$(CXX) $(LDFLAGS) -o uninst $(UNINST_OBJS) snprintf.o $(GUILIBS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o uninst $(UNINST_OBJS) $(GUILIBS) $(LIBS)
 
 uninst.o:	uninst.h gui-common.h
 uninst2.o:	uninst.h gui-common.h
@@ -357,5 +357,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.40 2003/01/30 04:27:45 mike Exp $".
+# End of "$Id: Makefile.in,v 1.41 2003/02/06 20:28:43 swdev Exp $".
 #
