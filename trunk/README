@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 2.2
+README - ESP Package Manager (EPM) 2.3
 --------------------------------------
 
 WHAT IS EPM?
@@ -87,6 +87,19 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
 
     No!  EPM is free software and any installations you create are
     unencumbered by licensing of any kind (not even the GPL.)
+
+
+WHAT'S NEW IN EPM 2.3?
+
+    EPM 2.3 adds the following features, fixes, and changes to
+    EPM 2.2:
+
+	- Now use getpwuid() instead of getlogin() to get the
+	  username of the packager.
+	- The RPM distributions now use the same init.d script
+	  logic as portable distributions. This should make them
+	  portable to all known Linux distributions as well as
+	  avoid a *very* nasty installer bug in RedHat 7.0.
 
 
 WHAT'S NEW IN EPM 2.2?
