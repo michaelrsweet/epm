@@ -1225,7 +1225,7 @@ CFLAGS="${CFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 LDFLAGS="${LDFLAGS:=}"
 
-OPTIM="-O"
+OPTIM="${OPTIM:=-O}"
 
 
 # Check whether --enable-debug or --disable-debug was given.

@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.9.2.4 2003/01/03 20:23:20 mike Exp $"
+ * "$Id: file.c,v 1.9.2.5 2003/07/24 14:07:53 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -90,7 +90,7 @@ copy_file(const char *dst,	/* I - Destination file */
   while ((bytes = fread(buffer, 1, sizeof(buffer), srcfile)) > 0)
     if (fwrite(buffer, 1, bytes, dstfile) < bytes)
     {
-      fprintf(stderr, "epm: Unable to write to \"%s\" -\n     %s\n", src,
+      fprintf(stderr, "epm: Unable to write to \"%s\" -\n     %s\n", dst,
               strerror(errno));
 
       fclose(srcfile);
@@ -257,5 +257,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.9.2.4 2003/01/03 20:23:20 mike Exp $".
+ * End of "$Id: file.c,v 1.9.2.5 2003/07/24 14:07:53 mike Exp $".
  */

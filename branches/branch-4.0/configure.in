@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.52.2.11 2003/05/30 05:11:25 mike Exp $"
+dnl "$Id: configure.in,v 1.52.2.12 2003/07/24 14:07:52 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -44,7 +44,7 @@ CFLAGS="${CFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 LDFLAGS="${LDFLAGS:=}"
 AC_SUBST(LDFLAGS)
-OPTIM="-O"
+OPTIM="${OPTIM:=-O}"
 AC_SUBST(OPTIM)
 
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [default=no]],
@@ -398,5 +398,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52.2.11 2003/05/30 05:11:25 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52.2.12 2003/07/24 14:07:52 mike Exp $".
 dnl
