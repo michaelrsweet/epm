@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 1.5
+README - ESP Package Manager (EPM) 1.6
 --------------------------------------
 
 WHAT IS EPM?
@@ -72,6 +72,13 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
     No!  EPM is free software and any installations you create are
     unencumbered by licensing of any kind (not even the GPL.)
 
+
+WHAT'S NEW IN EPM 1.6?
+
+    EPM 1.6 adds the following features and fixes to EPM 1.5:
+
+	- Installation archives were missing the ".ss" and ".pss"
+	  files that were added to support diskless installations.
 
 WHAT'S NEW IN EPM 1.5?
 
