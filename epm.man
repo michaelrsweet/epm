@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.24 2001/03/26 20:11:09 mike Exp $"
+.\" "$Id: epm.man,v 1.25 2001/04/25 20:34:15 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "26 March 2001" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "25 April 2001" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -72,6 +72,10 @@ rpm
 .br
 Generate a Red Hat Package Manager ("RPM") distribution suitable
 for installation on a Red Hat Linux system.
+.TP 5
+setld
+.br
+Generate a Tru64 (setld) software distribution.
 .TP 5
 swinstall, depot
 .br
@@ -312,5 +316,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.24 2001/03/26 20:11:09 mike Exp $".
+.\" End of "$Id: epm.man,v 1.25 2001/04/25 20:34:15 mike Exp $".
 .\"

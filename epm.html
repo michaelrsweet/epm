@@ -51,12 +51,15 @@
             tion suitable for installation on  a  Red  Hat  Linux
             system.
 
+       setld
+            Generate a Tru64 (setld) software distribution.
+
        swinstall, depot
             Generate a HP-UX software distribution.
 
-       Executable files in the distribution are normally stripped
-       of debugging information when packaged.  To  disable  this
        functionality use the <EM>-g</EM> option.
+
+       Intermediate (spec, etc.) files used to create the distri-
        bution are normally removed after the distribution is cre-
        ated.  The <EM>-k</EM> option keeps these files in the distribution
        directory.
@@ -108,9 +111,10 @@
             Adds a line of descriptive text to the  distribution.
             Multiple lines are supported.
 
-       %format <EM>format</EM> <EM>[...</EM> <EM>format]</EM>
             Uses  following files and directives only if the dis-
             tribution format is the same as <EM>format</EM>.
+
+       %format !<EM>format</EM> <EM>[...</EM> <EM>format]</EM>
             Uses following files and directives only if the  dis-
             tribution format is not the same as <EM>format</EM>.
 
@@ -159,10 +163,10 @@
 
        %requires <EM>product</EM>
 
-       %requires <EM>filename</EM>
             Indicates  that this product requires the named prod-
             uct or file.
 
+       %vendor <EM>vendor</EM> <EM>or</EM> <EM>author</EM> <EM>name</EM>
             Specifies the vendor or author of the product.
 
        %version <EM>version</EM> <EM>number</EM>
@@ -211,10 +215,8 @@
             Specifies  one  or  more files for installation using
             shell wildcard patterns. The  second  form  specifies
             that  the files have changed or are new and should be
-            included as part of a patch.
 
-       i <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>service-name</EM> <EM>source</EM>
-
+       I <EM>mode</EM> <EM>user</EM> <EM>group</EM> <EM>service-name</EM> <EM>source</EM>
             Specifies an initialization script for  installation.
             The  second  form specifies that the file has changed
             or is new and should be included as part of a  patch.
@@ -271,8 +273,6 @@
 </PRE>
 <H2>KNOWN BUGS</H2><PRE>
        EPM does not currently support generation of IRIX software
-       patches.
-
        mkepmlist(1) - make an EPM list file from a directory.
 
 
