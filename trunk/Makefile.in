@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.27 2001/06/28 22:32:29 mike Exp $"
+# "$Id: Makefile.in,v 1.28 2001/07/03 15:21:08 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -237,9 +237,9 @@ $(EPM_OBJS):	epm.h epmstring.h
 # epm
 #
 
-epminstall:	epminstall.o dist.o
+epminstall:	epminstall.o dist.o snprintf.o
 	echo Linking epminstall...
-	$(CC) $(LDFLAGS) -o epminstall epminstall.o dist.o
+	$(CC) $(LDFLAGS) -o epminstall epminstall.o dist.o snprintf.o
 
 epminstall.o:	epm.h epmstring.h
 
@@ -248,9 +248,9 @@ epminstall.o:	epm.h epmstring.h
 # setup
 #
 
-setup:	$(SETUP_OBJS)
+setup:	$(SETUP_OBJS) snprintf.o
 	echo Linking setup...
-	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) $(SETUPLIBS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o setup $(SETUP_OBJS) snprintf.o $(SETUPLIBS) $(LIBS)
 
 setup.o:	setup.h setup2.h Fl_Check_Browser.h Fl_Wizard.h
 setup2.o:	setup.h setup2.h Fl_Check_Browser.h Fl_Wizard.h
@@ -261,5 +261,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.27 2001/06/28 22:32:29 mike Exp $".
+# End of "$Id: Makefile.in,v 1.28 2001/07/03 15:21:08 mike Exp $".
 #
