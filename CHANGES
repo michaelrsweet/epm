@@ -1,6 +1,15 @@
 CHANGES - ESP Package Manager (EPM) 3.0
 ---------------------------------------
 
+WHAT'S NEW IN EPM 3.1?
+
+    EPM 3.1 adds the following features, fixes, and changes to
+    EPM 3.0:
+
+	- The GUI setup program left the "Next" button enabled
+	  after the license check.
+
+
 WHAT'S NEW IN EPM 3.0?
 
     EPM 3.0 adds the following features, fixes, and changes to
