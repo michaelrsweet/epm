@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.17 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: setld.c,v 1.18 2004/10/31 15:40:40 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -80,7 +80,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   }
 
   for (i = 0; prodname[i]; i ++)
-    if (!isupper(prodname[i]))
+    if (!isupper(prodname[i] & 255))
     {
       fprintf(stderr, "epm: Need a product name containing uppercase letters.\n"
                       "     The current product name (%s) is not acceptable.\n",
@@ -122,7 +122,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
       */
 
       for (runlevels = get_runlevels(dist->files + i, "023");
-           isdigit(*runlevels);
+           isdigit(*runlevels & 255);
 	   runlevels ++)
       {
 	file = add_file(dist);
@@ -428,5 +428,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.17 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: setld.c,v 1.18 2004/10/31 15:40:40 mike Exp $".
  */

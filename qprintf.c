@@ -1,5 +1,5 @@
 /*
- * "$Id: qprintf.c,v 1.5 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: qprintf.c,v 1.6 2004/10/31 15:40:40 mike Exp $"
  *
  *   Quoted fprintf function for the ESP Package Manager (EPM).
  *
@@ -79,7 +79,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
         sign = 0;
 
       width = 0;
-      while (isdigit(*format))
+      while (isdigit(*format & 255))
         width = width * 10 + *format++ - '0';
 
       if (*format == '.')
@@ -87,7 +87,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
         format ++;
 	prec = 0;
 
-	while (isdigit(*format))
+	while (isdigit(*format & 255))
           prec = prec * 10 + *format++ - '0';
       }
       else
@@ -216,6 +216,6 @@ qprintf(FILE       *fp,		/* I - File to write to */
 
 
 /*
- * End of "$Id: qprintf.c,v 1.5 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: qprintf.c,v 1.6 2004/10/31 15:40:40 mike Exp $".
  */
 

@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.55 2004/09/08 21:04:06 mike Exp $"
+ * "$Id: dist.c,v 1.56 2004/10/31 15:40:40 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -104,13 +104,13 @@ add_command(dist_t     *dist,		/* I - Distribution */
 
   if (strncmp(command, "<<", 2) == 0)
   {
-    for (command += 2; isspace(*command); command ++);
+    for (command += 2; isspace(*command & 255); command ++);
 
     command = get_inline(command, fp, buf, sizeof(buf));
   }
   else if (command[0] == '<' && command[1])
   {
-    for (command ++; isspace(*command); command ++);
+    for (command ++; isspace(*command & 255); command ++);
 
     command = get_file(command, buf, sizeof(buf));
   }
@@ -837,7 +837,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
       else
       {
         type = line[0];
-	if (!isspace(line[1]))
+	if (!isspace(line[1] & 255))
 	{
 	  fprintf(stderr, "epm: Expected whitespace after file type - %s\n",
 	          line);
@@ -1075,13 +1075,13 @@ add_string(int  num_strings,	/* I - Number of strings */
 
   if (strncmp(string, "<<", 2) == 0)
   {
-    for (string += 2; isspace(*string); string ++);
+    for (string += 2; isspace(*string & 255); string ++);
 
     string = get_inline(string, fp, buf, sizeof(buf));
   }
   else if (string[0] == '<' && string[1])
   {
-    for (string ++; isspace(*string); string ++);
+    for (string ++; isspace(*string & 255); string ++);
 
     string = get_file(string, buf, sizeof(buf));
   }
@@ -1757,7 +1757,7 @@ get_string(char **src,			/* IO - Source string */
   * Skip leading whitespace...
   */
 
-  while (isspace(*srcptr))
+  while (isspace(*srcptr & 255))
     srcptr ++;
 
   if (!*srcptr)
@@ -1771,7 +1771,7 @@ get_string(char **src,			/* IO - Source string */
   * Grab the next string...
   */
 
-  while (*srcptr && !isspace(*srcptr))
+  while (*srcptr && !isspace(*srcptr & 255))
   {
     if (*srcptr == '\\')
     {
@@ -1844,7 +1844,7 @@ get_string(char **src,			/* IO - Source string */
   * Skip leading whitespace...
   */
 
-  while (isspace(*srcptr))
+  while (isspace(*srcptr & 255))
     srcptr ++;
 
  /*
@@ -2052,5 +2052,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.55 2004/09/08 21:04:06 mike Exp $".
+ * End of "$Id: dist.c,v 1.56 2004/10/31 15:40:40 mike Exp $".
  */
