@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.4 2000/01/04 14:52:17 mike Exp $"
+ * "$Id: inst.c,v 1.5 2000/01/11 19:59:13 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -182,10 +182,10 @@ make_inst(const char     *prodname,	/* I - Product short name */
   * Add remove and removal scripts as needed...
   */
 
-  if (dist->num_removes)
+  if (dist->num_installs)
   {
    /*
-    * Add the remove script file to the list...
+    * Add the install script file to the list...
     */
 
     file = add_file(dist);
@@ -193,17 +193,17 @@ make_inst(const char     *prodname,	/* I - Product short name */
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    sprintf(file->src, "%s/%s.remove", directory, prodname);
-    sprintf(file->dst, "/etc/software/%s.remove", prodname);
+    sprintf(file->src, "%s/%s.install", directory, prodname);
+    sprintf(file->dst, "/etc/software/%s.install", prodname);
 
    /*
-    * Then create the remove script...
+    * Then create the install script...
     */
 
     if (Verbosity)
       puts("Creating exitops script...");
 
-    sprintf(filename, "%s/%s.remove", directory, prodname);
+    sprintf(filename, "%s/%s.install", directory, prodname);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
@@ -217,8 +217,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
     fputs("#!/bin/sh\n", fp);
     fputs("# " EPM_VERSION "\n", fp);
 
-    for (i = 0; i < dist->num_removes; i ++)
-      fprintf(fp, "%s\n", dist->removes[i]);
+    for (i = 0; i < dist->num_installs; i ++)
+      fprintf(fp, "%s\n", dist->installs[i]);
 
     fclose(fp);
   }
@@ -317,9 +317,9 @@ make_inst(const char     *prodname,	/* I - Product short name */
 	          file->user, file->group, file->dst + 1, file->src, subsys);
           break;
       case 'i' :
-          fprintf(fp, "f %04o %s %s %s %s %s exitop($rbase/etc/init.d/%s start)\n",
+          fprintf(fp, "f %04o %s %s %s %s %s exitop($rbase/etc/init.d/%s start) removeop($rbase/etc/init.d/%s stop)\n",
 	          file->mode, file->user, file->group, file->dst + 1,
-		  file->src, subsys, file->dst + 12);
+		  file->src, subsys, file->dst + 12, file->dst + 12);
           break;
       case 'l' :
           fprintf(fp, "l %04o %s %s %s - %s symval(%s)\n", file->mode,
@@ -418,7 +418,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Removing temporary distribution files...");
 
-  sprintf(filename, "%s/%s.remove", directory, prodname);
+  sprintf(filename, "%s/%s.install", directory, prodname);
   unlink(filename);
 
   sprintf(filename, "%s/%s.remove", directory, prodname);
@@ -444,5 +444,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.4 2000/01/04 14:52:17 mike Exp $".
+ * End of "$Id: inst.c,v 1.5 2000/01/11 19:59:13 mike Exp $".
  */

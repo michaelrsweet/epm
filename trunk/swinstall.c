@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.3 2000/01/04 13:45:41 mike Exp $"
+ * "$Id: swinstall.c,v 1.4 2000/01/11 19:59:13 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -38,11 +38,300 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
                dist_t         *dist,		/* I - Distribution information */
 	       struct utsname *platform)	/* I - Platform information */
 {
-  puts("Sorry, HP-UX swinstall format is not yet supported.");
-  return (1);
+  int		i, j;			/* Looping vars */
+  FILE		*fp;			/* Spec/script file */
+  tarf_t	*tarfile;		/* .tardist file */
+  int		linknum;		/* Symlink number */
+  char		name[1024];		/* Full product name */
+  char		infoname[1024],		/* Info filename */
+		postinstall[1024],	/* postinstall script */
+		preremove[1024];	/* preremove script */
+  char		filename[1024],		/* Destination filename */
+		srcname[1024],		/* Name of source file in distribution */
+		dstname[1024];		/* Name of destination file in distribution */
+  char		command[1024];		/* Command to run */
+  file_t	*file;			/* Current distribution file */
+  struct stat	fileinfo;		/* File information */
+
+
+  if (Verbosity)
+    puts("Creating swinstall distribution...");
+
+  if (platname[0])
+    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+  else
+    sprintf(name, "%s-%s", prodname, dist->version);
+
+ /*
+  * Add symlinks for init scripts...
+  */
+
+  for (i = 0; i < dist->num_files; i ++)
+    if (tolower(dist->files[i].type) == 'i')
+    {
+      for (j = 0; j < 6; j ++)
+        if (j != 1)
+	{
+	  file = add_file(dist);
+
+          file->type = 'l';
+	  file->mode = 0;
+	  strcpy(file->user, "root");
+	  strcpy(file->group, "sys");
+	  sprintf(file->src, "../init.d/%s", dist->files[i].dst);
+	  sprintf(file->dst, "/sbin/rc%d.d/%s%s", j, j == 0 ? "K000" : "S999",
+	          dist->files[i].dst);
+        }
+
+      file = dist->files + i;
+
+      sprintf(filename, "/sbin/init.d/%s", file->dst);
+      strcpy(file->dst, filename);
+    }
+
+ /*
+  * Add remove and removal scripts as needed...
+  */
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+      break;
+
+  if (dist->num_installs || i)
+  {
+   /*
+    * Then create the install script...
+    */
+
+    sprintf(postinstall, "%s/%s.install", directory, prodname);
+
+    if (Verbosity)
+      puts("Creating postinstall script...");
+
+    if ((fp = fopen(postinstall, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postinstall,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (j = 0; j < dist->num_installs; j ++)
+      fprintf(fp, "%s\n", dist->installs[j]);
+
+    for (j = dist->num_files, file = dist->files; j > 0; j --, file ++)
+      if (tolower(file->type) == 'i')
+	fprintf(fp, "/sbin/init.d/%s start\n", file->dst);
+
+    fclose(fp);
+  }
+  else
+    postinstall[0] = '\0';
+
+  if (dist->num_removes | i)
+  {
+   /*
+    * Then create the remove script...
+    */
+
+    if (Verbosity)
+      puts("Creating preremove script...");
+
+    sprintf(preremove, "%s/%s.remove", directory, prodname);
+
+    if ((fp = fopen(preremove, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preremove,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (j = dist->num_files, file = dist->files; j > 0; j --, file ++)
+      if (tolower(file->type) == 'i')
+	fprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
+
+    for (j = 0; j < dist->num_removes; j ++)
+      fprintf(fp, "%s\n", dist->removes[j]);
+
+    fclose(fp);
+  }
+  else
+    preremove[0] = '\0';
+
+ /*
+  * Create all symlinks...
+  */
+
+  if (Verbosity)
+    puts("Creating symlinks...");
+
+  for (i = dist->num_files, file = dist->files, linknum = 0;
+       i > 0;
+       i --, file ++)
+    if (tolower(file->type) == 'l')
+    {
+      sprintf(filename, "%s/%s.link%04d", directory, prodname, linknum);
+      symlink(file->src, filename);
+      linknum ++;
+    }
+
+ /*
+  * Write the info file for swpackage...
+  */
+
+  if (Verbosity)
+    puts("Creating info file...");
+
+  sprintf(infoname, "%s/%s.info", directory, prodname);
+
+  if ((fp = fopen(infoname, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create info file \"%s\" - %s\n", infoname,
+            strerror(errno));
+    return (1);
+  }
+
+  fputs("product\n", fp);
+  fprintf(fp, "  tag %s\n", prodname);
+  fprintf(fp, "  revision %s\n", dist->version);
+  fprintf(fp, "  title %s, %s\n", dist->product, dist->version);
+  if (dist->num_descriptions)
+    fprintf(fp, "  description %s\n", dist->descriptions[0]);
+  fprintf(fp, "  copyright Copyright %s\n", dist->copyright);
+  fprintf(fp, "  readme < %s\n", dist->license);
+  fputs("  is_locatable false\n", fp);
+
+  fputs("  fileset\n", fp);
+  fputs("    tag all\n", fp);
+  fprintf(fp, "    title %s, %s\n", dist->product, dist->version);
+
+  if (dist->num_requires)
+  {
+    fputs("    corequisites", fp);
+    for (i = 0; i < dist->num_requires; i ++)
+      if (dist->requires[i][0] != '/')
+        fprintf(fp, " %s", dist->requires[i]);
+    fputs("\n", fp);
+  }
+
+  if (dist->num_replaces)
+  {
+    fputs("    ancestor", fp);
+    for (i = 0; i < dist->num_replaces; i ++)
+      if (dist->replaces[i][0] != '/')
+        fprintf(fp, " %s", dist->replaces[i]);
+    fputs("\n", fp);
+  }
+
+  if (postinstall[0])
+    fprintf(fp, "    postinstall %s\n", postinstall);
+  if (preremove[0])
+    fprintf(fp, "    preremove %s\n", preremove);
+
+  for (i = dist->num_files, file = dist->files, linknum = 0;
+       i > 0;
+       i --, file ++)
+  {
+    switch (tolower(file->type))
+    {
+      case 'd' :
+          fprintf(fp, "    file -m %o -o %s -g %s %s\n", file->mode | S_IFDIR,
+	          file->user, file->group, file->dst);
+          break;
+      case 'c' :
+      case 'f' :
+      case 'i' :
+          fprintf(fp, "    file -m %04o -o %s -g %s %s %s\n", file->mode,
+	          file->user, file->group, file->src, file->dst);
+          break;
+      case 'l' :
+          sprintf(filename, "%s/%s.link%04d", directory, prodname, linknum);
+          linknum ++;
+          fprintf(fp, "    file -o %s -g %s %s %s\n", file->user, file->group,
+	          filename, file->dst);
+          break;
+    }
+  }
+
+  fputs("  end\n", fp);
+  fputs("end\n", fp);
+
+  fclose(fp);
+
+ /*
+  * Build the distribution from the spec file...
+  */
+
+  if (Verbosity)
+    puts("Building swinstall binary distribution...");
+
+  sprintf(filename, "%s/%s", directory, prodname);
+  mkdir(filename, 0777);
+
+  sprintf(command, "/usr/sbin/swpackage %s-s %s -d %s/%s "
+                   "-x write_remote_files=true %s",
+          Verbosity == 0 ? "" : "-v ", infoname, directory, prodname,
+	  prodname);
+
+  if (system(command))
+    return (1);
+
+ /*
+  * Tar and compress the distribution...
+  */
+
+  if (Verbosity)
+    puts("Creating tar.gz file for distribution...");
+
+  sprintf(filename, "%s/%s.tar.gz", directory, name);
+
+  if ((tarfile = tar_open(filename, 1)) == NULL)
+    return (1);
+
+  sprintf(filename, "%s/%s", directory, prodname);
+
+  if (tar_directory(tarfile, filename, prodname))
+  {
+    tar_close(tarfile);
+    return (1);
+  }
+
+  tar_close(tarfile);
+
+ /*
+  * Remove temporary files...
+  */
+
+  if (Verbosity)
+    puts("Removing temporary distribution files...");
+
+  unlink(infoname);
+
+  if (postinstall[0])
+    unlink(postinstall);
+  if (preremove[0])
+    unlink(preremove);
+
+  while (linknum > 0)
+  {
+    linknum --;
+    sprintf(filename, "%s/%s.link%04d", directory, prodname, linknum);
+    unlink(filename);
+  }
+
+  return (0);
 }
 
 
 /*
- * End of "$Id: swinstall.c,v 1.3 2000/01/04 13:45:41 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.4 2000/01/11 19:59:13 mike Exp $".
  */
