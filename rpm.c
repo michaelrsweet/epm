@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.2 1999/11/04 22:36:09 mike Exp $"
+ * "$Id: rpm.c,v 1.3 1999/11/05 02:50:32 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -75,15 +75,49 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "Packager: %s\n", dist->vendor);
   fprintf(fp, "BuildRoot: %s\n", directory);
   fputs("Group: Applications\n", fp);
+  for (i = 0; i < dist->num_requires; i ++)
+    fprintf(fp, "Requires: %s\n", dist->requires[i]);
+  for (i = 0; i < dist->num_incompats; i ++)
+    fprintf(fp, "Conflicts: %s\n", dist->incompats[i]);
   fputs("%description\n", fp);
   for (i = 0; i < dist->num_descriptions; i ++)
     fprintf(fp, "%s\n", dist->descriptions[i]);
+  fputs("%post\n", fp);
+  for (i = 0; i < dist->num_installs; i ++)
+    fprintf(fp, "%s\n", dist->installs[i]);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+    {
+      fprintf(fp, "/bin/chkconfig --add %s\n", file->dst);
+      fprintf(fp, "/etc/rc.d/init.d/%s start\n", file->dst);
+    }
+  fputs("%preun\n", fp);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+    {
+      fprintf(fp, "/bin/chkconfig --del %s\n", file->dst);
+      fprintf(fp, "/etc/rc.d/init.d/%s stop\n", file->dst);
+    }
+  for (i = 0; i < dist->num_removes; i ++)
+    fprintf(fp, "%s\n", dist->removes[i]);
   fputs("%files\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) != 'i')
-      fprintf(fp, "%s\n", file->dst);
-    else
-      fprintf(fp, "/etc/rc.d/init.d/%s\n", file->dst);
+    switch (tolower(file->type))
+    {
+      case 'c' :
+          fprintf(fp, "%%config %s\n", file->dst);
+          break;
+      case 'd' :
+          fprintf(fp, "%%dir %s\n", file->dst);
+          break;
+      case 'f' :
+      case 'l' :
+          fprintf(fp, "%s\n", file->dst);
+          break;
+      case 'i' :
+          fprintf(fp, "/etc/rc.d/init.d/%s\n", file->dst);
+          break;
+    }
 
   fclose(fp);
 
@@ -167,5 +201,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.2 1999/11/04 22:36:09 mike Exp $".
+ * End of "$Id: rpm.c,v 1.3 1999/11/05 02:50:32 mike Exp $".
  */
