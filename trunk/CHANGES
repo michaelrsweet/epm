@@ -6,6 +6,8 @@ WHAT'S NEW IN EPM 3.5.2?
     EPM 3.5.2 adds the following features, fixes, and changes to
     EPM 3.5.1:
 
+	- Now build gzip'd depot files as well as the tar.gz
+	  files when creating HP-UX software packages.
 	- Now correctly use --libdir setting to locate the setup
 	  GUI.
 	- Now use rpmbuild command, if available, to build RPM
