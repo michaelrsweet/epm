@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.68 2002/07/03 18:58:56 mike Exp $"
+ * "$Id: epm.c,v 1.69 2002/08/01 01:50:24 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -540,6 +540,9 @@ usage(void)
   puts("-v");
   puts("    Be verbose.");
   puts("-s setup.xpm");
+  puts("--help");
+  puts("--keep-files");
+  puts("--output-dir /foo/bar/directory");
   puts("--setup-image setup.xpm");
   puts("    Enable the setup GUI and use \"setup.xpm\" for the setup image.");
   puts("--setup-program /foo/bar/setup");
@@ -552,5 +555,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.68 2002/07/03 18:58:56 mike Exp $".
+ * End of "$Id: epm.c,v 1.69 2002/08/01 01:50:24 mike Exp $".
  */
