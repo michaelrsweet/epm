@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.1 2002/10/17 15:41:41 mike Exp $"
+ * "$Id: osx.c,v 1.1.2.1 2002/10/17 15:42:46 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -422,5 +422,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.1 2002/10/17 15:41:41 mike Exp $".
+ * End of "$Id: osx.c,v 1.1.2.1 2002/10/17 15:42:46 mike Exp $".
  */
