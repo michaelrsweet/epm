@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63.2.12 2002/08/30 02:12:44 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.13 2002/09/24 14:14:15 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -591,11 +591,11 @@ write_commands(dist_t *dist,		/* I - Distribution */
 
   if (i)
   {
-    qprintf(fp, "echo Running %s commands...\n", commands[type]);
+    fprintf(fp, "echo Running %s commands...\n", commands[type]);
 
     for (; i > 0; i --, c ++)
       if (c->type == type)
-        if (qprintf(fp, "%s\n", c->command) < 1)
+        if (fprintf(fp, "%s\n", c->command) < 1)
         {
           perror("epm: Error writing command");
           return (-1);
@@ -665,13 +665,13 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fputs("\tuid=0*)\n", fp);
   fputs("\t\t;;\n", fp);
   fputs("\t*)\n", fp);
-  qprintf(fp, "\t\techo Sorry, you must be root to %s this software.\n",
+  fprintf(fp, "\t\techo Sorry, you must be root to %s this software.\n",
           title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
   fputs("\t\texit 1\n", fp);
   fputs("\t\t;;\n", fp);
   fputs("esac\n", fp);
-  qprintf(fp, "echo \'Copyright %s\'\n", dist->copyright);
-  qprintf(fp, "# Reset umask for %s...\n",
+  qprintf(fp, "echo Copyright %s\n", dist->copyright);
+  fprintf(fp, "# Reset umask for %s...\n",
           title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
   fputs("umask 002\n", fp);
 
@@ -2103,5 +2103,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63.2.12 2002/08/30 02:12:44 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.13 2002/09/24 14:14:15 mike Exp $".
  */
