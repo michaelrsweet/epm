@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.41 2002/10/31 14:17:52 mike Exp $"
+ * "$Id: rpm.c,v 1.42 2002/12/11 21:41:39 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -51,6 +51,9 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   char		current[1024];		/* Current directory */
   const char	*runlevels;		/* Run levels */
   int		number;			/* Start/stop number */
+#ifndef EPM_RPMTOPDIR
+  static char	rpmdir[1024];		/* RPMDIR env var */
+#endif /* EPM_RPMTOPDIR */
 
 
   if (Verbosity)
@@ -101,7 +104,12 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   * Tell RPM to put the distributions in the output directory...
   */
 
+#ifdef EPM_RPMTOPDIR
   fprintf(fp, "%%define _topdir %s/%s\n", current, directory);
+#else
+  snprintf(rpmdir, sizeof(rpmdir), "RPMDIR=%s/%s", current, directory);
+  putenv(rpmdir);
+#endif /* EPM_RPMTOPDIR */
 
   snprintf(filename, sizeof(filename), "%s/RPMS", directory);
 
@@ -422,5 +430,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.41 2002/10/31 14:17:52 mike Exp $".
+ * End of "$Id: rpm.c,v 1.42 2002/12/11 21:41:39 mike Exp $".
  */

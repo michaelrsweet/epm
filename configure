@@ -2703,6 +2703,45 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
+# Extract the first word of "rpmbuild", so it can be a program name with args.
+set dummy rpmbuild; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_RPMBUILD+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $RPMBUILD in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_RPMBUILD="$RPMBUILD" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_RPMBUILD="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  ;;
+esac
+fi
+RPMBUILD=$ac_cv_path_RPMBUILD
+
+if test -n "$RPMBUILD"; then
+  echo "$as_me:$LINENO: result: $RPMBUILD" >&5
+echo "${ECHO_T}$RPMBUILD" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
 # Extract the first word of "strip", so it can be a program name with args.
 set dummy strip; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -5160,6 +5199,10 @@ if test "$exec_prefix" = "NONE"; then
 	exec_prefix="$prefix"
 fi
 
+if test "$libdir" = "\${exec_prefix}/lib"; then
+	libdir="$exec_prefix/lib"
+fi
+
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 	case "$uname" in
         	*BSD* | Darwin* | Linux*)
@@ -5234,12 +5277,12 @@ _ACEOF
 
 
 cat >>confdefs.h <<_ACEOF
-#define EPM_LIBDIR "$prefix/lib/epm"
+#define EPM_LIBDIR "$libdir/epm"
 _ACEOF
 
 
 
-if test "x$RPM" != "x"; then
+if test "x$RPM" != x; then
 	# It would be nice if Red Hat could make up its mind...
 	rpmversion="`$RPM --version | awk '{print $3}' | awk -F. '{print $1 * 10000 + $2 * 100 + $3}'`"
 
@@ -5260,6 +5303,29 @@ _ACEOF
 _ACEOF
 
 		fi
+	fi
+fi
+
+if test "x$RPMBUILD" != x; then
+	cat >>confdefs.h <<_ACEOF
+#define EPM_RPMBUILD "$RPMBUILD"
+_ACEOF
+
+	cat >>confdefs.h <<\_ACEOF
+#define EPM_RPMTOPDIR 1
+_ACEOF
+
+else
+	if test "x$RPM" != x; then
+		cat >>confdefs.h <<_ACEOF
+#define EPM_RPMBUILD "$RPM"
+_ACEOF
+
+	else
+		cat >>confdefs.h <<_ACEOF
+#define EPM_RPMBUILD "rpm"
+_ACEOF
+
 	fi
 fi
 
@@ -5842,6 +5908,7 @@ s,@NROFF@,$NROFF,;t t
 s,@GROFF@,$GROFF,;t t
 s,@RM@,$RM,;t t
 s,@RPM@,$RPM,;t t
+s,@RPMBUILD@,$RPMBUILD,;t t
 s,@STRIP@,$STRIP,;t t
 s,@CPP@,$CPP,;t t
 s,@FLTKCONFIG@,$FLTKCONFIG,;t t

@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.25 2002/01/02 20:39:39 mike Exp $"
+ * "$Id: config.h.in,v 1.26 2002/12/11 21:41:39 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -46,10 +46,24 @@
 
 
 /*
+ * What command is used to build RPMs?
+ */
+
+#define EPM_RPMBUILD	"rpm"
+
+
+/*
  * What option is used to specify the RPM architecture?
  */
 
 #define EPM_RPMARCH	"--target"
+
+
+/*
+ * Does this version of RPM support the "topdir_" variable?
+ */
+
+#undef EPM_RPMTOPDIR
 
 
 /*
@@ -112,5 +126,5 @@
 
 
 /*
- * End of "$Id: config.h.in,v 1.25 2002/01/02 20:39:39 mike Exp $".
+ * End of "$Id: config.h.in,v 1.26 2002/12/11 21:41:39 mike Exp $".
  */
