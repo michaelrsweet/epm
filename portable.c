@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.9 2000/04/26 23:46:31 mike Exp $"
+ * "$Id: portable.c,v 1.10 2000/05/16 18:48:15 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -845,7 +845,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
       * Require a file...
       */
 
-      fprintf(scriptfile, "if test ! -r %s; then\n", dist->requires[i]);
+      fprintf(scriptfile, "if test ! -r %s -a ! -h %s; then\n",
+              dist->requires[i], dist->requires[i]);
       fprintf(scriptfile, "	echo Sorry, you must first install \\'%s\\'!\n",
 	      dist->requires[i]);
       fputs("	exit 1\n", scriptfile);
@@ -883,7 +884,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
       * Incompatible with a file...
       */
 
-      fprintf(scriptfile, "if test -r %s; then\n", dist->incompats[i]);
+      fprintf(scriptfile, "if test -r %s -o -h %s; then\n",
+              dist->incompats[i], dist->incompats[i]);
       fprintf(scriptfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
 	      dist->incompats[i]);
       fputs("	echo Please remove it first.\n", scriptfile);
@@ -999,7 +1001,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   fputs("echo Installing software...\n", scriptfile);
   fprintf(scriptfile, "$tar %s.sw\n", prodname);
-  fputs("if test -w /usr; then\n", scriptfile);
+  fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
+  fputs("/bin/rm -f /usr/.writetest\n", scriptfile);
   fprintf(scriptfile, "	$tar %s.ss\n", prodname);
   fputs("fi\n", scriptfile);
 
@@ -1277,7 +1280,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   fputs("echo Patching software...\n", scriptfile);
   fprintf(scriptfile, "$tar %s.psw\n", prodname);
-  fputs("if test -w /usr; then\n", scriptfile);
+  fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
+  fputs("/bin/rm -f /usr/.writetest\n", scriptfile);
   fprintf(scriptfile, "	$tar %s.pss\n", prodname);
   fputs("fi\n", scriptfile);
 
@@ -1566,5 +1570,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.9 2000/04/26 23:46:31 mike Exp $".
+ * End of "$Id: portable.c,v 1.10 2000/05/16 18:48:15 mike Exp $".
  */
