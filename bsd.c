@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.10 2002/12/17 18:57:54 swdev Exp $"
+ * "$Id: bsd.c,v 1.11 2003/01/14 17:05:01 mike Exp $"
  *
  *   FreeBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -190,11 +190,35 @@ make_bsd(const char     *prodname,	/* I - Product short name */
           break;
     }
 
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'd')
+    {
+     /*
+      * We create and update directories as postinstall commands to
+      * avoid a bug in the FreeBSD pkg_delete command.
+      */
+
+      fprintf(fp, "@exec /bin/mkdir -p %s\n", file->dst);
+      fprintf(fp, "@exec /bin/chown %s:%s %s\n", file->user, file->group,
+              file->dst);
+      fprintf(fp, "@exec /bin/chmod %04o %s\n", file->mode, file->dst);
+    }
+
   for (i = dist->num_files, file = dist->files, old_mode = 0, old_user = "",
            old_group = "";
        i > 0;
        i --, file ++)
   {
+   /*
+    * The FreeBSD pkg_delete command (at least) doesn't like creating
+    * and deleting directories.  I don't know if other BSD's have the
+    * same problem, but for now just put the directory stuff in a
+    * postinstall script...
+    */
+
+    if (tolower(file->type) == 'd')
+      continue;
+
     if (file->mode != old_mode)
       fprintf(fp, "@mode %04o\n", old_mode = file->mode);
     if (strcmp(file->user, old_user))
@@ -210,9 +234,6 @@ make_bsd(const char     *prodname,	/* I - Product short name */
       case 'c' :
       case 'f' :
       case 'l' :
-          qprintf(fp, "%s\n", file->dst + 1);
-          break;
-      case 'd' :
           qprintf(fp, "%s\n", file->dst + 1);
           break;
     }
@@ -333,5 +354,5 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: bsd.c,v 1.10 2002/12/17 18:57:54 swdev Exp $".
+ * End of "$Id: bsd.c,v 1.11 2003/01/14 17:05:01 mike Exp $".
  */
