@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.27 2001/03/21 21:31:30 mike Exp $"
+ * "$Id: portable.c,v 1.28 2001/03/22 16:29:33 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -17,14 +17,15 @@
  *
  * Contents:
  *
- *   make_portable()   - Make a portable software distribution package.
- *   write_commands()  - Write commands.
- *   write_common()    - Write the common shell script header.
- *   write_dist()      - Write a software distribution...
- *   write_echocheck() - Write the echo check to find the right echo options.
- *   write_install()   - Write the installation script.
- *   write_patch()     - Write the patch script.
- *   write_remove()    - Write the removal script.
+ *   make_portable()      - Make a portable software distribution package.
+ *   write_commands()     - Write commands.
+ *   write_common()       - Write the common shell script header.
+ *   write_dist()         - Write a software distribution...
+ *   write_echocheck()    - Write the echo check to find the right echo options.
+ *   write_install()      - Write the installation script.
+ *   write_patch()        - Write the patch script.
+ *   write_remove()       - Write the removal script.
+ *   write_space_checks() - Write disk space checks for the installer.
  */
 
 /*
@@ -53,6 +54,8 @@ static int	write_patch(dist_t *dist, const char *prodname,
 		            const char *directory);
 static int	write_remove(dist_t *dist, const char *prodname,
 		             const char *directory);
+static int	write_space_checks(dist_t *dist, FILE *fp, const char *sw,
+		                   const char *ss);
 
 
 /*
@@ -1091,6 +1094,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "	" EPM_SOFTWARE "/%s.remove now\n", prodname);
   fputs("fi\n", scriptfile);
 
+  write_space_checks(dist, scriptfile, "sw", "ss");
   write_depends(dist, scriptfile);
   write_commands(dist, scriptfile, COMMAND_PRE_INSTALL);
 
@@ -1342,6 +1346,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("	done\n", scriptfile);
   fputs("fi\n", scriptfile);
 
+  write_space_checks(dist, scriptfile, "psw", "pss");
   write_depends(dist, scriptfile);
 
   fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
@@ -1708,5 +1713,59 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.27 2001/03/21 21:31:30 mike Exp $".
+ * 'write_space_checks()' - Write disk space checks for the installer.
+ */
+
+static int				/* O - 0 on success, -1 on error */
+write_space_checks(dist_t     *dist,	/* I - Distribution */
+                   FILE       *fp,	/* I - File to write to */
+                   const char *sw,	/* I - / archive */
+		   const char *ss)	/* I - /usr archive */
+{
+  fputs("if test `uname` = HP-UX; then\n", fp);
+  fputs("	fsroot=`df -k / | head -1 | awk '{print $1}'`\n", fp);
+  fputs("	sproot=`df -k / | grep free | awk '{print $1}'`\n", fp);
+  fputs("	fsusr=`df -k /usr | head -1 | awk '{print $1}'`\n", fp);
+  fputs("	spusr=`df -k /usr | grep free | awk '{print $1}'`\n", fp);
+  fputs("else\n", fp);
+  fputs("	fsroot=`df -k / | grep -v '^Filesystem' | awk '{print $6}'`\n", fp);
+  fputs("	sproot=`df -k / | grep -v '^Filesystem' | awk '{print $4}'`\n", fp);
+  fputs("	fsusr=`df -k /usr | grep -v '^Filesystem' | awk '{print $6}'`\n", fp);
+  fputs("	spusr=`df -k /usr | grep -v '^Filesystem' | awk '{print $4}'`\n", fp);
+  fputs("fi\n", fp);
+  fputs("\n", fp);
+  fprintf(fp, "temp=`ls -l %s.%s | awk '{print $5}'`\n", dist->product, sw);
+  fputs("spsw=`expr $temp / 1024`\n", fp);
+  fputs("\n", fp);
+  fprintf(fp, "temp=`ls -l %s.%s | awk '{print $5}'`\n", dist->product, ss);
+  fputs("spss=`expr $temp / 1024`\n", fp);
+  fputs("\n", fp);
+  fputs("spall=`expr $spsw + $spss`\n", fp);
+  fputs("\n", fp);
+  fputs("if test x$fsroot = x$fsusr; then\n", fp);
+  fputs("	if test $spall -gt $sproot; then\n", fp);
+  fputs("		echo Not enough free disk space for software:\n", fp);
+  fputs("		echo You need $spall kbytes but only have $sproot kbytes available.\n", fp);
+  fputs("		exit 1\n", fp);
+  fputs("	fi\n", fp);
+  fputs("else\n", fp);
+  fputs("	if test $spsw -gt $sproot; then\n", fp);
+  fputs("		echo Not enough free disk space for software:\n", fp);
+  fputs("		echo You need $spsw kbytes in / but only have $sproot kbytes available.\n", fp);
+  fputs("		exit 1\n", fp);
+  fputs("	fi\n", fp);
+  fputs("\n", fp);
+  fputs("	if test $spss -gt $spusr; then\n", fp);
+  fputs("		echo Not enough free disk space for software:\n", fp);
+  fputs("		echo You need $spss kbytes in /usr but only have $spusr kbytes available.\n", fp);
+  fputs("		exit 1\n", fp);
+  fputs("	fi\n", fp);
+  fputs("fi\n", fp);
+
+  return (0);
+}
+
+
+/*
+ * End of "$Id: portable.c,v 1.28 2001/03/22 16:29:33 mike Exp $".
  */

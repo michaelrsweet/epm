@@ -13,6 +13,8 @@ WHAT'S NEW IN EPM 2.6?
 	  "> version".
 	- Eliminated some GCC warnings about using a char to
 	  index into an array.
+	- Added a disk space check to the portable installation
+	  scripts.
 
 
 WHAT'S NEW IN EPM 2.5?
