@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.8 2001/04/27 12:35:48 mike Exp $"
+ * "$Id: setld.c,v 1.9 2001/06/07 13:14:14 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -211,7 +211,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
     if (tolower(file->type) == 'c')
     {
       fprintf(fp, "if test ! -f %s; then\n", file->dst);
-      fprintf(fp, "	/bin/mv %s.N %s\n", file->dst, file->dst);
+      fprintf(fp, "	/bin/cp %s.N %s\n", file->dst, file->dst);
       fputs("fi\n", fp);
     }
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
@@ -226,6 +226,13 @@ make_setld(const char     *prodname,	/* I - Product short name */
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_REMOVE)
       fprintf(fp, "%s\n", c->command);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'c')
+    {
+      fprintf(fp, "if cmp -s %s.N %s; then\n", file->dst, file->dst);
+      fprintf(fp, "	/bin/rm -f %s\n", file->dst);
+      fputs("fi\n", fp);
+    }
   fputs(";;\n", fp);
 
   fputs("POST_D)\n", fp);
@@ -424,5 +431,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.8 2001/04/27 12:35:48 mike Exp $".
+ * End of "$Id: setld.c,v 1.9 2001/06/07 13:14:14 mike Exp $".
  */
