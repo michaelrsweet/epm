@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.1 1999/06/21 14:25:17 mike Exp $"
+.\" "$Id: epm.man,v 1.2 1999/07/30 13:40:20 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,22 +15,12 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "21 June 1999" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "26 July 1999" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
 .B epm
-[ \-c
-.I copyright
-] [ \-g ] [ \-l
-.I license
-] \-r
-.I readme
-] [ \-v
-.I version
-] [ \-V
-.I vendor
-] product [
+[ \-g ] product [
 .I listfile
 ]
 .SH DESCRIPTION
@@ -46,11 +36,15 @@ Each product has an associated list file that describes the files to include
 with the product. Comment lines begin with the "#" character and are ignored.
 All other non-blank lines must begin with a letter or the percent sign ("%")
 as follows:
-.TP
+.TP 5
 %copyright \fIcopyright notice\fR
 .br
 Sets the copyright notice for the file.
-.TP
+.TP 5
+%include \fIfilename\fR
+.br
+Includes files listed in \fIfilename\fR.
+.TP 5
 %incompat \fIproduct\fR
 .br
 Indicates that this product is incompatible with the named product.
@@ -58,7 +52,7 @@ Indicates that this product is incompatible with the named product.
 %install \fIscript or program\fR
 .br
 Specifies a script or program to be run after all files are installed.
-.TP
+.TP 5
 %license \fIlicense file\fR
 .br
 Specifies the file to display as the software license.
@@ -79,6 +73,10 @@ Specifies a README file to be included in the distribution.
 .br
 Specifies a script or program to be run before removing or patching files.
 .TP 5
+%requires \fIproduct\fR
+.br
+Indicates that this product requires the named product.
+.TP 5
 %vendor \fIvendor or author name\fR
 .br
 Specifies the vendor or author of the product.
@@ -87,10 +85,15 @@ Specifies the vendor or author of the product.
 .br
 Specifies the version number of the product.
 .TP 5
-%system \fIoperating system name(s)\fR
+%system \fIsystem[-release] [... system[-release]]\fR
 .br
 Specifies that the following files should only be used for the specified
-operating system names.
+operating systems and releases.
+.TP 5
+%system !\fIsystem[-release] [... system[-release]]\fR
+.br
+Specifies that the following files should not be used for the specified
+operating systems and releases.
 .TP 5
 %system all
 .br
@@ -126,6 +129,12 @@ L \fImode user group destination source\fR
 .br
 Specifies a symbolic link in the installation. The second form specifies that
 the link has changed or is new and should be included as part of a patch.
+.TP 5
+R \fImode user group destination\fR
+.br
+Specifies that the file is to be removed upon patching.  The \fIuser\fR and
+\fIgroup\fR fields are ignored.  The \fImode\fR field is only used to determine
+if a check should be made for a previous version of the file.
 .SH COPYRIGHT
 Copyright 1999 by Easy Software Products, All Rights Reserved.
 .LP
@@ -139,5 +148,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.1 1999/06/21 14:25:17 mike Exp $".
+.\" End of "$Id: epm.man,v 1.2 1999/07/30 13:40:20 mike Exp $".
 .\"

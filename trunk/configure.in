@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.1 1999/06/21 14:25:16 mike Exp $"
+dnl "$Id: configure.in,v 1.2 1999/07/30 13:40:18 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -37,9 +37,11 @@ dnl Checks for programs...
 AC_PROG_CC
 AC_PATH_PROG(CHMOD,chmod)
 AC_PATH_PROG(CP,cp)
+AC_PATH_PROG(GZIP,gzip)
 AC_PATH_PROG(MKDIR,mkdir)
 AC_PATH_PROG(RM,rm)
 AC_PATH_PROG(STRIP,strip)
+AC_PATH_PROG(WHOAMI,whoami)
 
 dnl Architecture checks...
 AC_C_CONST
@@ -74,20 +76,27 @@ if test "$prefix" = "NONE"; then
 	prefix="/usr"
 fi
 
-dnl CUPS_SERVERROOT needs special attention for the default location...
+dnl EPM_SOFTWARE needs special attention for the default location...
 if test "$prefix" = "/usr"; then
 	EPM_SOFTWARE="/etc/software"
 else
 	EPM_SOFTWARE="$prefix/etc/software"
 fi
+
 AC_DEFINE_UNQUOTED(EPM_SOFTWARE, "$EPM_SOFTWARE")
 AC_SUBST(EPM_SOFTWARE)
+
+AC_DEFINE_UNQUOTED(EPM_GZIP, "$GZIP")
+AC_SUBST(EPM_GZIP)
 
 AC_DEFINE_UNQUOTED(EPM_STRIP, "$STRIP")
 AC_SUBST(EPM_STRIP)
 
+AC_DEFINE_UNQUOTED(EPM_WHOAMI, "$WHOAMI")
+AC_SUBST(EPM_WHOAMI)
+
 AC_OUTPUT(Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.1 1999/06/21 14:25:16 mike Exp $".
+dnl End of "$Id: configure.in,v 1.2 1999/07/30 13:40:18 mike Exp $".
 dnl

@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 1.0
+README - ESP Package Manager (EPM) 1.1
 --------------------------------------
 
 WHAT IS EPM?
@@ -66,6 +66,28 @@ HOW DO I USE EPM?
     software distribution at:
 
         http://www.cups.org/software.html
+
+
+WHAT'S NEW IN EPM 1.1?
+
+    EPM 1.1 adds the following features and fixes to EPM 1.0:
+
+        - The "whoami" command isn't always in the user's path, so scripts
+	  now use a hard-coded path (setup by the configure script) to the
+	  program.
+	- Added a check for IRIX64 (64-bit kernel instead of n32.)
+	- The %system directive now supports release numbers, e.g. "irix-6.5".
+	- The %system directive now supports "!" (not) operator so you can
+	  do things like "%system irix !irix-6.5" to select any IRIX release
+	  except IRIX 6.5.
+	- Files that already exist on the system are renamed to
+	  "filename.O" on installation and back to "filename" when removed
+	  (except for config files, which don't overwrite and aren't removed.)
+	- Prerequisites (%required directive) now look for required product
+	  in the current directory and install it automatically if it is
+	  available and not already installed.
+	- The copyright notice in the installation script was not displayed
+	  if the user used the "now" option.
 
 
 REPORTING PROBLEMS
