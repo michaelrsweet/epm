@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.28 2002/06/03 16:49:15 mike Exp $"
+ * "$Id: epm.h,v 1.29 2002/08/14 20:55:52 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -166,7 +166,8 @@ typedef struct				/**** File to install ****/
   char	user[32],			/* Owner of file */
 	group[32],			/* Group of file */
 	src[512],			/* Source path */
-	dst[512];			/* Destination path */
+	dst[512],			/* Destination path */
+	options[256];			/* File options (nostrip, etc.) */
 } file_t;
 
 typedef struct				/**** Install/Patch/Remove Commands ****/
@@ -274,5 +275,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.28 2002/06/03 16:49:15 mike Exp $".
+ * End of "$Id: epm.h,v 1.29 2002/08/14 20:55:52 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.9 2002/03/14 20:37:39 mike Exp $"
+ * "$Id: file.c,v 1.10 2002/08/14 20:55:52 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -208,7 +208,8 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
   */
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'f' && (file->mode & 0111))
+    if (tolower(file->type) == 'f' && (file->mode & 0111) &&
+        strstr(file->options, "nostrip()") == NULL)
     {
      /*
       * OK, this file has executable permissions; see if it is a
@@ -255,5 +256,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.9 2002/03/14 20:37:39 mike Exp $".
+ * End of "$Id: file.c,v 1.10 2002/08/14 20:55:52 mike Exp $".
  */
