@@ -47,14 +47,9 @@ WHAT'S NEW IN EPM 3.7?
     EPM 3.7 adds the following features, fixes, and changes to
     EPM 3.6:
 
-<<<<<<< CHANGES
-	- AIX output now correctly generates the inventory file
-	  for files in /usr and /opt.
-=======
 	- Fixed init script support for Tru64 packages.
 	- AIX output now correctly generates the inventory file
 	  for files in /usr and /opt.
->>>>>>> 1.65.2.38
 	- The Slackware packaging code swapped the output
 	  directory and product name when generating the
 	  post-install script.
@@ -101,8 +96,10 @@ WHAT'S NEW IN EPM 3.6?
     EPM 3.6 adds the following features, fixes, and changes to
     EPM 3.5.1:
 
+	- Added a GUI uninstall program to be distributed with
+	  portable distributions with a setup image.
 	- MacOS X portable packages now support graphical setup
-	  using the Apple authorization API.
+	  and uninstall using the Apple authorization API. 
 	- Debian packages did not include the (required)
 	  trailing period when running the update-rc.d script.
 	- BSD packages now create directories using postinstall

@@ -1,5 +1,5 @@
 /*
- * "$Id: snprintf.c,v 1.2.2.4 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: snprintf.c,v 1.2.2.5 2004/10/25 18:51:04 mike Exp $"
  *
  *   snprintf functions for the ESP Package Manager (EPM).
  *
@@ -17,8 +17,8 @@
  *
  * Contents:
  *
- *   vsnprintf() - Format a string into a fixed size buffer.
- *   snprintf()  - Format a string into a fixed size buffer.
+ *   epm_vsnprintf() - Format a string into a fixed size buffer.
+ *   epm_snprintf()  - Format a string into a fixed size buffer.
  */
 
 /*
@@ -35,24 +35,24 @@
  * 'vsnprintf()' - Format a string into a fixed size buffer.
  */
 
-int				/* O - Number of bytes formatted */
-vsnprintf(char       *buffer,	/* O - Output buffer */
-          size_t     bufsize,	/* O - Size of output buffer */
-	  const char *format,	/* I - printf-style format string */
-	  va_list    ap)	/* I - Pointer to additional arguments */
+int					/* O - Number of bytes formatted */
+epm_vsnprintf(char       *buffer,	/* O - Output buffer */
+              size_t     bufsize,	/* O - Size of output buffer */
+	      const char *format,	/* I - printf-style format string */
+ 	      va_list    ap)		/* I - Pointer to additional arguments */
 {
-  char		*bufptr,	/* Pointer to position in buffer */
-		*bufend,	/* Pointer to end of buffer */
-		sign,		/* Sign of format width */
-		size,		/* Size character (h, l, L) */
-		type;		/* Format type character */
-  const char	*bufformat;	/* Start of format */
-  int		width,		/* Width of field */
-		prec;		/* Number of characters of precision */
-  char		tformat[100],	/* Temporary format string for sprintf() */
-		temp[1024];	/* Buffer for formatted numbers */
-  char		*s;		/* Pointer to string */
-  int		slen;		/* Length of string */
+  char		*bufptr,		/* Pointer to position in buffer */
+		*bufend,		/* Pointer to end of buffer */
+		sign,			/* Sign of format width */
+		size,			/* Size character (h, l, L) */
+		type;			/* Format type character */
+  const char	*bufformat;		/* Start of format */
+  int		width,			/* Width of field */
+		prec;			/* Number of characters of precision */
+  char		tformat[100],		/* Temporary format string for sprintf() */
+		temp[1024];		/* Buffer for formatted numbers */
+  char		*s;			/* Pointer to string */
+  int		slen;			/* Length of string */
 
 
  /*
@@ -270,17 +270,17 @@ vsnprintf(char       *buffer,	/* O - Output buffer */
 
 #ifndef HAVE_SNPRINTF
 /*
- * 'snprintf()' - Format a string into a fixed size buffer.
+ * 'epm_snprintf()' - Format a string into a fixed size buffer.
  */
 
-int				/* O - Number of bytes formatted */
-snprintf(char       *buffer,	/* O - Output buffer */
-         size_t     bufsize,	/* O - Size of output buffer */
-         const char *format,	/* I - printf-style format string */
-	 ...)			/* I - Additional arguments as needed */
+int					/* O - Number of bytes formatted */
+epm_snprintf(char       *buffer,	/* O - Output buffer */
+             size_t     bufsize,	/* O - Size of output buffer */
+             const char *format,	/* I - printf-style format string */
+	     ...)			/* I - Additional arguments as needed */
 {
-  int		bytes;		/* Number of bytes formatted */
-  va_list 	ap;		/* Pointer to additional arguments */
+  int		bytes;			/* Number of bytes formatted */
+  va_list 	ap;			/* Pointer to additional arguments */
 
 
   va_start(ap, format);
@@ -293,6 +293,6 @@ snprintf(char       *buffer,	/* O - Output buffer */
 
 
 /*
- * End of "$Id: snprintf.c,v 1.2.2.4 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: snprintf.c,v 1.2.2.5 2004/10/25 18:51:04 mike Exp $".
  */
 

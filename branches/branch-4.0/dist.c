@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.16 2004/09/08 21:04:47 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.17 2004/10/25 18:51:03 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -1031,9 +1031,6 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
         get_string(&temp, src, sizeof(src));
 
         get_string(&temp, options, sizeof(options));
-
-	strncpy(options, temp, sizeof(options) - 1);
-	options[sizeof(options) - 1] = '\0';
 
 	if (tolower(type) == 'd' || type == 'R')
 	{
@@ -2323,5 +2320,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.16 2004/09/08 21:04:47 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.17 2004/10/25 18:51:03 mike Exp $".
  */
