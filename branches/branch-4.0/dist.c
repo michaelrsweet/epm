@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44.2.13 2004/03/05 05:28:17 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.14 2004/08/26 18:43:17 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -629,15 +629,26 @@ get_platform(struct utsname *platform)	/* O - Platform info */
       *temp = tolower(*temp);
 
  /*
-  * SunOS 5.x is really Solaris 2.x, and OSF1 is really Digital UNIX a.k.a.
-  * Compaq Tru64 UNIX...
+  * SunOS 5.x is really Solaris 2.x or Solaris X, and OSF1 is really
+  * Digital UNIX a.k.a. Compaq Tru64 UNIX...
   */
 
   if (strcmp(platform->sysname, "sunos") == 0 &&
       platform->release[0] >= '5')
   {
     strcpy(platform->sysname, "solaris");
-    platform->release[0] -= 3;
+
+    if (atoi(platform->release + 2) < 7)
+      platform->release[0] -= 3;
+    else
+    {
+     /*
+      * Strip 5. from the front of the version number...
+      */
+
+      for (temp = platform->release; temp[2]; temp ++)
+        *temp = temp[2];
+    }
   }
   else if (strcmp(platform->sysname, "osf1") == 0)
     strcpy(platform->sysname, "tru64"); /* AKA Digital UNIX */
@@ -2308,5 +2319,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.44.2.13 2004/03/05 05:28:17 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.14 2004/08/26 18:43:17 mike Exp $".
  */
