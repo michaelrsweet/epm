@@ -1205,8 +1205,8 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-VERSION=3.3.1
-VERNUMBER=331
+VERSION=3.4.0
+VERNUMBER=340
 
 
 cat >>confdefs.h <<_ACEOF
@@ -5171,6 +5171,10 @@ fi
 
 if test "$prefix" = "NONE"; then
 	prefix="/usr"
+fi
+
+if test "$exec_prefix" = "NONE"; then
+	exec_prefix="$prefix"
 fi
 
 if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
