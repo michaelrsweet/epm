@@ -89,6 +89,16 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
     unencumbered by licensing of any kind (not even the GPL.)
 
 
+WHAT'S NEW IN EPM 2.4?
+
+    EPM 2.4 adds the following features, fixes, and changes to
+    EPM 2.3:
+
+	- The [] wildcard matching did not skip over the
+	  character that was matched.  This prevented matches in
+	  most cases...
+
+
 WHAT'S NEW IN EPM 2.3?
 
     EPM 2.3 adds the following features, fixes, and changes to
