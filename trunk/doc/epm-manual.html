@@ -4,7 +4,7 @@
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
 <META NAME="copyright" CONTENT="Copyright 1999-2001 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20010620">
+<META NAME="docnumber" CONTENT="ESP-004-20010705">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: serif }
@@ -22,7 +22,7 @@ PRE { font-family: monospace }
 <BODY>
 <CENTER><A HREF="#CONTENTS"><IMG SRC="epmlogo.gif" BORDER="0" WIDTH="256" HEIGHT="256"><BR>
 <H1>Software Distribution Using the ESP Package Manager</H1></A><BR>
-ESP-004-20010620<BR>
+ESP-004-20010705<BR>
 Michael Sweet<BR>
 Copyright 1999-2001 by Easy Software Products<BR>
 </CENTER>
@@ -82,7 +82,7 @@ Copyright 1999-2001 by Easy Software Products<BR>
 <LI><A HREF="#8_1">The EPM List File Format</A></LI>
 <LI><A HREF="#SETUPTYPES">The setup.types File</A></LI>
 </UL>
-<B><A HREF="#RELNOTES">D</A></B>
+<B><A HREF="#RELNOTES">D - Release Notes</A></B>
 <UL>
 <LI><A HREF="#9_1">Changes in EPM v3.0</A></LI>
 <LI><A HREF="#9_2">Changes in EPM v2.8</A></LI>
@@ -177,8 +177,18 @@ Copyright 1999-2001 by Easy Software Products<BR>
 <DT><A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A></DT>
 <DD>The official home page of the ESP Package Manager software.
 <BR> &nbsp;</DD>
-<DT><A HREF="">title</A></DT>
-<DD>description
+<DT><A HREF="http://www.debian.org/devel/">http://www.debian.org/devel/</A>
+</DT>
+<DD>Debian Developers' Corner
+<BR>&nbsp;</DD>
+<DT><A HREF="http://techpubs.sgi.com/">http://techpubs.sgi.com/</A></DT>
+<DD>IRIX Documentation On-Line
+<BR>&nbsp;</DD>
+<DT><A HREF="http://www.rpm.org/">http://www.rpm.org/</A></DT>
+<DD>The RedHat Package Manager home page.
+<BR>&nbsp;</DD>
+<DT><A HREF="http://docs.sun.com/">http://docs.sun.com/</A></DT>
+<DD>Solaris Documentation On-Line
 <BR>&nbsp;</DD>
 </DL>
 </UL>
@@ -237,20 +247,20 @@ Requires?</SMALL></TH><TH><SMALL>Replaces?</SMALL></TH><TH><SMALL>Config
  Files?</SMALL></TH><TH><SMALL>Map Files?</SMALL></TH></TR>
 <TR><TD>installp</TD><TD>AIX</TD><TD>Yes</TD><TD>No</TD><TD>No</TD><TD>
 No</TD><TD>Yes</TD><TD>Yes</TD><TD>No</TD><TD>No</TD><TD>No</TD></TR>
-<TR><TD>BSD</TD><TD>FreeBSD
+<TR><TD>pkg_add</TD><TD>FreeBSD
 <BR> NetBSD
 <BR> OpenBSD</TD><TD>Yes</TD><TD>Yes<SUP>2</SUP></TD><TD>No</TD><TD>No</TD><TD>
 Yes</TD><TD>Yes</TD><TD>No</TD><TD>No</TD><TD>No</TD></TR>
-<TR><TD>Debian</TD><TD>Corel Linux
+<TR><TD>dpkg</TD><TD>Corel Linux
 <BR> Debian GNU/Linux</TD><TD>Yes</TD><TD>Yes<SUP>2</SUP></TD><TD>No</TD><TD>
 Yes</TD><TD>Yes</TD><TD>Yes</TD><TD>Yes</TD><TD>Yes</TD><TD>No</TD></TR>
-<TR><TD>depot</TD><TD>HP-UX</TD><TD>Yes</TD><TD>No</TD><TD>Yes</TD><TD>
+<TR><TD>swinstall</TD><TD>HP-UX</TD><TD>Yes</TD><TD>No</TD><TD>Yes</TD><TD>
 Yes</TD><TD>Yes</TD><TD>Yes</TD><TD>No</TD><TD>Yes</TD><TD>Yes</TD></TR>
 <TR><TD>inst</TD><TD>IRIX</TD><TD>Yes</TD><TD>No</TD><TD>Yes</TD><TD>Yes</TD><TD>
 Yes</TD><TD>Yes</TD><TD>Yes</TD><TD>Yes</TD><TD>Yes</TD></TR>
-<TR><TD>pkg</TD><TD>Solaris</TD><TD>Yes</TD><TD>No</TD><TD>Yes</TD><TD>
+<TR><TD>pkgadd</TD><TD>Solaris</TD><TD>Yes</TD><TD>No</TD><TD>Yes</TD><TD>
 No</TD><TD>Yes</TD><TD>Yes</TD><TD>No</TD><TD>Yes</TD><TD>Yes</TD></TR>
-<TR><TD>RPM</TD><TD>Mandrake
+<TR><TD>rpm</TD><TD>Mandrake
 <BR> RedHat
 <BR> SuSE
 <BR> TurboLinux</TD><TD>Yes</TD><TD>Yes<SUP>2</SUP></TD><TD>No</TD><TD>
@@ -282,10 +292,11 @@ No</TD><TD>Yes</TD><TD>Yes</TD><TD>No</TD><TD>No</TD><TD>No</TD></TR>
  set the ownerships and permissions. You essentially are creating a
  directory for your software that can be archived in the corresponding
  package format. To ensure that all file permissions and ownerships are
- correct, you must build the distribution as the root user, introducing
- potential security risks and violating many corporate security
- policies. It can also make building distributions difficult when
- dynamic data such as changing data files or databases is involved.</P>
+ correct, you must build the distribution as the root user or use the <CODE>
+fakeroot</CODE> software, introducing potential security risks and
+ violating many corporate security policies. It can also make building
+ distributions difficult when dynamic data such as changing data files
+ or databases is involved.</P>
 <P>The commercial UNIX formats use software list files that map source
  files to the correct directories and permissions. This allows for
  easier delivery of dynamic data, configuration management of what each
@@ -546,7 +557,7 @@ Installing EPM documentation in /usr/share/doc/epm
 <TABLE BORDER><CAPTION><A NAME="TABLE_2_3"> Table 2.3: Native Operating
  System Formats</A></CAPTION>
 <TR><TH>Operating System</TH><TH>Format</TH><TH>Command</TH></TR>
-<TR><TD>AIX</TD><TD><CODE>bff</CODE></TD><TD NOWRAP><CODE>installp -d<I>
+<TR><TD>AIX</TD><TD><CODE>aix</CODE></TD><TD NOWRAP><CODE>installp -d<I>
 directory</I> epm</CODE></TD></TR>
 <TR><TD>Compaq Tru64 UNIX
 <BR> Digital UNIX
@@ -554,7 +565,7 @@ directory</I> epm</CODE></TD></TR>
  directory</I>???</CODE></TD></TR>
 <TR><TD>FreeBSD
 <BR> NetBSD
-<BR> OpenBSD</TD><TD><CODE>pkg_add</CODE></TD><TD NOWRAP><CODE>cd<I>
+<BR> OpenBSD</TD><TD><CODE>bsd</CODE></TD><TD NOWRAP><CODE>cd<I>
  directory</I>
 <BR> pkg_add epm</CODE></TD></TR>
 <TR><TD>HP-UX</TD><TD><CODE>depot</CODE></TD><TD NOWRAP><CODE>swinstall
@@ -563,8 +574,8 @@ directory</I> epm</CODE></TD></TR>
  directory</I></CODE></TD></TR>
 <TR><TD>Linux</TD><TD><CODE>rpm</CODE></TD><TD NOWRAP><CODE>rpm -i<I>
  directory</I>/epm-3.0.rpm</CODE></TD></TR>
-<TR><TD>Solaris</TD><TD><CODE>pkgadd</CODE></TD><TD NOWRAP><CODE>pkgadd
- -d<I> directory</I> epm</CODE></TD></TR>
+<TR><TD>Solaris</TD><TD><CODE>pkg</CODE></TD><TD NOWRAP><CODE>pkgadd -d<I>
+ directory</I> epm</CODE></TD></TR>
 </TABLE>
 </CENTER>
 <HR>
@@ -1102,7 +1113,6 @@ i 755 root sys foo foo.sh
 <P ALIGN="CENTER"><B>END OF TERMS AND CONDITIONS</B></P>
 <HR>
 <H1 ALIGN="RIGHT"><A NAME="MANPAGES">B - Command Reference</A></H1>
-<P>Appendix summary</P>
 
 <!-- NEW PAGE -->
 <H2><A NAME="epm">epm</A></H2>
@@ -1269,11 +1279,11 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
 <DD>Set the permissions of the file or directory to<I> mode</I>. The
  default permissions are 0755 for directories and executable files and
  0644 for non-executable files.</DD>
-<DT>-s</DT>
-<DD>Strip the files (ignored, default for EPM.)</DD>
-<DT>-u<I> owner</I></DT>
+<DT>-o<I> owner</I></DT>
 <DD>Set the owner of the file or directory to<I> owner</I>. The default
  owner is &quot;root&quot;.</DD>
+<DT>-s</DT>
+<DD>Strip the files (ignored, default for EPM.)</DD>
 <DT>--list-file<I> filename.list</I></DT>
 <DD>Specify the list file to update.</DD>
 </DL>
@@ -1547,8 +1557,7 @@ TYPE Custom Configuration
  last type includes no products, the user will be presented with the
  full list of products to choose from.</P>
 <HR>
-<H1 ALIGN="RIGHT"><A NAME="RELNOTES">D</A></H1>
-<LI>Release Notes</LI>
+<H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
 <P>This appendix lists the change log for each release of the EPM
  software.</P>
 <H2><A NAME="9_1">Changes in EPM v3.0</A></H2>
