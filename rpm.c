@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.33 2001/07/23 17:54:21 mike Exp $"
+ * "$Id: rpm.c,v 1.34 2001/09/23 11:28:35 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -337,12 +337,12 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   if (strcmp(platform->machine, "intel") == 0)
   {
-    if (run_command(NULL, "rpm -bb " EPM_RPMARCH "i386 %s %s",
+    if (run_command(NULL, "rpm %s -bb " EPM_RPMARCH "i386 %s",
                     Verbosity == 0 ? "--quiet" : "", specname))
       return (1);
   }
-  else if (run_command(NULL, "rpm -bb " EPM_RPMARCH "%s %s %s",
-                       platform->machine, Verbosity == 0 ? "--quiet" : "",
+  else if (run_command(NULL, "rpm %s -bb " EPM_RPMARCH "%s %s",
+                       Verbosity == 0 ? "--quiet" : "", platform->machine,
 		       specname))
     return (1);
 
@@ -395,5 +395,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.33 2001/07/23 17:54:21 mike Exp $".
+ * End of "$Id: rpm.c,v 1.34 2001/09/23 11:28:35 mike Exp $".
  */
