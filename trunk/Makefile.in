@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.22 2001/06/25 19:48:47 mike Exp $"
+# "$Id: Makefile.in,v 1.23 2001/06/25 21:40:19 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -189,6 +189,10 @@ test:	$(TARGETS)
 # Make distributions using EPM...
 #
 
+aix: $(TARGETS)
+	echo Please note: AIX support is not working yet.
+	./epm -f aix -v epm
+
 bsd: $(TARGETS)
 	./epm -f bsd -v epm
 
@@ -253,5 +257,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.22 2001/06/25 19:48:47 mike Exp $".
+# End of "$Id: Makefile.in,v 1.23 2001/06/25 21:40:19 mike Exp $".
 #

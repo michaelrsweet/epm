@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.53 2001/06/25 19:48:47 mike Exp $"
+ * "$Id: epm.c,v 1.54 2001/06/25 21:40:19 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -366,6 +366,9 @@ main(int  argc,			/* I - Number of command-line arguments */
         i = make_portable(prodname, directory, platname, dist, &platform,
 	                  setup);
 	break;
+    case PACKAGE_AIX :
+        i = make_aix(prodname, directory, platname, dist, &platform);
+	break;
     case PACKAGE_BSD :
         i = make_bsd(prodname, directory, platname, dist, &platform);
 	break;
@@ -576,5 +579,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.53 2001/06/25 19:48:47 mike Exp $".
+ * End of "$Id: epm.c,v 1.54 2001/06/25 21:40:19 mike Exp $".
  */
