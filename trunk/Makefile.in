@@ -1,0 +1,106 @@
+#
+# "$Id: Makefile.in,v 1.1 1999/06/21 14:25:15 mike Exp $"
+#
+#   Makefile for the ESP Package Manager (EPM).
+#
+#   Copyright 1999 by Easy Software Products, all rights reserved.
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2, or (at your option)
+#   any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+
+#
+# Programs...
+#
+
+CC	=	@CC@
+CHMOD	=	@CHMOD@
+CP	=	@CP@
+MKDIR	=	@MKDIR@ -p
+RM	=	@RM@ -f
+SHELL	=	/bin/sh
+
+#
+# Program options...
+#
+# OPTIM   defines the common compiler optimization/debugging options.
+#
+
+ARFLAGS	=	crvs
+CFLAGS	=	@CFLAGS@ $(OPTIM)
+LDFLAGS	=	@LDFLAGS@ $(OPTIM)
+LIBS	=	@LIBS@
+OPTIM	=	@OPTIM@
+
+#
+# Directories...
+#
+
+bindir		=	@bindir@
+exec_prefix	=	@exec_prefix@
+mandir		=	@mandir@
+prefix		=	@prefix@
+
+#
+# Rules...
+#
+
+.SILENT:
+
+.SUFFIXES:	.c .h .o
+.c.o:
+	echo Compiling $<...
+	$(CC) $(CFLAGS) -c $<
+
+
+TARGETS	=	epm
+OBJS	=	epm.o string.o
+
+#
+# Make all targets...
+#
+
+all:	$(TARGETS)
+
+#
+# Clean all object files...
+#
+
+clean:
+	rm -f $(OBJS) $(TARGETS)
+
+#
+# Install all targets...
+#
+
+install: epm
+	echo Installing EPM in $(bindir) and $(mandir)/man1
+	-$(MKDIR) $(bindir)
+	$(RM) $(bindir)/epm
+	$(CP) epm $(bindir)/epm
+	$(CHMOD) 755 $(bindir)/epm
+	-$(MKDIR) $(mandir)/man1
+	$(RM) $(mandir)/man1/epm.1
+	$(CP) epm.1 $(mandir)/man1
+	$(CHMOD) 644 $(mandir)/man1/epm.1
+
+#
+# epm
+#
+
+epm:	$(OBJS)
+	echo Linking epm...
+	$(CC) $(LDFLAGS) -o epm $(OBJS)
+
+$(OBJS):	Makefile config.h string.h
+
+#
+# End of "$Id: Makefile.in,v 1.1 1999/06/21 14:25:15 mike Exp $".
+#
