@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.2 2001/06/20 18:34:57 mike Exp $"
+.\" "$Id: epm.man,v 1.3 2001/06/22 19:12:24 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,12 +15,14 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "20 June 2001" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "22 June 2001" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
 .B epm
-[ \-f
+[ \-a
+.I architecture
+] [ \-f
 .I format
 ] [ \-g ] [ \-k ] [ \-n[mrs] ] [ \-s
 .I setup.xpm
@@ -39,6 +41,10 @@ epm \- create software packages.
 \fBepm\fR generates software packages complete with installation, removal, and
 (if necessary) patch scripts. Unless otherwise specified, the files required
 for \fIproduct\fR are read from a file named "\fIproduct\fR.list".
+.LP
+The \fI-a\fR option ("architecture") specifies the actual
+architecture for the software. Without this option the generic
+processor architecture is used ("intel", "sparc", "mips", etc.)
 .LP
 The \fI-f\fR option ("format") specifies the distribution format:
 .TP 5
@@ -139,5 +145,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.2 2001/06/20 18:34:57 mike Exp $".
+.\" End of "$Id: epm.man,v 1.3 2001/06/22 19:12:24 mike Exp $".
 .\"
