@@ -17,7 +17,10 @@ WHAT'S NEW IN EPM 3.3?
 	  contribution from Andreas Voegele.
 	- The portable install and patch scripts now change the
 	  permissions of the installed "remove" script to 544.
-	  
+	- The wildcard character * did not match 0 characters if
+	  the pattern and the filename string differed only by
+	  the trailing * (e.g. "Courier" and "Courier*").
+
 
 WHAT'S NEW IN EPM 3.2.1?
 
