@@ -1,7 +1,7 @@
 //
-// "$Id: uninst2.cxx,v 1.1 2003/01/30 04:27:46 mike Exp $"
+// "$Id: uninst2.cxx,v 1.2 2003/02/13 21:34:01 mike Exp $"
 //
-//   ESP Software Wizard main entry for the ESP Package Manager (EPM).
+//   ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
 //   Copyright 1999-2003 by Easy Software Products.
 //
@@ -17,16 +17,6 @@
 //
 // Contents:
 //
-//   main()         - Main entry for software wizard...
-//   get_dists()    - Get a list of available software products.
-//   install_dist() - Install a distribution...
-//   list_cb()      - Handle selections in the software list.
-//   load_image()   - Load the setup image file (setup.xpm)...
-//   load_types()   - Load the setup image file (setup.xpm)...
-//   next_cb()      - Show software selections or install software.
-//   sort_dists()   - Compare two distribution names...
-//   add_string()   - Add a command to an array of commands...
-//   log_cb()       - Add one or more lines of text to the installation log.
 //
 
 #define _DEFINE_GLOBALS_
@@ -78,9 +68,10 @@ AuthorizationRef SetupAuthorizationRef;
 // Local functions...
 //
 
-int	remove_dist(const dist_t *dist);
 void	load_image(void);
 void	log_cb(int fd, int *fdptr);
+int	remove_dist(const dist_t *dist);
+void	show_installed(void);
 void	update_sizes(void);
 
 
@@ -172,6 +163,7 @@ main(int  argc,			// I - Number of command-line arguments
 #endif // __APPLE__
 
   get_installed();
+  show_installed();
 
   NextButton->activate();
 
@@ -182,6 +174,242 @@ main(int  argc,			// I - Number of command-line arguments
 #endif // __APPLE__
 
   return (0);
+}
+
+
+//
+// 'list_cb()' - Handle selections in the software list.
+//
+
+void
+list_cb(Fl_Check_Browser *, void *)
+{
+  int		i, j, k;
+  dist_t	*dist,
+		*dist2;
+  depend_t	*depend;
+
+
+  if (SoftwareList->nchecked() == 0)
+  {
+    update_sizes();
+
+    NextButton->deactivate();
+    return;
+  }
+
+  for (i = 0, dist = Installed; i < NumInstalled; i ++, dist ++)
+    if (SoftwareList->checked(i + 1))
+    {
+      // Check for required/incompatible products...
+      for (j = 0, depend = dist->depends; j < dist->num_depends; j ++, depend ++)
+        switch (depend->type)
+	{
+	  case DEPEND_REQUIRES :
+	      if ((dist2 = find_dist(depend->product, NumInstalled, Installed)) != NULL)
+	      {
+  		// Software is in the list, is it selected?
+	        k = dist2 - Installed;
+
+		if (SoftwareList->checked(k + 1))
+		  continue;
+
+        	// Nope, select it unless we're unchecked another selection...
+		if (SoftwareList->value() != (k + 1))
+		  SoftwareList->checked(k + 1, 1);
+		else
+		{
+		  SoftwareList->checked(i + 1, 0);
+		  break;
+		}
+	      }
+	      else if ((dist2 = find_dist(depend->product, NumInstalled,
+	                                  Installed)) == NULL)
+	      {
+		// Required but not installed or available!
+		fl_alert("%s requires %s to be installed, but it is not available "
+	        	 "for installation.", dist->name, depend->product);
+		SoftwareList->checked(i + 1, 0);
+		break;
+	      }
+	      break;
+
+          case DEPEND_INCOMPAT :
+	      if ((dist2 = find_dist(depend->product, NumInstalled,
+	                             Installed)) != NULL)
+	      {
+		// Already installed!
+		fl_alert("%s is incompatible with %s. Please remove it before "
+	        	 "installing this software.", dist->name, dist2->name);
+		SoftwareList->checked(i + 1, 0);
+		break;
+	      }
+	      else if ((dist2 = find_dist(depend->product, NumInstalled, Installed)) != NULL)
+	      {
+  		// Software is in the list, is it selected?
+	        k = dist2 - Installed;
+
+		// Software is in the list, is it selected?
+		if (!SoftwareList->checked(k + 1))
+		  continue;
+
+        	// Yes, tell the user...
+		fl_alert("%s is incompatible with %s. Please deselect it before "
+	        	 "installing this software.", dist->name, dist2->name);
+		SoftwareList->checked(i + 1, 0);
+		break;
+	      }
+	  default :
+	      break;
+	}
+    }
+
+  update_sizes();
+
+  if (SoftwareList->nchecked())
+    NextButton->activate();
+  else
+    NextButton->deactivate();
+}
+
+
+//
+// 'load_image()' - Load the setup image file (setup.xpm)...
+//
+
+void
+load_image(void)
+{
+  Fl_XPM_Image	*xpm;		// New image
+
+
+  xpm = new Fl_XPM_Image("setup.xpm");
+
+  WelcomeImage->image(xpm);
+}
+
+
+//
+// 'log_cb()' - Add one or more lines of text to the removeation log.
+//
+
+void
+log_cb(int fd,			// I - Pipe to read from
+       int *fdptr)		// O - Pipe to read from
+{
+  int		bytes;		// Bytes read/to read
+  char		*bufptr;	// Pointer into buffer
+  static int	bufused = 0;	// Number of bytes used
+  static char	buffer[8193];	// Buffer
+
+
+  bytes = 8192 - bufused;
+  if ((bytes = read(fd, buffer + bufused, bytes)) <= 0)
+  {
+    // End of file; zero the FD to tell the remove_dist() function to
+    // stop...
+
+    Fl::remove_fd(fd);
+    close(fd);
+    *fdptr = 0;
+
+    if (bufused > 0)
+    {
+      // Add remaining text...
+      buffer[bufused] = '\0';
+      RemoveLog->add(buffer);
+      bufused = 0;
+    }
+  }
+  else
+  {
+    // Add bytes to the buffer, then add lines as needed...
+    bufused += bytes;
+    buffer[bufused] = '\0';
+
+    while ((bufptr = strchr(buffer, '\n')) != NULL)
+    {
+      *bufptr++ = '\0';
+      RemoveLog->add(buffer);
+      strcpy(buffer, bufptr);
+      bufused -= bufptr - buffer;
+    }
+  }
+
+  RemoveLog->bottomline(RemoveLog->size());
+}
+
+
+//
+// 'next_cb()' - Show software selections or remove software.
+//
+
+void
+next_cb(Fl_Button *, void *)
+{
+  int		i;		// Looping var
+  int		progress;	// Progress so far...
+  int		error;		// Errors?
+  static char	message[1024];	// Progress message...
+  static int	removing = 0;	// Removing software?
+
+
+  Wizard->next();
+
+  PrevButton->deactivate();
+
+  if (Wizard->value() == ConfirmPane)
+  {
+    ConfirmList->clear();
+    PrevButton->activate();
+
+    for (i = 0; i < NumInstalled; i ++)
+      if (SoftwareList->checked(i + 1))
+        ConfirmList->add(SoftwareList->text(i + 1));
+  }
+
+  if (Wizard->value() == RemovePane && !removing)
+  {
+    removing = 1;
+
+    NextButton->deactivate();
+    CancelButton->deactivate();
+    CancelButton->label("Close");
+
+    for (i = 0, progress = 0, error = 0; i < NumInstalled; i ++)
+      if (SoftwareList->checked(i + 1))
+      {
+        sprintf(message, "Removing %s v%s...", Installed[i].name,
+	        Installed[i].version);
+
+        RemovePercent->value(100.0 * progress / SoftwareList->nchecked());
+	RemovePercent->label(message);
+	RemovePane->redraw();
+
+        if ((error = remove_dist(Installed + i)) != 0)
+	  break;
+
+	progress ++;
+      }
+
+    RemovePercent->value(100.0);
+
+    if (error)
+      RemovePercent->label("Removal Failed!");
+    else
+      RemovePercent->label("Removal Complete");
+
+    RemovePane->redraw();
+
+    CancelButton->activate();
+
+    fl_beep();
+
+    removing = 0;
+  }
+  else if (Wizard->value() == SoftwarePane &&
+           SoftwareList->nchecked() == 0)
+    NextButton->deactivate();
 }
 
 
@@ -295,238 +523,31 @@ remove_dist(const dist_t *dist)// I - Distribution to remove
 
 
 //
-// 'list_cb()' - Handle selections in the software list.
+// 'show_installed()' - Show the installed software products.
 //
 
 void
-list_cb(Fl_Check_Browser *, void *)
-{
-  int		i, j, k;
-  dist_t	*dist,
-		*dist2;
-  depend_t	*depend;
-
-
-  if (SoftwareList->nchecked() == 0)
-  {
-    update_sizes();
-
-    NextButton->deactivate();
-    return;
-  }
-
-  for (i = 0, dist = Dists; i < NumDists; i ++, dist ++)
-    if (SoftwareList->checked(i + 1))
-    {
-      // Check for required/incompatible products...
-      for (j = 0, depend = dist->depends; j < dist->num_depends; j ++, depend ++)
-        switch (depend->type)
-	{
-	  case DEPEND_REQUIRES :
-	      if ((dist2 = find_dist(depend->product, NumDists, Dists)) != NULL)
-	      {
-  		// Software is in the list, is it selected?
-	        k = dist2 - Dists;
-
-		if (SoftwareList->checked(k + 1))
-		  continue;
-
-        	// Nope, select it unless we're unchecked another selection...
-		if (SoftwareList->value() != (k + 1))
-		  SoftwareList->checked(k + 1, 1);
-		else
-		{
-		  SoftwareList->checked(i + 1, 0);
-		  break;
-		}
-	      }
-	      else if ((dist2 = find_dist(depend->product, NumInstalled,
-	                                  Installed)) == NULL)
-	      {
-		// Required but not installed or available!
-		fl_alert("%s requires %s to be installed, but it is not available "
-	        	 "for installation.", dist->name, depend->product);
-		SoftwareList->checked(i + 1, 0);
-		break;
-	      }
-	      break;
-
-          case DEPEND_INCOMPAT :
-	      if ((dist2 = find_dist(depend->product, NumInstalled,
-	                             Installed)) != NULL)
-	      {
-		// Already installed!
-		fl_alert("%s is incompatible with %s. Please remove it before "
-	        	 "installing this software.", dist->name, dist2->name);
-		SoftwareList->checked(i + 1, 0);
-		break;
-	      }
-	      else if ((dist2 = find_dist(depend->product, NumDists, Dists)) != NULL)
-	      {
-  		// Software is in the list, is it selected?
-	        k = dist2 - Dists;
-
-		// Software is in the list, is it selected?
-		if (!SoftwareList->checked(k + 1))
-		  continue;
-
-        	// Yes, tell the user...
-		fl_alert("%s is incompatible with %s. Please deselect it before "
-	        	 "installing this software.", dist->name, dist2->name);
-		SoftwareList->checked(i + 1, 0);
-		break;
-	      }
-	  default :
-	      break;
-	}
-    }
-
-  update_sizes();
-
-  if (SoftwareList->nchecked())
-    NextButton->activate();
-  else
-    NextButton->deactivate();
-}
-
-
-//
-// 'load_image()' - Load the setup image file (setup.xpm)...
-//
-
-void
-load_image(void)
-{
-  Fl_XPM_Image	*xpm;		// New image
-
-
-  xpm = new Fl_XPM_Image("setup.xpm");
-
-  WelcomeImage->image(xpm);
-}
-
-
-//
-// 'next_cb()' - Show software selections or remove software.
-//
-
-void
-next_cb(Fl_Button *, void *)
+show_installed()
 {
   int		i;		// Looping var
-  int		progress;	// Progress so far...
-  int		error;		// Errors?
-  static char	message[1024];	// Progress message...
-  static int	removing = 0;	// Removing software?
+  dist_t	*temp;		// Pointer to current distribution
+  char		line[1024];	// Product name and version...
 
 
-  Wizard->next();
-
-  PrevButton->deactivate();
-
-  if (Wizard->value() == ConfirmPane)
+  if (NumInstalled == 0)
   {
-    ConfirmList->clear();
-    PrevButton->activate();
-
-    for (i = 0; i < NumDists; i ++)
-      if (SoftwareList->checked(i + 1))
-        ConfirmList->add(SoftwareList->text(i + 1));
+    fl_alert("No software found to remove!");
+    exit(1);
   }
 
-  if (Wizard->value() == RemovePane && !removing)
+  for (i = 0, temp = Installed; i < NumInstalled; i ++, temp ++)
   {
-    removing = 1;
+    sprintf(line, "%s v%s", temp->name, temp->version);
 
-    NextButton->deactivate();
-    CancelButton->deactivate();
-    CancelButton->label("Close");
-
-    for (i = 0, progress = 0, error = 0; i < NumDists; i ++)
-      if (SoftwareList->checked(i + 1))
-      {
-        sprintf(message, "Removing %s v%s...", Dists[i].name,
-	        Dists[i].version);
-
-        RemovePercent->value(100.0 * progress / SoftwareList->nchecked());
-	RemovePercent->label(message);
-	RemovePane->redraw();
-
-        if ((error = remove_dist(Dists + i)) != 0)
-	  break;
-
-	progress ++;
-      }
-
-    RemovePercent->value(100.0);
-
-    if (error)
-      RemovePercent->label("Removal Failed!");
-    else
-      RemovePercent->label("Removal Complete");
-
-    RemovePane->redraw();
-
-    CancelButton->activate();
-
-    fl_beep();
-
-    removing = 0;
-  }
-  else if (Wizard->value() == SoftwarePane &&
-           SoftwareList->nchecked() == 0)
-    NextButton->deactivate();
-}
-
-
-//
-// 'log_cb()' - Add one or more lines of text to the removeation log.
-//
-
-void
-log_cb(int fd,			// I - Pipe to read from
-       int *fdptr)		// O - Pipe to read from
-{
-  int		bytes;		// Bytes read/to read
-  char		*bufptr;	// Pointer into buffer
-  static int	bufused = 0;	// Number of bytes used
-  static char	buffer[8193];	// Buffer
-
-
-  bytes = 8192 - bufused;
-  if ((bytes = read(fd, buffer + bufused, bytes)) <= 0)
-  {
-    // End of file; zero the FD to tell the remove_dist() function to
-    // stop...
-
-    Fl::remove_fd(fd);
-    close(fd);
-    *fdptr = 0;
-
-    if (bufused > 0)
-    {
-      // Add remaining text...
-      buffer[bufused] = '\0';
-      RemoveLog->add(buffer);
-      bufused = 0;
-    }
-  }
-  else
-  {
-    // Add bytes to the buffer, then add lines as needed...
-    bufused += bytes;
-    buffer[bufused] = '\0';
-
-    while ((bufptr = strchr(buffer, '\n')) != NULL)
-    {
-      *bufptr++ = '\0';
-      RemoveLog->add(buffer);
-      strcpy(buffer, bufptr);
-      bufused -= bufptr - buffer;
-    }
+    SoftwareList->add(line, 0);
   }
 
-  RemoveLog->bottomline(RemoveLog->size());
+  update_sizes();
 }
 
 
@@ -550,8 +571,8 @@ update_sizes(void)
 
 
   // Get the sizes for the selected products...
-  for (i = 0, dist = Dists, rootsize = 0, usrsize = 0;
-       i < NumDists;
+  for (i = 0, dist = Installed, rootsize = 0, usrsize = 0;
+       i < NumInstalled;
        i ++, dist ++)
     if (SoftwareList->checked(i + 1))
     {
@@ -627,5 +648,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: uninst2.cxx,v 1.1 2003/01/30 04:27:46 mike Exp $".
+// End of "$Id: uninst2.cxx,v 1.2 2003/02/13 21:34:01 mike Exp $".
 //
