@@ -4977,7 +4977,7 @@ if test -n "$GCC"; then
 	# you care about binary portability between Linux distributions,
 	# you need to either 1) build your own GCC with static C++ libraries
 	# or 2) link using gcc and libsupc++.  We choose the latter since
-	# CUPS doesn't (currently) use any of the stdc++ library.
+	# EPM doesn't (currently) use any of the stdc++ library.
 	#
 	# Also, GCC 3.0.x still has problems compiling some code.  You may
 	# or may not have success with it.  USE 3.0.x WITH EXTREME CAUTION!
