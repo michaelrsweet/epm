@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.29 1999/10/10 13:43:39 mike Exp $"
+ * "$Id: epm.c,v 1.30 1999/10/20 14:50:20 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -495,7 +495,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Create the shared software distribution file...
   */
 
-  puts("Creating non-shared software distribution file...");
+  puts("Creating shared software distribution file...");
 
   sprintf(swname, "%s.ss", prodname);
   sprintf(filename, "%s/%s", directory, swname);
@@ -2419,5 +2419,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.29 1999/10/10 13:43:39 mike Exp $".
+ * End of "$Id: epm.c,v 1.30 1999/10/20 14:50:20 mike Exp $".
  */
