@@ -1,5 +1,5 @@
 /*
- * "$Id: qprintf.c,v 1.1 2002/08/30 02:00:42 mike Exp $"
+ * "$Id: qprintf.c,v 1.1.2.1 2002/08/30 02:13:34 mike Exp $"
  *
  *   Quoted fprintf function for the ESP Package Manager (EPM).
  *
@@ -216,6 +216,6 @@ qprintf(FILE       *fp,		/* I - File to write to */
 
 
 /*
- * End of "$Id: qprintf.c,v 1.1 2002/08/30 02:00:42 mike Exp $".
+ * End of "$Id: qprintf.c,v 1.1.2.1 2002/08/30 02:13:34 mike Exp $".
  */
 
