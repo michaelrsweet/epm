@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.14 2001/09/19 15:52:17 mike Exp $"
+ * "$Id: deb.c,v 1.15 2001/10/19 16:54:51 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -96,7 +96,10 @@ make_deb(const char     *prodname,	/* I - Product short name */
   }
 
   fprintf(fp, "Package: %s\n", prodname);
-  fprintf(fp, "Version: %s\n", dist->version);
+  if (dist->relnumber)
+    fprintf(fp, "Version: %s-%d\n", dist->version, dist->relnumber);
+  else
+    fprintf(fp, "Version: %s\n", dist->version);
   fprintf(fp, "Maintainer: %s\n", dist->vendor);
 
  /*
@@ -423,5 +426,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.14 2001/09/19 15:52:17 mike Exp $".
+ * End of "$Id: deb.c,v 1.15 2001/10/19 16:54:51 mike Exp $".
  */
