@@ -1,11 +1,28 @@
-CHANGES - ESP Package Manager (EPM) 3.6.1
------------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.7
+---------------------------------------
 
-WHAT'S NEW IN EPM 3.6.1?
+WHAT'S NEW IN EPM 3.7?
 
-    EPM 3.6.1 adds the following features, fixes, and changes to
+    EPM 3.7 adds the following features, fixes, and changes to
     EPM 3.6:
 
+	- The file copy code reported write errors for the
+	  source filename and not the (correct) destination
+	  filename.
+	- Fixed the handling of absolute output directories when
+	  generating RPM packages.
+	- The configure script did not support the OPTIM
+	  environment variable for custom optimization settings.
+	- Portable packages updated the permissions of
+	  configuration files before they were copied.
+	- Portable installations did not remove empty
+	  installation directories when the remove script was
+	  run.
+	- Portable patch installation did not correctly
+	  determine when root or /usr files were present in the
+	  patch.
+	- OSX packages incorrectly looked in /System/Library for
+	  the init scripts instead of /Library.
 	- RPM building did not work properly when --output-dir
 	  was specified using an absolute path.
 	- Made cosmetic changes to the setup/uninstall GUIs.

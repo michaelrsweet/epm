@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.86 2003/07/05 01:58:11 mike Exp $"
+ * "$Id: portable.c,v 1.87 2003/07/23 21:41:08 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -86,6 +86,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
   file_t	*file;			/* Software file */
   int		rootsize,		/* Size of files in root partition */
 		usrsize;		/* Size of files in /usr partition */
+  int		prootsize,		/* Size of patch files in root partition */
+		pusrsize;		/* Size of patch files in /usr partition */
   static const char	*distfiles[] =	/* Distribution files */
 		{
 		  "install",
@@ -158,7 +160,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  for (i = dist->num_files, file = dist->files, rootsize = 0;
+  for (i = dist->num_files, file = dist->files, rootsize = 0, prootsize = 0;
        i > 0;
        i --, file ++)
     if (strncmp(file->dst, "/usr", 4) != 0)
@@ -176,6 +178,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    }
 
             rootsize += (srcstat.st_size + 1023) / 1024;
+
+            if (isupper(file->type))
+              prootsize += (srcstat.st_size + 1023) / 1024;
 
            /*
 	    * Configuration files are extracted to the config file name with
@@ -219,6 +224,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      printf("Directory %s...\n", file->dst);
 
             rootsize ++;
+
+            if (isupper(file->type))
+              prootsize ++;
 	    break;
 
 	case 'l' : /* Link file */
@@ -235,6 +243,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    }
 
             rootsize ++;
+
+            if (isupper(file->type))
+              prootsize ++;
 	    break;
       }
 
@@ -258,7 +269,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  for (i = dist->num_files, file = dist->files, usrsize = 0;
+  for (i = dist->num_files, file = dist->files, usrsize = 0, pusrsize = 0;
        i > 0;
        i --, file ++)
     if (strncmp(file->dst, "/usr", 4) == 0)
@@ -276,6 +287,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    }
 
             usrsize += (srcstat.st_size + 1023) / 1024;
+
+            if (isupper(file->type))
+              pusrsize += (srcstat.st_size + 1023) / 1024;
 
            /*
 	    * Configuration files are extracted to the config file name with
@@ -319,6 +333,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      printf("%s...\n", file->dst);
 
 	    usrsize ++;
+
+            if (isupper(file->type))
+              pusrsize ++;
 	    break;
 
 	case 'l' : /* Link file */
@@ -335,6 +352,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    }
 
 	    usrsize ++;
+
+            if (isupper(file->type))
+              pusrsize ++;
 	    break;
       }
 
@@ -531,7 +551,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
     return (1);
 
   if (havepatchfiles)
-    if (write_patch(dist, prodname, rootsize, usrsize, directory))
+    if (write_patch(dist, prodname, prootsize, pusrsize, directory))
       return (1);
 
   if (write_remove(dist, prodname, rootsize, usrsize, directory))
@@ -1697,35 +1717,6 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "cp %s.remove %s\n", prodname, SoftwareDir);
   fprintf(scriptfile, "chmod 544 %s/%s.remove\n", SoftwareDir, prodname);
 
-  fputs("echo Updating file permissions...\n", scriptfile);
-
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (strncmp(file->dst, "/usr", 4) != 0 &&
-        strcmp(file->user, "root") != 0)
-      switch (tolower(file->type))
-      {
-	case 'c' :
-	case 'f' :
-	    qprintf(scriptfile, "chown %s %s\n", file->user, file->dst);
-	    qprintf(scriptfile, "chgrp %s %s\n", file->group, file->dst);
-	    break;
-      }
-
-  fputs("if test -f /usr/.writetest; then\n", scriptfile);
-  fputs("	rm -f /usr/.writetest\n", scriptfile);
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (strncmp(file->dst, "/usr", 4) == 0 &&
-        strcmp(file->user, "root") != 0)
-      switch (tolower(file->type))
-      {
-	case 'c' :
-	case 'f' :
-	    qprintf(scriptfile, "	chown %s %s\n", file->user, file->dst);
-	    qprintf(scriptfile, "	chgrp %s %s\n", file->group, file->dst);
-	    break;
-      }
-  fputs("fi\n", scriptfile);
-
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'c')
       break;
@@ -1750,6 +1741,39 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
   }
+
+  fputs("echo Updating file permissions...\n", scriptfile);
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) != 0 &&
+        strcmp(file->user, "root") != 0)
+      switch (tolower(file->type))
+      {
+	case 'c' :
+	    qprintf(scriptfile, "chown %s %s.N\n", file->user, file->dst);
+	    qprintf(scriptfile, "chgrp %s %s.N\n", file->group, file->dst);
+	case 'f' :
+	    qprintf(scriptfile, "chown %s %s\n", file->user, file->dst);
+	    qprintf(scriptfile, "chgrp %s %s\n", file->group, file->dst);
+	    break;
+      }
+
+  fputs("if test -f /usr/.writetest; then\n", scriptfile);
+  fputs("	rm -f /usr/.writetest\n", scriptfile);
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (strncmp(file->dst, "/usr", 4) == 0 &&
+        strcmp(file->user, "root") != 0)
+      switch (tolower(file->type))
+      {
+	case 'c' :
+	    qprintf(scriptfile, "	chown %s %s.N\n", file->user, file->dst);
+	    qprintf(scriptfile, "	chgrp %s %s.N\n", file->group, file->dst);
+	case 'f' :
+	    qprintf(scriptfile, "	chown %s %s\n", file->user, file->dst);
+	    qprintf(scriptfile, "	chgrp %s %s\n", file->group, file->dst);
+	    break;
+      }
+  fputs("fi\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
@@ -2384,6 +2408,23 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     fputs("done\n", scriptfile);
   }
 
+  for (i = dist->num_files, file = dist->files + i - 1; i > 0; i --, file --)
+    if (tolower(file->type) == 'd')
+      break;
+
+  if (i)
+  {
+    fputs("echo Removing empty installation directories...\n", scriptfile);
+
+    for (; i > 0; i --, file --)
+      if (tolower(file->type) == 'd')
+      {
+	qprintf(scriptfile, "if test -d %s; then\n", file->dst);
+	qprintf(scriptfile, "	rmdir %s >/dev/null 2>&1\n", file->dst);
+	fputs("fi\n", scriptfile);
+      }
+  }
+
   write_commands(dist, scriptfile, COMMAND_POST_REMOVE);
 
   fprintf(scriptfile, "rm -f %s/%s.remove\n", SoftwareDir, prodname);
@@ -2500,5 +2541,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.86 2003/07/05 01:58:11 mike Exp $".
+ * End of "$Id: portable.c,v 1.87 2003/07/23 21:41:08 mike Exp $".
  */

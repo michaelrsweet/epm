@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.9 2003/01/03 01:19:27 mike Exp $"
+ * "$Id: osx.c,v 1.10 2003/07/23 21:41:08 mike Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -217,7 +217,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
-        qprintf(fp, "/System/Library/StartupItems/%s/%s start\n",
+        qprintf(fp, "/Library/StartupItems/%s/%s start\n",
 	        file->dst, file->dst);
 
     fclose(fp);
@@ -289,12 +289,12 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
           fputs("{\n", fp);
           fprintf(fp, "  Description = \"%s\";\n", dist->product);
-	  qprintf(fp, "  Provides = \"%s\";\n",
+	  qprintf(fp, "  Provides = (%s);\n",
 	          get_option(file, "provides", file->dst));
           if ((option = get_option(file, "requires", NULL)) != NULL)
-	    qprintf(fp, "  Requires = \"%s\";\n", option);
+	    qprintf(fp, "  Requires = (%s);\n", option);
           if ((option = get_option(file, "uses", NULL)) != NULL)
-	    qprintf(fp, "  Uses = \"%s\";\n", option);
+	    qprintf(fp, "  Uses = (%s);\n", option);
           if ((option = get_option(file, "order", NULL)) != NULL)
 	    qprintf(fp, "  OrderPreference = \"%s\";\n", option);
 	  fputs("}\n", fp);
@@ -406,5 +406,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.9 2003/01/03 01:19:27 mike Exp $".
+ * End of "$Id: osx.c,v 1.10 2003/07/23 21:41:08 mike Exp $".
  */
