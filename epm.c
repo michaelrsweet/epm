@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.40 2000/06/28 20:25:21 mike Exp $"
+ * "$Id: epm.c,v 1.41 2000/11/10 18:12:48 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -138,6 +138,18 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    else if (strcasecmp(temp, "swinstall") == 0 ||
 	             strcasecmp(temp, "depot") == 0)
 	      format = PACKAGE_SWINSTALL;
+	    else if (strcasecmp(temp, "native") == 0)
+#if defined(__linux)
+	      format = PACKAGE_RPM;
+#elif defined(__sgi)
+	      format = PACKAGE_INST;
+#elif defined(__sun)
+	      format = PACKAGE_PKG;
+#elif defined(__hpux)
+	      format = PACKAGE_SWINSTALL;
+#else
+	      format = PACKAGE_PORTABLE;
+#endif
 	    else
 	      usage();
 	    break;
@@ -423,5 +435,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.40 2000/06/28 20:25:21 mike Exp $".
+ * End of "$Id: epm.c,v 1.41 2000/11/10 18:12:48 mike Exp $".
  */

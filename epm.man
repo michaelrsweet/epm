@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.13 2000/06/28 20:25:21 mike Exp $"
+.\" "$Id: epm.man,v 1.14 2000/11/10 18:12:48 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "28 June 2000" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "10 November 2000" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
@@ -47,6 +47,12 @@ inst, tardist
 .br
 Generate an IRIX distribution suitable for installation on an system running
 IRIX.
+.TP 5
+native
+.br
+Generate an native distribution. This uses \fIrpm\fR for Linux, \fIinst\fR for
+IRIX, \fIpkg\fR for Solaris, and \fIswinstall\fR for HP-UX. All other
+operating systems default to the \fIportable\fR format.
 .TP 5
 pkg
 .br
@@ -247,5 +253,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.13 2000/06/28 20:25:21 mike Exp $".
+.\" End of "$Id: epm.man,v 1.14 2000/11/10 18:12:48 mike Exp $".
 .\"
