@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.12 2001/03/03 21:29:48 mike Exp $"
+ * "$Id: inst.c,v 1.13 2001/03/20 15:23:21 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -123,11 +123,11 @@ make_inst(const char     *prodname,	/* I - Product short name */
       if (d->type == DEPEND_REQUIRES)
       {
         if (strchr(d->product, '.') != NULL)
-  	  fprintf(fp, "				%s 0 maxint\n",
-         	  d->product);
+  	  fprintf(fp, "				%s %d %d\n",
+         	  d->product, d->vernumber[0], d->vernumber[1]);
         else if (d->product[0] != '/')
-  	  fprintf(fp, "				%s.sw.eoe 0 maxint\n",
-        	  d->product);
+  	  fprintf(fp, "				%s.sw.eoe %d %d\n",
+         	  d->product, d->vernumber[0], d->vernumber[1]);
       }
     fputs("			)\n", fp);
   }
@@ -136,20 +136,20 @@ make_inst(const char     *prodname,	/* I - Product short name */
     if (d->type == DEPEND_REPLACES)
     {
       if (strchr(d->product, '.') != NULL)
-        fprintf(fp, "			replaces %s 0 maxint\n",
-                d->product);
+        fprintf(fp, "			replaces %s %d %d\n",
+         	d->product, d->vernumber[0], d->vernumber[1]);
       else if (d->product[0] != '/')
-        fprintf(fp, "			replaces %s.sw.eoe 0 maxint\n",
-                d->product);
+        fprintf(fp, "			replaces %s.sw.eoe %d %d\n",
+         	d->product, d->vernumber[0], d->vernumber[1]);
     }
     else if (d->type == DEPEND_INCOMPAT)
     {
       if (strchr(d->product, '.') != NULL)
-        fprintf(fp, "			incompat %s 0 maxint\n",
-                d->product);
+        fprintf(fp, "			incompat %s %d %d\n",
+         	d->product, d->vernumber[0], d->vernumber[1]);
       else if (d->product[0] != '/')
-        fprintf(fp, "			incompat %s.sw.eoe 0 maxint\n",
-                d->product);
+        fprintf(fp, "			incompat %s.sw.eoe %d %d\n",
+         	d->product, d->vernumber[0], d->vernumber[1]);
     }
 
   fputs("		endsubsys\n", fp);
@@ -596,5 +596,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.12 2001/03/03 21:29:48 mike Exp $".
+ * End of "$Id: inst.c,v 1.13 2001/03/20 15:23:21 mike Exp $".
  */

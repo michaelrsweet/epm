@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.24 2001/03/15 16:13:35 mike Exp $"
+ * "$Id: portable.c,v 1.25 2001/03/20 15:23:21 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -38,7 +38,7 @@
  * Local functions...
  */
 
-static int	write_commands(dist_t *dist, FILE *fp, char type);
+static int	write_commands(dist_t *dist, FILE *fp, int type);
 static FILE	*write_common(dist_t *dist, const char *title,
 		              const char *filename);
 static int	write_depends(dist_t *dist, FILE *fp);
@@ -521,7 +521,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 static int				/* O - 0 on success, -1 on failure */
 write_commands(dist_t *dist,		/* I - Distribution */
                FILE   *fp,		/* I - File pointer */
-               char   type)		/* I - Type of commands to write */
+               int    type)		/* I - Type of commands to write */
 {
   int			i;		/* Looping var */
   command_t		*c;		/* Current command */
@@ -644,7 +644,7 @@ write_depends(dist_t *dist,		/* I - Distribution */
 
   for (i = 0, d= dist->depends; i < dist->num_depends; i ++, d ++)
   {
-    fprintf(fp, "#%%%s %s\n", depends[d->type], d->product);
+    fprintf(fp, "#%%%s %s\n", depends[(int)d->type], d->product);
 
     switch (d->type)
     {
@@ -1625,5 +1625,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.24 2001/03/15 16:13:35 mike Exp $".
+ * End of "$Id: portable.c,v 1.25 2001/03/20 15:23:21 mike Exp $".
  */

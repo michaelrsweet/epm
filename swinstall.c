@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.10 2001/03/03 21:29:49 mike Exp $"
+ * "$Id: swinstall.c,v 1.11 2001/03/20 15:23:21 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -328,7 +328,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "    title %s, %s\n", dist->product, dist->version);
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (d->type == DEPEND_REQUIRES)
+    if (d->type == DEPEND_REQUIRES && d->product[0] != '/')
       break;
 
   if (i)
@@ -336,15 +336,23 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     fputs("    corequisites", fp);
 
     for (; i > 0; i --, d ++)
-      if (d->type == DEPEND_REQUIRES)
-        if (d->product[0] != '/')
-          fprintf(fp, " %s", d->product);
+      if (d->type == DEPEND_REQUIRES && d->product[0] != '/')
+      {
+        fprintf(fp, " %s", d->product);
+	if (d->vernumber[0] == 0)
+	{
+	  if (d->vernumber[1] < INT_MAX)
+            fprintf(fp, ",r<=%s", d->version[1]);
+	}
+	else
+	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
+      }
 
     fputs("\n", fp);
   }
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (d->type == DEPEND_REPLACES)
+    if (d->type == DEPEND_REPLACES && d->product[0] != '/')
       break;
 
   if (i)
@@ -352,9 +360,17 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     fputs("    ancestor", fp);
 
     for (; i > 0; i --, d ++)
-      if (d->type == DEPEND_REPLACES)
-        if (d->product[0] != '/')
-          fprintf(fp, " %s", d->product);
+      if (d->type == DEPEND_REPLACES && d->product[0] != '/')
+      {
+        fprintf(fp, " %s", d->product);
+	if (d->vernumber[0] == 0)
+	{
+	  if (d->vernumber[1] < INT_MAX)
+            fprintf(fp, ",r<=%s", d->version[1]);
+	}
+	else
+	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
+      }
 
     fputs("\n", fp);
   }
@@ -471,5 +487,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.10 2001/03/03 21:29:49 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.11 2001/03/20 15:23:21 mike Exp $".
  */
