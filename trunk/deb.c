@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.5 2001/01/03 20:41:33 mike Exp $"
+ * "$Id: deb.c,v 1.6 2001/03/03 21:29:48 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -38,14 +38,22 @@ make_deb(const char     *prodname,	/* I - Product short name */
          dist_t         *dist,		/* I - Distribution information */
 	 struct utsname *platform)	/* I - Platform information */
 {
-  int		i;			/* Looping var */
-  FILE		*fp;			/* Control file */
-  char		name[1024];		/* Full product name */
-  char		filename[1024];		/* Destination filename */
-  char		command[1024];		/* Command to run */
-  file_t	*file;			/* Current distribution file */
-  struct passwd	*pwd;			/* Pointer to user record */
-  struct group	*grp;			/* Pointer to group record */
+  int			i;		/* Looping var */
+  FILE			*fp;		/* Control file */
+  char			name[1024];	/* Full product name */
+  char			filename[1024];	/* Destination filename */
+  char			command[1024];	/* Command to run */
+  command_t		*c;		/* Current command */
+  depend_t		*d;		/* Current dependency */
+  file_t		*file;		/* Current distribution file */
+  struct passwd		*pwd;		/* Pointer to user record */
+  struct group		*grp;		/* Pointer to group record */
+  static const char	*depends[] =	/* Dependency names */
+			{
+			  "Depends",
+			  "Conflicts",
+			  "Replaces"
+			};
 
 
   if (Verbosity)
@@ -96,81 +104,174 @@ make_deb(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_descriptions; i ++)
     fprintf(fp, " %s\n", dist->descriptions[i]);
 
-  for (i = 0; i < dist->num_requires; i ++)
-    fprintf(fp, "Depends: %s\n", dist->requires[i]);
-
-  for (i = 0; i < dist->num_incompats; i ++)
-    fprintf(fp, "Conflicts: %s\n", dist->incompats[i]);
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    fprintf(fp, "%s: %s\n", depends[d->type], d->product);
 
   fclose(fp);
+
+ /*
+  * Write the preinst file for DPKG...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_PRE_INSTALL)
+      break;
+
+  if (i)
+  {
+    if (Verbosity)
+      puts("Creating preinst script...");
+
+    sprintf(filename, "%s/%s/DEBIAN/preinst", directory, name);
+
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_PRE_INSTALL)
+        fprintf(fp, "%s\n", c->command);
+
+    fclose(fp);
+  }
 
  /*
   * Write the postinst file for DPKG...
   */
 
-  if (Verbosity)
-    puts("Creating postinst script...");
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_INSTALL)
+      break;
 
-  sprintf(filename, "%s/%s/DEBIAN/postinst", directory, name);
+  if (!i)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        break;
 
-  if ((fp = fopen(filename, "w")) == NULL)
+  if (i)
   {
-    fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
-            strerror(errno));
-    return (1);
-  }
+    if (Verbosity)
+      puts("Creating postinst script...");
 
-  fchmod(fileno(fp), 0755);
+    sprintf(filename, "%s/%s/DEBIAN/postinst", directory, name);
 
-  fputs("#!/bin/sh\n", fp);
-  fputs("# " EPM_VERSION "\n", fp);
-
-  for (i = 0; i < dist->num_installs; i ++)
-    fprintf(fp, "%s\n", dist->installs[i]);
-
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+    if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(fp, "update-rc.d %s defaults >/dev/null\n", file->dst);
-
-      fprintf(fp, "/etc/init.d/%s start\n", file->dst);
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+              strerror(errno));
+      return (1);
     }
 
-  fclose(fp);
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_INSTALL)
+        fprintf(fp, "%s\n", c->command);
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+      {
+        fprintf(fp, "update-rc.d %s defaults >/dev/null\n", file->dst);
+
+        fprintf(fp, "/etc/init.d/%s start\n", file->dst);
+      }
+
+    fclose(fp);
+  }
 
  /*
-  * Write the preun file for DPKG...
+  * Write the prerm file for DPKG...
   */
 
-  if (Verbosity)
-    puts("Creating preun script...");
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_PRE_REMOVE)
+      break;
 
-  sprintf(filename, "%s/%s/DEBIAN/preun", directory, name);
+  if (!i)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        break;
 
-  if ((fp = fopen(filename, "w")) == NULL)
+  if (i)
   {
-    fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
-            strerror(errno));
-    return (1);
-  }
+    if (Verbosity)
+      puts("Creating prerm script...");
 
-  fchmod(fileno(fp), 0755);
+    sprintf(filename, "%s/%s/DEBIAN/prerm", directory, name);
 
-  fputs("#!/bin/sh\n", fp);
-  fputs("# " EPM_VERSION "\n", fp);
-
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+    if ((fp = fopen(filename, "w")) == NULL)
     {
-      fputs("if [ purge = \"$1\" ]; then\n", fp);
-      fprintf(fp, "	update-rc.d %s remove >/dev/null\n", file->dst);
-      fputs("fi\n", fp);
-
-      fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+              strerror(errno));
+      return (1);
     }
 
-  for (i = 0; i < dist->num_removes; i ++)
-    fprintf(fp, "%s\n", dist->removes[i]);
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_PRE_REMOVE)
+        fprintf(fp, "%s\n", c->command);
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+      {
+        fputs("if [ purge = \"$1\" ]; then\n", fp);
+        fprintf(fp, "	update-rc.d %s remove >/dev/null\n", file->dst);
+        fputs("fi\n", fp);
+
+        fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
+      }
+
+    fclose(fp);
+  }
+
+ /*
+  * Write the postrm file for DPKG...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_REMOVE)
+      break;
+
+  if (i)
+  {
+    if (Verbosity)
+      puts("Creating postrm script...");
+
+    sprintf(filename, "%s/%s/DEBIAN/postrm", directory, name);
+
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_REMOVE)
+        fprintf(fp, "%s\n", c->command);
+
+    fclose(fp);
+  }
 
  /*
   * Write the conffiles file for DPKG...
@@ -289,5 +390,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.5 2001/01/03 20:41:33 mike Exp $".
+ * End of "$Id: deb.c,v 1.6 2001/03/03 21:29:48 mike Exp $".
  */

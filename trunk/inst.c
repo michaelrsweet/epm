@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.11 2001/01/19 16:24:00 mike Exp $"
+ * "$Id: inst.c,v 1.12 2001/03/03 21:29:48 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -55,8 +55,14 @@ make_inst(const char     *prodname,	/* I - Product short name */
 		srcname[1024],		/* Name of source file in distribution */
 		dstname[1024];		/* Name of destination file in distribution */
   char		command[1024];		/* Command to run */
+  char		preinstall[1024],	/* Pre install script */
+		postinstall[1024],	/* Post install script */
+		preremove[1024],	/* Pre remove script */
+		postremove[1024];	/* Post remove script */
   char		subsys[255];		/* Subsystem name */
   file_t	*file;			/* Current distribution file */
+  command_t	*c;			/* Current command */
+  depend_t	*d;			/* Current dependency */
   struct stat	fileinfo;		/* File information */
   static const char *extensions[] =	/* INST file extensions */
 		{
@@ -105,35 +111,46 @@ make_inst(const char     *prodname,	/* I - Product short name */
           dist->version);
   fprintf(fp, "			exp \"%s.sw.eoe\"\n", prodname);
 
-  if (dist->num_requires)
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REQUIRES)
+      break;
+
+  if (i)
   {
     fputs("			prereq\n", fp);
     fputs("			(\n", fp);
-    for (i = 0; i < dist->num_requires; i ++)
-      if (strchr(dist->requires[i], '.') != NULL)
-	fprintf(fp, "				%s 0 maxint\n",
-        	dist->requires[i]);
-      else if (dist->requires[i][0] != '/')
-	fprintf(fp, "				%s.sw.eoe 0 maxint\n",
-        	dist->requires[i]);
+    for (; i > 0; i --, d ++)
+      if (d->type == DEPEND_REQUIRES)
+      {
+        if (strchr(d->product, '.') != NULL)
+  	  fprintf(fp, "				%s 0 maxint\n",
+         	  d->product);
+        else if (d->product[0] != '/')
+  	  fprintf(fp, "				%s.sw.eoe 0 maxint\n",
+        	  d->product);
+      }
     fputs("			)\n", fp);
   }
 
-  for (i = 0; i < dist->num_replaces; i ++)
-    if (strchr(dist->replaces[i], '.') != NULL)
-      fprintf(fp, "			replaces %s 0 maxint\n",
-              dist->replaces[i]);
-    else if (dist->replaces[i][0] != '/')
-      fprintf(fp, "			replaces %s.sw.eoe 0 maxint\n",
-              dist->replaces[i]);
-
-  for (i = 0; i < dist->num_incompats; i ++)
-    if (strchr(dist->incompats[i], '.') != NULL)
-      fprintf(fp, "			incompat %s 0 maxint\n",
-              dist->incompats[i]);
-    else if (dist->incompats[i][0] != '/')
-      fprintf(fp, "			incompat %s.sw.eoe 0 maxint\n",
-              dist->incompats[i]);
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REPLACES)
+    {
+      if (strchr(d->product, '.') != NULL)
+        fprintf(fp, "			replaces %s 0 maxint\n",
+                d->product);
+      else if (d->product[0] != '/')
+        fprintf(fp, "			replaces %s.sw.eoe 0 maxint\n",
+                d->product);
+    }
+    else if (d->type == DEPEND_INCOMPAT)
+    {
+      if (strchr(d->product, '.') != NULL)
+        fprintf(fp, "			incompat %s 0 maxint\n",
+                d->product);
+      else if (d->product[0] != '/')
+        fprintf(fp, "			incompat %s.sw.eoe 0 maxint\n",
+                d->product);
+    }
 
   fputs("		endsubsys\n", fp);
   fputs("	endimage\n", fp);
@@ -183,35 +200,39 @@ make_inst(const char     *prodname,	/* I - Product short name */
     }
 
  /*
-  * Add remove and removal scripts as needed...
+  * Add preinstall script as needed...
   */
 
-  if (dist->num_installs)
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_INSTALL)
+      break;
+
+  if (i)
   {
    /*
-    * Add the install script file to the list...
+    * Add the preinstall script file to the list...
     */
 
     file = add_file(dist);
-    file->type = 'E';
+    file->type = '1';
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    sprintf(file->src, "%s/%s.install", directory, prodname);
-    sprintf(file->dst, "/etc/software/%s.install", prodname);
+    sprintf(file->src, "%s/%s.preinstall", directory, prodname);
+    sprintf(file->dst, "/etc/software/%s.preinstall", prodname);
 
    /*
     * Then create the install script...
     */
 
     if (Verbosity)
-      puts("Creating exitops script...");
+      puts("Creating preinstall script...");
 
-    sprintf(filename, "%s/%s.install", directory, prodname);
+    sprintf(preinstall, "%s/%s.preinstall", directory, prodname);
 
-    if ((fp = fopen(filename, "w")) == NULL)
+    if ((fp = fopen(preinstall, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preinstall,
               strerror(errno));
       return (1);
     }
@@ -221,38 +242,153 @@ make_inst(const char     *prodname,	/* I - Product short name */
     fputs("#!/bin/sh\n", fp);
     fputs("# " EPM_VERSION "\n", fp);
 
-    for (i = 0; i < dist->num_installs; i ++)
-      fprintf(fp, "%s\n", dist->installs[i]);
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_INSTALL)
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
+  else
+    preinstall[0] = '\0';
 
-  if (dist->num_removes)
+ /*
+  * Add postinstall script as needed...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_INSTALL)
+      break;
+
+  if (i)
   {
    /*
-    * Add the remove script file to the list...
+    * Add the postinstall script file to the list...
     */
 
     file = add_file(dist);
-    file->type = 'R';
+    file->type = '2';
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    sprintf(file->src, "%s/%s.remove", directory, prodname);
-    sprintf(file->dst, "/etc/software/%s.remove", prodname);
+    sprintf(file->src, "%s/%s.postinstall", directory, prodname);
+    sprintf(file->dst, "/etc/software/%s.postinstall", prodname);
+
+   /*
+    * Then create the install script...
+    */
+
+    if (Verbosity)
+      puts("Creating postinstall script...");
+
+    sprintf(postinstall, "%s/%s.postinstall", directory, prodname);
+
+    if ((fp = fopen(postinstall, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postinstall,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_INSTALL)
+        fprintf(fp, "%s\n", c->command);
+
+    fclose(fp);
+  }
+  else
+    postinstall[0] = '\0';
+
+ /*
+  * Add preremove script as needed...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_INSTALL)
+      break;
+
+  if (i)
+  {
+   /*
+    * Add the preremove script file to the list...
+    */
+
+    file = add_file(dist);
+    file->type = '3';
+    file->mode = 0555;
+    strcpy(file->user, "root");
+    strcpy(file->group, "sys");
+    sprintf(file->src, "%s/%s.preremove", directory, prodname);
+    sprintf(file->dst, "/etc/software/%s.preremove", prodname);
+
+   /*
+    * Then create the install script...
+    */
+
+    if (Verbosity)
+      puts("Creating preremove script...");
+
+    sprintf(preremove, "%s/%s.preremove", directory, prodname);
+
+    if ((fp = fopen(preremove, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preremove,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_INSTALL)
+        fprintf(fp, "%s\n", c->command);
+
+    fclose(fp);
+  }
+  else
+    preremove[0] = '\0';
+
+ /*
+  * Add postremove script as needed...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_INSTALL)
+      break;
+
+  if (i)
+  {
+   /*
+    * Add the postremove script file to the list...
+    */
+
+    file = add_file(dist);
+    file->type = '4';
+    file->mode = 0555;
+    strcpy(file->user, "root");
+    strcpy(file->group, "sys");
+    sprintf(file->src, "%s/%s.postremove", directory, prodname);
+    sprintf(file->dst, "/etc/software/%s.postremove", prodname);
 
    /*
     * Then create the remove script...
     */
 
     if (Verbosity)
-      puts("Creating removeop script...");
+      puts("Creating postremove script...");
 
-    sprintf(filename, "%s/%s.remove", directory, prodname);
+    sprintf(postremove, "%s/%s.postremove", directory, prodname);
 
-    if ((fp = fopen(filename, "w")) == NULL)
+    if ((fp = fopen(postremove, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postremove,
               strerror(errno));
       return (1);
     }
@@ -262,11 +398,14 @@ make_inst(const char     *prodname,	/* I - Product short name */
     fputs("#!/bin/sh\n", fp);
     fputs("# " EPM_VERSION "\n", fp);
 
-    for (i = 0; i < dist->num_removes; i ++)
-      fprintf(fp, "%s\n", dist->removes[i]);
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_INSTALL)
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
+  else
+    postremove[0] = '\0';
 
  /*
   * Sort the file list by the destination name, since gendist needs a sorted
@@ -303,6 +442,22 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
     switch (tolower(file->type))
     {
+      case '1' :
+          fprintf(fp, "f %04o %s %s %s %s %s postop($rbase/%s)\n", file->mode,
+	          file->user, file->group, file->dst + 1, file->src, subsys,
+		  file->dst + 1);
+          break;
+      case '2' :
+          fprintf(fp, "f %04o %s %s %s %s %s exitop($rbase/%s)\n", file->mode,
+	          file->user, file->group, file->dst + 1, file->src, subsys,
+		  file->dst + 1);
+          break;
+      case '3' :
+      case '4' :
+          fprintf(fp, "f %04o %s %s %s %s %s removeop($rbase/%s)\n", file->mode,
+	          file->user, file->group, file->dst + 1, file->src, subsys,
+		  file->dst + 1);
+          break;
       case 'c' :
           fprintf(fp, "f %04o %s %s %s %s %s config(suggest)\n", file->mode,
 	          file->user, file->group, file->dst + 1, file->src, subsys);
@@ -310,11 +465,6 @@ make_inst(const char     *prodname,	/* I - Product short name */
       case 'd' :
           fprintf(fp, "d %04o %s %s %s - %s\n", file->mode,
 	          file->user, file->group, file->dst + 1, subsys);
-          break;
-      case 'e' :
-          fprintf(fp, "f %04o %s %s %s %s %s exitop($rbase/%s)\n", file->mode,
-	          file->user, file->group, file->dst + 1, file->src, subsys,
-		  file->dst + 1);
           break;
       case 'f' :
           fprintf(fp, "f %04o %s %s %s %s %s\n", file->mode,
@@ -328,11 +478,6 @@ make_inst(const char     *prodname,	/* I - Product short name */
       case 'l' :
           fprintf(fp, "l %04o %s %s %s - %s symval(%s)\n", file->mode,
 	          file->user, file->group, file->dst + 1, subsys, file->src);
-          break;
-      case 'r' :
-          fprintf(fp, "f %04o %s %s %s %s %s removeop($rbase/%s)\n", file->mode,
-	          file->user, file->group, file->dst + 1, file->src, subsys,
-		  file->dst + 1);
           break;
     }
   }
@@ -422,11 +567,14 @@ make_inst(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Removing temporary distribution files...");
 
-  sprintf(filename, "%s/%s.install", directory, prodname);
-  unlink(filename);
-
-  sprintf(filename, "%s/%s.remove", directory, prodname);
-  unlink(filename);
+  if (preinstall[0])
+    unlink(preinstall);
+  if (postinstall[0])
+    unlink(postinstall);
+  if (preremove[0])
+    unlink(preremove);
+  if (postremove[0])
+    unlink(postremove);
 
   unlink(idbname);
   unlink(specname);
@@ -448,5 +596,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.11 2001/01/19 16:24:00 mike Exp $".
+ * End of "$Id: inst.c,v 1.12 2001/03/03 21:29:48 mike Exp $".
  */

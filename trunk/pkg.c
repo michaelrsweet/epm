@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.11 2001/02/15 13:34:16 mike Exp $"
+ * "$Id: pkg.c,v 1.12 2001/03/03 21:29:48 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -41,10 +41,16 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   int		i, j;			/* Looping vars */
   FILE		*fp;			/* Control file */
   char		name[1024];		/* Full product name */
-  char		filename[1024];		/* Destination filename */
+  char		filename[1024],		/* Destination filename */
+		preinstall[1024],	/* Pre install script */
+		postinstall[1024],	/* Post install script */
+		preremove[1024],	/* Pre remove script */
+		postremove[1024];	/* Post remove script */
   char		command[1024];		/* Command to run */
   char		current[1024];		/* Current directory */
   file_t	*file;			/* Current distribution file */
+  command_t	*c;			/* Current command */
+  depend_t	*d;			/* Current dependency */
   tarf_t	*tarfile;		/* Distribution file */
   time_t	curtime;		/* Current time info */
   struct tm	*curdate;		/* Current date info */
@@ -130,11 +136,60 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
   fclose(fp);
 
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+ /*
+  * Write the preinstall file for pkgmk...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_PRE_INSTALL)
       break;
 
-  if (dist->num_installs || i)
+  if (i)
+  {
+   /*
+    * Write the preinstall file for pkgmk...
+    */
+
+    if (Verbosity)
+      puts("Creating preinstall script...");
+
+    sprintf(preinstall, "%s/%s.preinstall", directory, prodname);
+
+    if ((fp = fopen(preinstall, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preinstall,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_PRE_INSTALL)
+        fprintf(fp, "%s\n", c->command);
+
+    fclose(fp);
+  }
+  else
+    preinstall[0] = '\0';
+
+ /*
+  * Write the postinstall file for pkgmk...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_INSTALL)
+      break;
+
+  if (!i)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        break;
+
+  if (i)
   {
    /*
     * Write the postinstall file for pkgmk...
@@ -143,11 +198,11 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating postinstall script...");
 
-    sprintf(filename, "%s/%s.postinstall", directory, prodname);
+    sprintf(postinstall, "%s/%s.postinstall", directory, prodname);
 
-    if ((fp = fopen(filename, "w")) == NULL)
+    if ((fp = fopen(postinstall, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postinstall,
               strerror(errno));
       return (1);
     }
@@ -157,17 +212,33 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     fputs("#!/bin/sh\n", fp);
     fputs("# " EPM_VERSION "\n", fp);
 
-    for (j = 0; j < dist->num_installs; j ++)
-      fprintf(fp, "%s\n", dist->installs[j]);
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_INSTALL)
+        fprintf(fp, "%s\n", c->command);
 
-    for (j = dist->num_files, file = dist->files; j > 0; j --, file ++)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
 	fprintf(fp, "/etc/init.d/%s start\n", file->dst);
 
     fclose(fp);
   }
+  else
+    postinstall[0] = '\0';
 
-  if (dist->num_removes || i)
+ /*
+  * Write the preremove script...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_PRE_REMOVE)
+      break;
+
+  if (!i)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        break;
+
+  if (i)
   {
    /*
     * Write the preremove file for pkgmk...
@@ -176,11 +247,11 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating preremove script...");
 
-    sprintf(filename, "%s/%s.preremove", directory, prodname);
+    sprintf(preremove, "%s/%s.preremove", directory, prodname);
 
-    if ((fp = fopen(filename, "w")) == NULL)
+    if ((fp = fopen(preremove, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preremove,
               strerror(errno));
       return (1);
     }
@@ -190,15 +261,58 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     fputs("#!/bin/sh\n", fp);
     fputs("# " EPM_VERSION "\n", fp);
 
-    for (j = dist->num_files, file = dist->files; j > 0; j --, file ++)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
 	fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
 
-    for (j = 0; j < dist->num_removes; j ++)
-      fprintf(fp, "%s\n", dist->removes[j]);
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_PRE_REMOVE)
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
+  else
+    preremove[0] = '\0';
+
+ /*
+  * Write the postremove file for pkgmk...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_REMOVE)
+      break;
+
+  if (i)
+  {
+   /*
+    * Write the postremove file for pkgmk...
+    */
+
+    if (Verbosity)
+      puts("Creating postremove script...");
+
+    sprintf(postremove, "%s/%s.postremove", directory, prodname);
+
+    if ((fp = fopen(postremove, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postremove,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_REMOVE)
+        fprintf(fp, "%s\n", c->command);
+
+    fclose(fp);
+  }
+  else
+    postremove[0] = '\0';
 
  /*
   * Add symlinks for init scripts...
@@ -253,10 +367,14 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     if (tolower(file->type) == 'i')
       break;
 
-  if (dist->num_installs || i)
-    fprintf(fp, "i postinstall=%s/%s/%s.postinstall\n", current, directory, prodname);
-  if (dist->num_removes || i)
-    fprintf(fp, "i preremove=%s/%s/%s.preremove\n", current, directory, prodname);
+  if (preinstall[0])
+    fprintf(fp, "i preinstall=%s\n", preinstall);
+  if (postinstall[0])
+    fprintf(fp, "i postinstall=%s\n", postinstall);
+  if (preremove[0])
+    fprintf(fp, "i preremove=%s\n", preremove);
+  if (postremove[0])
+    fprintf(fp, "i postremove=%s\n", postremove);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     switch (tolower(file->type))
@@ -350,15 +468,19 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   unlink(filename);
   sprintf(filename, "%s/%s.prototype", directory, prodname);
   unlink(filename);
-  sprintf(filename, "%s/%s.postinstall", directory, prodname);
-  unlink(filename);
-  sprintf(filename, "%s/%s.preremove", directory, prodname);
-  unlink(filename);
+  if (preinstall[0])
+    unlink(preinstall);
+  if (postinstall[0])
+    unlink(postinstall);
+  if (preremove[0])
+    unlink(preremove);
+  if (postremove[0])
+    unlink(postremove);
 
   return (0);
 }
 
 
 /*
- * End of "$Id: pkg.c,v 1.11 2001/02/15 13:34:16 mike Exp $".
+ * End of "$Id: pkg.c,v 1.12 2001/03/03 21:29:48 mike Exp $".
  */

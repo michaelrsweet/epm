@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.22 2001/03/02 14:29:41 mike Exp $"
+ * "$Id: dist.c,v 1.23 2001/03/03 21:29:48 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -17,6 +17,9 @@
  *
  * Contents:
  *
+ *   add_command()  - Add a command to the distribution...
+ *   add_depend()   - Add a dependency to the distribution...
+ *   add_file()     - Add a file to the distribution.
  *   free_dist()    - Free memory used by a distribution.
  *   read_dist()    - Read a software distribution.
  *   add_string()   - Add a command to an array of commands...
@@ -45,6 +48,101 @@ static char	*get_line(char *buffer, int size, FILE *fp,
 		          struct utsname *platform, const char *format,
 			  int *skip);
 static int	patmatch(const char *, const char *);
+
+
+/*
+ * 'add_command()' - Add a command to the distribution...
+ */
+
+void
+add_command(dist_t     *dist,		/* I - Distribution */
+            char       type,		/* I - Command type */
+	    const char *command)	/* I - Command string */
+{
+  command_t	*temp;			/* New command */
+
+
+  if (dist->num_commands == 0)
+    temp = malloc(sizeof(command_t));
+  else
+    temp = realloc(dist->commands, (dist->num_commands + 1) * sizeof(command_t));
+
+  if (temp == NULL)
+  {
+    perror("epm: Out of memory allocating a command");
+    return;
+  }
+
+  dist->commands = temp;
+  temp           += dist->num_commands;
+
+  temp->type    = type;
+  temp->command = strdup(command);
+
+  if (temp->command == NULL)
+  {
+    perror("epm: Out of memory duplicating a command string");
+    return;
+  }
+
+  dist->num_commands ++;
+}
+
+
+/*
+ * 'add_depend()' - Add a dependency to the distribution...
+ */
+
+void
+add_depend(dist_t     *dist,		/* I - Distribution */
+           char       type,		/* I - Type of dependency */
+	   const char *product,		/* I - Product name */
+	   const char *version,		/* I - Product version */
+           int        vernumber)	/* I - Version number */
+{
+  depend_t	*temp;			/* New depend */
+
+
+  if (dist->num_depends == 0)
+    temp = malloc(sizeof(depend_t));
+  else
+    temp = realloc(dist->depends, (dist->num_depends + 1) * sizeof(depend_t));
+
+  if (temp == NULL)
+  {
+    perror("epm: Out of memory allocating a dependency");
+    return;
+  }
+
+  dist->depends = temp;
+  temp           += dist->num_depends;
+
+  temp->type    = type;
+  temp->product = strdup(product);
+
+  if (temp->depend == NULL)
+  {
+    perror("epm: Out of memory duplicating a product string");
+    return;
+  }
+
+  if (version)
+  {
+    temp->version = strdup(version);
+
+    if (temp->version == NULL)
+    {
+      perror("epm: Out of memory duplicating a version string");
+      return;
+    }
+  }
+  else
+    temp->version = NULL;
+
+  temp->vernumber = vernumber;
+
+  dist->num_depends ++;
+}
 
 
 /*
@@ -77,15 +175,30 @@ add_file(dist_t *dist)	/* I - Distribution */
 void
 free_dist(dist_t *dist)		/* I - Distribution to free */
 {
+  int	i;			/* Looping var */
+
+
   if (dist->num_files > 0)
     free(dist->files);
 
   free_strings(dist->num_descriptions, dist->descriptions);
-  free_strings(dist->num_installs, dist->installs);
-  free_strings(dist->num_removes, dist->removes);
-  free_strings(dist->num_patches, dist->patches);
-  free_strings(dist->num_incompats, dist->incompats);
-  free_strings(dist->num_requires, dist->requires);
+
+  for (i = 0; i < dist->num_commands; i ++)
+    free(dist->commands[i].command);
+
+  if (dist->num_commands)
+    free(dist->commands);
+
+  for (i = 0; i < dist->num_depends; i ++)
+  {
+    free(dist->depends[i].product);
+
+    if (dist->depends[i].version)
+      free(dist->depends[i].version);
+  }
+
+  if (dist->num_depends)
+    free(dist->depends);
 
   free(dist);
 }
@@ -110,7 +223,10 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 		pattern[256],	/* Pattern for source files */
 		user[32],	/* User */
 		group[32],	/* Group */
-		*temp;		/* Temporary pointer */
+		*temp,		/* Temporary pointer */
+		*product,	/* Pointer to product name */
+		*version;	/* Pointer to version string */
+  int		vernumber;	/* Version number */
   int		mode,		/* File permissions */
 		skip;		/* 1 = skip files, 0 = archive files */
   dist_t	*dist;		/* Distribution data */
@@ -191,15 +307,21 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	else if (strcmp(line, "%description") == 0)
 	  dist->num_descriptions =
 	      add_string(dist->num_descriptions, &(dist->descriptions), temp);
-	else if (strcmp(line, "%install") == 0)
-	  dist->num_installs =
-	      add_string(dist->num_installs, &(dist->installs), temp);
-	else if (strcmp(line, "%remove") == 0)
-	  dist->num_removes =
-	      add_string(dist->num_removes, &(dist->removes), temp);
-	else if (strcmp(line, "%patch") == 0)
-	  dist->num_patches =
-	      add_string(dist->num_patches, &(dist->patches), temp);
+	else if (strcmp(line, "%preinstall") == 0)
+          add_command(dist, COMMAND_PRE_INSTALL, temp);
+	else if (strcmp(line, "%install") == 0 ||
+	         strcmp(line, "%postinstall") == 0)
+          add_command(dist, COMMAND_POST_INSTALL, temp);
+	else if (strcmp(line, "%remove") == 0 ||
+	         strcmp(line, "%preremove") == 0)
+          add_command(dist, COMMAND_PRE_REMOVE, temp);
+	else if (strcmp(line, "%postremove") == 0)
+          add_command(dist, COMMAND_POST_REMOVE, temp);
+	else if (strcmp(line, "%prepatch") == 0)
+          add_command(dist, COMMAND_PRE_PATCH, temp);
+	else if (strcmp(line, "%patch") == 0 ||
+	         strcmp(line, "%postpatch") == 0)
+          add_command(dist, COMMAND_POST_PATCH, temp);
         else if (strcmp(line, "%product") == 0)
 	{
           if (!dist->product[0])
@@ -261,15 +383,61 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
             }
 	  }
 	}
-	else if (strcmp(line, "%incompat") == 0)
-	  dist->num_incompats = add_string(dist->num_incompats,
-	                                   &(dist->incompats), temp);
-	else if (strcmp(line, "%requires") == 0)
-	  dist->num_requires = add_string(dist->num_requires, &(dist->requires),
-	                                  temp);
-	else if (strcmp(line, "%replaces") == 0)
-	  dist->num_replaces = add_string(dist->num_replaces, &(dist->replaces),
-	                                  temp);
+	else if (strcmp(line, "%incompat") == 0 ||
+	         strcmp(line, "%replaces") == 0 ||
+	         strcmp(line, "%requires") == 0)
+	{
+	 /*
+	  * Grab the product name...
+	  */
+
+	  product = temp;
+
+         /*
+	  * Find the product version...
+	  */
+
+	  if ((temp = strchr(temp, ' ')) != NULL)
+	  {
+	    while (isspace(*temp))
+	      *temp++ = '\0';
+
+            if (*temp)
+	    {
+	      version = temp;
+
+	      if ((temp = strchr(temp, ' ')) != NULL)
+	      {
+	        *temp++ = '\0';
+	        vernumber = atoi(temp);
+	      }
+	      else
+	      {
+	        vernumber = 0;
+	        for (temp = version; *temp; temp ++)
+		  if (isdigit(*temp))
+	            vernumber = vernumber * 10 + *temp - '0';
+              }
+	    }
+	    else
+	    {
+	      version   = NULL;
+	      vernumber = 0;
+	    }
+	  }
+	  else
+	  {
+	    version   = NULL;
+	    vernumber = 0;
+	  }
+
+	  if (strcmp(line, "%incompat") == 0)
+	    add_depend(dist, DEPEND_INCOMPAT, product, version, vernumber);
+	  else if (strcmp(line, "%replaces") == 0)
+	    add_depend(dist, DEPEND_REPLACES, product, version, vernumber);
+	  else
+	    add_depend(dist, DEPEND_REQUIRES, product, version, vernumber);
+	}
 	else
 	{
 	  fprintf(stderr, "epm: Unknown directive \"%s\" ignored!\n", line);
@@ -790,5 +958,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.22 2001/03/02 14:29:41 mike Exp $".
+ * End of "$Id: dist.c,v 1.23 2001/03/03 21:29:48 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.9 2001/01/19 16:24:01 mike Exp $"
+ * "$Id: swinstall.c,v 1.10 2001/03/03 21:29:49 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -44,11 +44,15 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   int		linknum;		/* Symlink number */
   char		name[1024];		/* Full product name */
   char		infoname[1024],		/* Info filename */
+		preinstall[1024],	/* preinstall script */
 		postinstall[1024],	/* postinstall script */
-		preremove[1024];	/* preremove script */
+		preremove[1024],	/* preremove script */
+		postremove[1024];	/* postremove script */
   char		filename[1024];		/* Destination filename */
   char		command[1024];		/* Command to run */
   file_t	*file;			/* Current distribution file */
+  command_t	*c;			/* Current command */
+  depend_t	*d;			/* Current dependency */
 
 
   (void)platform; /* Eliminates compiler warning about unused variable */
@@ -91,20 +95,69 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     }
 
  /*
-  * Add remove and removal scripts as needed...
+  * Write the preinstall script if needed...
   */
 
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if (tolower(file->type) == 'i')
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_PRE_INSTALL)
       break;
 
-  if (dist->num_installs || i)
+  if (i)
   {
    /*
-    * Then create the install script...
+    * Create the preinstall script...
     */
 
-    sprintf(postinstall, "%s/%s.install", directory, prodname);
+    sprintf(preinstall, "%s/%s.preinst", directory, prodname);
+
+    if (Verbosity)
+      puts("Creating preinstall script...");
+
+    if ((fp = fopen(preinstall, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preinstall,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_PRE_INSTALL)
+        fprintf(fp, "%s\n", c->command);
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+	fprintf(fp, "/sbin/init.d/%s start\n", file->dst);
+
+    fclose(fp);
+  }
+  else
+    preinstall[0] = '\0';
+
+ /*
+  * Write the postinstall script if needed...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_INSTALL)
+      break;
+
+  if (!i)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        break;
+
+  if (i)
+  {
+   /*
+    * Create the postinstall script...
+    */
+
+    sprintf(postinstall, "%s/%s.postinst", directory, prodname);
 
     if (Verbosity)
       puts("Creating postinstall script...");
@@ -121,10 +174,11 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     fputs("#!/bin/sh\n", fp);
     fputs("# " EPM_VERSION "\n", fp);
 
-    for (j = 0; j < dist->num_installs; j ++)
-      fprintf(fp, "%s\n", dist->installs[j]);
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_INSTALL)
+        fprintf(fp, "%s\n", c->command);
 
-    for (j = dist->num_files, file = dist->files; j > 0; j --, file ++)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
 	fprintf(fp, "/sbin/init.d/%s start\n", file->dst);
 
@@ -133,7 +187,20 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   else
     postinstall[0] = '\0';
 
-  if (dist->num_removes | i)
+ /*
+  * Write the preremove script if needed...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_PRE_REMOVE)
+      break;
+
+  if (!i)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        break;
+
+  if (i)
   {
    /*
     * Then create the remove script...
@@ -142,7 +209,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating preremove script...");
 
-    sprintf(preremove, "%s/%s.remove", directory, prodname);
+    sprintf(preremove, "%s/%s.prerm", directory, prodname);
 
     if ((fp = fopen(preremove, "w")) == NULL)
     {
@@ -160,13 +227,58 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
       if (tolower(file->type) == 'i')
 	fprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
 
-    for (j = 0; j < dist->num_removes; j ++)
-      fprintf(fp, "%s\n", dist->removes[j]);
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_PRE_REMOVE)
+        fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
   }
   else
     preremove[0] = '\0';
+
+ /*
+  * Write the postremove script if needed...
+  */
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_POST_REMOVE)
+      break;
+
+  if (i)
+  {
+   /*
+    * Create the postremove script...
+    */
+
+    sprintf(postremove, "%s/%s.postrm", directory, prodname);
+
+    if (Verbosity)
+      puts("Creating postremove script...");
+
+    if ((fp = fopen(postremove, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postremove,
+              strerror(errno));
+      return (1);
+    }
+
+    fchmod(fileno(fp), 0755);
+
+    fputs("#!/bin/sh\n", fp);
+    fputs("# " EPM_VERSION "\n", fp);
+
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+      if (c->type == COMMAND_POST_REMOVE)
+        fprintf(fp, "%s\n", c->command);
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+	fprintf(fp, "/sbin/init.d/%s start\n", file->dst);
+
+    fclose(fp);
+  }
+  else
+    postremove[0] = '\0';
 
  /*
   * Create all symlinks...
@@ -215,28 +327,46 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   fputs("    tag all\n", fp);
   fprintf(fp, "    title %s, %s\n", dist->product, dist->version);
 
-  if (dist->num_requires)
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REQUIRES)
+      break;
+
+  if (i)
   {
     fputs("    corequisites", fp);
-    for (i = 0; i < dist->num_requires; i ++)
-      if (dist->requires[i][0] != '/')
-        fprintf(fp, " %s", dist->requires[i]);
+
+    for (; i > 0; i --, d ++)
+      if (d->type == DEPEND_REQUIRES)
+        if (d->product[0] != '/')
+          fprintf(fp, " %s", d->product);
+
     fputs("\n", fp);
   }
 
-  if (dist->num_replaces)
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REPLACES)
+      break;
+
+  if (i)
   {
     fputs("    ancestor", fp);
-    for (i = 0; i < dist->num_replaces; i ++)
-      if (dist->replaces[i][0] != '/')
-        fprintf(fp, " %s", dist->replaces[i]);
+
+    for (; i > 0; i --, d ++)
+      if (d->type == DEPEND_REPLACES)
+        if (d->product[0] != '/')
+          fprintf(fp, " %s", d->product);
+
     fputs("\n", fp);
   }
 
+  if (preinstall[0])
+    fprintf(fp, "    preinstall %s\n", preinstall);
   if (postinstall[0])
     fprintf(fp, "    postinstall %s\n", postinstall);
   if (preremove[0])
     fprintf(fp, "    preremove %s\n", preremove);
+  if (postremove[0])
+    fprintf(fp, "    postremove %s\n", postremove);
 
   for (i = dist->num_files, file = dist->files, linknum = 0;
        i > 0;
@@ -320,10 +450,14 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
   unlink(infoname);
 
+  if (preinstall[0])
+    unlink(preinstall);
   if (postinstall[0])
     unlink(postinstall);
   if (preremove[0])
     unlink(preremove);
+  if (postremove[0])
+    unlink(postremove);
 
   while (linknum > 0)
   {
@@ -337,5 +471,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.9 2001/01/19 16:24:01 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.10 2001/03/03 21:29:49 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.11 2001/01/19 16:16:50 mike Exp $"
+ * "$Id: epm.h,v 1.12 2001/03/03 21:29:48 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -82,7 +82,6 @@ typedef struct direct DIRENT;
 #define	TAR_FIFO	'6'		/* FIFO special file */
 #define	TAR_CONTIG	'7'		/* Contiguous file */
 
-
 /*
  * Package formats...
  */
@@ -95,6 +94,31 @@ enum
   PACKAGE_PKG,				/* AT&T package format (AIX, Solaris) */
   PACKAGE_RPM,				/* RedHat package format */
   PACKAGE_SWINSTALL			/* HP-UX package format */
+};
+
+/*
+ * Command types...
+ */
+
+enum
+{
+  COMMAND_PRE_INSTALL,			/* Command to run before install */
+  COMMAND_POST_INSTALL,			/* Command to run after install */
+  COMMAND_PRE_PATCH,			/* Command to run before patch */
+  COMMAND_POST_PATCH,			/* Command to run after patch */
+  COMMAND_PRE_REMOVE,			/* Command to run before remove */
+  COMMAND_POST_REMOVE			/* Command to run after remove */
+};
+
+/*
+ * Dependency types...
+ */
+
+enum
+{
+  DEPEND_REQUIRES,			/* This product requires */
+  DEPEND_INCOMPAT,			/* This product is incompatible with */
+  DEPEND_REPLACES			/* This product replaces */
 };
 
 
@@ -141,6 +165,20 @@ typedef struct				/**** File to install ****/
 	dst[512];			/* Destination path */
 } file_t;
 
+typedef struct				/**** Install/Patch/Remove Commands ****/
+{
+  char	type;				/* Command type */
+  char	*command;			/* Command string */
+} command_t;
+
+typedef struct				/**** Dependencies ****/
+{
+  char	type;				/* Dependency type */
+  char	product[256];			/* Product name */
+  char	version[256];			/* Product version string */
+  int	vernumber;			/* Product version number */
+} depend_t;
+
 typedef struct				/**** Distribution Structure ****/
 {
   char		product[256],		/* Product name */
@@ -153,18 +191,10 @@ typedef struct				/**** Distribution Structure ****/
   int		num_descriptions;	/* Number of description strings */
   char		**descriptions;		/* Description strings */
   int		vernumber;		/* Version number */
-  int		num_installs;		/* Number of installation commands */
-  char		**installs;		/* Installation commands */
-  int		num_removes;		/* Number of removal commands */
-  char		**removes;		/* Removal commands */
-  int		num_patches;		/* Number of patch commands */
-  char		**patches;		/* Patch commands */
-  int		num_incompats;		/* Number of incompatible products */
-  char		**incompats;		/* Incompatible products/files */
-  int		num_requires;		/* Number of requires products */
-  char		**requires;		/* Required products/files */
-  int		num_replaces;		/* Number of replaces products */
-  char		**replaces;		/* Replaced products/files */
+  int		num_commands;		/* Number of commands */
+  command_t	*commands;		/* Commands */
+  int		num_depends;		/* Number of dependencies */
+  depend_t	*depends;		/* Dependencies */
   int		num_files;		/* Number of files */
   file_t	*files;			/* Files */
 } dist_t;
@@ -182,6 +212,9 @@ extern const char	*SetupProgram;	/* Setup program */
  * Prototypes...
  */
 
+extern void	add_command(dist_t *dist, char type, const char *command);
+extern void	add_depend(dist_t *dist, char type, const char *product,
+		           const char *version, int vernumber);
 extern file_t	*add_file(dist_t *dist);
 extern int	copy_file(const char *dst, const char *src,
 		          int mode, int owner, int group);
@@ -219,6 +252,7 @@ extern int	tar_header(tarf_t *tar, char type, int mode, int size,
 			   const char *pathname, const char *linkname);
 extern tarf_t	*tar_open(const char *filename, int compress);
 
+
 /*
- * End of "$Id: epm.h,v 1.11 2001/01/19 16:16:50 mike Exp $".
+ * End of "$Id: epm.h,v 1.12 2001/03/03 21:29:48 mike Exp $".
  */
