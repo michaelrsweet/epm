@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.95 2005/02/08 15:52:34 swdev Exp $"
+ * "$Id: portable.c,v 1.96 2005/02/08 19:11:42 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -298,7 +298,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk setup.icns\n", srcstat.st_size / 1024.0);
+      printf("    %7.0fk setup.icns\n", (srcstat.st_size + 1023) / 1024.0);
 
     snprintf(filename, sizeof(filename), "%s/setup.info", DataDir);
     stat(filename, &srcstat);
@@ -322,7 +322,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk PkgInfo\n", srcstat.st_size / 1024.0);
+      printf("    %7.0fk PkgInfo\n", (srcstat.st_size + 1023) / 1024.0);
 
     snprintf(filename, sizeof(filename), "%s/setup.plist", DataDir);
     stat(filename, &srcstat);
@@ -346,7 +346,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk Info.plist\n", srcstat.st_size / 1024.0);
+      printf("    %7.0fk Info.plist\n", (srcstat.st_size + 1023) / 1024.0);
   }
 
   destdir = "Install.app/Contents/Resources/";
@@ -413,7 +413,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk setup\n", srcstat.st_size / 1024.0);
+      printf("    %7.0fk setup\n", (srcstat.st_size + 1023) / 1024.0);
 
    /*
     * And the image file...
@@ -446,7 +446,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk %s\n", srcstat.st_size / 1024.0, setup_img);
+      printf("    %7.0fk %s\n", (srcstat.st_size + 1023) / 1024.0, setup_img);
 
    /*
     * And the types file...
@@ -475,7 +475,7 @@ write_combined(const char *title,	/* I - Title */
       }
 
       if (Verbosity)
-        printf("    %7.0fk setup.types\n", srcstat.st_size / 1024.0);
+        printf("    %7.0fk setup.types\n", (srcstat.st_size + 1023) / 1024.0);
     }
 
    /*
@@ -545,7 +545,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk uninst.icns\n", srcstat.st_size / 1024.0);
+      printf("    %7.0fk uninst.icns\n", (srcstat.st_size + 1023) / 1024.0);
 
     snprintf(filename, sizeof(filename), "%s/uninst.info", DataDir);
     stat(filename, &srcstat);
@@ -569,7 +569,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk PkgInfo\n", srcstat.st_size / 1024.0);
+      printf("    %7.0fk PkgInfo\n", (srcstat.st_size + 1023) / 1024.0);
 
     snprintf(filename, sizeof(filename), "%s/uninst.plist", DataDir);
     stat(filename, &srcstat);
@@ -593,7 +593,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk Info.plist\n", srcstat.st_size / 1024.0);
+      printf("    %7.0fk Info.plist\n", (srcstat.st_size + 1023) / 1024.0);
 #endif /* __APPLE__ */
 
    /*
@@ -632,7 +632,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk uninst\n", srcstat.st_size / 1024.0);
+      printf("    %7.0fk uninst\n", (srcstat.st_size + 1023) / 1024.0);
 
 #ifdef __APPLE__
    /*
@@ -662,7 +662,7 @@ write_combined(const char *title,	/* I - Title */
     }
 
     if (Verbosity)
-      printf("    %7.0fk %s\n", srcstat.st_size / 1024.0, setup_img);
+      printf("    %7.0fk %s\n", (srcstat.st_size + 1023) / 1024.0, setup_img);
 #endif /* __APPLE__ */
   }
 
@@ -686,7 +686,7 @@ write_combined(const char *title,	/* I - Title */
     stat(tarfilename, &srcstat);
 
     puts("     ------- ----------------------------------------");
-    printf("    %7.0fk %s\n", srcstat.st_size / 1024.0,
+    printf("    %7.0fk %s\n", (srcstat.st_size + 1023) / 1024.0,
            tarfilename);
   }
 
@@ -2006,7 +2006,7 @@ write_instfiles(tarf_t     *tarfile,	/* I - Distribution tar file */
     }
 
     if (Verbosity)
-      printf("    %7.0fk %s.%s\n", srcstat.st_size / 1024.0,
+      printf("    %7.0fk %s.%s\n", (srcstat.st_size + 1023) / 1024.0,
 	     prodfull, files[i]);
   }
 
@@ -2694,5 +2694,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.95 2005/02/08 15:52:34 swdev Exp $".
+ * End of "$Id: portable.c,v 1.96 2005/02/08 19:11:42 mike Exp $".
  */
