@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.50 2001/05/11 20:07:19 mike Exp $"
+ * "$Id: epm.c,v 1.51 2001/06/22 19:09:25 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -59,7 +59,8 @@ main(int  argc,			/* I - Number of command-line arguments */
   int		i;		/* Looping var */
   int		strip;		/* 1 if we should strip executables */
   struct utsname platform;	/* UNIX name info */
-  char		platname[255],	/* Base platform name */
+  char		*namefmt,	/* Name format to use */
+		platname[255],	/* Base platform name */
 		prodname[256],	/* Product name */
 		listname[256],	/* List file name */
 		directory[255],	/* Name of install directory */
@@ -92,13 +93,10 @@ main(int  argc,			/* I - Number of command-line arguments */
   if (argc < 2)
     usage();
 
-  strip  = 1;
-  format = PACKAGE_PORTABLE;
-  setup  = NULL;
-
-  sprintf(platname, "%s-%s-%s", platform.sysname, platform.release,
-          platform.machine);
-  strcpy(directory, platname);
+  strip       = 1;
+  format      = PACKAGE_PORTABLE;
+  setup       = NULL;
+  namefmt     = "srm";
   prodname[0] = '\0';
   listname[0] = '\0';
 
@@ -111,8 +109,20 @@ main(int  argc,			/* I - Number of command-line arguments */
 
       switch (argv[i][1])
       {
-        case 'g' : /* Don't strip */
-	    strip = 0;
+        case 'a' : /* Architecture */
+	    if (argv[i][2])
+	      temp = argv[i] + 2;
+	    else
+	    {
+	      i ++;
+	      if (i >= argc)
+	        usage();
+
+              temp = argv[i];
+	    }
+
+	    strncpy(platform.machine, temp, sizeof(platform.machine) - 1);
+	    platform.machine[sizeof(platform.machine) - 1] = '\0';
 	    break;
 
         case 'f' : /* Format */
@@ -161,26 +171,24 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      usage();
 	    break;
 
+        case 'g' : /* Don't strip */
+	    strip = 0;
+	    break;
+
         case 'k' : /* Keep intermediate files */
 	    KeepFiles = 1;
 	    break;
 
         case 'n' : /* Name with sysname, machine, and/or release */
-            platname[0] = '\0';
-
-	    for (temp = argv[i] + 2; *temp != '\0'; temp ++)
+	    if (argv[i][2])
+	      namefmt = argv[i] + 2;
+	    else
 	    {
-	      if (platname[0])
-		strcat(platname, "-");
-
-	      if (*temp == 'm')
-	        strcat(platname, platform.machine);
-	      else if (*temp == 'r')
-	        strcat(platname, platform.release);
-	      else if (*temp == 's')
-	        strcat(platname, platform.sysname);
-	      else
+	      i ++;
+	      if (i >= argc)
 	        usage();
+
+              namefmt = argv[i];
 	    }
 	    break;
 
@@ -243,11 +251,40 @@ main(int  argc,			/* I - Number of command-line arguments */
     else
       usage();
 
+ /* 
+  * Check for product name and list file...
+  */
+
   if (!prodname[0])
     usage();
 
   if (!listname[0])
     sprintf(listname, "%s.list", prodname);
+
+ /*
+  * Format the build directory and platform name strings...
+  */
+
+  sprintf(directory, "%s-%s-%s", platform.sysname, platform.release,
+          platform.machine);
+
+  platname[0] = '\0';
+
+  for (temp = namefmt; *temp != '\0'; temp ++)
+  {
+    if (platname[0])
+      strcat(platname, "-");
+
+    if (*temp == 'm')
+      strcat(platname, platform.machine);
+    else if (*temp == 'r')
+      strcat(platname, platform.release);
+    else if (*temp == 's')
+      strcat(platname, platform.sysname);
+    else
+      usage();
+  }
+
 
  /*
   * Show program info...
@@ -526,5 +563,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.50 2001/05/11 20:07:19 mike Exp $".
+ * End of "$Id: epm.c,v 1.51 2001/06/22 19:09:25 mike Exp $".
  */
