@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 2.5
+README - ESP Package Manager (EPM) 2.6
 --------------------------------------
 
 WHAT IS EPM?
@@ -8,6 +8,7 @@ WHAT IS EPM?
     distributions in various formats, including:
 
 	- AT&T Software Packages ("pkg"), used by Solaris.
+	- Compaq Tru64 UNIX ("setld")
 	- Debian Package Manager ("dpkg")
 	- HP-UX Software Packages ("swinstall" or "depot")
 	- IRIX Software Manager ("inst" or "tardist")
@@ -60,7 +61,7 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
     unencumbered by licensing of any kind (not even the GPL.)
 
 
-WHAT'S NEW IN EPM 2.5?
+WHAT'S NEW IN EPM?
 
     See the file "CHANGES" for change information.
 
