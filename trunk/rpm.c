@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.3 1999/11/05 02:50:32 mike Exp $"
+ * "$Id: rpm.c,v 1.4 1999/11/05 14:44:40 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -40,6 +40,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 {
   int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
+  char		name[1024];		/* Full product name */
   char		specname[1024];		/* Spec filename */
   char		filename[1024];		/* Destination filename */
   char		command[1024];		/* RPM command to run */
@@ -50,6 +51,11 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   if (Verbosity)
     puts("Creating RPM distribution...");
+
+  if (platname[0])
+    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+  else
+    sprintf(name, "%s-%s", prodname, dist->version);
 
  /*
   * Write the spec file for RPM...
@@ -62,7 +68,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(specname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create spec file \"%s\" - %s\n", filename,
+    fprintf(stderr, "epm: Unable to create spec file \"%s\" - %s\n", specname,
             strerror(errno));
     return (1);
   }
@@ -73,7 +79,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fputs("Release: 1\n", fp);
   fprintf(fp, "Copyright: %s\n", dist->copyright);
   fprintf(fp, "Packager: %s\n", dist->vendor);
-  fprintf(fp, "BuildRoot: %s\n", directory);
+  fprintf(fp, "BuildRoot: %s/buildroot\n", directory);
   fputs("Group: Applications\n", fp);
   for (i = 0; i < dist->num_requires; i ++)
     fprintf(fp, "Requires: %s\n", dist->requires[i]);
@@ -122,11 +128,44 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fclose(fp);
 
  /*
+  * Write the rpmrc file for RPM...
+  */
+
+  if (Verbosity)
+    puts("Creating rpmrc file...");
+
+  sprintf(filename, "%s/rpmrc", directory);
+
+  if ((fp = fopen(filename, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create file \"%s\" - %s\n", filename,
+            strerror(errno));
+    return (1);
+  }
+
+  fprintf(fp, "topdir: %s\n", directory);
+
+  fclose(fp);
+
+  sprintf(filename, "%s/RPMS", directory);
+  mkdir(filename, 0755);
+
+  if (strcmp(platform->machine, "intel") == 0)
+    strcat(filename, "/i386");
+  else
+  {
+    strcat(filename, "/");
+    strcat(filename, platform->machine);
+  }
+
+  mkdir(filename, 0755);
+
+ /*
   * Copy the files over...
   */
 
   if (Verbosity)
-    puts("Copying distribution files...");
+    puts("Copying temporary distribution files...");
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
   {
@@ -148,7 +187,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     {
       case 'c' :
       case 'f' :
-          sprintf(filename, "%s%s", directory, file->dst);
+          sprintf(filename, "%s/buildroot%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -158,7 +197,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'i' :
-          sprintf(filename, "%s/etc/rc.d/init.d/%s", directory, file->dst);
+          sprintf(filename, "%s/buildroot/etc/rc.d/init.d/%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -168,7 +207,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'd' :
-          sprintf(filename, "%s%s", directory, file->dst);
+          sprintf(filename, "%s/buildroot%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", file->src, filename);
@@ -177,7 +216,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 			 grp ? grp->gr_gid : 0);
           break;
       case 'l' :
-          sprintf(filename, "%s%s", directory, file->dst);
+          sprintf(filename, "%s/buildroot%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -194,12 +233,44 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building RPM binary distribution...");
 
-  sprintf(command, "rpm -bb %s", specname);
+  sprintf(command, "rpm -bb %s --rcfile=%s/rpmrc %s",
+          Verbosity == 0 ? "--quiet" : "", directory, specname);
 
-  return (system(command));
+  if (system(command))
+    return (1);
+
+  if (strcmp(platform->machine, "intel") == 0)
+    sprintf(command, "cd %s; /bin/mv RPMS/i386/%s-%s-1.i386.rpm %s.rpm",
+            directory, prodname, dist->version, name);
+  else
+    sprintf(command, "cd %s; /bin/mv RPMS/%s/%s-%s-1.%s.rpm %s.rpm", directory,
+            platform->machine, prodname, dist->version, platform->machine,
+	    name);
+
+  system(command);
+
+ /*
+  * Remove temporary files...
+  */
+
+  if (Verbosity)
+    puts("Removing temporary distribution files...");
+
+  sprintf(command, "/bin/rm -rf %s/buildroot", directory);
+  system(command);
+
+  sprintf(command, "/bin/rm -rf %s/RPMS", directory);
+  system(command);
+
+  unlink(specname);
+
+  sprintf(filename, "%s/rpmrc", directory);
+  unlink(filename);
+
+  return (0);
 }
 
 
 /*
- * End of "$Id: rpm.c,v 1.3 1999/11/05 02:50:32 mike Exp $".
+ * End of "$Id: rpm.c,v 1.4 1999/11/05 14:44:40 mike Exp $".
  */
