@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.17 2001/04/25 20:27:48 mike Exp $"
+ * "$Id: epm.h,v 1.18 2001/05/25 00:57:38 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -51,17 +51,6 @@ typedef struct dirent DIRENT;
 typedef struct direct DIRENT;
 #    define NAMLEN(dirent) (dirent)->d_namlen
 #  endif
-
-
-/*
- * "test" command symlink option...
- */
-
-#if defined(__hpux) || defined(__sun)
-#  define SYMLINK "-h"
-#else
-#  define SYMLINK "-L"
-#endif /* __hpux || __sun */
 
 
 /*
@@ -261,5 +250,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.17 2001/04/25 20:27:48 mike Exp $".
+ * End of "$Id: epm.h,v 1.18 2001/05/25 00:57:38 mike Exp $".
  */

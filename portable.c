@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.40 2001/05/23 19:53:50 mike Exp $"
+ * "$Id: portable.c,v 1.41 2001/05/25 00:57:38 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -21,7 +21,7 @@
  *   write_commands()     - Write commands.
  *   write_common()       - Write the common shell script header.
  *   write_dist()         - Write a software distribution...
- *   write_echocheck()    - Write the echo check to find the right echo options.
+ *   write_confcheck()    - Write the echo check to find the right echo options.
  *   write_install()      - Write the installation script.
  *   write_patch()        - Write the patch script.
  *   write_remove()       - Write the removal script.
@@ -47,7 +47,7 @@ static int	write_dist(const char *title, const char *directory,
 		           const char *prodname, const char *platname,
 			   dist_t *dist, const char **files,
 			   const char *setup);
-static int	write_echocheck(FILE *fp);
+static int	write_confcheck(FILE *fp);
 static int	write_install(dist_t *dist, const char *prodname,
 		              const char *directory);
 static int	write_patch(dist_t *dist, const char *prodname,
@@ -618,7 +618,7 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fprintf(fp, "echo Copyright %s\n", dist->copyright);
   fputs("umask 002\n", fp);
 
-  write_echocheck(fp);
+  write_confcheck(fp);
 
  /*
   * Return the file pointer...
@@ -998,11 +998,11 @@ write_dist(const char *title,		/* I - Title to show */
 
 
 /*
- * 'write_echocheck()' - Write the echo check to find the right echo options.
+ * 'write_confcheck()' - Write the echo check to find the right echo options.
  */
 
 static int				/* O - -1 on error, 0 on success */
-write_echocheck(FILE *fp)		/* I - Script file */
+write_confcheck(FILE *fp)		/* I - Script file */
 {
  /*
   * This is a simplified version of the autoconf test for echo; basically
@@ -1018,6 +1018,18 @@ write_echocheck(FILE *fp)		/* I - Script file */
   fputs("else\n", fp);
   fputs("	ac_n=\n", fp);
   fputs("	ac_c='\\c'\n", fp);
+  fputs("fi\n", fp);
+
+ /*
+  * This is a check for the correct options to use with the "tar"
+  * command.
+  */
+
+  fputs("# Determine correct extract options for the tar command...\n", fp);
+  fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", fp);
+  fputs("	ac_tar=\"/bin/tar -xpf\"\n", fp);
+  fputs("else\n", fp);
+  fputs("	ac_tar=\"/bin/tar -xpPf\"\n", fp);
   fputs("fi\n", fp);
 
   return (0);
@@ -1051,12 +1063,6 @@ write_install(dist_t     *dist,		/* I - Software distribution */
                     "     %s\n", filename, strerror(errno));
     return (-1);
   }
-
-  fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", scriptfile);
-  fputs("	tar=\"/bin/tar -xpf\"\n", scriptfile);
-  fputs("else\n", scriptfile);
-  fputs("	tar=\"/bin/tar -xpPf\"\n", scriptfile);
-  fputs("fi\n", scriptfile);
 
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
@@ -1130,7 +1136,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
       }
 
     fputs("; do\n", scriptfile);
-    fputs("	if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
+    fputs("	if test -d $file -o -f $file -o -h $file; then\n", scriptfile);
     fputs("		/bin/mv -f $file $file.O\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1158,7 +1164,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
       }
 
     fputs("; do\n", scriptfile);
-    fputs("		if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
+    fputs("		if test -d $file -o -f $file -o -h $file; then\n", scriptfile);
     fputs("			/bin/mv -f $file $file.O\n", scriptfile);
     fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
@@ -1193,10 +1199,10 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   }
 
   fputs("echo Installing software...\n", scriptfile);
-  fprintf(scriptfile, "$tar %s.sw\n", prodname);
+  fprintf(scriptfile, "$ac_tar %s.sw\n", prodname);
   fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
   fputs("/bin/rm -f /usr/.writetest\n", scriptfile);
-  fprintf(scriptfile, "	$tar %s.ss\n", prodname);
+  fprintf(scriptfile, "	$ac_tar %s.ss\n", prodname);
   fputs("fi\n", scriptfile);
 
   fputs("if test -d " EPM_SOFTWARE "; then\n", scriptfile);
@@ -1245,7 +1251,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1324,12 +1330,6 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
                     "     %s\n", filename, strerror(errno));
     return (-1);
   }
-
-  fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", scriptfile);
-  fputs("	tar=\"/bin/tar -xpf\"\n", scriptfile);
-  fputs("else\n", scriptfile);
-  fputs("	tar=\"/bin/tar -xpPf\"\n", scriptfile);
-  fputs("fi\n", scriptfile);
 
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
@@ -1417,10 +1417,10 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   }
 
   fputs("echo Patching software...\n", scriptfile);
-  fprintf(scriptfile, "$tar %s.psw\n", prodname);
+  fprintf(scriptfile, "$ac_tar %s.psw\n", prodname);
   fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
   fputs("/bin/rm -f /usr/.writetest\n", scriptfile);
-  fprintf(scriptfile, "	$tar %s.pss\n", prodname);
+  fprintf(scriptfile, "	$ac_tar %s.pss\n", prodname);
   fputs("fi\n", scriptfile);
 
   fprintf(scriptfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
@@ -1461,7 +1461,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	rm -f $file\n", scriptfile);
-    fputs("	if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
+    fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
     fputs("		/bin/mv -f $file.O $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1481,7 +1481,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1610,7 +1610,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
     fputs("rcdir=\"\"\n", scriptfile);
     fputs("for dir in /sbin/rc.d /sbin /etc/rc.d /etc ; do\n", scriptfile);
-    fputs("	if test -d $dir/rc3.d -o " SYMLINK " $dir/rc3.d; then\n", scriptfile);
+    fputs("	if test -d $dir/rc3.d -o -h $dir/rc3.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1659,7 +1659,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("	rm -f $file\n", scriptfile);
-    fputs("	if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
+    fputs("	if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
     fputs("		/bin/mv -f $file.O $file\n", scriptfile);
     fputs("	fi\n", scriptfile);
     fputs("done\n", scriptfile);
@@ -1688,7 +1688,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
     fputs("; do\n", scriptfile);
     fputs("		rm -f $file\n", scriptfile);
-    fputs("		if test -d $file.O -o -f $file.O -o " SYMLINK " $file.O; then\n", scriptfile);
+    fputs("		if test -d $file.O -o -f $file.O -o -h $file.O; then\n", scriptfile);
     fputs("			/bin/mv -f $file.O $file\n", scriptfile);
     fputs("		fi\n", scriptfile);
     fputs("	done\n", scriptfile);
@@ -1783,5 +1783,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.40 2001/05/23 19:53:50 mike Exp $".
+ * End of "$Id: portable.c,v 1.41 2001/05/25 00:57:38 mike Exp $".
  */
