@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.4 2001/06/25 17:27:17 mike Exp $"
+.\" "$Id: epm.man,v 1.5 2001/06/26 19:47:36 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "25 June 2001" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "26 June 2001" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -47,6 +47,10 @@ architecture for the software. Without this option the generic
 processor architecture is used ("intel", "sparc", "mips", etc.)
 .LP
 The \fI-f\fR option ("format") specifies the distribution format:
+.TP 5
+aix
+.br
+Generate an AIX distribution suitable for installation on an AIX system.
 .TP 5
 bsd
 .br
@@ -151,5 +155,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.4 2001/06/25 17:27:17 mike Exp $".
+.\" End of "$Id: epm.man,v 1.5 2001/06/26 19:47:36 mike Exp $".
 .\"
