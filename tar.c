@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.9 2001/01/03 20:41:34 mike Exp $"
+ * "$Id: tar.c,v 1.10 2001/01/04 17:33:52 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -17,10 +17,11 @@
  *
  * Contents:
  *
- *   tar_close()  - Close a tar file, padding as needed.
- *   tar_file()   - Write the contents of a file...
- *   tar_header() - Write a TAR header for the specified file...
- *   tar_open()   - Open a TAR file for writing.
+ *   tar_close()     - Close a tar file, padding as needed.
+ *   tar_directory() - Archive a directory.
+ *   tar_file()      - Write the contents of a file...
+ *   tar_header()    - Write a TAR header for the specified file...
+ *   tar_open()      - Open a TAR file for writing.
  */
 
 /*
@@ -414,5 +415,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.9 2001/01/03 20:41:34 mike Exp $".
+ * End of "$Id: tar.c,v 1.10 2001/01/04 17:33:52 mike Exp $".
  */
