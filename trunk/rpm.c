@@ -1,9 +1,9 @@
 /*
- * "$Id: rpm.c,v 1.22 2000/12/14 14:02:40 mike Exp $"
+ * "$Id: rpm.c,v 1.23 2001/01/03 20:41:34 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2000 by Easy Software Products.
+ *   Copyright 1999-2001 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -346,5 +346,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.22 2000/12/14 14:02:40 mike Exp $".
+ * End of "$Id: rpm.c,v 1.23 2001/01/03 20:41:34 mike Exp $".
  */

@@ -1,9 +1,9 @@
 /*
- * "$Id: file.c,v 1.5 2000/12/01 14:44:16 mike Exp $"
+ * "$Id: file.c,v 1.6 2001/01/03 20:41:33 mike Exp $"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2000 by Easy Software Products.
+ *   Copyright 1999-2001 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -220,5 +220,5 @@ strip_execs(dist_t *dist)	/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.5 2000/12/01 14:44:16 mike Exp $".
+ * End of "$Id: file.c,v 1.6 2001/01/03 20:41:33 mike Exp $".
  */

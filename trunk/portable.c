@@ -1,9 +1,9 @@
 /*
- * "$Id: portable.c,v 1.17 2000/12/10 15:40:20 mike Exp $"
+ * "$Id: portable.c,v 1.18 2001/01/03 20:41:34 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2000 by Easy Software Products.
+ *   Copyright 1999-2001 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -620,7 +620,8 @@ write_dist(const char *title,		/* I - Title to show */
     sprintf(dstname, "%s.%s", prodname, files[i]);
 
     stat(srcname, &srcstat);
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (!0222),
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
 		   dstname, NULL) < 0)
     {
@@ -1550,5 +1551,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.17 2000/12/10 15:40:20 mike Exp $".
+ * End of "$Id: portable.c,v 1.18 2001/01/03 20:41:34 mike Exp $".
  */

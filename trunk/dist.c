@@ -1,9 +1,9 @@
 /*
- * "$Id: dist.c,v 1.12 2000/12/13 00:41:20 mike Exp $"
+ * "$Id: dist.c,v 1.13 2001/01/03 20:41:33 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2000 by Easy Software Products.
+ *   Copyright 1999-2001 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -723,5 +723,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.12 2000/12/13 00:41:20 mike Exp $".
+ * End of "$Id: dist.c,v 1.13 2001/01/03 20:41:33 mike Exp $".
  */

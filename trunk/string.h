@@ -1,9 +1,9 @@
 /*
- * "$Id: string.h,v 1.3 2000/01/04 13:45:41 mike Exp $"
+ * "$Id: string.h,v 1.4 2001/01/03 20:41:34 mike Exp $"
  *
  *   String definitions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2000 by Easy Software Products.
+ *   Copyright 1999-2001 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -54,5 +54,5 @@ extern int	strncasecmp(const char *, const char *, size_t n);
 #endif /* !_EPM_STRING_H_ */
 
 /*
- * End of "$Id: string.h,v 1.3 2000/01/04 13:45:41 mike Exp $".
+ * End of "$Id: string.h,v 1.4 2001/01/03 20:41:34 mike Exp $".
  */
