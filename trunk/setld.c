@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.4 2001/04/26 14:21:48 mike Exp $"
+ * "$Id: setld.c,v 1.5 2001/04/26 16:21:02 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -55,6 +55,8 @@ make_setld(const char     *prodname,	/* I - Product short name */
   struct passwd	*pwd;			/* Pointer to user record */
   struct group	*grp;			/* Pointer to group record */
 
+
+  (void)platform;
 
  /*
   * Check the package information to make sure it complies with the
@@ -409,5 +411,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.4 2001/04/26 14:21:48 mike Exp $".
+ * End of "$Id: setld.c,v 1.5 2001/04/26 16:21:02 mike Exp $".
  */
