@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.30 2001/11/01 16:43:06 mike Exp $"
+# "$Id: Makefile.in,v 1.31 2001/11/01 18:27:31 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -163,11 +163,11 @@ install: epm @INSTALL_SETUP@
 	$(CP) $(srcdir)/doc/epm.list.5 $(mandir)/cat5/epm.list.$(CAT5EXT)
 	$(RM) $(mandir)/cat5/setup.types.$(CAT5EXT)
 	$(CP) $(srcdir)/doc/setup.types.5 $(mandir)/cat5/setup.types.$(CAT5EXT)
+	-$(MKDIR) $(mandir)/man5
 	$(RM) $(mandir)/man5/epm.list.5
 	$(CP) $(srcdir)/doc/epm.list.man $(mandir)/man5/epm.list.5
 	$(RM) $(mandir)/man5/setup.types.5
 	$(CP) $(srcdir)/doc/setup.types.man $(mandir)/man5/setup.types.5
-	-$(MKDIR) $(mandir)/man5
 	echo Installing EPM documentation in $(docdir)
 	-$(MKDIR) $(docdir)
 	$(RM) $(docdir)/COPYING
@@ -274,5 +274,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.30 2001/11/01 16:43:06 mike Exp $".
+# End of "$Id: Makefile.in,v 1.31 2001/11/01 18:27:31 mike Exp $".
 #
