@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.41 2001/07/25 20:52:50 mike Exp $"
+ * "$Id: dist.c,v 1.42 2001/10/26 16:14:31 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -346,7 +346,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   strcpy(platform->machine, "mips");
 #elif defined(__hpux)
   strcpy(platform->machine, "hppa");
-#elif defined(_AIX)
+#elif defined(_AIX) || defined(__APPLE__)
   strcpy(platform->machine, "powerpc");
 #else
   for (temp = platform->machine; *temp != '\0'; temp ++)
@@ -1640,5 +1640,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.41 2001/07/25 20:52:50 mike Exp $".
+ * End of "$Id: dist.c,v 1.42 2001/10/26 16:14:31 mike Exp $".
  */

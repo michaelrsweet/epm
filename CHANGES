@@ -24,6 +24,9 @@ WHAT'S NEW IN EPM 3.2?
 	  PATH variable so the "tar", "rm", and "mv" commands
 	  can be found in whatever directory the local system
 	  uses.
+	- AIX packaging now works.
+	- Added support for the Darwin (MacOS X) tar command
+	  in portable packages (sudo ./foo.install :)
 
 
 WHAT'S NEW IN EPM 3.1?
