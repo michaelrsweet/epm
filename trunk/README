@@ -18,7 +18,7 @@ WHAT IS EPM?
 	- MacOS X software packages ("name.pkg")
 	- Portable (installation and removal scripts with tar files)
         - Red Hat Package Manager ("rpm")
-	- Slackware software packages ("name.pkg")
+	- Slackware software packages ("name.tgz")
 
     EPM also includes graphical "setup" and "uninstall" programs
     that can be provided with your distributions to make
