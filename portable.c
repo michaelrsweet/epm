@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.4 1999/12/29 16:18:02 mike Exp $"
+ * "$Id: portable.c,v 1.5 1999/12/30 21:27:28 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -850,7 +850,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
       fprintf(scriptfile, "if test ! -x " EPM_SOFTWARE "/%s.remove; then\n",
               dist->requires[i]);
-      fprintf(scriptfile, "	if test -x %d.install; then\n",
+      fprintf(scriptfile, "	if test -x %s.install; then\n",
               dist->requires[i]);
       fprintf(scriptfile, "		echo Installing required %s software...\n",
               dist->requires[i]);
@@ -1557,5 +1557,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.4 1999/12/29 16:18:02 mike Exp $".
+ * End of "$Id: portable.c,v 1.5 1999/12/30 21:27:28 mike Exp $".
  */
