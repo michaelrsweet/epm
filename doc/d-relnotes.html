@@ -6,6 +6,28 @@
 <P>This appendix lists the change log for each release of the
 EPM software.</P>
 
+<H2>Changes in EPM v3.5</H2>
+
+<UL>
+
+	<LI>The portable removal scripts didn't correctly write
+	the list of init scripts to remove.
+
+	<LI>Added a new --output-dir option contributed by
+	Geoffrey Wossum.
+
+	<LI>Not all implementations of the "id" command support
+	the "-u" option, so EPM now looks at the default
+	output.
+
+	<LI>RPM dependencies with a single version number didn't
+	get written to the spec file properly.
+
+	<LI>Added support for file options - nostrip() and
+	runlevel(12345)
+
+</UL>
+
 <H2>Changes in EPM v3.4</H2>
 
 <UL>
