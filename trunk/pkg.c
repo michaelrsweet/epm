@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.26 2004/10/01 12:39:23 mike Exp $"
+ * "$Id: pkg.c,v 1.27 2004/10/31 15:40:40 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -331,7 +331,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
       */
 
       for (runlevels = get_runlevels(dist->files + i, "03");
-           isdigit(*runlevels);
+           isdigit(*runlevels & 255);
 	   runlevels ++)
       {
 	file = add_file(dist);
@@ -525,5 +525,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.26 2004/10/01 12:39:23 mike Exp $".
+ * End of "$Id: pkg.c,v 1.27 2004/10/31 15:40:40 mike Exp $".
  */

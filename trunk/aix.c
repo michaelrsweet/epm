@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.16 2004/03/05 05:24:34 mike Exp $"
+ * "$Id: aix.c,v 1.17 2004/10/31 15:40:40 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -240,7 +240,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
           break;
       case 'i' :
           for (runlevels = get_runlevels(file, "2");
-	       isdigit(*runlevels);
+	       isdigit(*runlevels & 255);
 	       runlevels ++)
 	  {
             snprintf(filename, sizeof(filename),
@@ -806,5 +806,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: aix.c,v 1.16 2004/03/05 05:24:34 mike Exp $".
+ * End of "$Id: aix.c,v 1.17 2004/10/31 15:40:40 mike Exp $".
  */
