@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.1 1999/06/21 14:25:16 mike Exp $"
+ * "$Id: epm.c,v 1.2 1999/06/23 14:38:58 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -545,6 +545,17 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("	exit 1\n", installfile);
   fputs("fi\n", installfile);
 
+  fputs("echo \"Installing software...\"\n", installfile);
+  fprintf(installfile, "$tar %s.sw\n", prodname);
+
+  fputs("if test -d " EPM_SOFTWARE "; then\n", installfile);
+  fprintf(installfile, "	/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  fputs("else\n", installfile);
+  fputs("	/bin/mkdir -p " EPM_SOFTWARE "\n", installfile);
+  fputs("fi\n", installfile);
+  fprintf(installfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
+  fputs("echo \"Running post-installation commands...\"\n", installfile);
+
  /*
   * Write the patch script header...
   */
@@ -635,6 +646,13 @@ main(int  argc,			/* I - Number of command-line arguments */
       fprintf(patchfile, "%s\n", line + 7);
 
   rewind(listfile);
+
+  fputs("echo \"Patching software...\"\n", patchfile);
+  fprintf(patchfile, "$tar %s.psw\n", prodname);
+
+  fprintf(patchfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
+  fprintf(patchfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
+  fputs("echo \"Running post-installation commands...\"\n", patchfile);
 
  /*
   * Write the removal script header...
@@ -947,22 +965,6 @@ main(int  argc,			/* I - Number of command-line arguments */
   */
 
   puts("Finishing installation and patch scripts...");
-
-  fputs("echo \"Installing software...\"\n", installfile);
-  fprintf(installfile, "$tar %s.sw\n", prodname);
-  fputs("if test -d " EPM_SOFTWARE "; then\n", installfile);
-  fprintf(installfile, "	/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
-  fputs("else\n", installfile);
-  fputs("	/bin/mkdir -p " EPM_SOFTWARE "\n", installfile);
-  fputs("fi\n", installfile);
-  fprintf(installfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
-  fputs("echo \"Running post-installation commands...\"\n", installfile);
-
-  fputs("echo \"Patching software...\"\n", patchfile);
-  fprintf(patchfile, "$tar %s.psw\n", prodname);
-  fprintf(patchfile, "/bin/rm -f " EPM_SOFTWARE "/%s.remove\n", prodname);
-  fprintf(patchfile, "/bin/cp %s.remove " EPM_SOFTWARE "\n", prodname);
-  fputs("echo \"Running post-installation commands...\"\n", patchfile);
 
   skip = 0;
   while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
@@ -1392,5 +1394,5 @@ write_header(FILE   *fp,	/* I - Tar file to write to */
 
 
 /*
- * End of "$Id: epm.c,v 1.1 1999/06/21 14:25:16 mike Exp $".
+ * End of "$Id: epm.c,v 1.2 1999/06/23 14:38:58 mike Exp $".
  */
