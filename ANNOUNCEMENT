@@ -1,19 +1,18 @@
 ----HTML-PRESS-RELEASE---------------------------------------------------
 
-<H1>ESP Package Manager 3.6 Released</H1>
+<H1>ESP Package Manager 3.7 Released</H1>
 
-<P><B>Hollywood, MD (March 25, 2003)</B> -- Easy Software
-Products today announced the 3.6 release of the ESP Package
+<P><B>Hollywood, MD (August 12, 2003)</B> -- Easy Software
+Products today announced the 3.7 release of the ESP Package
 Manager ("EPM"), a cross-platform software distribution program
 for UNIX.
 
-<P>EPM v3.6 adds a new uninstall GUI and enhanced MacOS X
-packaging functionality. The new release also fixes some bugs
-discovered in the portable, RPM, and BSD package generation. The
-new release is available on-line at:
+<P>EPM v3.7 adds Slackware package support and fixes some bugs
+discovered in the portable, RPM, OSX, and BSD package
+generation. The new release is available on-line at:
 
 <UL><PRE>
-<A HREF="http://www.easysw.com/epm">http://www.easysw.com/epm</A>
+<A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
 </PRE></UL>
 
 <P>EPM is a software packaging tool for all versions of UNIX that
@@ -42,6 +41,8 @@ including:
 
 	<LI>Red Hat Package Manager ("rpm")
 
+	<LI>Slackware software packages ("name.pkg")
+
 </UL>
 
 <P>EPM also includes graphical "setup" and "uninstall" programs
@@ -55,18 +56,17 @@ commercial support.
 
 ----TEXT-PRESS-RELEASE---------------------------------------------------
 
-ESP Package Manager 3.6 Released
+ESP Package Manager 3.7 Released
 
-Hollywood, MD (March 25, 2003) -- Easy Software Products today
-announced the 3.6 release of the ESP Package Manager ("EPM"), a
+Hollywood, MD (August 12, 2003) -- Easy Software Products today
+announced the 3.7 release of the ESP Package Manager ("EPM"), a
 cross-platform software distribution program for UNIX.
 
-EPM v3.6 adds a new uninstall GUI and enhanced MacOS X packaging
-functionality.  The new release also fixes some bugs discovered
-in the portable, RPM, and BSD package generation.  The new
-release is available on-line at:
+EPM v3.7 adds Slackware package support and fixes some bugs
+discovered in the portable, RPM, OSX, and BSD package
+generation.  The new release is available on-line at:
 
-    http://www.easysw.com/epm
+    http://www.easysw.com/epm/
 
 EPM is a software packaging tool for all versions of UNIX that
 generates software and patch distributions in various formats,
@@ -83,6 +83,7 @@ including:
     - MacOS X software packages ("name.pkg")
     - Portable (installation and removal scripts with tar files)
     - Red Hat Package Manager ("rpm")
+    - Slackware software packages ("name.pkg")
 
 EPM also includes graphical "setup" and "uninstall" programs
 that can be provided with your distributions to make
