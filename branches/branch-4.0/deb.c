@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.16.2.10 2004/10/31 17:22:53 mike Exp $"
+ * "$Id: deb.c,v 1.16.2.11 2004/11/01 12:21:25 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -83,11 +83,11 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
   snprintf(filename, sizeof(filename), "%s/%s", directory, name);
   mkdir(filename, 0777);
-  strcat(filename, "/DEBIAN");
+  strlcat(filename, "/DEBIAN", sizeof(filename));
   mkdir(filename, 0777);
   chmod(filename, 0755);
 
-  strcat(filename, "/control");
+  strlcat(filename, "/control", sizeof(filename));
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -443,5 +443,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.16.2.10 2004/10/31 17:22:53 mike Exp $".
+ * End of "$Id: deb.c,v 1.16.2.11 2004/11/01 12:21:25 mike Exp $".
  */

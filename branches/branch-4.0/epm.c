@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.67.2.11 2004/11/01 12:19:43 mike Exp $"
+ * "$Id: epm.c,v 1.67.2.12 2004/11/01 12:21:25 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -387,14 +387,14 @@ main(int  argc,			/* I - Number of command-line arguments */
   for (temp = namefmt; *temp != '\0'; temp ++)
   {
     if (platname[0])
-      strcat(platname, "-");
+      strlcat(platname, "-", sizeof(platname));
 
     if (*temp == 'm')
-      strcat(platname, platform.machine);
+      strlcat(platname, platform.machine, sizeof(platname));
     else if (*temp == 'r')
-      strcat(platname, platform.release);
+      strlcat(platname, platform.release, sizeof(platname));
     else if (*temp == 's')
-      strcat(platname, platform.sysname);
+      strlcat(platname, platform.sysname, sizeof(platname));
     else
     {
       printf("epm: Bad name format character \"%c\" in \"%s\".\n", *temp,
@@ -599,5 +599,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.67.2.11 2004/11/01 12:19:43 mike Exp $".
+ * End of "$Id: epm.c,v 1.67.2.12 2004/11/01 12:21:25 mike Exp $".
  */
