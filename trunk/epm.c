@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.18 1999/08/24 13:01:40 mike Exp $"
+ * "$Id: epm.c,v 1.19 1999/08/27 14:37:32 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -1404,9 +1404,9 @@ write_install(dist_t *dist,	/* I - Software distribution */
   fprintf(scriptfile, "#%%copyright %s\n", dist->copyright);
   fprintf(scriptfile, "#%%version %s %d\n", dist->version, dist->vernumber);
   fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", scriptfile);
-  fputs("	tar=\"/bin/tar xf\"\n", scriptfile);
+  fputs("	tar=\"/bin/tar -xpf\"\n", scriptfile);
   fputs("else\n", scriptfile);
-  fputs("	tar=\"/bin/tar xPf\"\n", scriptfile);
+  fputs("	tar=\"/bin/tar -xpPf\"\n", scriptfile);
   fputs("fi\n", scriptfile);
   fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", scriptfile);
   fputs("	echo Sorry, you must be root to install this software.\n", scriptfile);
@@ -1716,9 +1716,9 @@ write_patch(dist_t *dist,	/* I - Software distribution */
   fprintf(scriptfile, "#%%copyright %s\n", dist->copyright);
   fprintf(scriptfile, "#%%version %s %d\n", dist->version, dist->vernumber);
   fputs("if test \"`/bin/tar --help 2>&1 | grep GNU`\" = \"\"; then\n", scriptfile);
-  fputs("	tar=\"/bin/tar xf\"\n", scriptfile);
+  fputs("	tar=\"/bin/tar -xpf\"\n", scriptfile);
   fputs("else\n", scriptfile);
-  fputs("	tar=\"/bin/tar xPf\"\n", scriptfile);
+  fputs("	tar=\"/bin/tar -xpPf\"\n", scriptfile);
   fputs("fi\n", scriptfile);
   fputs("if test \"`" EPM_WHOAMI "`\" != \"root\"; then\n", scriptfile);
   fputs("	echo Sorry, you must be root to install this software.\n",
@@ -2096,5 +2096,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.18 1999/08/24 13:01:40 mike Exp $".
+ * End of "$Id: epm.c,v 1.19 1999/08/27 14:37:32 mike Exp $".
  */

@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 1.2
+README - ESP Package Manager (EPM) 1.3
 --------------------------------------
 
 WHAT IS EPM?
@@ -73,6 +73,15 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
     unencumbered by licensing of any kind (not even the GPL.)
 
 
+WHAT'S NEW IN EPM 1.3?
+
+    EPM 1.3 adds the following features and fixes to EPM 1.2:
+
+	- Now use the "p" option to tar to ensure that file permissions
+	  are created properly.  This is normally the default for the
+	  super-user, but not under Digital UNIX!
+
+
 WHAT'S NEW IN EPM 1.2?
 
     EPM 1.2 adds the following features and fixes to EPM 1.1:
@@ -83,6 +92,7 @@ WHAT'S NEW IN EPM 1.2?
 	  make links to the appropriate system-specific rc.d
 	  directories and run the scripts to start and stop things
 	  accordingly.
+
 
 WHAT'S NEW IN EPM 1.1?
 
