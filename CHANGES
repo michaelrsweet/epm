@@ -6,6 +6,9 @@ WHAT'S NEW IN EPM 3.5.2?
     EPM 3.5.2 adds the following features, fixes, and changes to
     EPM 3.5.1:
 
+	- Portable distributions that didn't have any files in
+	  /usr or in / would look for a non-existent .sw or .ss
+	  file.
 	- EPM's sample list file didn't include the man pages
 	  for setup or setup.types, and installed the epm list
 	  file format man page in the wrong directories.

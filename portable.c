@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.77 2002/10/17 18:13:14 mike Exp $"
+ * "$Id: portable.c,v 1.78 2002/12/03 16:35:14 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1220,7 +1220,8 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fprintf(scriptfile, "	%s/%s.remove now\n", SoftwareDir, prodname);
   fputs("fi\n", scriptfile);
 
-  write_space_checks(prodname, scriptfile, "sw", "ss");
+  write_space_checks(prodname, scriptfile, rootsize ? "sw" : NULL,
+                     usrsize ? "ss" : NULL);
   write_depends(dist, scriptfile);
   write_commands(dist, scriptfile, COMMAND_PRE_INSTALL);
 
@@ -1551,7 +1552,8 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("	done\n", scriptfile);
   fputs("fi\n", scriptfile);
 
-  write_space_checks(prodname, scriptfile, "psw", "pss");
+  write_space_checks(prodname, scriptfile, rootsize ? "psw" : NULL,
+                     usrsize ? "pss" : NULL);
   write_depends(dist, scriptfile);
 
   fprintf(scriptfile, "if test ! -x %s/%s.remove; then\n",
@@ -2062,14 +2064,28 @@ write_space_checks(const char *prodname,/* I - Distribution name */
   fputs("	;;\n", fp);
   fputs("esac\n", fp);
   fputs("\n", fp);
-  fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, sw);
-  fputs("spsw=`expr $temp / 1024`\n", fp);
+
+  if (sw)
+  {
+    fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, sw);
+    fputs("spsw=`expr $temp / 1024`\n", fp);
+  }
+  else
+    fputs("spsw=0\n", fp);
   fputs("\n", fp);
-  fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, ss);
-  fputs("spss=`expr $temp / 1024`\n", fp);
+
+  if (ss)
+  {
+    fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, ss);
+    fputs("spss=`expr $temp / 1024`\n", fp);
+  }
+  else
+    fputs("spss=0\n", fp);
   fputs("\n", fp);
+
   fputs("spall=`expr $spsw + $spss`\n", fp);
   fputs("\n", fp);
+
   fputs("if test x$sproot = x -o x$spusr = x; then\n", fp);
   fputs("	echo WARNING: Unable to determine available disk space; installing blindly...\n", fp);
   fputs("else\n", fp);
@@ -2099,5 +2115,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.77 2002/10/17 18:13:14 mike Exp $".
+ * End of "$Id: portable.c,v 1.78 2002/12/03 16:35:14 mike Exp $".
  */
