@@ -8,7 +8,7 @@ NNAAMMEE
        epm - create software packages
 
 SSYYNNOOPPSSIISS
-       eeppmm [ -g ] product [ _l_i_s_t_f_i_l_e ]
+       eeppmm [ -g ] [ -n[mrs] ] [ -t ] product [ _l_i_s_t_f_i_l_e ]
 
 DDEESSCCRRIIPPTTIIOONN
        eeppmm  generates  software  packages complete with installa-
@@ -19,6 +19,18 @@ DDEESSCCRRIIPPTTIIOONN
        Executable files in the distribution are normally stripped
        of  debugging  information  when packaged. To disable this
        functionality use the _-_g option.
+
+       The _-_t _o_p_t_i_o_n _(_"_t_e_s_t_"_) _d_i_s_a_b_l_e_s  _t_h_e  _g_e_n_e_r_a_t_i_o_n  _o_f  _c_o_m_-
+       _p_r_e_s_s_e_d _a_r_c_h_i_v_e_s _c_o_n_t_a_i_n_i_n_g _t_h_e _d_i_s_t_r_i_b_u_t_i_o_n_.
+
+       Distribution archives normally are named "product-version-
+       system-release-machine.tar.gz"    and    "product-version-
+       system-release-machine-patch.tar.gz"  (for patch distribu-
+       tions.)  The "system-release-machine" information  can  be
+       customized  or  eliminated  using  the  _-_n option with the
+       appropriate trailing letters.  Using  _-_n  by  itself  will
+       remove  the "system-release-machine" string from the file-
+       name entirely.
 
 LLIISSTT FFIILLEESS
        Each product has an associated list  file  that  describes
@@ -45,6 +57,19 @@ LLIISSTT FFIILLEESS
             Specifies  the  file  to  display  as  the   software
             license.
 
+
+
+
+
+19 August 1999         ESP Package Manager                      1
+
+
+
+
+
+epm(1)                Easy Software Products               epm(1)
+
+
        %patch _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
             Specifies  a  script  or  program to be run after all
             files are patched.
@@ -57,20 +82,8 @@ LLIISSTT FFIILLEESS
             bution.
 
        %remove _s_c_r_i_p_t _o_r _p_r_o_g_r_a_m
-            Specifies  a  script  or  program  to  be  run before
-
-
-
-26 July 1999           ESP Package Manager                      1
-
-
-
-
-
-epm(1)                Easy Software Products               epm(1)
-
-
-            removing or patching files.
+            Specifies a script or program to be run before remov-
+            ing or patching files.
 
        %requires _p_r_o_d_u_c_t
             Indicates that this product requires the named  prod-
@@ -111,23 +124,10 @@ epm(1)                Easy Software Products               epm(1)
             figuration files are installed as "destination.N"  if
             the destination already exists.
 
-       d _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
-
-       D _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
-            Specifies   a   directory   should  be  created  when
-            installing the software. The  second  form  specifies
-            that  the  directory is new and should be included as
-            part of a patch.
-
-       l _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-
-       L _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
-            Specifies a symbolic link in  the  installation.  The
-            second form specifies that the link has changed or is
 
 
 
-26 July 1999           ESP Package Manager                      2
+19 August 1999         ESP Package Manager                      2
 
 
 
@@ -136,27 +136,52 @@ epm(1)                Easy Software Products               epm(1)
 epm(1)                Easy Software Products               epm(1)
 
 
+       d _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
+
+       D _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _-
+            Specifies   a   directory   should  be  created  when
+            installing the software. The  second  form  specifies
+            that  the  directory is new and should be included as
+            part of a patch.
+
+       i _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
+
+       I _m_o_d_e _u_s_e_r _g_r_o_u_p _s_e_r_v_i_c_e_-_n_a_m_e _s_o_u_r_c_e
+            Specifies an initialization script for  installation.
+            The  second  form specifies that the file has changed
+            or is new and should be included as part of a  patch.
+            Initialization      scripts     are     stored     in
+            /etc/software/init.d and are linked to the  appropri-
+            ate  system-specific directories for run levels 0 and
+            3. Initialization scripts mmuusstt accepts at  least  the
+            _s_t_a_r_t and _s_t_o_p commands.
+
+       l _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+
+       L _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n _s_o_u_r_c_e
+            Specifies  a  symbolic  link in the installation. The
+            second form specifies that the link has changed or is
             new and should be included as part of a patch.
 
        R _m_o_d_e _u_s_e_r _g_r_o_u_p _d_e_s_t_i_n_a_t_i_o_n
-            Specifies that the file is to be removed upon  patch-
-            ing.   The  _u_s_e_r  and  _g_r_o_u_p fields are ignored.  The
-            _m_o_d_e field is only  used  to  determine  if  a  check
+            Specifies  that the file is to be removed upon patch-
+            ing.  The _u_s_e_r and _g_r_o_u_p  fields  are  ignored.   The
+            _m_o_d_e  field  is  only  used  to  determine if a check
             should be made for a previous version of the file.
 
 CCOOPPYYRRIIGGHHTT
-       Copyright  1999  by  Easy  Software  Products,  All Rights
+       Copyright 1999  by  Easy  Software  Products,  All  Rights
        Reserved.
 
-       This program is free software;  you  can  redistribute  it
+       This  program  is  free  software; you can redistribute it
        and/or modify it under the terms of the GNU General Public
-       License as published  by  the  Free  Software  Foundation;
+       License  as  published  by  the  Free Software Foundation;
        either version 2, or (at your option) any later version.
 
-       This  program  is  distributed in the hope that it will be
+       This program is distributed in the hope that  it  will  be
        useful, but WITHOUT ANY WARRANTY; without even the implied
-       warranty  of  MERCHANTABILITY  or FITNESS FOR A PARTICULAR
-       PURPOSE.  See the GNU  General  Public  License  for  more
+       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
+       PURPOSE.   See  the  GNU  General  Public License for more
        details.
 
 
@@ -168,31 +193,6 @@ CCOOPPYYRRIIGGHHTT
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-26 July 1999           ESP Package Manager                      3
+19 August 1999         ESP Package Manager                      3
 
 
