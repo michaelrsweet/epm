@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.9 2002/07/03 18:58:56 mike Exp $"
+.\" "$Id: epm.man,v 1.10 2002/08/01 01:50:25 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "3 July 2002" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "31 July 2002" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -26,7 +26,7 @@ epm \- create software packages.
 .I format
 ] [ \-g ] [ \-k ] [ \-n[mrs] ] [ \-s
 .I setup.xpm
-] [ \--output-dir
+] [ \--help ] [ \--keep-files ] [ \--output-dir
 .I directory
 ] [ \--setup-image
 .I setup.xpm
@@ -171,5 +171,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.9 2002/07/03 18:58:56 mike Exp $".
+.\" End of "$Id: epm.man,v 1.10 2002/08/01 01:50:25 mike Exp $".
 .\"

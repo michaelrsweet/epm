@@ -7,27 +7,28 @@ NNAAMMEE
 
 SSYYNNOOPPSSIISS
        eeppmm  [  -a  _a_r_c_h_i_t_e_c_t_u_r_e  ]  [ -f _f_o_r_m_a_t ] [ -g ] [ -k ] [
-       -n[mrs] ] [ -s _s_e_t_u_p_._x_p_m ] [ --setup-image _s_e_t_u_p_._x_p_m  ]  [
-       --setup-program    _/_f_o_o_/_b_a_r_/_s_e_t_u_p    ]   [   --setup-types
-       _s_e_t_u_p_._t_y_p_e_s ] [ -v ] [ _n_a_m_e_=_v_a_l_u_e _n_a_m_e_=_v_a_l_u_e ]  product  [
+       -n[mrs] ] [ -s _s_e_t_u_p_._x_p_m ] [ --help ] [ --keep-files  ]  [
+       --output-dir  _d_i_r_e_c_t_o_r_y  ]  [  --setup-image _s_e_t_u_p_._x_p_m ] [
+       --setup-program   _/_f_o_o_/_b_a_r_/_s_e_t_u_p   ]    [    --setup-types
+       _s_e_t_u_p_._t_y_p_e_s  ]  [ -v ] [ _n_a_m_e_=_v_a_l_u_e _n_a_m_e_=_v_a_l_u_e ] product [
        _l_i_s_t_f_i_l_e ]
 
 DDEESSCCRRIIPPTTIIOONN
-       eeppmm  generates  software  packages complete with installa­
-       tion, removal, and (if necessary)  patch  scripts.  Unless
-       otherwise  specified,  the  files required for _p_r_o_d_u_c_t are
+       eeppmm generates software packages  complete  with  installa-
+       tion,  removal,  and  (if necessary) patch scripts. Unless
+       otherwise specified, the files required  for  _p_r_o_d_u_c_t  are
        read from a file named "_p_r_o_d_u_c_t.list".
 
-       The _-_a option ("architecture") specifies the actual archi­
-       tecture  for the software. Without this option the generic
-       processor architecture is used ("intel", "sparc",  "mips",
+       The _-_a option ("architecture") specifies the actual archi-
+       tecture for the software. Without this option the  generic
+       processor  architecture is used ("intel", "sparc", "mips",
        etc.)
 
-       The  _-_f  option ("format") specifies the distribution for­
+       The _-_f option ("format") specifies the  distribution  for-
        mat:
 
        aix
-            Generate an AIX distribution suitable  for  installa­
+            Generate  an  AIX distribution suitable for installa-
             tion on an AIX system.
 
        bsd
@@ -35,33 +36,33 @@ DDEESSCCRRIIPPTTIIOONN
             on a FreeBSD, NetBSD, or OpenBSD system.
 
        deb
-            Generate a Debian distribution suitable for installa­
+            Generate a Debian distribution suitable for installa-
             tion on a Debian Linux system.
 
        inst, tardist
-            Generate  an IRIX distribution suitable for installa­
+            Generate an IRIX distribution suitable for  installa-
             tion on an system running IRIX.
 
        native
-            Generate an native distribution. This  uses  _r_p_m  for
-            Linux,  _i_n_s_t for IRIX, _p_k_g for Solaris, _s_w_i_n_s_t_a_l_l for
-            HP-UX, and _b_s_d for FreeBSD, NetBSD, and OpenBSD.  All
-            other  operating systems default to the _p_o_r_t_a_b_l_e for­
+            Generate  an  native  distribution. This uses _r_p_m for
+            Linux, _i_n_s_t for IRIX, _p_k_g for Solaris, _s_w_i_n_s_t_a_l_l  for
+            HP-UX,  and _b_s_d for FreeBSD, NetBSD, and OpenBSD. All
+            other operating systems default to the _p_o_r_t_a_b_l_e  for-
             mat.
 
        pkg
-            Generate an AT&T software  package.  These  are  used
+            Generate  an  AT&T  software  package. These are used
             primarily under Solaris.
 
        portable
             Generate  a  portable  distribution  based  on  shell
             scripts and tar files.  The resulting distribution is
-            installed  and  removed the same way on all operating
+            installed and removed the same way on  all  operating
             systems. [default]
 
        rpm
-            Generate a Red Hat Package Manager ("RPM")  distribu­
-            tion  suitable  for  installation  on a Red Hat Linux
+            Generate  a Red Hat Package Manager ("RPM") distribu-
+            tion suitable for installation on  a  Red  Hat  Linux
             system.
 
        setld
@@ -71,51 +72,55 @@ DDEESSCCRRIIPPTTIIOONN
             Generate a HP-UX software distribution.
 
        Executable files in the distribution are normally stripped
-       of  debugging  information  when packaged. To disable this
+       of debugging information when packaged.  To  disable  this
        functionality use the _-_g option.
 
-       Intermediate (spec, etc.) files used to create the distri­
-       bution are normally removed after the distribution is cre­
-       ated. The _-_k option keeps these files in the  distribution
+       Intermediate (spec, etc.) files used to create the distri-
+       bution are normally removed after the distribution is cre-
+       ated.  The _-_k option keeps these files in the distribution
        directory.
 
        The _-_s and _-_-_s_e_t_u_p_-_i_m_a_g_e options ("setup") include the ESP
        Software Wizard with the specified XPM image file with the
-       distribution.  This  option is currently only supported by
+       distribution. This option is currently only  supported  by
        portable distributions.
 
-       The _-_-_s_e_t_u_p_-_p_r_o_g_r_a_m option specifies the setup  executable
-       to  use  with  the  distribution. This option is currently
+       The  _-_-_s_e_t_u_p_-_p_r_o_g_r_a_m option specifies the setup executable
+       to use with the distribution.  This  option  is  currently
        only supported by portable distributions.
 
        The _-_-_s_e_t_u_p_-_t_y_p_e_s option specifies the _s_e_t_u_p_._t_y_p_e_s file to
-       include  with  the  distribution. This option is currently
+       include with the distribution. This  option  is  currently
        only supported by portable distributions.
 
-       The _-_v option ("verbose") increases the amount of informa­
-       tion  that  is reported. Use multiple v's for more verbose
+       The  _-_-_o_u_t_p_u_t_-_d_i_r  option specifies the directory to place
+       output file into. The default directory is  based  on  the
+       operating system, version, and architecture.
+
+       The _-_v option ("verbose") increases the amount of informa-
+       tion that is reported. Use multiple v's for  more  verbose
        output.
 
-       Distributions normally are named  "product-version-system-
-       release-machine.ext"  and "product-version-system-release-
+       Distributions  normally are named "product-version-system-
+       release-machine.ext" and  "product-version-system-release-
        machine-patch.ext" (for patch distributions.) The "system-
-       release-machine"  information  can be customized or elimi­
-       nated using the _-_n option with  the  appropriate  trailing
-       letters.  Using  _-_n  by  itself  will  remove the "system-
+       release-machine" information can be customized  or  elimi-
+       nated  using  the  _-_n option with the appropriate trailing
+       letters. Using _-_n  by  itself  will  remove  the  "system-
        release-machine" string from the filename entirely.
 
-       Debian, IRIX, portable, and Red Hat distributions use  the
-       extensions   ".deb",   ".tardist",  "tar.gz",  and  ".rpm"
+       Debian,  IRIX, portable, and Red Hat distributions use the
+       extensions  ".deb",  ".tardist",  "tar.gz",   and   ".rpm"
        respectively.
 
 LLIISSTT FFIILLEESS
-       The  EPM  list  file  format  is  now  described  in   the
+       The   EPM  list  file  format  is  now  described  in  the
        _e_p_m_._l_i_s_t_(_5_) man page.
 
 EENNVVIIRROONNMMEENNTT VVAARRIIAABBLLEESS
-       The  _R_P_M_D_I_R  environment  variable will override where EPM
-       looks for RPM  distributions  you  generate.  The  default
-       locations   are  /usr/src/redhat/RPMS,  /usr/src/RPM/RPMS,
+       The _R_P_M_D_I_R environment variable will  override  where  EPM
+       looks  for  RPM  distributions  you  generate. The default
+       locations  are  /usr/src/redhat/RPMS,   /usr/src/RPM/RPMS,
        /usr/src/packages/RPMS, and /usr/local/src/RPMS.
 
 KKNNOOWWNN BBUUGGSS
@@ -123,28 +128,28 @@ KKNNOOWWNN BBUUGGSS
        patches.
 
 SSEEEE AALLSSOO
-       epminstall(1)  -  add  a  directory, file, or symlink to a
+       epminstall(1) - add a directory, file,  or  symlink  to  a
        list file
        mkepmlist(1) - make an epm list file from a directory
        epm.list(5) - epm list file format
-       setup(1) - graphical setup program  for  the  esp  package
+       setup(1)  -  graphical  setup  program for the esp package
        manager
 
 CCOOPPYYRRIIGGHHTT
-       Copyright  1999-2002 by Easy Software Products, All Rights
+       Copyright 1999-2002 by Easy Software Products, All  Rights
        Reserved.
 
-       This program is free software;  you  can  redistribute  it
+       This  program  is  free  software; you can redistribute it
        and/or modify it under the terms of the GNU General Public
-       License as published  by  the  Free  Software  Foundation;
+       License  as  published  by  the  Free Software Foundation;
        either version 2, or (at your option) any later version.
 
-       This  program  is  distributed in the hope that it will be
+       This program is distributed in the hope that  it  will  be
        useful, but WITHOUT ANY WARRANTY; without even the implied
-       warranty  of  MERCHANTABILITY  or FITNESS FOR A PARTICULAR
-       PURPOSE.  See the GNU  General  Public  License  for  more
+       warranty of MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR
+       PURPOSE.   See  the  GNU  General  Public License for more
        details.
 
 
 
-26 June 2001           ESP Package Manager                 epm(1)
+31 July 2002           ESP Package Manager                 epm(1)
