@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 2.4
+README - ESP Package Manager (EPM) 2.5
 --------------------------------------
 
 WHAT IS EPM?
@@ -87,6 +87,16 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
 
     No!  EPM is free software and any installations you create are
     unencumbered by licensing of any kind (not even the GPL.)
+
+
+WHAT'S NEW IN EPM 2.5?
+
+    EPM 2.5 adds the following features, fixes, and changes to
+    EPM 2.4:
+
+	- The config file support for AT&T software packages
+	  did not check to see if the source file had an
+	  absolute path.
 
 
 WHAT'S NEW IN EPM 2.4?
