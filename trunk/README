@@ -83,6 +83,16 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
     unencumbered by licensing of any kind (not even the GPL.)
 
 
+WHAT'S NEW IN EPM 2.1.1?
+
+    EPM 2.1.1 adds the following features, fixes, and changes to
+    EPM 2.1:
+
+        - Updated the BuildRoot directive in RPM spec files to be an
+	  absolute path; RedHat 6.2's version of RPM adds a leading
+	  slash otherwise.
+
+
 WHAT'S NEW IN EPM 2.1?
 
     EPM 2.1 adds the following features, fixes, and changes to
