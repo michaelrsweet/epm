@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.11 2001/05/24 20:11:13 mike Exp $"
+// "$Id: setup2.cxx,v 1.12 2001/06/28 22:32:29 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -22,6 +22,7 @@
 //   install_dist() - Install a distribution...
 //   list_cb()      - Handle selections in the software list.
 //   load_image()   - Load the setup image file (setup.xpm)...
+//   load_types()   - Load the setup image file (setup.xpm)...
 //   next_cb()      - Show software selections or install software.
 //   sort_dists()   - Compare two distribution names...
 //   add_string()   - Add a command to an array of commands...
@@ -35,7 +36,7 @@
 #include <FL/fl_ask.H>
 #include <FL/Fl_Pixmap.H>
 #include <errno.h>
-#include <string.h>
+#include <ctype.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
@@ -56,10 +57,7 @@ typedef int (*compare_func_t)(const void *, const void *);
 // Local functions...
 //
 
-static int	add_string(int num_strings, char ***strings, char *string);
 static void	log_cb(int fd, int *fdptr);
-
-int		sort_dists(const dist_t *d0, const dist_t *d1);
 
 
 //
@@ -81,11 +79,16 @@ main(int  argc,		// I - Number of command-line arguments
 
   w = make_window();
 
+  WelcomePane->show();
+
+  get_installed();
+
   if (argc > 1)
     get_dists(argv[1]);
   else
     get_dists(".");
 
+  load_types();
   load_image();
 
   w->show(1, argv);
@@ -93,6 +96,99 @@ main(int  argc,		// I - Number of command-line arguments
   Fl::run();
 
   return (0);
+}
+
+
+//
+// 'add_depend()' - Add a dependency to a distribution.
+//
+
+void
+add_depend(dist_t     *d,	// I - Distribution
+           int        type,	// I - Dependency type
+	   const char *name,	// I - Name of product
+	   int        lowver,	// I - Lower version number
+	   int        hiver)	// I - Highre version number
+{
+  depend_t	*temp;		// Pointer to dependency
+
+
+  if (d->num_depends == 0)
+    temp = (depend_t *)malloc(sizeof(depend_t));
+  else
+    temp = (depend_t *)realloc(d->depends,
+                               sizeof(depend_t) * (d->num_depends + 1));
+
+  if (temp == NULL)
+  {
+    perror("setup: Unable to allocate memory for dependency");
+    exit(1);
+  }
+
+  d->depends     = temp;
+  temp           += d->num_depends;
+  d->num_depends ++;
+
+  memset(temp, 0, sizeof(depend_t));
+  strncpy(temp->product, name, sizeof(temp->product) - 1);
+  temp->type         = type;
+  temp->vernumber[0] = lowver;
+  temp->vernumber[1] = hiver;
+}
+
+
+//
+// 'add_dist()' - Add a distribution.
+//
+
+dist_t *			// O - New distribution
+add_dist(int    *num_d,		// IO - Number of distributions
+         dist_t **d)		// IO - Distributions
+{
+  dist_t	*temp;		// Pointer to current distribution
+
+
+  // Add a new distribution entry...
+  if (*num_d == 0)
+    temp = (dist_t *)malloc(sizeof(dist_t));
+  else
+    temp = (dist_t *)realloc(*d, sizeof(dist_t) * (*num_d + 1));
+
+  if (temp == NULL)
+  {
+    perror("setup: Unable to allocate memory for distribution");
+    exit(1);
+  }
+
+  *d = temp;
+  temp  += *num_d;
+  (*num_d) ++;
+
+  memset(temp, 0, sizeof(dist_t));
+
+  return (temp);
+}
+
+
+//
+// 'find_dist()' - Find a distribution.
+//
+
+dist_t *			// O - Pointer to distribution or NULL
+find_dist(const char *name,	// I - Distribution name
+          int        num_d,	// I - Number of distributions
+	  dist_t     *d)	// I - Distributions
+{
+  while (num_d > 0)
+  {
+    if (strcmp(name, d->product) == 0)
+      return (d);
+
+    d ++;
+    num_d --;
+  }
+
+  return (NULL);
 }
 
 
@@ -107,11 +203,12 @@ get_dists(const char *d)	// I - Directory to look in
   int		num_files;	// Number of files
   dirent	**files;	// Files
   const char	*ext;		// Extension
-  dist_t	*temp;		// Pointer to current distribution
+  dist_t	*temp,		// Pointer to current distribution
+		*installed;	// Pointer to installed product
   FILE		*fp;		// File to read from
   char		line[1024],	// Line from file...
-		*ptr;		// Pointer into line...
-  char		filename[1024];	// Filename
+		product[64];	// Product name...
+  int		lowver, hiver;	// Version numbers for dependencies
 
 
   // Get the files in the specified directory...
@@ -144,22 +241,8 @@ get_dists(const char *d)	// I - Directory to look in
       }
 
       // Add a new distribution entry...
-      if (NumDists == 0)
-        temp = (dist_t *)malloc(sizeof(dist_t));
-      else
-        temp = (dist_t *)realloc(Dists, sizeof(dist_t) * (NumDists + 1));
+      temp = add_dist(&NumDists, &Dists);
 
-      if (temp == NULL)
-      {
-        perror("setup: Unable to allocate memory for distribution");
-	exit(1);
-      }
-
-      Dists = temp;
-      temp  += NumDists;
-      NumDists ++;
-
-      memset(temp, 0, sizeof(dist_t));
       strncpy(temp->product, files[i]->d_name, sizeof(temp->product) - 1);
       *strrchr(temp->product, '.') = '\0';	// Drop .install
 
@@ -177,23 +260,17 @@ get_dists(const char *d)	// I - Directory to look in
 	if (strncmp(line, "#%product ", 10) == 0)
 	  strncpy(temp->name, line + 10, sizeof(temp->name) - 1);
 	else if (strncmp(line, "#%version ", 10) == 0)
-	  sscanf(line + 10, "%31s", temp->version);
-	else if (strncmp(line, "#%incompat ", 11) == 0)
+	  sscanf(line + 10, "%31s%d", temp->version, &(temp->vernumber));
+	else if (strncmp(line, "#%incompat ", 11) == 0 ||
+	         strncmp(line, "#%requires ", 11) == 0)
 	{
-	  if ((ptr = strchr(line + 11, ' ')) != NULL)
-	    *ptr = '\0';
+	  lowver = 0;
+	  hiver  = 0;
 
-	  temp->num_incompats = add_string(temp->num_incompats,
-	                                   &(temp->incompats), line + 11);
+	  if (sscanf(line + 11, "%s%*s%d%*s%d", product, &lowver, &hiver) > 0)
+	    add_depend(temp, (line[2] == 'i') ? DEPEND_INCOMPAT : DEPEND_REQUIRES,
+	               product, lowver, hiver);
         }
-	else if (strncmp(line, "#%requires ", 11) == 0)
-        {
-	  if ((ptr = strchr(line + 11, ' ')) != NULL)
-	    *ptr = '\0';
-
-	  temp->num_requires = add_string(temp->num_requires,
-	                                   &(temp->requires), line + 11);
-	}
       }
 
       fclose(fp);
@@ -215,13 +292,22 @@ get_dists(const char *d)	// I - Directory to look in
 
   for (i = 0, temp = Dists; i < NumDists; i ++, temp ++)
   {
-    sprintf(filename, EPM_SOFTWARE "/%s.remove", temp->product);
     sprintf(line, "%s v%s", temp->name, temp->version);
 
-    if (access(filename, X_OK))
+    if ((installed = find_dist(temp->product, NumInstalled, Installed)) == NULL)
     {
       strcat(line, " (new)");
-      SoftwareList->add(line);
+      SoftwareList->add(line, 1);
+    }
+    else if (installed->vernumber > temp->vernumber)
+    {
+      strcat(line, " (downgrade)");
+      SoftwareList->add(line, 0);
+    }
+    else if (installed->vernumber == temp->vernumber)
+    {
+      strcat(line, " (installed)");
+      SoftwareList->add(line, 0);
     }
     else
     {
@@ -229,6 +315,76 @@ get_dists(const char *d)	// I - Directory to look in
       SoftwareList->add(line, 1);
     }
   }
+}
+
+
+//
+// 'get_installed()' - Get a list of installed software products.
+//
+
+void
+get_installed(void)
+{
+  int		i;		// Looping var
+  int		num_files;	// Number of files
+  dirent	**files;	// Files
+  const char	*ext;		// Extension
+  dist_t	*temp;		// Pointer to current distribution
+  FILE		*fp;		// File to read from
+  char		line[1024];	// Line from file...
+
+
+  // See if there are any installed files...
+  NumInstalled = 0;
+  Installed    = NULL;
+
+  if ((num_files = filename_list(EPM_SOFTWARE, &files)) == 0)
+    return;
+
+  // Build a distribution list...
+  for (i = 0; i < num_files; i ++)
+  {
+    ext = filename_ext(files[i]->d_name);
+    if (strcmp(ext, ".remove") == 0)
+    {
+      // Found a .remove script...
+      snprintf(line, sizeof(line), EPM_SOFTWARE "/%s", files[i]->d_name);
+      if ((fp = fopen(line, "r")) == NULL)
+      {
+        perror("setup: Unable to open removal script");
+	exit(1);
+      }
+
+      // Add a new distribution entry...
+      temp = add_dist(&NumInstalled, &Installed);
+
+      strncpy(temp->product, files[i]->d_name, sizeof(temp->product) - 1);
+      *strrchr(temp->product, '.') = '\0';	// Drop .remove
+
+      // Read info from the removal script...
+      while (fgets(line, sizeof(line), fp) != NULL)
+      {
+        // Only read distribution info lines...
+        if (strncmp(line, "#%", 2))
+	  continue;
+
+        // Drop the trailing newline...
+        line[strlen(line) - 1] = '\0';
+
+        // Copy data as needed...
+	if (strncmp(line, "#%product ", 10) == 0)
+	  strncpy(temp->name, line + 10, sizeof(temp->name) - 1);
+	else if (strncmp(line, "#%version ", 10) == 0)
+	  sscanf(line + 10, "%31s%d", temp->version, &(temp->vernumber));
+      }
+
+      fclose(fp);
+    }
+
+    free(files[i]);
+  }
+
+  free(files);
 }
 
 
@@ -258,22 +414,33 @@ install_dist(const dist_t *dist)// I - Distribution to install
     // Save this license's length...
     liclength = licinfo.st_size;
 
+    // Set the title string...
+    snprintf(command, sizeof(command), "Software License for %s", dist->name);
+    LicenseLabel->label(command);
+
     // Load the license into the browser...
     LicenseBrowser->clear();
     LicenseBrowser->load(licfile);
 
     // Show the license window and wait for the user...
-    LicenseWindow->show();
-    AcceptRadio->clear();
-    DeclineRadio->clear();
+    LicensePane->show();
+    LicenseAccept->clear();
+    LicenseDecline->clear();
+    NextButton->deactivate();
+    CancelButton->activate();
 
-    while (LicenseWindow->visible())
+    while (LicensePane->visible())
       Fl::wait();
 
-    if (DeclineRadio->value())
+    CancelButton->deactivate();
+
+    if (LicenseDecline->value())
     {
       // Can't install without acceptance...
-      InstallLog->add("License not accepted!");
+      liclength = 0;
+      snprintf(command, sizeof(command), "License not accepted for %s!",
+               dist->name);
+      InstallLog->add(command);
       return (1);
     }
   }
@@ -357,7 +524,7 @@ list_cb(Fl_Check_Browser *, void *)
   int		i, j, k;
   dist_t	*dist,
 		*dist2;
-  char		filename[1024];
+  depend_t	*depend;
 
 
   if (SoftwareList->nchecked() == 0)
@@ -369,76 +536,67 @@ list_cb(Fl_Check_Browser *, void *)
   for (i = 0, dist = Dists; i < NumDists; i ++, dist ++)
     if (SoftwareList->checked(i + 1))
     {
-      // Check for requires products...
-      for (j = 0; j < dist->num_requires; j ++)
-      {
-        // See if it is one of the products to be installed...
-        for (k = 0, dist2 = Dists; k < NumDists; k ++, dist2 ++)
-	  if (strcmp(dist2->product, dist->requires[j]) == 0)
-	    break;
-
-        if (k < NumDists)
+      // Check for required/incompatible products...
+      for (j = 0, depend = dist->depends; j < dist->num_depends; j ++, depend ++)
+        switch (depend->type)
 	{
-	  // Software is in the list, is it selected?
-	  if (SoftwareList->checked(k + 1))
-	    continue;
+	  case DEPEND_REQUIRES :
+	      if ((dist2 = find_dist(depend->product, NumDists, Dists)) != NULL)
+	      {
+  		// Software is in the list, is it selected?
+	        k = dist2 - Dists;
 
-          // Nope, select it unless we're unchecked another selection...
-	  if (SoftwareList->value() != (k + 1))
-	    SoftwareList->checked(k + 1, 1);
-	  else
-	  {
-	    SoftwareList->checked(i + 1, 0);
-	    break;
-	  }
+		if (SoftwareList->checked(k + 1))
+		  continue;
+
+        	// Nope, select it unless we're unchecked another selection...
+		if (SoftwareList->value() != (k + 1))
+		  SoftwareList->checked(k + 1, 1);
+		else
+		{
+		  SoftwareList->checked(i + 1, 0);
+		  break;
+		}
+	      }
+	      else if ((dist2 = find_dist(depend->product, NumInstalled,
+	                                  Installed)) == NULL)
+	      {
+		// Required but not installed or available!
+		fl_alert("%s requires %s to be installed, but it is not available "
+	        	 "for installation.", dist->name, depend->product);
+		SoftwareList->checked(i + 1, 0);
+		break;
+	      }
+	      break;
+
+          case DEPEND_INCOMPAT :
+	      if ((dist2 = find_dist(depend->product, NumInstalled,
+	                             Installed)) != NULL)
+	      {
+		// Already installed!
+		fl_alert("%s is incompatible with %s. Please remove it before "
+	        	 "installing this software.", dist->name, dist2->name);
+		SoftwareList->checked(i + 1, 0);
+		break;
+	      }
+	      else if ((dist2 = find_dist(depend->product, NumDists, Dists)) != NULL)
+	      {
+  		// Software is in the list, is it selected?
+	        k = dist2 - Dists;
+
+		// Software is in the list, is it selected?
+		if (!SoftwareList->checked(k + 1))
+		  continue;
+
+        	// Yes, tell the user...
+		fl_alert("%s is incompatible with %s. Please deselect it before "
+	        	 "installing this software.", dist->name, dist2->name);
+		SoftwareList->checked(i + 1, 0);
+		break;
+	      }
+	  default :
+	      break;
 	}
-	else
-	{
-          // See if the requires product is already installed...
-          sprintf(filename, EPM_SOFTWARE "/%s.remove", dist->requires[j]);
-	  if (!access(filename, X_OK))
-	    continue;
-
-	  // Required but not installed or available!
-	  fl_alert("%s requires %s to be installed, but it is not available "
-	           "for installation.", dist->name, dist->requires[j]);
-	  SoftwareList->checked(i + 1, 0);
-	  break;
-	}
-      }
-
-      // Check for incompatible products...
-      for (j = 0; j < dist->num_incompats; j ++)
-      {
-        // See if the incompatible product is already installed...
-        sprintf(filename, EPM_SOFTWARE "/%s.remove", dist->incompats[j]);
-	if (!access(filename, X_OK))
-	{
-	  // Already installed!
-	  fl_alert("%s is incompatible with %s. Please remove it before "
-	           "installing this software.", dist->name, dist->incompats[j]);
-	  SoftwareList->checked(i + 1, 0);
-	  break;
-	}
-
-        // Then see if it is one of the products to be installed...
-        for (k = 0, dist2 = Dists; k < NumDists; k ++, dist2 ++)
-	  if (strcmp(dist2->product, dist->incompats[j]) == 0)
-	    break;
-
-        if (k < NumDists)
-	{
-	  // Software is in the list, is it selected?
-	  if (!SoftwareList->checked(k + 1))
-	    continue;
-
-          // Yes, tell the user...
-	  fl_alert("%s is incompatible with %s. Please deselect it before "
-	           "installing this software.", dist->name, dist2->name);
-	  SoftwareList->checked(i + 1, 0);
-	  break;
-	}
-      }
     }
 
   if (SoftwareList->nchecked())
@@ -485,6 +643,99 @@ load_image(void)
 
 
 //
+// 'load_types()' - Load the installation types from the setup.types file.
+//
+
+void
+load_types(void)
+{
+  int		i;		// Looping var
+  FILE		*fp;		// File to read from
+  char		line[1024],	// Line from file
+		*lineptr;	// Pointer into line
+  dtype_t	*dt;		// Current install type
+  dist_t	*dist;		// Distribution
+
+
+  NumInstTypes = 0;
+
+  if ((fp = fopen("setup.types", "r")) != NULL)
+  {
+    dt = NULL;
+
+    while (fgets(line, sizeof(line), fp) != NULL)
+    {
+      if (line[0] == '#' || line[0] == '\n')
+        continue;
+
+      lineptr = line + strlen(line) - 1;
+      if (*lineptr == '\n')
+        *lineptr = '\0';
+
+      if (strncasecmp(line, "TYPE", 4) == 0 && isspace(line[4]))
+      {
+        // New type...
+	if (NumInstTypes >= (sizeof(InstTypes) / sizeof(InstTypes[0])))
+	{
+	  fprintf(stderr, "setup: Too many TYPEs (> %d) in setup.types!\n",
+	          sizeof(InstTypes) / sizeof(InstTypes[0]));
+	  fclose(fp);
+	  exit(1);
+	}
+
+        for (lineptr = line + 5; isspace(*lineptr); lineptr ++);
+
+        dt = InstTypes + NumInstTypes;
+	NumInstTypes ++;
+
+	memset(dt, 0, sizeof(dtype_t));
+	strncpy(dt->label, lineptr, sizeof(dt->label) - 1);
+      }
+      else if (strncasecmp(line, "INSTALL", 7) == 0 && dt && isspace(line[7]))
+      {
+        // Install a product...
+	if (dt->num_products >= (sizeof(dt->products) / sizeof(dt->products[0])))
+	{
+	  fprintf(stderr, "setup: Too many INSTALLs (> %d) in setup.types!\n",
+	          sizeof(dt->products) / sizeof(dt->products[0]));
+	  fclose(fp);
+	  exit(1);
+	}
+
+        for (lineptr = line + 8; isspace(*lineptr); lineptr ++);
+
+        if ((dist = find_dist(lineptr, NumDists, Dists)) != NULL)
+	{
+          dt->products[dt->num_products] = dist - Dists;
+	  dt->num_products ++;
+	}
+	else
+	  fprintf(stderr, "setup: Unable to find product \"%s\" for \"%s\"!\n",
+	          lineptr, dt->label);
+      }
+      else
+      {
+        fprintf(stderr, "setup: Bad line - %s\n", line);
+	fclose(fp);
+	exit(1);
+      }
+    }
+
+    fclose(fp);
+  }
+
+  for (i = 0, dt = InstTypes; i < NumInstTypes; i ++, dt ++)
+  {
+    TypeButton[i]->label(dt->label);
+    TypeButton[i]->show();
+  }
+
+  for (; i < (sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
+    TypeButton[i]->hide();
+}
+
+
+//
 // 'next_cb()' - Show software selections or install software.
 //
 
@@ -495,12 +746,34 @@ next_cb(Fl_Button *, void *)
   int		progress;	// Progress so far...
   int		error;		// Errors?
   static char	message[1024];	// Progress message...
+  static int	installing = 0;	// Installing software?
 
 
   Wizard->next();
 
-  if (Wizard->value() == InstallPane)
+  if (Wizard->value() == TypePane)
   {
+    if (NumInstTypes == 0)
+      Wizard->next();
+  }
+  else if (Wizard->value() == SoftwarePane)
+  {
+    for (i = 0; i < (sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
+      if (TypeButton[i]->value())
+        break;
+
+    if (i < (sizeof(TypeButton) / sizeof(TypeButton[0])) &&
+        InstTypes[i].num_products > 0)
+      Wizard->next();
+  }
+
+  if (Wizard->value() == LicensePane)
+    Wizard->next();
+
+  if (Wizard->value() == InstallPane && !installing)
+  {
+    installing = 1;
+
     NextButton->deactivate();
     CancelButton->deactivate();
     CancelButton->label("Close");
@@ -533,8 +806,11 @@ next_cb(Fl_Button *, void *)
     CancelButton->activate();
 
     XBell(fl_display, 100);
+
+    installing = 0;
   }
-  else if (SoftwareList->nchecked() == 0)
+  else if (Wizard->value() == SoftwarePane &&
+           SoftwareList->nchecked() == 0)
     NextButton->deactivate();
 }
 
@@ -552,21 +828,47 @@ sort_dists(const dist_t *d0,	// I - First distribution
 
 
 //
-// 'add_string()' - Add a command to an array of commands...
+// 'type_cb()' - Handle selections in the type list.
 //
 
-static int			// O - Number of strings
-add_string(int  num_strings,	// I - Number of strings
-           char ***strings,	// O - Pointer to string pointer array
-           char *string)	// I - String to add
+void
+type_cb(CheckButton *w, void *)	// I - Check button widget
 {
-  if (num_strings == 0)
-    *strings = (char **)malloc(sizeof(char *));
-  else
-    *strings = (char **)realloc(*strings, (num_strings + 1) * sizeof(char *));
+  int		i;		// Looping var
+  dtype_t	*dt;		// Current install type
+  dist_t	*temp,		// Current software
+		*installed;	// Installed software
 
-  (*strings)[num_strings] = strdup(string);
-  return (num_strings + 1);
+
+  for (i = 0; i < (sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
+    if (w == TypeButton[i])
+      break;
+
+  if (i >= (sizeof(TypeButton) / sizeof(TypeButton[0])))
+    return;
+
+  dt = InstTypes + i;
+
+  SoftwareList->check_none();
+
+  // Select all products in the install type
+  for (i = 0; i < dt->num_products; i ++)
+    SoftwareList->checked(dt->products[i] + 1, 1);
+
+  // And then any upgrade products...
+  for (i = 0, temp = Dists; i < NumDists; i ++, temp ++)
+  {
+    if ((installed = find_dist(temp->product, NumInstalled, Installed)) == NULL)
+    {
+      // Select new products when the type is custom...
+      if (dt->num_products == 0)
+        SoftwareList->checked(i + 1, 1);
+    }
+    else if (installed->vernumber < temp->vernumber)
+      SoftwareList->checked(i + 1, 1);
+  }
+
+  NextButton->activate();
 }
 
 
@@ -622,5 +924,5 @@ log_cb(int fd,			// I - Pipe to read from
 
 
 //
-// End of "$Id: setup2.cxx,v 1.11 2001/05/24 20:11:13 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.12 2001/06/28 22:32:29 mike Exp $".
 //

@@ -2,33 +2,6 @@
 
 #include "setup.h"
 
-Fl_Window *LicenseWindow=(Fl_Window *)0;
-
-static void cb_LicenseWindow(Fl_Window*, void*) {
-  if (ContinueButton->active())
-  LicenseWindow->hide();
-}
-
-Fl_Browser *LicenseBrowser=(Fl_Browser *)0;
-
-Fl_Button *ContinueButton=(Fl_Button *)0;
-
-static void cb_ContinueButton(Fl_Button*, void*) {
-  LicenseWindow->hide();
-}
-
-Fl_Round_Button *AcceptRadio=(Fl_Round_Button *)0;
-
-static void cb_AcceptRadio(Fl_Round_Button*, void*) {
-  ContinueButton->activate();
-}
-
-Fl_Round_Button *DeclineRadio=(Fl_Round_Button *)0;
-
-static void cb_DeclineRadio(Fl_Round_Button*, void*) {
-  ContinueButton->activate();
-}
-
 static void cb_ESP(Fl_Window*, void*) {
   if (CancelButton->active())
   exit(0);
@@ -55,6 +28,10 @@ Fl_Group *WelcomePane=(Fl_Group *)0;
 
 Fl_Box *WelcomeImage=(Fl_Box *)0;
 
+Fl_Group *TypePane=(Fl_Group *)0;
+
+CheckButton *TypeButton[8]={(CheckButton *)0};
+
 Fl_Group *SoftwarePane=(Fl_Group *)0;
 
 Fl_Check_Browser *SoftwareList=(Fl_Check_Browser *)0;
@@ -72,6 +49,26 @@ static void cb_InstallNoneButton(Fl_Button*, void*) {
   SoftwareList->check_none();
 }
 
+Fl_Box *SoftwareSize=(Fl_Box *)0;
+
+Fl_Group *LicensePane=(Fl_Group *)0;
+
+Fl_Box *LicenseLabel=(Fl_Box *)0;
+
+Fl_Browser *LicenseBrowser=(Fl_Browser *)0;
+
+CheckButton *LicenseAccept=(CheckButton *)0;
+
+static void cb_LicenseAccept(CheckButton*, void*) {
+  NextButton->activate();
+}
+
+CheckButton *LicenseDecline=(CheckButton *)0;
+
+static void cb_LicenseDecline(CheckButton*, void*) {
+  NextButton->activate();
+}
+
 Fl_Group *InstallPane=(Fl_Group *)0;
 
 Fl_Slider *InstallPercent=(Fl_Slider *)0;
@@ -80,68 +77,96 @@ Fl_Browser *InstallLog=(Fl_Browser *)0;
 
 Fl_Window* make_window() {
   Fl_Window* w;
-  { Fl_Window* o = LicenseWindow = new Fl_Window(580, 400, "Software License");
-    w = o;
-    o->callback((Fl_Callback*)cb_LicenseWindow);
-    { Fl_Browser* o = LicenseBrowser = new Fl_Browser(10, 10, 560, 300);
-      o->textfont(4);
-      o->textsize(12);
-      Fl_Group::current()->resizable(o);
-    }
-    { Fl_Button* o = ContinueButton = new Fl_Button(500, 365, 70, 25, "Continue");
-      o->callback((Fl_Callback*)cb_ContinueButton);
-      o->deactivate();
-    }
-    { Fl_Group* o = new Fl_Group(10, 315, 485, 45);
-      { Fl_Round_Button* o = AcceptRadio = new Fl_Round_Button(10, 315, 425, 20, "Yes, I accept the terms and conditions of the software license.");
-        o->type(102);
-        o->down_box(FL_ROUND_DOWN_BOX);
-        o->selection_color(4);
-        o->callback((Fl_Callback*)cb_AcceptRadio);
-      }
-      { Fl_Round_Button* o = DeclineRadio = new Fl_Round_Button(10, 335, 455, 20, "No, I do not accept the terms and conditions of the software license.");
-        o->type(102);
-        o->down_box(FL_ROUND_DOWN_BOX);
-        o->selection_color(4);
-        o->callback((Fl_Callback*)cb_DeclineRadio);
-      }
-      o->end();
-    }
-    o->set_modal();
-    o->end();
-  }
-  { Fl_Window* o = new Fl_Window(450, 345, "ESP Software Wizard");
+  { Fl_Window* o = new Fl_Window(580, 345, "ESP Software Wizard");
     w = o;
     o->callback((Fl_Callback*)cb_ESP);
-    { Fl_Button* o = NextButton = new Fl_Button(315, 310, 55, 25);
+    { Fl_Button* o = NextButton = new Fl_Button(445, 310, 55, 25);
       bitmap_next.label(o);
       o->callback((Fl_Callback*)next_cb);
     }
-    { Fl_Button* o = CancelButton = new Fl_Button(380, 310, 60, 25, "Cancel");
+    { Fl_Button* o = CancelButton = new Fl_Button(510, 310, 60, 25, "Cancel");
       o->callback((Fl_Callback*)cb_CancelButton);
     }
-    { Fl_Wizard* o = Wizard = new Fl_Wizard(0, 0, 450, 300);
-      o->box(FL_THIN_UP_BOX);
-      { Fl_Group* o = WelcomePane = new Fl_Group(10, 10, 430, 280);
+    { Fl_Wizard* o = Wizard = new Fl_Wizard(0, 0, 580, 300);
+      { Fl_Group* o = WelcomePane = new Fl_Group(10, 10, 560, 280);
         o->box(FL_FLAT_BOX);
-        { Fl_Box* o = new Fl_Box(10, 10, 430, 25, "Welcome to Setup");
+        { Fl_Box* o = new Fl_Box(10, 10, 560, 25, "Welcome to Setup");
           o->labelfont(1);
           o->labelsize(18);
           o->labelcolor(4);
           o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
         }
-        { Fl_Box* o = new Fl_Box(40, 55, 370, 80, "This wizard will install the software you select on your system.\n\nTo select\
+        { Fl_Box* o = new Fl_Box(40, 55, 500, 55, "This wizard will install the software you select on your system.\n\nTo select\
  software for installation, please click on the \"Next\" button below.");
           o->align(133|FL_ALIGN_INSIDE);
         }
-        { Fl_Box* o = WelcomeImage = new Fl_Box(40, 150, 370, 140);
-          o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
+        { Fl_Box* o = WelcomeImage = new Fl_Box(40, 110, 500, 180);
+          o->align(FL_ALIGN_BOTTOM_LEFT|FL_ALIGN_INSIDE);
         }
         o->end();
       }
-      { Fl_Group* o = SoftwarePane = new Fl_Group(10, 10, 430, 280);
+      { Fl_Group* o = TypePane = new Fl_Group(10, 10, 555, 280);
         o->box(FL_FLAT_BOX);
-        { Fl_Box* o = new Fl_Box(10, 10, 430, 25, "Software Selection");
+        o->hide();
+        { Fl_Box* o = new Fl_Box(10, 10, 555, 25, "Installation Type");
+          o->labelfont(1);
+          o->labelsize(18);
+          o->labelcolor(4);
+          o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        }
+        { Fl_Box* o = new Fl_Box(40, 55, 475, 35, "Please select the type of software installation and click on the \"Next\" but\
+ton below.");
+          o->align(133|FL_ALIGN_INSIDE);
+        }
+        { Fl_Group* o = new Fl_Group(65, 100, 305, 185);
+          { CheckButton* o = TypeButton[0] = new CheckButton(70, 100, 300, 20);
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)type_cb);
+          }
+          { CheckButton* o = TypeButton[1] = new CheckButton(70, 120, 300, 20);
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)type_cb);
+          }
+          { CheckButton* o = TypeButton[2] = new CheckButton(70, 140, 300, 20);
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)type_cb);
+          }
+          { CheckButton* o = TypeButton[3] = new CheckButton(70, 160, 300, 20);
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)type_cb);
+          }
+          { CheckButton* o = TypeButton[4] = new CheckButton(70, 180, 300, 20);
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)type_cb);
+          }
+          { CheckButton* o = TypeButton[5] = new CheckButton(70, 200, 300, 20);
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)type_cb);
+          }
+          { CheckButton* o = TypeButton[6] = new CheckButton(70, 220, 300, 20);
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)type_cb);
+          }
+          { CheckButton* o = TypeButton[7] = new CheckButton(70, 240, 300, 20);
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)type_cb);
+          }
+          o->end();
+        }
+        o->end();
+      }
+      { Fl_Group* o = SoftwarePane = new Fl_Group(10, 10, 560, 280);
+        o->box(FL_FLAT_BOX);
+        o->hide();
+        { Fl_Box* o = new Fl_Box(10, 10, 560, 25, "Software Selection");
           o->labelfont(1);
           o->labelsize(18);
           o->labelcolor(4);
@@ -151,21 +176,55 @@ Fl_Window* make_window() {
 \" button below.");
           o->align(133|FL_ALIGN_INSIDE);
         }
-        { Fl_Check_Browser* o = SoftwareList = new Fl_Check_Browser(40, 120, 370, 135, " Available Software:");
+        { Fl_Check_Browser* o = SoftwareList = new Fl_Check_Browser(40, 120, 500, 135, " Available Software:");
           o->box(FL_DOWN_BOX);
           o->callback((Fl_Callback*)list_cb);
           o->align(FL_ALIGN_TOP_LEFT);
           o->when(FL_WHEN_RELEASE);
         }
-        { Fl_Button* o = InstallAllButton = new Fl_Button(235, 265, 75, 25, "Install All");
+        { Fl_Button* o = InstallAllButton = new Fl_Button(365, 265, 75, 25, "Install All");
           o->callback((Fl_Callback*)cb_InstallAllButton);
         }
-        { Fl_Button* o = InstallNoneButton = new Fl_Button(320, 265, 90, 25, "Install None");
+        { Fl_Button* o = InstallNoneButton = new Fl_Button(450, 265, 90, 25, "Install None");
           o->callback((Fl_Callback*)cb_InstallNoneButton);
+        }
+        { Fl_Box* o = SoftwareSize = new Fl_Box(40, 265, 320, 25, "0k marked for installation.");
+          o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
         }
         o->end();
       }
-      { Fl_Group* o = InstallPane = new Fl_Group(10, 10, 430, 280);
+      { Fl_Group* o = LicensePane = new Fl_Group(10, 10, 560, 280);
+        o->box(FL_FLAT_BOX);
+        o->hide();
+        { Fl_Box* o = LicenseLabel = new Fl_Box(10, 10, 560, 40, "License Agreement for Some Product");
+          o->labelfont(1);
+          o->labelsize(18);
+          o->labelcolor(4);
+          o->align(133|FL_ALIGN_INSIDE);
+        }
+        { Fl_Browser* o = LicenseBrowser = new Fl_Browser(10, 55, 560, 185);
+          o->textfont(4);
+          o->textsize(12);
+          Fl_Group::current()->resizable(o);
+        }
+        { Fl_Group* o = new Fl_Group(10, 245, 560, 45);
+          o->box(FL_FLAT_BOX);
+          { CheckButton* o = LicenseAccept = new CheckButton(10, 245, 560, 20, "Yes, I accept the terms and conditions of the software license agreement.");
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)cb_LicenseAccept);
+          }
+          { CheckButton* o = LicenseDecline = new CheckButton(10, 270, 560, 20, "No, I do not accept the terms and conditions of the software license agreemen\
+t.");
+            o->type(102);
+            o->down_box(FL_ROUND_DOWN_BOX);
+            o->callback((Fl_Callback*)cb_LicenseDecline);
+          }
+          o->end();
+        }
+        o->end();
+      }
+      { Fl_Group* o = InstallPane = new Fl_Group(10, 10, 555, 280);
         o->box(FL_FLAT_BOX);
         o->hide();
         { Fl_Box* o = new Fl_Box(10, 10, 430, 25, "Installing Software...");
@@ -174,7 +233,7 @@ Fl_Window* make_window() {
           o->labelcolor(4);
           o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
         }
-        { Fl_Slider* o = InstallPercent = new Fl_Slider(40, 75, 365, 15, "Progress Label...");
+        { Fl_Slider* o = InstallPercent = new Fl_Slider(40, 75, 525, 15, "Progress Label...");
           o->type(3);
           o->selection_color(63);
           o->labelfont(2);
@@ -182,7 +241,7 @@ Fl_Window* make_window() {
           o->value(50);
           o->align(FL_ALIGN_TOP_LEFT);
         }
-        InstallLog = new Fl_Browser(40, 100, 365, 180);
+        InstallLog = new Fl_Browser(40, 100, 525, 190);
         o->end();
       }
       o->end();
