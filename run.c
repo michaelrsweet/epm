@@ -1,9 +1,9 @@
 /*
- * "$Id: run.c,v 1.7 2005/01/11 21:20:17 mike Exp $"
+ * "$Id: run.c,v 1.8 2005/01/11 21:36:57 mike Exp $"
  *
  *   External program function for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2004 by Easy Software Products.
+ *   Copyright 1999-2005 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -178,5 +178,5 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
 
 
 /*
- * End of "$Id: run.c,v 1.7 2005/01/11 21:20:17 mike Exp $".
+ * End of "$Id: run.c,v 1.8 2005/01/11 21:36:57 mike Exp $".
  */

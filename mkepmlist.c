@@ -1,9 +1,9 @@
 /*
- * "$Id: mkepmlist.c,v 1.9 2005/01/11 21:20:17 mike Exp $"
+ * "$Id: mkepmlist.c,v 1.10 2005/01/11 21:36:57 mike Exp $"
  *
  *   List file generation utility for the ESP Package Manager (EPM).
  *
- *   Copyright 2003-2004 by Easy Software Products
+ *   Copyright 2003-2005 by Easy Software Products
  *   Copyright 2003 Andreas Voegele
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -440,7 +440,7 @@ void
 info(void)
 {
   puts(EPM_VERSION);
-  puts("Copyright 1999-2004 by Easy Software Products.");
+  puts("Copyright 1999-2005 by Easy Software Products.");
   puts("");
   puts("EPM is free software and comes with ABSOLUTELY NO WARRANTY; for details");
   puts("see the GNU General Public License in the file COPYING or at");
@@ -621,5 +621,5 @@ usage(void)
 
 
 /*
- * End of "$Id: mkepmlist.c,v 1.9 2005/01/11 21:20:17 mike Exp $".
+ * End of "$Id: mkepmlist.c,v 1.10 2005/01/11 21:36:57 mike Exp $".
  */

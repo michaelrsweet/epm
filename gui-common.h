@@ -1,9 +1,9 @@
 //
-// "$Id: gui-common.h,v 1.3 2005/01/11 21:20:17 mike Exp $"
+// "$Id: gui-common.h,v 1.4 2005/01/11 21:36:57 mike Exp $"
 //
 //   ESP Software Wizard common header file for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2004 by Easy Software Products.
+//   Copyright 1999-2005 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -109,5 +109,5 @@ int	sort_dists(const dist_t *d0, const dist_t *d1);
 
 
 //
-// End of "$Id: gui-common.h,v 1.3 2005/01/11 21:20:17 mike Exp $".
+// End of "$Id: gui-common.h,v 1.4 2005/01/11 21:36:57 mike Exp $".
 //

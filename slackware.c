@@ -1,9 +1,9 @@
 /*
- * "$Id: slackware.c,v 1.3 2005/01/11 21:20:17 mike Exp $"
+ * "$Id: slackware.c,v 1.4 2005/01/11 21:36:57 mike Exp $"
  *
  *   Slackware package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 2003 by Easy Software Products.
+ *   Copyright 2003-2005 by Easy Software Products.
  *
  *   Contributed by Alec Thomas <$givenname at korn dot ch>
  *
@@ -330,5 +330,5 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: slackware.c,v 1.3 2005/01/11 21:20:17 mike Exp $".
+ * End of "$Id: slackware.c,v 1.4 2005/01/11 21:36:57 mike Exp $".
  */
