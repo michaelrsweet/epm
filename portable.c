@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.82 2003/02/13 16:52:30 mike Exp $"
+ * "$Id: portable.c,v 1.83 2003/02/13 18:33:41 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1124,7 +1124,7 @@ write_dist(const char *title,		/* I - Title to show */
   if (setup)
   {
    /*
-    * Include the ESP Software Wizard (setup)...
+    * Include the ESP Software Installation Wizard (setup)...
     */
 
     if (stat(SetupProgram, &srcstat))
@@ -1138,13 +1138,13 @@ write_dist(const char *title,		/* I - Title to show */
     }
 
 #ifdef __APPLE__
-    snprintf(dstname, sizeof(dstname), "Setup.app/Contents/MacOS/setup");
-#else
-    strcpy(dstname, "setup");
-#endif /* __APPLE__ */
-
     if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", dstname, NULL) < 0)
+	           srcstat.st_mtime, "root", "root",
+		   "Setup.app/Contents/MacOS/setup", NULL) < 0)
+#else
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
+#endif /* __APPLE__ */
     {
       if (Verbosity)
         puts("");
@@ -1247,11 +1247,205 @@ write_dist(const char *title,		/* I - Title to show */
       }
     }
 
-#ifdef __APPLE__
    /*
     * And finally the uninstall stuff...
     */
 
+#ifdef __APPLE__
+    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root",
+                   "Uninstall.app", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Uninstall.app/Contents", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/MacOS", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/Resources", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing directory header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+   /*
+    * Then copy the data files...
+    */
+
+    snprintf(srcname, sizeof(srcname), "%s/uninst.icns", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/Resources/uninst.icns", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    snprintf(srcname, sizeof(srcname), "%s/uninst.info", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/PkgInfo", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+
+    snprintf(srcname, sizeof(srcname), "%s/uninst.plist", DataDir);
+    stat(srcname, &srcstat);
+
+    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
+                   srcstat.st_size, srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/Info.plist", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, srcname) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+	      dstname, strerror(errno));
+      return (-1);
+    }
+#endif /* __APPLE__ */
+
+   /*
+    * Include the ESP Software Removal Wizard (uninst)...
+    */
+
+    if (stat(UninstProgram, &srcstat))
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Unable to stat GUI uninstall program %s - %s\n",
+	      UninstProgram, strerror(errno));
+      return (-1);
+    }
+
+#ifdef __APPLE__
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root",
+		   "Uninstall.app/Contents/MacOS/uninst", NULL) < 0)
+#else
+    if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "uninst", NULL) < 0)
+#endif /* __APPLE__ */
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, UninstProgram) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for uninst -\n    %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (Verbosity)
+    {
+      printf(" uninst");
+      fflush(stdout);
+    }
+
+#ifdef __APPLE__
+   /*
+    * And the image file...
+    */
+
+    stat(setup, &srcstat);
+    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+	           srcstat.st_mtime, "root", "root", "Uninstall.app/Contents/Resources/setup.xpm", NULL) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file header - %s\n",
+	      strerror(errno));
+      return (-1);
+    }
+
+    if (tar_file(tarfile, setup) < 0)
+    {
+      if (Verbosity)
+        puts("");
+
+      fprintf(stderr, "epm: Error writing file data for setup.xpm -\n    %s\n",
+	      strerror(errno));
+      return (-1);
+    }
 #endif /* __APPLE__ */
   }
 
@@ -2306,5 +2500,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.82 2003/02/13 16:52:30 mike Exp $".
+ * End of "$Id: portable.c,v 1.83 2003/02/13 18:33:41 mike Exp $".
  */

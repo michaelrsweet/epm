@@ -23,7 +23,7 @@
 	<string>help</string>
 
 	<key>CFBundleName</key>
-	<string>ESP Package Manager Uninstall Program</string>
+	<string>ESP Software Removal Wizard</string>
 
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>

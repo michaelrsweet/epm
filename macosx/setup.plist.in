@@ -23,7 +23,7 @@
 	<string>help</string>
 
 	<key>CFBundleName</key>
-	<string>ESP Package Manager Setup Program</string>
+	<string>ESP Software Installation Wizard</string>
 
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
