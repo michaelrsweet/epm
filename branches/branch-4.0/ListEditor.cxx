@@ -766,19 +766,19 @@ ListEditor::ListEditor(const char *listfile) {
     o->set_modal();
     o->end();
   }
-  { Fl_Window* o = project_window = new Fl_Window(500, 411, "Project Settings");
+  { Fl_Window* o = project_window = new Fl_Window(500, 410, "Project Settings");
     w = o;
     o->user_data((void*)(this));
     { Fl_Tabs* o = new Fl_Tabs(10, 10, 480, 350);
       { Fl_Group* o = new Fl_Group(10, 35, 480, 325, "General");
-        o->hide();
         name_field = new Fl_Input(145, 45, 335, 25, "Project:");
         version_field = new Fl_Input(145, 80, 165, 25, "Version:");
         { Fl_Counter* o = version_counter = new Fl_Counter(310, 80, 170, 25);
           o->minimum(0);
           o->maximum(1e+08);
-          o->step(10);
+          o->step(1);
           o->value(1e+06);
+          version_counter->lstep(10);
         }
         copyright_field = new Fl_Input(145, 115, 335, 25, "Copyright:");
         vendor_field = new Fl_Input(145, 150, 335, 25, "Vendor:");
@@ -790,6 +790,7 @@ ListEditor::ListEditor(const char *listfile) {
         o->end();
       }
       { Fl_Group* o = new Fl_Group(10, 35, 480, 325, "Packages");
+        o->hide();
         { Fl_Browser* o = subpackage_list = new Fl_Browser(20, 60, 355, 60, "Subpackages:");
           o->type(2);
           o->callback((Fl_Callback*)cb_subpackage_list);

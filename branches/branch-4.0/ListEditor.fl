@@ -50,10 +50,10 @@ set_title();} {}
   } {
     Fl_Window window {
       label {EPM List Editor 4.0}
-      callback {close_cb();}
-      private xywh {265 20 720 495} hide resizable
+      callback {close_cb();} open
+      private xywh {265 20 720 495} resizable
       code0 {\#include "epm.h"}
-      code1 {\#include <FL/Fl_Preferences.H>}
+      code1 {\#include <FL/Fl_Preferences.H>} visible
     } {
       Fl_Menu_Bar menubar {open
         private xywh {0 0 720 25}
@@ -458,14 +458,14 @@ set_title();} {}
     }
     Fl_Window project_window {
       label {Project Settings}
-      private xywh {4 20 500 411} visible
+      private xywh {4 20 500 410} visible
     } {
       Fl_Tabs {} {open
         private xywh {10 10 480 350}
       } {
         Fl_Group {} {
           label General open
-          private xywh {10 35 480 325} hide
+          private xywh {10 35 480 325}
         } {
           Fl_Input name_field {
             label {Project:}
@@ -475,8 +475,9 @@ set_title();} {}
             label {Version:}
             private xywh {145 80 165 25}
           }
-          Fl_Counter version_counter {
-            private xywh {310 80 170 25} minimum 0 maximum 1e+08 step 10 value 1e+06
+          Fl_Counter version_counter {selected
+            private xywh {310 80 170 25} minimum 0 maximum 1e+08 step 1 value 1e+06
+            code0 {version_counter->lstep(10);}
           }
           Fl_Input copyright_field {
             label {Copyright:}
@@ -508,8 +509,8 @@ set_title();} {}
           }
         }
         Fl_Group {} {
-          label Packages open selected
-          private xywh {10 35 480 325}
+          label Packages open
+          private xywh {10 35 480 325} hide
         } {
           Fl_Browser subpackage_list {
             label {Subpackages:}
