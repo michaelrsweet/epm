@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.40 2001/07/25 20:30:11 mike Exp $"
+ * "$Id: dist.c,v 1.41 2001/07/25 20:52:50 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -1395,7 +1395,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	  *skip |= SKIP_IFSAT;
       }
     }
-    else if (strcmp(buffer, "%else") == 0)
+    else if (strcmp(buffer, "%else\n") == 0)
     {
      /*
       * Handle "else" condition of %ifdef statement...
@@ -1419,7 +1419,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	*skip |= SKIP_IFSAT;
       }
     }
-    else if (strcmp(buffer, "%endif") == 0 && (*skip & SKIP_IFACTIVE))
+    else if (strcmp(buffer, "%endif\n") == 0)
     {
      /*
       * Cancel any filtering based on environment variables.
@@ -1437,7 +1437,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 
       *skip &= ~(SKIP_IF | SKIP_IFACTIVE | SKIP_IFSAT);
     }
-    else if (!*skip)
+    else if (!(*skip & SKIP_MASK))
     {
      /*
       * Otherwise strip any trailing newlines and return the string!
@@ -1640,5 +1640,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.40 2001/07/25 20:30:11 mike Exp $".
+ * End of "$Id: dist.c,v 1.41 2001/07/25 20:52:50 mike Exp $".
  */
