@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.35 2002/06/06 19:39:37 mike Exp $"
+# "$Id: Makefile.in,v 1.36 2002/06/08 02:04:45 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -217,6 +217,7 @@ Makefile:	Makefile.in configure
 	else \
 		./configure; \
 	fi
+	touch config.h
 
 
 #
@@ -230,6 +231,7 @@ config.h:	config.h.in configure
 	else \
 		./configure; \
 	fi
+	touch config.h
 
 
 #
@@ -330,5 +332,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.35 2002/06/06 19:39:37 mike Exp $".
+# End of "$Id: Makefile.in,v 1.36 2002/06/08 02:04:45 mike Exp $".
 #
