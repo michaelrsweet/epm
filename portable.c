@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.37 2001/05/22 00:41:27 mike Exp $"
+ * "$Id: portable.c,v 1.38 2001/05/22 18:54:42 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1034,6 +1034,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 	      const char *directory)	/* I - Directory */
 {
   int		i;		/* Looping var */
+  int		col;		/* Column in the output */
   FILE		*scriptfile;	/* Install script */
   char		filename[1024];	/* Name of temporary file */
   file_t	*file;		/* Software file */
@@ -1117,11 +1118,16 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   {
     fputs("echo Backing up old versions of non-shared files to be installed...\n", scriptfile);
 
-    fputs("for file in", scriptfile);
+    col = fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
       if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
           strncmp(file->dst, "/usr", 4) != 0)
-        fprintf(scriptfile, " %s", file->dst);
+      {
+        if (col > 80)
+	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	else
+          col += fprintf(scriptfile, " %s", file->dst);
+      }
 
     fputs("; do\n", scriptfile);
     fputs("	if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
@@ -1140,11 +1146,16 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     fputs("if test -w /usr ; then\n", scriptfile);
     fputs("	echo Backing up old versions of shared files to be installed...\n", scriptfile);
 
-    fputs("	for file in", scriptfile);
+    col = fputs("	for file in", scriptfile);
     for (; i > 0; i --, file ++)
       if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
           strncmp(file->dst, "/usr", 4) == 0)
-        fprintf(scriptfile, " %s", file->dst);
+      {
+        if (col > 80)
+	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	else
+          col += fprintf(scriptfile, " %s", file->dst);
+      }
 
     fputs("; do\n", scriptfile);
     fputs("		if test -d $file -o -f $file -o " SYMLINK " $file; then\n", scriptfile);
@@ -1203,10 +1214,15 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   {
     fputs("echo Checking configuration files...\n", scriptfile);
 
-    fputs("for file in", scriptfile);
+    col = fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
       if (tolower(file->type) == 'c')
-        fprintf(scriptfile, " %s", file->dst);
+      {
+        if (col > 80)
+	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	else
+          col += fprintf(scriptfile, " %s", file->dst);
+      }
 
     fputs("; do\n", scriptfile);
     fputs("	if test ! -f $file; then\n", scriptfile);
@@ -1621,17 +1637,24 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   fputs("echo Removing/restoring installed files...\n", scriptfile);
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l' ||
+         tolower(file->type) == 'c') &&
         strncmp(file->dst, "/usr", 4) != 0)
       break;
 
   if (i)
   {
-    fputs("for file in", scriptfile);
+    col = fputs("for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l' ||
+           tolower(file->type) == 'c') &&
           strncmp(file->dst, "/usr", 4) != 0)
-	fprintf(scriptfile, " %s", file->dst);
+      {
+        if (col > 80)
+	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	else
+          col += fprintf(scriptfile, " %s", file->dst);
+      }
 
     fputs("; do\n", scriptfile);
     fputs("	rm -f $file\n", scriptfile);
@@ -1642,18 +1665,25 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+    if ((tolower(file->type) == 'f' || tolower(file->type) == 'l' ||
+         tolower(file->type) == 'c') &&
         strncmp(file->dst, "/usr", 4) == 0)
       break;
 
   if (i)
   {
     fputs("if test -w /usr ; then\n", scriptfile);
-    fputs("	for file in", scriptfile);
+    col = fputs("	for file in", scriptfile);
     for (; i > 0; i --, file ++)
-      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l') &&
+      if ((tolower(file->type) == 'f' || tolower(file->type) == 'l' ||
+           tolower(file->type) == 'c') &&
           strncmp(file->dst, "/usr", 4) == 0)
-	fprintf(scriptfile, " %s", file->dst);
+      {
+        if (col > 80)
+	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	else
+          col += fprintf(scriptfile, " %s", file->dst);
+      }
 
     fputs("; do\n", scriptfile);
     fputs("		rm -f $file\n", scriptfile);
@@ -1752,5 +1782,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.37 2001/05/22 00:41:27 mike Exp $".
+ * End of "$Id: portable.c,v 1.38 2001/05/22 18:54:42 mike Exp $".
  */
