@@ -21,6 +21,8 @@ WHAT'S NEW IN EPM 3.5?
 	  the full name in quotes ("file with spaces") or using
 	  the backslash character (file\ with\ spaces).
 	- The mkepmlist utility didn't handle symlinks properly.
+	- BSD packages needed to list the directories to remove
+	  separately and in reverse order.
 
 
 WHAT'S NEW IN EPM 3.4?
