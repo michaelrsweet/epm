@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.38 2001/07/05 16:57:22 mike Exp $"
+ * "$Id: dist.c,v 1.39 2001/07/09 20:45:07 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -28,6 +28,8 @@
  *   compare_files()   - Compare the destination filenames.
  *   free_strings()    - Free memory used by the array of strings.
  *   expand_name()     - Expand a filename with environment variables.
+ *   get_file()        - Read a file into a string...
+ *   get_inline()      - Read inline lines into a string...
  *   get_line()        - Get a line from a file, filtering for uname lines...
  *   get_vernumber()   - Convert a version string to a number...
  *   patmatch()        - Pattern matching...
@@ -54,10 +56,13 @@ extern int	gethostname(char *, int);
  * Local functions...
  */
 
-static int	add_string(int num_strings, char ***strings, char *string);
+static int	add_string(int num_strings, char ***strings, FILE *fp,
+		           char *string);
 static int	compare_files(const file_t *f0, const file_t *f1);
 static void	expand_name(char *buffer, char *name);
 static void	free_strings(int num_strings, char **strings);
+static char	*get_file(const char *filename, char *buffer, int size);
+static char	*get_inline(const char *term, FILE *fp, char *buffer, int size);
 static char	*get_line(char *buffer, int size, FILE *fp,
 		          struct utsname *platform, const char *format,
 			  int *skip);
@@ -71,11 +76,29 @@ static int	patmatch(const char *, const char *);
 
 void
 add_command(dist_t     *dist,		/* I - Distribution */
+            FILE       *fp,		/* I - Distribution file */
             char       type,		/* I - Command type */
 	    const char *command)	/* I - Command string */
 {
   command_t	*temp;			/* New command */
+  char		buf[16384];		/* File import buffer */
 
+
+  if (strncmp(command, "<<", 2) == 0)
+  {
+    for (command += 2; isspace(*command); command ++);
+
+    command = get_inline(command, fp, buf, sizeof(buf));
+  }
+  else if (command[0] == '<' && command[1])
+  {
+    for (command ++; isspace(*command); command ++);
+
+    command = get_file(command, buf, sizeof(buf));
+  }
+
+  if (command == NULL)
+    return;
 
   if (dist->num_commands == 0)
     temp = malloc(sizeof(command_t));
@@ -90,9 +113,8 @@ add_command(dist_t     *dist,		/* I - Distribution */
 
   dist->commands = temp;
   temp           += dist->num_commands;
-
-  temp->type    = type;
-  temp->command = strdup(command);
+  temp->type     = type;
+  temp->command  = strdup(command);
 
   if (temp->command == NULL)
   {
@@ -495,22 +517,23 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	}
 	else if (strcmp(line, "%description") == 0)
 	  dist->num_descriptions =
-	      add_string(dist->num_descriptions, &(dist->descriptions), temp);
+	      add_string(dist->num_descriptions, &(dist->descriptions), 
+	                 listfiles[listlevel], temp);
 	else if (strcmp(line, "%preinstall") == 0)
-          add_command(dist, COMMAND_PRE_INSTALL, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_PRE_INSTALL, temp);
 	else if (strcmp(line, "%install") == 0 ||
 	         strcmp(line, "%postinstall") == 0)
-          add_command(dist, COMMAND_POST_INSTALL, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_POST_INSTALL, temp);
 	else if (strcmp(line, "%remove") == 0 ||
 	         strcmp(line, "%preremove") == 0)
-          add_command(dist, COMMAND_PRE_REMOVE, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_PRE_REMOVE, temp);
 	else if (strcmp(line, "%postremove") == 0)
-          add_command(dist, COMMAND_POST_REMOVE, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_POST_REMOVE, temp);
 	else if (strcmp(line, "%prepatch") == 0)
-          add_command(dist, COMMAND_PRE_PATCH, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_PRE_PATCH, temp);
 	else if (strcmp(line, "%patch") == 0 ||
 	         strcmp(line, "%postpatch") == 0)
-          add_command(dist, COMMAND_POST_PATCH, temp);
+          add_command(dist, listfiles[listlevel], COMMAND_POST_PATCH, temp);
         else if (strcmp(line, "%product") == 0)
 	{
           if (!dist->product[0])
@@ -804,14 +827,49 @@ sort_dist_files(dist_t *dist)	/* I - Distribution to sort */
 static int			/* O - Number of strings */
 add_string(int  num_strings,	/* I - Number of strings */
            char ***strings,	/* O - Pointer to string pointer array */
+           FILE *fp,		/* I - File to read from for inline text */
            char *string)	/* I - String to add */
 {
-  if (num_strings == 0)
-    *strings = (char **)malloc(sizeof(char *));
-  else
-    *strings = (char **)realloc(*strings, (num_strings + 1) * sizeof(char *));
+  char		**temp,		/* Temporary pointer to string array */
+		buf[16384];	/* File import buffer */
 
-  (*strings)[num_strings] = strdup(string);
+
+  if (strncmp(string, "<<", 2) == 0)
+  {
+    for (string += 2; isspace(*string); string ++);
+
+    string = get_inline(string, fp, buf, sizeof(buf));
+  }
+  else if (string[0] == '<' && string[1])
+  {
+    for (string ++; isspace(*string); string ++);
+
+    string = get_file(string, buf, sizeof(buf));
+  }
+
+  if (string == NULL)
+    return (num_strings);
+
+  if (num_strings == 0)
+    temp = (char **)malloc(sizeof(char *));
+  else
+    temp = (char **)realloc(*strings, (num_strings + 1) * sizeof(char *));
+
+  if (temp == NULL)
+  {
+    perror("epm: Out of memory adding string");
+    return (num_strings);
+  }
+
+  *strings = temp;
+  temp     += num_strings;
+
+  if ((*temp = strdup(string)) == NULL)
+  {
+    perror("epm: Out of memory duplicating string");
+    return (num_strings);
+  }
+
   return (num_strings + 1);
 }
 
@@ -912,6 +970,112 @@ free_strings(int  num_strings,	/* I - Number of strings */
 
 
 /*
+ * 'get_file()' - Read a file into a string...
+ */
+
+static char *			/* O  - Pointer to string or NULL on EOF */
+get_file(const char *filename,	/* I  - File to read from */
+         char       *buffer,	/* IO - String buffer */
+	 int        size)	/* I  - Size of string buffer */
+{
+  FILE		*fp;		/* File buffer */
+  struct stat	info;		/* File information */
+
+
+  if (stat(filename, &info))
+  {
+    fprintf(stderr, "epm: Unable to stat \"%s\" - %s\n", filename,
+            strerror(errno));
+    return (NULL);
+  }
+
+  if (info.st_size > (size - 1))
+  {
+    fprintf(stderr, "epm: File \"%s\" is too large (%d bytes) for buffer (%d bytes)\n",
+            filename, (int)info.st_size, size - 1);
+    return (NULL);
+  }
+
+  if ((fp = fopen(filename, "r")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to open \"%s\" - %s\n", filename,
+            strerror(errno));
+    return (NULL);
+  }
+
+  if ((fread(buffer, 1, info.st_size, fp)) < info.st_size)
+  {
+    fprintf(stderr, "epm: Unable to read \"%s\" - %s\n", filename,
+            strerror(errno));
+    fclose(fp);
+    return (NULL);
+  }
+
+  fclose(fp);
+
+  if (buffer[info.st_size - 1] == '\n')
+    buffer[info.st_size - 1] = '\0';
+  else
+    buffer[info.st_size] = '\0';
+
+  return (buffer);
+}
+
+
+/*
+ * 'get_inline()' - Read inline lines into a string...
+ */
+
+static char *			/* O  - Pointer to string or NULL on EOF */
+get_inline(const char *term,	/* I  - Termination string */
+           FILE       *fp,	/* I  - File to read from */
+           char       *buffer,	/* IO - String buffer */
+	   int        size)	/* I  - Size of string buffer */
+{
+  char	*bufptr;		/* Pointer into buffer */
+  int	termlen;		/* Length of termination string */
+  int	linelen;		/* Length of line */
+
+
+  bufptr  = buffer;
+  termlen = strlen(term);
+
+  if (termlen == 0)
+    return (NULL);
+
+  while (fgets(bufptr, size, fp) != NULL)
+  {
+    if (strncmp(bufptr, term, termlen) == 0 && bufptr[termlen] == '\n')
+    {
+      *bufptr = '\0';
+      break;
+    }
+
+    linelen = strlen(bufptr);
+    size    -= linelen;
+    bufptr  += linelen;
+
+    if (size < 2)
+    {
+      fputs("epm: Inline script too long!\n", stderr);
+      break;
+    }
+  }
+
+  if (bufptr > buffer)
+  {
+    bufptr --;
+    if (*bufptr == '\n')
+      *bufptr = '\0';
+
+    return (buffer);
+  }
+  else
+    return (NULL);
+}
+
+
+/*
  * 'get_line()' - Get a line from a file, filtering for uname lines...
  */
 
@@ -923,14 +1087,14 @@ get_line(char           *buffer,	/* I - Buffer to read into */
          const char     *format,	/* I - Distribution format */
 	 int            *skip)		/* IO - Skip lines? */
 {
-  int	op,				/* Operation (0 = OR, 1 = AND) */
-	namelen,			/* Length of system name + version */
-	len,				/* Length of string */
-	match;				/* 1 = match, 0 = not */
-  char	*ptr,				/* Pointer into value */
-	*bufptr,			/* Pointer into buffer */
-	namever[255],			/* Name + version */
-	value[255];			/* Value string */
+  int		op,			/* Operation (0 = OR, 1 = AND) */
+		namelen,		/* Length of system name + version */
+		len,			/* Length of string */
+		match;			/* 1 = match, 0 = not */
+  char		*ptr,			/* Pointer into value */
+		*bufptr,		/* Pointer into buffer */
+		namever[255],		/* Name + version */
+		value[255];		/* Value string */
 
 
   while (fgets(buffer, size, fp) != NULL)
@@ -1244,5 +1408,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.38 2001/07/05 16:57:22 mike Exp $".
+ * End of "$Id: dist.c,v 1.39 2001/07/09 20:45:07 mike Exp $".
  */

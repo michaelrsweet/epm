@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.24 2001/07/02 14:26:54 mike Exp $"
+ * "$Id: epm.h,v 1.25 2001/07/09 20:45:08 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -215,7 +215,8 @@ extern const char	*SetupProgram;	/* Setup program */
  * Prototypes...
  */
 
-extern void	add_command(dist_t *dist, char type, const char *command);
+extern void	add_command(dist_t *dist, FILE *fp, char type,
+		            const char *command);
 extern void	add_depend(dist_t *dist, char type, const char *line);
 extern file_t	*add_file(dist_t *dist);
 extern int	copy_file(const char *dst, const char *src,
@@ -269,5 +270,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.24 2001/07/02 14:26:54 mike Exp $".
+ * End of "$Id: epm.h,v 1.25 2001/07/09 20:45:08 mike Exp $".
  */
