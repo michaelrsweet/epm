@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.18 2001/01/03 20:41:34 mike Exp $"
+ * "$Id: portable.c,v 1.19 2001/01/19 16:24:00 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -91,6 +91,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
 		  NULL
 		};
 
+
+  (void)platform; /* Eliminates compiler warning about unused variable */
 
   if (Verbosity)
     puts("Creating PORTABLE distribution...");
@@ -1551,5 +1553,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.18 2001/01/03 20:41:34 mike Exp $".
+ * End of "$Id: portable.c,v 1.19 2001/01/19 16:24:00 mike Exp $".
  */

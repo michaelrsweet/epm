@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.8 2001/01/03 20:41:34 mike Exp $"
+ * "$Id: swinstall.c,v 1.9 2001/01/19 16:24:01 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -50,6 +50,8 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   char		command[1024];		/* Command to run */
   file_t	*file;			/* Current distribution file */
 
+
+  (void)platform; /* Eliminates compiler warning about unused variable */
 
   if (Verbosity)
     puts("Creating swinstall distribution...");
@@ -335,5 +337,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.8 2001/01/03 20:41:34 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.9 2001/01/19 16:24:01 mike Exp $".
  */
