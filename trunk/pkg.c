@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.18 2001/06/26 16:22:22 mike Exp $"
+ * "$Id: pkg.c,v 1.19 2001/12/04 21:21:25 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -455,7 +455,8 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Copying into package stream file...");
 
-  if (run_command(directory, "pkgtrans -s . %s.pkg %s", name, prodname))
+  if (run_command(directory, "pkgtrans -s %s/%s %s.pkg %s",
+                  current, directory, name, prodname))
     return (1);
 
  /*
@@ -488,5 +489,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.18 2001/06/26 16:22:22 mike Exp $".
+ * End of "$Id: pkg.c,v 1.19 2001/12/04 21:21:25 mike Exp $".
  */
