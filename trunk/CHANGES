@@ -11,8 +11,8 @@ WHAT'S NEW IN EPM 3.0?
 	  architectures (e.g. i586, i686, ultrasparc, etc.)
 	- Added support for the *BSD package format using
 	  pkg_create.
-	- Added experimental support for the AIX package format
-	  using backup.
+	- Added support for the AIX package format using
+	  the backup program.
 	- Added new epminstall utility to build list files
 	  from "make install" targets.
 	- Added snprintf/vsnprintf functions for systems that

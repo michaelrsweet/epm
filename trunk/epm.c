@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.56 2001/06/26 16:22:21 mike Exp $"
+ * "$Id: epm.c,v 1.57 2001/06/26 19:47:36 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -219,7 +219,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    break;
 
         case 'v' : /* Be verbose */
-	    Verbosity ++;
+	    Verbosity += strlen(argv[i]) - 1;
 	    break;
 
         case '-' : /* --option */
@@ -449,7 +449,7 @@ usage(void)
   puts("Options:");
   puts("-g");
   puts("    Don't strip executables in distributions.");
-  puts("-f {deb,depot,inst,native,pkg,portable,rpm,setld,swinstall,tardist}");
+  puts("-f {aix,bsd,deb,depot,inst,native,pkg,portable,rpm,setld,swinstall,tardist}");
   puts("    Set distribution format.");
   puts("-k");
   puts("    Keep intermediate files (spec files, etc.)");
@@ -469,5 +469,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.56 2001/06/26 16:22:21 mike Exp $".
+ * End of "$Id: epm.c,v 1.57 2001/06/26 19:47:36 mike Exp $".
  */
