@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.6 2002/08/30 02:00:42 mike Exp $"
+ * "$Id: bsd.c,v 1.7 2002/09/25 19:44:27 mike Exp $"
  *
  *   FreeBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -213,10 +213,21 @@ make_bsd(const char     *prodname,	/* I - Product short name */
           qprintf(fp, "%s\n", file->dst + 1);
           break;
       case 'd' :
-          qprintf(fp, "%s\n@dirrm %s\n", file->dst + 1, file->dst + 1);
+          qprintf(fp, "%s\n", file->dst + 1);
           break;
     }
   }
+
+ /*
+  * Need to list directories to remove in reverse order after
+  * everything else...
+  */
+
+  for (i = dist->num_files, file = dist->files + i - 1;
+       i > 0;
+       i --, file --)
+    if (tolower(file->type) == 'd')
+      qprintf(fp, "@dirrm %s\n", file->dst + 1);
 
   fclose(fp);
 
@@ -319,5 +330,5 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: bsd.c,v 1.6 2002/08/30 02:00:42 mike Exp $".
+ * End of "$Id: bsd.c,v 1.7 2002/09/25 19:44:27 mike Exp $".
  */
