@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.15 2002/12/17 18:57:56 swdev Exp $"
+ * "$Id: setld.c,v 1.16 2003/12/22 12:37:25 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -201,7 +201,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   fputs("PRE_L)\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      qprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
+      qprintf(fp, "%s stop\n", file->dst);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_INSTALL)
       fprintf(fp, "%s\n", c->command);
@@ -220,13 +220,13 @@ make_setld(const char     *prodname,	/* I - Product short name */
     }
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      qprintf(fp, "/sbin/init.d/%s start\n", file->dst);
+      qprintf(fp, "%s start\n", file->dst);
   fputs(";;\n", fp);
 
   fputs("PRE_D)\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      qprintf(fp, "/sbin/init.d/%s stop\n", file->dst);
+      qprintf(fp, "%s stop\n", file->dst);
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_REMOVE)
       fprintf(fp, "%s\n", c->command);
@@ -250,7 +250,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   fclose(fp);
 
  /*
-  * Sort the file list by the destination name, since kits needs a sorted
+  * Sort the file list by the destination name, since kits need a sorted
   * list...
   */
 
@@ -428,5 +428,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.15 2002/12/17 18:57:56 swdev Exp $".
+ * End of "$Id: setld.c,v 1.16 2003/12/22 12:37:25 mike Exp $".
  */
