@@ -1,4 +1,4 @@
-INSTALL - ESP Package Manager (EPM) 3.1
+INSTALL - ESP Package Manager (EPM) 3.2
 ---------------------------------------
 
 WHAT IS REQUIRED FOR EPM?
@@ -6,8 +6,9 @@ WHAT IS REQUIRED FOR EPM?
     On your development system you just need a C compiler, a make
     program, the Bourne (or Korn or Bash) shell, and gzip.
 
-    The graphical setup program needs a C++ compiler and the FLTK
-    library, available at "http://www.fltk.org".
+    The graphical setup program needs a C++ compiler and the
+    FLTK library, version 1.1 or higher, available at
+    "http://www.fltk.org".
 
     EPM can generate so-called "portable" distributions that are based
     on shell scripts and tar files.  For these types of distributions

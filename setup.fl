@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0011 
+version 1.0100 
 header_name {.h} 
 code_name {.cxx} 
 gridx 5 
@@ -15,21 +15,18 @@ Function {make_window()} {open
     code0 {\#include "setup2.h"} visible
   } {
     Fl_Button NextButton {
-      label {next.xbm}
       callback next_cb
-      xywh {445 310 55 25} labeltype image
+      image {next.xbm} xywh {445 310 55 25}
     }
     Fl_Button CancelButton {
       label Cancel
       callback {exit(0);}
       xywh {510 310 60 25}
     }
-    Fl_Tabs Wizard {open
+    Fl_Wizard Wizard {open
       xywh {0 0 580 300}
-      code0 {\#include "Fl_Wizard.h"}
-      class Fl_Wizard
     } {
-      Fl_Group WelcomePane {open
+      Fl_Group WelcomePane {
         xywh {10 10 560 280} box FLAT_BOX hide
       } {
         Fl_Box {} {
@@ -46,7 +43,7 @@ To select software for installation, please click on the "Next" button below.}
           xywh {40 50 500 180} align 21
         }
       }
-      Fl_Group TypePane {open
+      Fl_Group TypePane {
         xywh {10 10 555 280} box FLAT_BOX hide
       } {
         Fl_Box {} {
@@ -63,48 +60,39 @@ To select software for installation, please click on the "Next" button below.}
           Fl_Round_Button {TypeButton[0]} {
             callback type_cb
             xywh {70 100 300 20} type Radio down_box ROUND_DOWN_BOX
-            code0 {\#include "CheckButton.h"}
-            class CheckButton
           }
           Fl_Round_Button {TypeButton[1]} {
             callback type_cb
             xywh {70 120 300 20} type Radio down_box ROUND_DOWN_BOX
-            class CheckButton
           }
           Fl_Round_Button {TypeButton[2]} {
             callback type_cb
             xywh {70 140 300 20} type Radio down_box ROUND_DOWN_BOX
-            class CheckButton
           }
           Fl_Round_Button {TypeButton[3]} {
             callback type_cb
             xywh {70 160 300 20} type Radio down_box ROUND_DOWN_BOX
-            class CheckButton
           }
           Fl_Round_Button {TypeButton[4]} {
             callback type_cb
             xywh {70 180 300 20} type Radio down_box ROUND_DOWN_BOX
-            class CheckButton
           }
           Fl_Round_Button {TypeButton[5]} {
             callback type_cb
             xywh {70 200 300 20} type Radio down_box ROUND_DOWN_BOX
-            class CheckButton
           }
           Fl_Round_Button {TypeButton[6]} {
             callback type_cb
             xywh {70 220 300 20} type Radio down_box ROUND_DOWN_BOX
-            class CheckButton
           }
           Fl_Round_Button {TypeButton[7]} {
             callback type_cb
             xywh {70 240 300 20} type Radio down_box ROUND_DOWN_BOX
-            class CheckButton
           }
         }
       }
-      Fl_Group SoftwarePane {open
-        xywh {10 10 560 285} box FLAT_BOX hide
+      Fl_Group SoftwarePane {open selected
+        xywh {10 10 560 285} box FLAT_BOX
       } {
         Fl_Box {} {
           label {Software Selection}
@@ -114,12 +102,10 @@ To select software for installation, please click on the "Next" button below.}
           label {Please select the software you would like to install and click on the "Next" button below.}
           xywh {40 55 370 35} align 149
         }
-        Fl_Browser SoftwareList {
+        Fl_Check_Browser SoftwareList {
           label { Available Software:}
           callback list_cb
           xywh {40 120 500 135} type Multi box DOWN_BOX selection_color 7 align 5 when 3
-          code0 {\#include "Fl_Check_Browser.h"}
-          class Fl_Check_Browser
         }
         Fl_Button InstallAllButton {
           label {Install All}
@@ -139,14 +125,14 @@ list_cb(0,0);}
         }
       }
       Fl_Group ConfirmPane {open
-        xywh {10 10 560 280} box FLAT_BOX
+        xywh {10 10 560 280} box FLAT_BOX hide
       } {
         Fl_Box {} {
           label {Confirm Installation}
           xywh {10 10 560 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Box {} {
-          label {You have selected the software below for installation. Click on the "Next" button to start the software installation. Click on the "Back" button to change your selections.} selected
+          label {You have selected the software below for installation. Click on the "Next" button to start the software installation. Click on the "Back" button to change your selections.}
           xywh {40 55 500 50} align 149
         }
         Fl_Browser ConfirmList {
@@ -170,13 +156,11 @@ list_cb(0,0);}
             label {Yes, I accept the terms and conditions of the software license agreement.}
             callback {NextButton->activate();}
             xywh {10 245 560 20} type Radio down_box ROUND_DOWN_BOX
-            class CheckButton
           }
           Fl_Round_Button LicenseDecline {
             label {No, I do not accept the terms and conditions of the software license agreement.}
             callback {NextButton->activate();}
             xywh {10 270 560 20} type Radio down_box ROUND_DOWN_BOX
-            class CheckButton
           }
         }
       }
@@ -187,9 +171,9 @@ list_cb(0,0);}
           label {Installing Software...}
           xywh {10 10 430 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
-        Fl_Slider InstallPercent {
+        Fl_Progress InstallPercent {
           label {Progress Label...}
-          xywh {40 75 525 15} type {Horz Fill} selection_color 63 labelfont 2 align 5 maximum 100 value 50
+          xywh {40 75 525 15} selection_color 63 labelfont 2 align 5
         }
         Fl_Browser InstallLog {
           xywh {40 100 525 190}
@@ -197,9 +181,8 @@ list_cb(0,0);}
       }
     }
     Fl_Button PrevButton {
-      label {prev.xbm}
       callback {Wizard->prev();}
-      xywh {380 310 55 25} labeltype image
+      image {prev.xbm} xywh {380 310 55 25}
     }
   }
 } 

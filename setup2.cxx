@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.22 2001/08/07 15:31:52 mike Exp $"
+// "$Id: setup2.cxx,v 1.23 2001/11/01 16:43:07 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -896,7 +896,7 @@ sort_dists(const dist_t *d0,	// I - First distribution
 //
 
 void
-type_cb(CheckButton *w, void *)	// I - Check button widget
+type_cb(Fl_Round_Button *w, void *)	// I - Radio button widget
 {
   int		i;		// Looping var
   dtype_t	*dt;		// Current install type
@@ -1082,5 +1082,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.22 2001/08/07 15:31:52 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.23 2001/11/01 16:43:07 mike Exp $".
 //
