@@ -10,9 +10,10 @@ WHAT'S NEW IN EPM 2.5?
 	  post-patch, pre-remove, and post-remove commands.
 	- There was no way to use a literal $ in scripts or in
 	  filenames.  Use $$ to include a single $.
-	- The config file support for AT&T software packages
-	  did not check to see if the source file had an
-	  absolute path.
+	- The config and license file support for AT&T software
+	  packages did not check to see if the source file had
+	  an absolute path.  This would produce an invalid
+	  prototype file.
 	- The RPM --target option was not being called with an
 	  equal sign, which caused problems with RPM 4.0.
 	- Updated the Debian packager to use the prerm and postrm
