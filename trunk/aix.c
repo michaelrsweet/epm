@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.8 2002/01/02 20:39:39 mike Exp $"
+ * "$Id: aix.c,v 1.9 2002/06/04 18:36:38 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -230,7 +230,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
             snprintf(filename, sizeof(filename), "%s/%s%s", directory, prodname,
 	             file->dst);
 	  else
-            snprintf(filename, sizeof(filename), "%s/%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
+            snprintf(filename, sizeof(filename), "%s/%s/usr/lpp/%s/inst_root%s",
 	             directory, prodname, prodname, file->dst);
 
 	  if (Verbosity > 1)
@@ -256,7 +256,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
             snprintf(filename, sizeof(filename), "%s/%s%s", directory, prodname,
 	             file->dst);
 	  else
-            snprintf(filename, sizeof(filename), "%s/%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
+            snprintf(filename, sizeof(filename), "%s/%s/usr/lpp/%s/inst_root%s",
 	             directory, prodname, prodname, file->dst);
 
 	  if (Verbosity > 1)
@@ -270,7 +270,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
             snprintf(filename, sizeof(filename), "%s/%s%s", directory, prodname,
 	             file->dst);
 	  else
-            snprintf(filename, sizeof(filename), "%s/%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
+            snprintf(filename, sizeof(filename), "%s/%s/usr/lpp/%s/inst_root%s",
 	             directory, prodname, prodname, file->dst);
 
 	  if (Verbosity > 1)
@@ -646,5 +646,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 }
 
 /*
- * End of "$Id: aix.c,v 1.8 2002/01/02 20:39:39 mike Exp $".
+ * End of "$Id: aix.c,v 1.9 2002/06/04 18:36:38 mike Exp $".
  */

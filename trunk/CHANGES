@@ -1,5 +1,18 @@
-CHANGES - ESP Package Manager (EPM) 3.3
----------------------------------------
+CHANGES - ESP Package Manager (EPM) 3.3.1
+-----------------------------------------
+
+WHAT'S NEW IN EPM 3.3.1?
+
+    EPM 3.3.1 adds the following features, fixes, and changes to
+    EPM 3.3:
+
+	- The tar files produced by EPM didn't conform to the
+	  POSIX 1003.1 spec.  EPM now puts the POSIX version
+	  number (00) and supports "long" filenames up to
+	  255 characters in length.
+	- AIX packages did not use the correct path for files
+	  placed in the root partition.
+
 
 WHAT'S NEW IN EPM 3.3?
 
