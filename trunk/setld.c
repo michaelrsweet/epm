@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.11 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: setld.c,v 1.12 2002/08/29 11:44:48 mike Exp $"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -53,6 +53,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
   char		current[1024];		/* Current directory */
   struct passwd	*pwd;			/* Pointer to user record */
   struct group	*grp;			/* Pointer to group record */
+  const char	*runlevels;		/* Run levels */
 
 
   (void)platform;
@@ -116,29 +117,34 @@ make_setld(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      file = add_file(dist);
-      file->type = 'l';
-      file->mode = 0;
-      strcpy(file->user, "root");
-      strcpy(file->group, "sys");
-      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
-      snprintf(file->dst, sizeof(file->dst), "/sbin/rc0.d/K00%s", dist->files[i].dst);
+     /*
+      * Make symlinks for all of the selected run levels...
+      */
 
-      file = add_file(dist);
-      file->type = 'l';
-      file->mode = 0;
-      strcpy(file->user, "root");
-      strcpy(file->group, "sys");
-      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
-      snprintf(file->dst, sizeof(file->dst), "/etc/rc2.d/S99%s", dist->files[i].dst);
+      for (runlevels = get_runlevels(dist->files + i, "023");
+           isdigit(*runlevels);
+	   runlevels ++)
+      {
+	file = add_file(dist);
+	file->type = 'l';
+	file->mode = 0;
+	strcpy(file->user, "root");
+	strcpy(file->group, "sys");
+	snprintf(file->src, sizeof(file->src), "../init.d/%s",
+        	 dist->files[i].dst);
 
-      file = add_file(dist);
-      file->type = 'l';
-      file->mode = 0;
-      strcpy(file->user, "root");
-      strcpy(file->group, "sys");
-      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
-      snprintf(file->dst, sizeof(file->dst), "/etc/rc3.d/S99%s", dist->files[i].dst);
+        if (*runlevels == '0')
+	  snprintf(file->dst, sizeof(file->dst), "/sbin/rc0.d/K%02d%s",
+        	   get_stop(dist->files + i, 0), dist->files[i].dst);
+        else
+	  snprintf(file->dst, sizeof(file->dst), "/sbin/rc%c.d/S%02d%s",
+        	   *runlevels, get_start(dist->files + i, 99),
+		   dist->files[i].dst);
+      }
+
+     /*
+      * Then send the original file to /sbin/init.d...
+      */
 
       file = dist->files + i;
 
@@ -422,5 +428,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.11 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: setld.c,v 1.12 2002/08/29 11:44:48 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.9 2002/06/04 18:36:38 mike Exp $"
+ * "$Id: aix.c,v 1.10 2002/08/29 11:44:46 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -77,6 +77,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   file_t		*file;		/* Current distribution file */
   struct passwd		*pwd;		/* Pointer to user record */
   struct group		*grp;		/* Pointer to group record */
+  const char		*runlevels;	/* Run levels */
 
 
   REF(platform);
@@ -241,15 +242,21 @@ make_aix(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'i' :
-          snprintf(filename, sizeof(filename), "%s/%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
-	           directory, prodname, prodname, file->dst);
+          for (runlevels = get_runlevels(file, "2");
+	       isdigit(*runlevels);
+	       runlevels ++)
+	  {
+            snprintf(filename, sizeof(filename),
+	             "%s/%s/usr/lpp/%s/inst_root/etc/rc.d/rc%c.d/%s",
+	             directory, prodname, prodname, *runlevels, file->dst);
 
-	  if (Verbosity > 1)
-	    printf("%s -> %s...\n", file->src, filename);
+	    if (Verbosity > 1)
+	      printf("%s -> %s...\n", file->src, filename);
 
-	  if (copy_file(filename, file->src, file->mode, pwd ? pwd->pw_uid : 0,
-			grp ? grp->gr_gid : 0))
-	    return (1);
+	    if (copy_file(filename, file->src, file->mode,
+	                  pwd ? pwd->pw_uid : 0, grp ? grp->gr_gid : 0))
+	      return (1);
+	  }
           break;
       case 'd' :
           if (strncmp(file->dst, "/usr/", 5) == 0)
@@ -646,5 +653,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 }
 
 /*
- * End of "$Id: aix.c,v 1.9 2002/06/04 18:36:38 mike Exp $".
+ * End of "$Id: aix.c,v 1.10 2002/08/29 11:44:46 mike Exp $".
  */

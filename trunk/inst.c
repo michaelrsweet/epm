@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.21 2002/03/14 20:37:39 mike Exp $"
+ * "$Id: inst.c,v 1.22 2002/08/29 11:44:47 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -56,6 +56,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   command_t	*c;			/* Current command */
   depend_t	*d;			/* Current dependency */
   struct stat	fileinfo;		/* File information */
+  const char	*runlevels;		/* Run levels */
   static const char *extensions[] =	/* INST file extensions */
 		{
 		  "",
@@ -177,21 +178,34 @@ make_inst(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      file = add_file(dist);
-      file->type = 'l';
-      file->mode = 0;
-      strcpy(file->user, "root");
-      strcpy(file->group, "sys");
-      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
-      snprintf(file->dst, sizeof(file->dst), "/etc/rc0.d/K00%s", dist->files[i].dst);
+     /*
+      * Make symlinks for all of the selected run levels...
+      */
 
-      file = add_file(dist);
-      file->type = 'l';
-      file->mode = 0;
-      strcpy(file->user, "root");
-      strcpy(file->group, "sys");
-      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
-      snprintf(file->dst, sizeof(file->dst), "/etc/rc2.d/S99%s", dist->files[i].dst);
+      for (runlevels = get_runlevels(dist->files + i, "02");
+           isdigit(*runlevels);
+	   runlevels ++)
+      {
+	file = add_file(dist);
+	file->type = 'l';
+	file->mode = 0;
+	strcpy(file->user, "root");
+	strcpy(file->group, "sys");
+	snprintf(file->src, sizeof(file->src), "../init.d/%s",
+        	 dist->files[i].dst);
+
+        if (*runlevels == '0')
+	  snprintf(file->dst, sizeof(file->dst), "/etc/rc0.d/K%02d%s",
+        	   get_stop(dist->files + i, 0), dist->files[i].dst);
+        else
+	  snprintf(file->dst, sizeof(file->dst), "/etc/rc%c.d/S%02d%s",
+        	   *runlevels, get_start(dist->files + i, 99),
+		   dist->files[i].dst);
+      }
+
+     /*
+      * Then send the original file to /etc/init.d...
+      */
 
       file = dist->files + i;
 
@@ -598,5 +612,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.21 2002/03/14 20:37:39 mike Exp $".
+ * End of "$Id: inst.c,v 1.22 2002/08/29 11:44:47 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.16 2002/01/02 20:39:39 mike Exp $"
+ * "$Id: deb.c,v 1.17 2002/08/29 11:44:47 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -48,6 +48,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
   file_t		*file;		/* Current distribution file */
   struct passwd		*pwd;		/* Pointer to user record */
   struct group		*grp;		/* Pointer to group record */
+  const char		*runlevels;	/* Run levels */
   static const char	*depends[] =	/* Dependency names */
 			{
 			  "Depends:",
@@ -218,7 +219,17 @@ make_deb(const char     *prodname,	/* I - Product short name */
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
       {
-        fprintf(fp, "update-rc.d %s defaults >/dev/null\n", file->dst);
+        for (runlevels = get_runlevels(file, "02345");
+	     isdigit(*runlevels);
+	     runlevels ++)
+	{
+	  if (*runlevels == '0')
+            fprintf(fp, "update-rc.d %s stop %02d 0 >/dev/null\n", file->dst,
+	            get_stop(file, 0));
+          else
+            fprintf(fp, "update-rc.d %s start %02d %c >/dev/null\n", file->dst,
+	            get_start(file, 99), *runlevels);
+        }
 
         fprintf(fp, "/etc/init.d/%s start\n", file->dst);
       }
@@ -265,11 +276,11 @@ make_deb(const char     *prodname,	/* I - Product short name */
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i')
       {
+        fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
+
         fputs("if [ purge = \"$1\" ]; then\n", fp);
         fprintf(fp, "	update-rc.d %s remove >/dev/null\n", file->dst);
         fputs("fi\n", fp);
-
-        fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
       }
 
     fclose(fp);
@@ -426,5 +437,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.16 2002/01/02 20:39:39 mike Exp $".
+ * End of "$Id: deb.c,v 1.17 2002/08/29 11:44:47 mike Exp $".
  */

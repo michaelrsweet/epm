@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.18 2002/03/14 20:37:39 mike Exp $"
+ * "$Id: swinstall.c,v 1.19 2002/08/29 11:44:48 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -52,6 +52,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   file_t	*file;			/* Current distribution file */
   command_t	*c;			/* Current command */
   depend_t	*d;			/* Current dependency */
+  const char	*runlevels;		/* Run levels */
 
 
   (void)platform; /* Eliminates compiler warning about unused variable */
@@ -261,25 +262,34 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      file = add_file(dist);
-      file->type = 'l';
-      file->mode = 0;
-      strcpy(file->user, "root");
-      strcpy(file->group, "sys");
-      snprintf(file->src, sizeof(file->src), "../init.d/%s",
-               dist->files[i].dst);
-      snprintf(file->dst, sizeof(file->dst), "/sbin/rc0.d/K000%s",
-               dist->files[i].dst);
+     /*
+      * Make symlinks for all of the selected run levels...
+      */
 
-      file = add_file(dist);
-      file->type = 'l';
-      file->mode = 0;
-      strcpy(file->user, "root");
-      strcpy(file->group, "sys");
-      snprintf(file->src, sizeof(file->src), "../init.d/%s",
-               dist->files[i].dst);
-      snprintf(file->dst, sizeof(file->dst), "/sbin/rc2d.d/S999%s",
-               dist->files[i].dst);
+      for (runlevels = get_runlevels(dist->files + i, "02");
+           isdigit(*runlevels);
+	   runlevels ++)
+      {
+	file = add_file(dist);
+	file->type = 'l';
+	file->mode = 0;
+	strcpy(file->user, "root");
+	strcpy(file->group, "sys");
+	snprintf(file->src, sizeof(file->src), "../init.d/%s",
+        	 dist->files[i].dst);
+
+        if (*runlevels == '0')
+	  snprintf(file->dst, sizeof(file->dst), "/sbin/rc0.d/K%02d0%s",
+        	   get_stop(dist->files + i, 0), dist->files[i].dst);
+        else
+	  snprintf(file->dst, sizeof(file->dst), "/sbin/rc%c.d/S%02d0%s",
+        	   *runlevels, get_start(dist->files + i, 99),
+		   dist->files[i].dst);
+      }
+
+     /*
+      * Then send the original file to /sbin/init.d...
+      */
 
       file = dist->files + i;
 
@@ -498,5 +508,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.18 2002/03/14 20:37:39 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.19 2002/08/29 11:44:48 mike Exp $".
  */

@@ -2477,6 +2477,11 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
+if test x$GZIP = x; then
+	{ { echo "$as_me:$LINENO: error: GNU zip not found but required!" >&5
+echo "$as_me: error: GNU zip not found but required!" >&2;}
+   { (exit 1); exit 1; }; }
+fi
 # Extract the first word of "htmldoc", so it can be a program name with args.
 set dummy htmldoc; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
