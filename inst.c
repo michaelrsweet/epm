@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.10 2001/01/03 20:41:33 mike Exp $"
+ * "$Id: inst.c,v 1.11 2001/01/19 16:24:00 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -66,6 +66,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
 		  ".sw"
 		};
 
+
+  (void)platform; /* Eliminates compiler warning about unused variable */
 
   if (Verbosity)
     puts("Creating inst distribution...");
@@ -446,5 +448,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.10 2001/01/03 20:41:33 mike Exp $".
+ * End of "$Id: inst.c,v 1.11 2001/01/19 16:24:00 mike Exp $".
  */
