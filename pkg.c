@@ -343,7 +343,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
       * Make symlinks for all of the selected run levels...
       */
 
-      for (runlevels = get_runlevels(dist->files + i, "03");
+      for (runlevels = get_runlevels(dist->files + i, "0235");
            isdigit(*runlevels & 255);
 	   runlevels ++)
       {
