@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.57 2001/11/01 16:50:27 mike Exp $"
+ * "$Id: portable.c,v 1.58 2001/11/02 20:01:33 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1117,7 +1117,7 @@ write_confcheck(FILE *fp)		/* I - Script file */
   */
 
   fputs("# Determine correct extract options for the tar command...\n", fp);
-  fputs("if test `uname` == Darwin; then\n", fp);
+  fputs("if test `uname` = Darwin; then\n", fp);
   fputs("	ac_tar=\"tar -xpPf\"\n", fp);
   fputs("else if test \"`tar --help 2>&1 | grep GNU`\" = \"\"; then\n", fp);
   fputs("	ac_tar=\"tar -xpf\"\n", fp);
@@ -1953,5 +1953,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.57 2001/11/01 16:50:27 mike Exp $".
+ * End of "$Id: portable.c,v 1.58 2001/11/02 20:01:33 mike Exp $".
  */
