@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.6 2001/10/26 16:14:30 mike Exp $"
+ * "$Id: aix.c,v 1.7 2001/10/26 17:32:04 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -51,7 +51,7 @@ static const char	*files[] =	/* Control files... */
 			  "inventory",
 			  "post_i",
 			  "pre_i",
-			  "pre_rm"
+			  "unpost_i"
 			};
 
 
@@ -504,17 +504,17 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fclose(fp);
 
    /*
-    * Write the product.pre_rm file for installp...
+    * Write the product.unpost_i file for installp...
     */
 
     if (Verbosity > 1)
-      puts("    Creating .pre_rm file...");
+      puts("    Creating .unpost_i file...");
 
-    snprintf(filename, sizeof(filename), "%s/%s.pre_rm", directory, prodname);
+    snprintf(filename, sizeof(filename), "%s/%s.unpost_i", directory, prodname);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create .pre_rm file \"%s\" - %s\n", filename,
+      fprintf(stderr, "epm: Unable to create .unpost_i file \"%s\" - %s\n", filename,
               strerror(errno));
       return (1);
     }
@@ -646,5 +646,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 }
 
 /*
- * End of "$Id: aix.c,v 1.6 2001/10/26 16:14:30 mike Exp $".
+ * End of "$Id: aix.c,v 1.7 2001/10/26 17:32:04 mike Exp $".
  */
