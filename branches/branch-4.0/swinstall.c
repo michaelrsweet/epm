@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.18.2.10 2004/12/02 15:49:38 mike Exp $"
+ * "$Id: swinstall.c,v 1.18.2.11 2004/12/02 16:48:14 swdev Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -428,11 +428,16 @@ make_swinstall(const char     *prodname,/* I - Product short name */
   snprintf(filename, sizeof(filename), "%s/%s.desc", directory, prodname);
   if (!access(filename, 0))
     fprintf(fp, "  description < %s\n", filename);
-  fprintf(fp, "  copyright < %s\n", dist->license);
-  fprintf(fp, "  readme < %s\n", dist->readme);
+  if (strncmp(dist->license, "./", 2))
+    fprintf(fp, "  copyright < %s\n", dist->license);
+  else
+    fprintf(fp, "  copyright < %s\n", dist->license + 2);
+  if (strncmp(dist->readme, "./", 2))
+    fprintf(fp, "  readme < %s\n", dist->readme);
+  else
+    fprintf(fp, "  readme < %s\n", dist->readme + 2);
   fprintf(fp, "  vendor_tag %s\n", vtag);
   fputs("  is_locatable false\n", fp);
-  fprintf(fp, "  contents %s\n", prodname);
 
   if (dist->num_subpackages > 0)
   {
@@ -440,11 +445,38 @@ make_swinstall(const char     *prodname,/* I - Product short name */
     * Write subproduct specifications...
     */
 
+    fputs("  subproduct\n", fp);
+    fputs("    tag base\n", fp);
+    fputs("    contents fs_base\n", fp);
+    fprintf(fp, "    revision %s\n", dist->version);
+
+    for (i = 0; i < dist->num_descriptions; i ++)
+      if (!dist->descriptions[i].subpackage)
+      {
+        fprintf(fp, "    title %s, %s\n", dist->descriptions[i].description,
+	        dist->version);
+        break;
+      }
+
+    if (!access(filename, 0))
+      fprintf(fp, "    description < %s\n", filename);
+    fputs("  end\n", fp);
+
     for (i = 0; i < dist->num_subpackages; i ++)
     {
       fputs("  subproduct\n", fp);
       fprintf(fp, "    tag %s\n", dist->subpackages[i]);
-      fprintf(fp, "    contents %s\n", dist->subpackages[i]);
+      fprintf(fp, "    contents fs_%s\n", dist->subpackages[i]);
+      fprintf(fp, "    revision %s\n", dist->version);
+
+      for (j = 0; j < dist->num_descriptions; j ++)
+	if (dist->descriptions[j].subpackage == dist->subpackages[i])
+	{
+          fprintf(fp, "    title %s, %s\n", dist->descriptions[j].description,
+	          dist->version);
+          break;
+	}
+
       snprintf(filename, sizeof(filename), "%s/%s-%s.desc", directory,
                prodname, dist->subpackages[i]);
       if (!access(filename, 0))
@@ -578,8 +610,16 @@ write_fileset(FILE       *fp,		/* I - File to write to */
 
 
   fputs("  fileset\n", fp);
-  fprintf(fp, "    tag %s\n", subpackage ? subpackage : "base");
-  fprintf(fp, "    title %s, %s\n", dist->product, dist->version);
+  fprintf(fp, "    tag fs_%s\n", subpackage ? subpackage : "base");
+  fprintf(fp, "    revision %s\n", dist->version);
+
+  for (i = 0; i < dist->num_descriptions; i ++)
+    if (dist->descriptions[i].subpackage == subpackage)
+    {
+      fprintf(fp, "    title %s, %s\n", dist->descriptions[i].description,
+              dist->version);
+      break;
+    }
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
     if (d->type == DEPEND_REQUIRES && d->product[0] != '/' &&
@@ -590,24 +630,24 @@ write_fileset(FILE       *fp,		/* I - File to write to */
   {
     for (; i > 0; i --, d ++)
     {
-      fputs("    prerequisites", fp);
       if (d->type == DEPEND_REQUIRES && d->product[0] != '/' &&
           d->subpackage == subpackage)
       {
         if (!strcmp(d->product, "_self"))
-	  fprintf(fp, " %s", prodname);
+	  fprintf(fp, "    prerequisites %s", prodname);
 	else
-	  fprintf(fp, " %s", d->product);
+	  fprintf(fp, "    prerequisites %s", d->product);
 
 	if (d->vernumber[0] == 0)
 	{
 	  if (d->vernumber[1] < INT_MAX)
-            fprintf(fp, ",r<=%s", d->version[1]);
+            fprintf(fp, ",r<=%s\n", d->version[1]);
+	  else
+	    putc('\n', fp);
 	}
 	else
-	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
+	  fprintf(fp, ",r>=%s,r<=%s\n", d->version[0], d->version[1]);
       }
-      fputs("\n", fp);
     }
   }
 
@@ -620,20 +660,20 @@ write_fileset(FILE       *fp,		/* I - File to write to */
   {
     for (; i > 0; i --, d ++)
     {
-      fputs("    ancestor", fp);
       if (d->type == DEPEND_REPLACES && d->product[0] != '/' &&
           d->subpackage == subpackage)
       {
-        fprintf(fp, " %s", d->product);
+        fprintf(fp, "    ancestor %s", d->product);
 	if (d->vernumber[0] == 0)
 	{
 	  if (d->vernumber[1] < INT_MAX)
-            fprintf(fp, ",r<=%s", d->version[1]);
+            fprintf(fp, ",r<=%s\n", d->version[1]);
+	  else
+	    putc('\n', fp);
 	}
 	else
-	  fprintf(fp, ",r>=%s,r<=%s", d->version[0], d->version[1]);
+	  fprintf(fp, ",r>=%s,r<=%s\n", d->version[0], d->version[1]);
       }
-      fputs("\n", fp);
     }
   }
 
@@ -702,5 +742,5 @@ write_fileset(FILE       *fp,		/* I - File to write to */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.18.2.10 2004/12/02 15:49:38 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.18.2.11 2004/12/02 16:48:14 swdev Exp $".
  */
