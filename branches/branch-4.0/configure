@@ -5038,7 +5038,6 @@ else
 	EPMEDITOR="epmeditor"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
-	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 fi
 
 

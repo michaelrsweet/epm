@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.52.2.6 2002/10/18 15:02:34 mike Exp $"
+dnl "$Id: configure.in,v 1.52.2.7 2002/11/07 14:02:40 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -136,7 +136,6 @@ else
 	EPMEDITOR="epmeditor"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
-	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
 fi
 
 AC_SUBST(EPMEDITOR)
@@ -368,5 +367,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52.2.6 2002/10/18 15:02:34 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52.2.7 2002/11/07 14:02:40 mike Exp $".
 dnl
