@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.36 1999/12/14 22:16:05 mike Exp $"
+ * "$Id: epm.c,v 1.37 1999/12/15 14:09:38 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -67,6 +67,15 @@ main(int  argc,			/* I - Number of command-line arguments */
 		*setup;		/* Setup GUI image */
   dist_t	*dist;		/* Software distribution */
   int		format;		/* Distribution format */
+  static char	*formats[] =	/* Distribution format strings */
+		{
+		  "portable",
+		  "deb",
+		  "inst",
+		  "pkg",
+		  "rpm",
+		  "swinstall"
+		};
 
 
  /*
@@ -205,7 +214,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Read the distribution...
   */
 
-  if ((dist = read_dist(listname, &platform)) == NULL)
+  if ((dist = read_dist(listname, &platform, formats[format])) == NULL)
     return (1);
 
  /*
@@ -414,5 +423,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.36 1999/12/14 22:16:05 mike Exp $".
+ * End of "$Id: epm.c,v 1.37 1999/12/15 14:09:38 mike Exp $".
  */

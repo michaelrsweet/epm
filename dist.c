@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.3 1999/12/02 22:27:41 mike Exp $"
+ * "$Id: dist.c,v 1.4 1999/12/15 14:09:38 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -39,7 +39,8 @@
 static int	add_string(int num_strings, char ***strings, char *string);
 static void	free_strings(int num_strings, char **strings);
 static char	*get_line(char *buffer, int size, FILE *fp,
-		          struct utsname *platform, int *skip);
+		          struct utsname *platform, const char *format,
+			  int *skip);
 static void	expand_name(char *buffer, char *name);
 
 
@@ -92,8 +93,9 @@ free_dist(dist_t *dist)		/* I - Distribution to free */
  */
 
 dist_t *				/* O - New distribution */
-read_dist(char           *filename,	/* I - Main distribution list file */
-          struct utsname *platform)	/* I - Platform information */
+read_dist(const char     *filename,	/* I - Main distribution list file */
+          struct utsname *platform,	/* I - Platform information */
+          const char     *format)	/* I - Format of distribution */
 {
   FILE		*listfiles[10];	/* File lists */
   int		listlevel;	/* Level in file list */
@@ -141,7 +143,8 @@ read_dist(char           *filename,	/* I - Main distribution list file */
 
   do
   {
-    while (get_line(line, sizeof(line), listfiles[listlevel], platform, &skip) != NULL)
+    while (get_line(line, sizeof(line), listfiles[listlevel], platform, format,
+                    &skip) != NULL)
       if (line[0] == '%')
       {
        /*
@@ -333,6 +336,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
          int            size,		/* I - Size of buffer */
 	 FILE           *fp,		/* I - File to read from */
 	 struct utsname *platform,	/* I - Platform information */
+         const char     *format,	/* I - Distribution format */
 	 int            *skip)		/* IO - Skip lines? */
 {
   int	op,				/* Operation (0 = OR, 1 = AND) */
@@ -355,13 +359,13 @@ get_line(char           *buffer,	/* I - Buffer to read into */
       continue;
 
    /*
-    * See if this is a %system line...
+    * See if this is a %system or %format line...
     */
 
     if (strncmp(buffer, "%system ", 8) == 0)
     {
      /*
-      * Yes, do filtering...
+      * Yes, do filtering based on the OS (+version)...
       */
 
       *skip = 0;
@@ -401,6 +405,46 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	    match = 0;
 	  else
 	    match = strncasecmp(value, namever, strlen(value)) == 0;
+
+          if (op)
+	    *skip |= match;
+	  else
+	    *skip &= !match;
+        }
+      }
+    }
+    else if (strncmp(buffer, "%format ", 8) == 0)
+    {
+     /*
+      * Yes, do filtering based on the distribution format...
+      */
+
+      *skip = 0;
+
+      if (strcmp(buffer + 8, "all\n") != 0)
+      {
+        bufptr = buffer + 8;
+        *skip  = *bufptr != '!';
+
+        while (*bufptr)
+	{
+          if (*bufptr == '!')
+	  {
+	    op = 1;
+	    bufptr ++;
+	  }
+	  else
+	    op = 0;
+
+	  for (ptr = value; *bufptr && !isspace(*bufptr) &&
+	                        (ptr - value) < (sizeof(value) - 1);)
+	    *ptr++ = *bufptr++;
+
+	  *ptr = '\0';
+	  while (isspace(*bufptr))
+	    bufptr ++;
+
+	  match = strcasecmp(value, format) == 0;
 
           if (op)
 	    *skip |= match;
@@ -463,5 +507,5 @@ expand_name(char *buffer,	/* O - Output string */
 
 
 /*
- * End of "$Id: dist.c,v 1.3 1999/12/02 22:27:41 mike Exp $".
+ * End of "$Id: dist.c,v 1.4 1999/12/15 14:09:38 mike Exp $".
  */
