@@ -1,16 +1,17 @@
 ----HTML-PRESS-RELEASE---------------------------------------------------
 
-<H1>ESP Package Manager 2.3 Released</H1>
+<H1>ESP Package Manager 2.5 Released</H1>
 
-<P><B>Hollywood, MD (January 23, 2001)</B> -- Easy Software
-Products today announced the 2.3 release of the ESP Package
+<P><B>Hollywood, MD (March 15, 2001)</B> -- Easy Software
+Products today announced the 2.5 release of the ESP Package
 Manager ("EPM"), a cross-platform software distribution
 program for UNIX.
 
-<P>EPM v2.3 fixes a number of bugs, adds support for
-configuration files under HP-UX, and adds support for variable
-definition inside the list files. The new release is available
-on-line at:
+<P>EPM v2.5 adds support for pre- and post- install, patch, and
+removal scripts, adds support for $ in output filenames, makes
+portable installation scripts more portable, adds support for
+the new SuSE init.d directory locations, and fixes a number of
+small bugs. The new release is available on-line at:
 
 <UL><PRE>
 <A HREF="http://www.easysw.com/epm">http://www.easysw.com/epm</A>
@@ -47,16 +48,18 @@ commercial support.
 
 ----TEXT-PRESS-RELEASE---------------------------------------------------
 
-ESP Package Manager 2.3 Released
+ESP Package Manager 2.5 Released
 
-Hollywood, MD (January 23, 2001) -- Easy Software Products
-today announced the 2.3 release of the ESP Package Manager
+Hollywood, MD (March 15, 2001) -- Easy Software Products
+today announced the 2.5 release of the ESP Package Manager
 ("EPM"), a cross-platform software distribution program for
 UNIX.
 
-EPM v2.3 fixes a number of bugs, adds support for configuration
-files under HP-UX, and adds support for variable definition
-inside the list files. The new release is available on-line at:
+EPM v2.5 adds support for pre- and post- install, patch, and
+removal scripts, adds support for $ in output filenames, makes
+portable installation scripts more portable, adds support for
+the new SuSE init.d directory locations, and fixes a number of
+small bugs. The new release is available on-line at:
 
     http://www.easysw.com/epm
 

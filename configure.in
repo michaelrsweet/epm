@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.20 2001/03/15 15:31:02 mike Exp $"
+dnl "$Id: configure.in,v 1.21 2001/03/15 16:13:35 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -52,6 +52,15 @@ else
 	LDFLAGS="$LDFLAGS -s"
 fi)
 
+AC_ARG_WITH(fltk-libs, [  --with-fltk-libs        set directory for FLTK library],
+	LDFLAGS="-L$withval $LDFLAGS"
+	fltklibs="$withval",
+	fltklibs="")
+
+AC_ARG_WITH(fltk-libs, [  --with-fltk-includes    set directory for FLTK includes],
+	CFLAGS="-I$withval $CFLAGS"
+	CXXFLAGS="-I$withval $CXXFLAGS",)
+
 dnl Checks for programs...
 AC_PROG_CC
 AC_PROG_CXX
@@ -85,6 +94,20 @@ AC_CHECK_FUNCS(strncasecmp)
 
 dnl Check for libraries...
 
+AC_CHECK_LIB(m,pow)
+AC_CHECK_LIB(socket,socket,
+if test "$uname" != "IRIX"; then
+	LIBS="$LIBS -lsocket"
+else
+	echo "Not using -lsocket since you are running IRIX."
+fi)
+AC_CHECK_LIB(nsl,gethostbyaddr,
+if test "$uname" != "IRIX"; then
+	LIBS="$LIBS -lnsl"
+else
+	echo "Not using -lnsl since you are running IRIX."
+fi)
+
 AC_PATH_X
 if test "$x_libraries" = "/usr/lib"; then
 	echo "Ignoring X library directory \"$x_libraries\" requested by configure."
@@ -104,38 +127,54 @@ if test "$x_includes" != "NONE" -a "x$x_includes" != "x"; then
 	CFLAGS="$CFLAGS -I$x_includes"
 	CXXFLAGS="$CXXFLAGS -I$x_includes"
 fi
-AC_CHECK_LIB(m,pow)
 
-if test "$uname" = Linux; then
-	AC_CHECK_LIB(GL,glEnable)
+dnl Try to find the static FLTK library...
+AC_MSG_CHECKING(for static FLTK library)
+
+if test x$fltklibs = x; then
+	for dir in "" /usr /usr/openwin /usr/X11R6 /usr/local; do
+		if test -f $dir/lib32/libfltk.a; then
+			fltklibs=$dir/lib32
+			if test $dir != /usr -a x$dir/include != x$x_includes; then
+				CFLAGS="-I$dir/include $CFLAGS"
+				CXXFLAGS="-I$dir/include $CXXFLAGS"
+			fi
+			break
+		fi
+		if test -f $dir/lib/libfltk.a; then
+			fltklibs=$dir/lib
+			if test $dir != /usr -a x$dir/include != x$x_includes; then
+				CFLAGS="-I$dir/include $CFLAGS"
+				CXXFLAGS="-I$dir/include $CXXFLAGS"
+			fi
+			break
+		fi
+	done
 fi
 
-AC_CHECK_LIB(fltk,numericsort)
+if test x$fltklibs = x; then
+	AC_MSG_RESULT(no)
+else
+	AC_MSG_RESULT($fltklibs/libfltk.a)
+fi
 
-if test "$ac_cv_lib_fltk_numericsort" = yes -a "$ac_cv_prog_CXX" != ""; then
+if test x$fltklibs != x -a x$ac_cv_prog_CXX != x; then
 	SETUP="setup"
 	INSTALL_SETUP="install-setup"
 	LIST_SETUP="f 0555 root sys ${libdir}/epm/setup setup"
-	LIBS="$LIBS -lXext -lX11"
+
+	LIBS="$LIBS $fltklibs/libfltk.a -lXext -lX11"
 else
 	SETUP=""
 	INSTALL_SETUP=""
 	LIST_SETUP=""
-	AC_MSG_WARN(C++ compiler or FLTK not available so setup GUI will not be built.)
-fi
 
-AC_CHECK_LIB(socket,socket,
-if test "$uname" != "IRIX"; then
-	LIBS="$LIBS -lsocket"
-else
-	echo "Not using -lsocket since you are running IRIX."
-fi)
-AC_CHECK_LIB(nsl,gethostbyaddr,
-if test "$uname" != "IRIX"; then
-	LIBS="$LIBS -lnsl"
-else
-	echo "Not using -lnsl since you are running IRIX."
-fi)
+	if test x$ac_cv_prog_CXX = x; then
+		AC_MSG_WARN(C++ compiler not available so setup GUI will not be built.)
+	else
+		AC_MSG_WARN(Static FLTK library not available so setup GUI will not be built.)
+	fi
+fi
 
 AC_SUBST(SETUP)
 AC_SUBST(INSTALL_SETUP)
@@ -294,5 +333,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list)
 
 dnl
-dnl End of "$Id: configure.in,v 1.20 2001/03/15 15:31:02 mike Exp $".
+dnl End of "$Id: configure.in,v 1.21 2001/03/15 16:13:35 mike Exp $".
 dnl
