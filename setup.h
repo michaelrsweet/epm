@@ -36,5 +36,6 @@ extern Fl_Group *InstallPane;
 #include <FL/Fl_Slider.H>
 extern Fl_Slider *InstallPercent;
 extern Fl_Browser *InstallLog;
+extern Fl_Button *PrevButton;
 Fl_Window* make_window();
 #endif

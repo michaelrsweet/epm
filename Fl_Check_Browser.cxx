@@ -115,8 +115,7 @@ void Fl_Check_Browser::item_draw(void *v, int x, int y, int, int) const {
 void Fl_Check_Browser::item_select(void *v, int state) {
 	cb_item *i = (cb_item *)v;
 
-	i->selected = state;
-	if (!state) {
+	if (state) {
 		if (i->checked) {
 			i->checked = 0;
 			nchecked_--;
