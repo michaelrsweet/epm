@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.2 1999/12/03 22:36:54 mike Exp $"
+// "$Id: setup2.cxx,v 1.3 1999/12/30 21:00:55 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -285,10 +285,26 @@ install_dist(const dist_t *dist)// I - Distribution to install
 
   // Loop until the child is done...
   while (fds[0])	// log_cb() will close and zero fds[0]...
+  {
+    // Wait for events...
     Fl::wait();
 
-  // Get the child's exit status...
-  wait(&status);
+    // Check to see if the child went away...
+    if (waitpid(0, &status, WNOHANG) == pid)
+      break;
+  }
+
+  if (fds[0])
+  {
+    // Close the pipe - have all the data from the child...
+    Fl::remove_fd(fds[0]);
+    close(fds[0]);
+  }
+  else
+  {
+    // Get the child's exit status...
+    wait(&status);
+  }
 
   // Return...
   return (status);
@@ -570,5 +586,5 @@ log_cb(int fd,			// I - Pipe to read from
 
 
 //
-// End of "$Id: setup2.cxx,v 1.2 1999/12/03 22:36:54 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.3 1999/12/30 21:00:55 mike Exp $".
 //
