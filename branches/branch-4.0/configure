@@ -5030,8 +5030,8 @@ if test "x$FLTKCONFIG" = x; then
 	GUILIBS=""
 	INSTALL_GUIS=""
 
-	{ echo "$as_me:$LINENO: WARNING: Sorry, GUIs require FLTK 1.1.x." >&5
-echo "$as_me: WARNING: Sorry, GUIs require FLTK 1.1.x." >&2;}
+	{ echo "$as_me:$LINENO: WARNING: Sorry, the GUIs require FLTK 1.1.x." >&5
+echo "$as_me: WARNING: Sorry, the GUIs require FLTK 1.1.x." >&2;}
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
 	SETUP="setup"

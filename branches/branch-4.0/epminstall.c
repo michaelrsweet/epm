@@ -1,9 +1,9 @@
 /*
- * "$Id: epminstall.c,v 1.8.2.2 2002/05/10 00:19:47 mike Exp $"
+ * "$Id: epminstall.c,v 1.8.2.3 2003/01/03 20:23:20 mike Exp $"
  *
  *   Install program replacement for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2002 by Easy Software Products.
+ *   Copyright 1999-2003 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -373,7 +373,7 @@ static void
 info(void)
 {
   puts(EPM_VERSION);
-  puts("Copyright 1999-2002 by Easy Software Products.");
+  puts("Copyright 1999-2003 by Easy Software Products.");
   puts("");
   puts("EPM is free software and comes with ABSOLUTELY NO WARRANTY; for details");
   puts("see the GNU General Public License in the file COPYING or at");
@@ -407,5 +407,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epminstall.c,v 1.8.2.2 2002/05/10 00:19:47 mike Exp $".
+ * End of "$Id: epminstall.c,v 1.8.2.3 2003/01/03 20:23:20 mike Exp $".
  */

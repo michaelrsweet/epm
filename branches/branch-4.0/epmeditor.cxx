@@ -1,9 +1,9 @@
 //
-// "$Id: epmeditor.cxx,v 1.1.2.3 2002/05/20 00:47:57 mike Exp $"
+// "$Id: epmeditor.cxx,v 1.1.2.4 2003/01/03 20:23:20 mike Exp $"
 //
 //   ESP List Editor main entry for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2002 by Easy Software Products.
+//   Copyright 1999-2003 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -55,5 +55,5 @@ main(int  argc,					// I - Number of command-line arguments
 
 
 //
-// End of "$Id: epmeditor.cxx,v 1.1.2.3 2002/05/20 00:47:57 mike Exp $".
+// End of "$Id: epmeditor.cxx,v 1.1.2.4 2003/01/03 20:23:20 mike Exp $".
 //

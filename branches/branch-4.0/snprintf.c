@@ -1,9 +1,9 @@
 /*
- * "$Id: snprintf.c,v 1.2.2.1 2002/08/30 02:12:45 mike Exp $"
+ * "$Id: snprintf.c,v 1.2.2.2 2003/01/03 20:23:23 mike Exp $"
  *
  *   snprintf functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2002 by Easy Software Products.
+ *   Copyright 1999-2003 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -294,6 +294,6 @@ snprintf(char       *buffer,	/* O - Output buffer */
 
 
 /*
- * End of "$Id: snprintf.c,v 1.2.2.1 2002/08/30 02:12:45 mike Exp $".
+ * End of "$Id: snprintf.c,v 1.2.2.2 2003/01/03 20:23:23 mike Exp $".
  */
 

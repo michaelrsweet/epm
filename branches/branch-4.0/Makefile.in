@@ -1,9 +1,9 @@
 #
-# "$Id: Makefile.in,v 1.34.2.4 2002/10/17 15:42:46 mike Exp $"
+# "$Id: Makefile.in,v 1.34.2.5 2003/01/03 20:23:16 mike Exp $"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
-#   Copyright 1999-2002 by Easy Software Products, all rights reserved.
+#   Copyright 1999-2003 by Easy Software Products, all rights reserved.
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -20,16 +20,17 @@
 # Programs...
 #
 
-AR	=	@AR@
-CC	=	@CC@
-CHMOD	=	@CHMOD@
-CP	=	@CP@
-CXX	=	@CXX@
-MKDIR	=	@MKDIR@ -p
-RANLIB	=	@RANLIB@
-RM	=	@RM@ -f
-SHELL	=	/bin/sh
-STRIP	=	@STRIP@
+AR		=	@AR@
+CC		=	@CC@
+CHMOD		=	@CHMOD@
+CP		=	@CP@
+CXX		=	@CXX@
+FLTKCONFIG	=	@FLTKCONFIG@
+MKDIR		=	@MKDIR@ -p
+RANLIB		=	@RANLIB@
+RM		=	@RM@ -f
+SHELL		=	/bin/sh
+STRIP		=	@STRIP@
 
 
 #
@@ -38,23 +39,23 @@ STRIP	=	@STRIP@
 # OPTIM   defines the common compiler optimization/debugging options.
 #
 
-ARFLAGS	=	@ARFLAGS@
-CFLAGS	=	@CFLAGS@ $(OPTIM)
-CXXFLAGS =	@CXXFLAGS@ $(OPTIM)
-GUILIBS =	@GUILIBS@
-LDFLAGS	=	@LDFLAGS@ $(OPTIM)
-LIBS	=	@LIBS@
-OPTIM	=	@OPTIM@
+ARFLAGS		=	@ARFLAGS@
+CFLAGS		=	@CFLAGS@ $(OPTIM)
+CXXFLAGS	=	@CXXFLAGS@ $(OPTIM)
+GUILIBS		=	@GUILIBS@
+LDFLAGS		=	@LDFLAGS@ $(OPTIM)
+LIBS		=	@LIBS@
+OPTIM		=	@OPTIM@
 
 
 #
 # Manpage extensions...
 #
 
-CAT1EXT	=	@CAT1EXT@
-MAN1EXT	=	@MAN1EXT@
-CAT5EXT	=	@CAT5EXT@
-MAN5EXT	=	@MAN5EXT@
+CAT1EXT		=	@CAT1EXT@
+MAN1EXT		=	@MAN1EXT@
+CAT5EXT		=	@CAT5EXT@
+MAN5EXT		=	@MAN5EXT@
 
 
 #
@@ -92,14 +93,41 @@ VPATH		=	$(srcdir)
 # Targets...
 #
 
-TARGETS	=	libepm.a epm epminstall mkepmlist @SETUP@ @EPMEDITOR@
-EPM_OBJS =	aix.o bsd.o deb.o dist.o file.o inst.o osx.o pkg.o \
-		portable.o qprintf.o rpm.o run.o setld.o snprintf.o \
-		string.o swinstall.o tar.o
-SETUP_OBJS =	setup.o setup2.o
-LEDIT_OBJS =	epmeditor.o ListEditor.o ListEditor2.o ListEditor3.o \
-		ListManager.o
-OBJS	=	epm.o $(EPM_OBJS) epminstall.o $(SETUP_OBJS) $(LEDIT_OBJS)
+TARGETS		=	libepm.a \
+			epm \
+			epminstall \
+			mkepmlist \
+			@SETUP@ \
+			@EPMEDITOR@
+EPM_OBJS	=	aix.o \
+			bsd.o \
+			deb.o \
+			dist.o \
+			file.o \
+			inst.o \
+			osx.o \
+			pkg.o \
+			portable.o \
+			qprintf.o \
+			rpm.o \
+			run.o \
+			setld.o \
+			snprintf.o \
+			string.o \
+			swinstall.o \
+			tar.o
+SETUP_OBJS	=	setup.o \
+			setup2.o
+LEDIT_OBJS	=	epmeditor.o \
+			ListEditor.o \
+			ListEditor2.o \
+			ListEditor3.o \
+			ListManager.o
+OBJS		=	epm.o \
+			$(EPM_OBJS) \
+			epminstall.o \
+			$(SETUP_OBJS) \
+			$(LEDIT_OBJS)
 
 
 #
@@ -114,7 +142,8 @@ all:	$(TARGETS)
 #
 
 clean:
-	rm -f $(OBJS) $(TARGETS)
+	$(RM) $(OBJS)
+	$(RM) $(TARGETS)
 
 
 #
@@ -122,16 +151,16 @@ clean:
 #
 
 distclean:
-	rm -f $(OBJS) $(TARGETS) \
-		config.cache config.h config.log config.status \
-		mkepmlist Makefile
+	$(RM) $(OBJS)
+	$(RM) $(TARGETS)
+	$(RM) config.cache config.h config.log config.status
 
 
 #
 # Install all targets...
 #
 
-install: epm @INSTALL_SETUP@
+install: epm @INSTALL_GUIS@
 	echo Installing EPM programs in $(bindir)
 	-$(MKDIR) $(bindir)
 	$(RM) $(bindir)/epm
@@ -183,12 +212,19 @@ install: epm @INSTALL_SETUP@
 	$(RM) $(docdir)/epm-manual.pdf
 	$(CP) $(srcdir)/doc/epm-manual.pdf $(docdir)
 
-install-setup:	setup
+install-guis:	@SETUP@ @EPMEDITOR@
+	echo Installing EPM editor in $(bindir)
+	-$(MKDIR) $(bindir)
+	$(RM) $(bindir)/epmeditor
+	$(CP) epmeditor $(bindir)
+	$(STRIP) $(bindir)/epmeditor
+	$(FLTKCONFIG) --post $(bindir)/epmeditor
 	echo Installing EPM setup in $(libdir)/epm
 	-$(MKDIR) $(libdir)/epm
 	$(RM) $(libdir)/epm/setup
 	$(CP) setup $(libdir)/epm
 	$(STRIP) $(libdir)/epm/setup
+	$(FLTKCONFIG) --post $(libdir)/epm/setup
 
 
 #
@@ -207,6 +243,8 @@ uninstall:
 	$(RM) $(mandir)/man5/setup.types.5
 	echo Uninstalling EPM documentation from $(docdir)
 	$(RM) -r $(docdir)
+	echo Uninstalling EPM editor from $(bindir)
+	$(RM) $(bindir)/epmeditor
 	echo Uninstalling EPM setup from $(libdir)/epm
 	$(RM) $(libdir)/epm/setup
 
@@ -252,6 +290,9 @@ pkg: $(TARGETS)
 
 native: $(TARGETS)
 	./epm -f native -v epm
+
+osx: $(TARGETS)
+	./epm -f osx -v epm
 
 portable: $(TARGETS)
 	./epm -v epm
@@ -336,5 +377,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.34.2.4 2002/10/17 15:42:46 mike Exp $".
+# End of "$Id: Makefile.in,v 1.34.2.5 2003/01/03 20:23:16 mike Exp $".
 #

@@ -1,9 +1,9 @@
 /*
- * "$Id: epm.h,v 1.27.2.11 2002/10/18 15:02:35 mike Exp $"
+ * "$Id: epm.h,v 1.27.2.12 2003/01/03 20:23:20 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2002 by Easy Software Products.
+ *   Copyright 1999-2003 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -317,5 +317,5 @@ extern int	write_dist(const char *listname, dist_t *dist);
 
 
 /*
- * End of "$Id: epm.h,v 1.27.2.11 2002/10/18 15:02:35 mike Exp $".
+ * End of "$Id: epm.h,v 1.27.2.12 2003/01/03 20:23:20 mike Exp $".
  */

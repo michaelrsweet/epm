@@ -1,10 +1,10 @@
 /*
- * "$Id: mkepmlist.c,v 1.1.2.3 2003/01/03 04:14:41 mike Exp $"
+ * "$Id: mkepmlist.c,v 1.1.2.4 2003/01/03 20:23:21 mike Exp $"
  *
  *   List file generation utility for the ESP Package Manager (EPM).
  *
- *   Copyright 2002-2003 by Easy Software Products
- *   Copyright 2002 Andreas Voegele
+ *   Copyright 2003-2003 by Easy Software Products
+ *   Copyright 2003 Andreas Voegele
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -86,10 +86,10 @@ main(int  argc,			/* I - Number of command-line arguments */
 {
   int		i;		/* Looping var */
   const char	*prefix,	/* Installation prefix */
-		*temp;		/* Temporary prefix */
-  char		filename[1024],	/* Absolute directory */
+		*dstpath;	/* Destination path  */
+  char		dst[1024],	/* Destination */
 		*ptr;		/* Pointer into filename */
-  struct stat	fileinfo;	/* File information */
+  struct stat	info;		/* File information */
 
 
  /*
@@ -158,56 +158,65 @@ main(int  argc,			/* I - Number of command-line arguments */
       */
 
       if (prefix)
-        temp = prefix;
+        dstpath = prefix;
       else
       {
         if (argv[i][0] == '/')
-          temp = argv[i];
+          dstpath = argv[i];
 	else
 	{
           if (argv[i][0] == '.')
 	  {
-	    for (temp = argv[i]; *temp == '.';)
+	    for (dstpath = argv[i]; *dstpath == '.';)
 	    {
-	      if (strncmp(temp, "./", 2) == 0)
-		temp += 2;
-	      else if (strncmp(temp, "../", 3) == 0)
-		temp += 3;
+	      if (strncmp(dstpath, "./", 2) == 0)
+		dstpath += 2;
+	      else if (strncmp(dstpath, "../", 3) == 0)
+		dstpath += 3;
 	      else
 		break;
 	    }
 
-	    if (strcmp(temp, ".") == 0)
-	      temp = "";
+	    if (strcmp(dstpath, ".") == 0)
+	      dstpath = "";
 	  }
 	  else
-	    temp = argv[i];
+	    dstpath = argv[i];
 
-          if (temp[0])
+          if (dstpath[0])
 	  {
-            snprintf(filename, sizeof(filename), "/%s", temp);
-	    temp = filename;
-	  }
-	}
-
-        if (!stat(temp, &fileinfo))
-	{
-	  if (!S_ISDIR(fileinfo.st_mode))
-	  {
-	    if (temp != filename)
-	    {
-	      strncpy(filename, temp, sizeof(filename) - 1);
-	      filename[sizeof(filename) - 1] = '\0';
-	      temp = filename;
-	    }
-
-	    if ((ptr = strrchr(temp, '/')) != NULL)
-	      *ptr = '\0';
+            snprintf(dst, sizeof(dst), "/%s", dstpath);
+	    dstpath = dst;
 	  }
 	}
       }
 
-      process_file(argv[i], temp);
+      if (!lstat(argv[i], &info))
+      {
+	if (!S_ISDIR(info.st_mode))
+	{
+	  if (!prefix)
+	  {
+	   /*
+	    * Remove trailing filename component from destination...
+	    */
+
+	    if (dstpath != dst)
+	    {
+	      strncpy(dst, dstpath, sizeof(dst) - 1);
+	      dst[sizeof(dst) - 1] = '\0';
+	      dstpath = dst;
+	    }
+
+	    if ((ptr = strrchr(dstpath, '/')) != NULL)
+	      *ptr = '\0';
+          }
+
+          process_file(argv[i], dstpath);
+	}
+	else
+	  process_dir(argv[i], dstpath);
+      }
     }
 
  /*
@@ -432,7 +441,7 @@ void
 info(void)
 {
   puts(EPM_VERSION);
-  puts("Copyright 1999-2002 by Easy Software Products.");
+  puts("Copyright 1999-2003 by Easy Software Products.");
   puts("");
   puts("EPM is free software and comes with ABSOLUTELY NO WARRANTY; for details");
   puts("see the GNU General Public License in the file COPYING or at");
@@ -613,5 +622,5 @@ usage(void)
 
 
 /*
- * End of "$Id: mkepmlist.c,v 1.1.2.3 2003/01/03 04:14:41 mike Exp $".
+ * End of "$Id: mkepmlist.c,v 1.1.2.4 2003/01/03 20:23:21 mike Exp $".
  */

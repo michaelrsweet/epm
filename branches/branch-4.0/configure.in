@@ -1,9 +1,9 @@
 dnl
-dnl "$Id: configure.in,v 1.52.2.8 2002/12/11 21:45:22 mike Exp $"
+dnl "$Id: configure.in,v 1.52.2.9 2003/01/03 20:23:19 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
-dnl   Copyright 1999-2002 by Easy Software Products, all rights reserved.
+dnl   Copyright 1999-2003 by Easy Software Products, all rights reserved.
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ if test "x$FLTKCONFIG" = x; then
 	GUILIBS=""
 	INSTALL_GUIS=""
 
-	AC_MSG_WARN([Sorry, GUIs require FLTK 1.1.x.])
+	AC_MSG_WARN([Sorry, the GUIs require FLTK 1.1.x.])
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
 	SETUP="setup"
@@ -378,5 +378,5 @@ dnl Output the makefile, list file, and config header...
 AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
-dnl End of "$Id: configure.in,v 1.52.2.8 2002/12/11 21:45:22 mike Exp $".
+dnl End of "$Id: configure.in,v 1.52.2.9 2003/01/03 20:23:19 mike Exp $".
 dnl

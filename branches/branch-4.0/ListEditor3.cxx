@@ -1,9 +1,9 @@
 //
-// "$Id: ListEditor3.cxx,v 1.1.2.4 2002/05/20 00:47:56 mike Exp $"
+// "$Id: ListEditor3.cxx,v 1.1.2.5 2003/01/03 20:23:16 mike Exp $"
 //
 //   ESP List Editor callback methods for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2002 by Easy Software Products.
+//   Copyright 1999-2003 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -721,5 +721,5 @@ ListEditor::save_as_cb()			// I - List editor window
 
 
 //
-// End of "$Id: ListEditor3.cxx,v 1.1.2.4 2002/05/20 00:47:56 mike Exp $".
+// End of "$Id: ListEditor3.cxx,v 1.1.2.5 2003/01/03 20:23:16 mike Exp $".
 //

@@ -1,9 +1,9 @@
 //
-// "$Id: ListManager.cxx,v 1.1.2.2 2002/05/12 21:57:12 mike Exp $"
+// "$Id: ListManager.cxx,v 1.1.2.3 2003/01/03 20:23:16 mike Exp $"
 //
 //   List manager widget methods for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2002 by Easy Software Products.
+//   Copyright 1999-2003 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -258,5 +258,5 @@ ListManager::handle(int event)		// I - Event to handle
 
 
 //
-// End of "$Id: ListManager.cxx,v 1.1.2.2 2002/05/12 21:57:12 mike Exp $".
+// End of "$Id: ListManager.cxx,v 1.1.2.3 2003/01/03 20:23:16 mike Exp $".
 //

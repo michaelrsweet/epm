@@ -1,9 +1,9 @@
 //
-// "$Id: ListManager.h,v 1.1.2.1 2002/05/10 00:19:46 mike Exp $"
+// "$Id: ListManager.h,v 1.1.2.2 2003/01/03 20:23:16 mike Exp $"
 //
 //   List manager widget definitions for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2002 by Easy Software Products.
+//   Copyright 1999-2003 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -57,5 +57,5 @@ class ListManager : public Fl_Widget
 
 
 //
-// End of "$Id: ListManager.h,v 1.1.2.1 2002/05/10 00:19:46 mike Exp $".
+// End of "$Id: ListManager.h,v 1.1.2.2 2003/01/03 20:23:16 mike Exp $".
 //

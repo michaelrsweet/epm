@@ -1,9 +1,9 @@
 /*
- * "$Id: pkg.c,v 1.20.2.4 2002/10/17 18:15:12 mike Exp $"
+ * "$Id: pkg.c,v 1.20.2.5 2003/01/03 20:23:21 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2002 by Easy Software Products.
+ *   Copyright 1999-2003 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -503,5 +503,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.20.2.4 2002/10/17 18:15:12 mike Exp $".
+ * End of "$Id: pkg.c,v 1.20.2.5 2003/01/03 20:23:21 mike Exp $".
  */
