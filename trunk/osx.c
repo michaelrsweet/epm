@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.2 2002/10/17 16:36:31 mike Exp $"
+ * "$Id: osx.c,v 1.3 2002/10/17 17:21:22 swdev Exp $"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -46,10 +46,13 @@ make_osx(const char     *prodname,	/* I - Product short name */
   command_t	*c;			/* Current command */
   struct passwd	*pwd;			/* Pointer to user record */
   struct group	*grp;			/* Pointer to group record */
+  char		current[1024];		/* Current directory */
 
 
   if (Verbosity)
     puts("Creating MacOS X distribution...");
+
+  getcwd(current, sizeof(current));
 
   if (dist->relnumber)
   {
@@ -232,10 +235,10 @@ make_osx(const char     *prodname,	/* I - Product short name */
   make_directory(filename, 0777, 0, 0);
 
   snprintf(filename, sizeof(filename), "%s/Resources/License.txt", directory);
-  copy_file(dist->license, filename, 0644, 0, 0);
+  copy_file(filename, dist->license, 0644, 0, 0);
 
   snprintf(filename, sizeof(filename), "%s/Resources/ReadMe.txt", directory);
-  copy_file(dist->readme, filename, 0644, 0, 0);
+  copy_file(filename, dist->readme, 0644, 0, 0);
 
   snprintf(filename, sizeof(filename), "%s/Resources/Welcome.txt", directory);
   if ((fp = fopen(filename, "w")) == NULL)
@@ -451,10 +454,18 @@ make_osx(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building OSX package...");
 
+  if (directory[0] == '/')
+  {
+    strncpy(filename, directory, sizeof(filename) - 1);
+    filename[sizeof(filename) - 1] = '\0';
+  }
+  else
+    snprintf(filename, sizeof(filename), "%s/%s", current, directory);
+
   if (run_command(NULL, "/Developer/Applications/PackageMaker.app/"
                         "Contents/MacOS/PackageMaker -build "
 			"-p %s/%s.pkg -f %s/Package -r %s/Resources",
-		  directory, prodname, directory, directory))
+		  filename, prodname, filename, filename))
     return (1);
 
  /*
@@ -475,5 +486,5 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.2 2002/10/17 16:36:31 mike Exp $".
+ * End of "$Id: osx.c,v 1.3 2002/10/17 17:21:22 swdev Exp $".
  */
