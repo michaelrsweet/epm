@@ -1,0 +1,12 @@
+*.bck
+Makefile
+config.cache
+config.h
+config.log
+config.status
+epm
+epm.list
+epminstall
+mkepmlist
+setup
+uninst
