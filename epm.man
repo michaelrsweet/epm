@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.20 2001/01/19 16:16:51 mike Exp $"
+.\" "$Id: epm.man,v 1.21 2001/01/23 13:35:43 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -112,7 +112,9 @@ or the percent sign ("%") as follows:
 .TP 5
 $name=value
 .br
-Sets the named variable to \fIvalue\fR.
+Sets the named variable to \fIvalue\fR. \fBNote:\fR Variables
+set in the list file are overridden by variables specified on
+the command-line or in the current environment.
 .TP 5
 %copyright \fIcopyright notice\fR
 .br
@@ -279,5 +281,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.20 2001/01/19 16:16:51 mike Exp $".
+.\" End of "$Id: epm.man,v 1.21 2001/01/23 13:35:43 mike Exp $".
 .\"
