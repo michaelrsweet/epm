@@ -1,7 +1,7 @@
 //
-// "$Id: setup2.cxx,v 1.34 2003/01/30 04:27:46 mike Exp $"
+// "$Id: setup2.cxx,v 1.35 2003/02/13 21:34:01 mike Exp $"
 //
-//   ESP Software Wizard main entry for the ESP Package Manager (EPM).
+//   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
 //   Copyright 1999-2003 by Easy Software Products.
 //
@@ -309,7 +309,7 @@ get_dists(const char *d)	// I - Directory to look in
 
   if (NumDists == 0)
   {
-    fputs("setup: No distributions to install!\n", stderr);
+    fl_alert("No software found to install!");
     exit(1);
   }
 
@@ -997,5 +997,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: setup2.cxx,v 1.34 2003/01/30 04:27:46 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.35 2003/02/13 21:34:01 mike Exp $".
 //

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.83 2003/02/13 18:33:41 mike Exp $"
+ * "$Id: portable.c,v 1.84 2003/02/13 21:34:00 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -955,7 +955,7 @@ write_dist(const char *title,		/* I - Title to show */
     * Create directories for the setup application...
     */
 
-    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Setup.app", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Setup.app", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -965,7 +965,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Setup.app/Contents", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Setup.app/Contents", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -975,7 +975,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Setup.app/Contents/MacOS", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Setup.app/Contents/MacOS", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -985,7 +985,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Setup.app/Contents/Resources", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Setup.app/Contents/Resources", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -1252,7 +1252,7 @@ write_dist(const char *title,		/* I - Title to show */
     */
 
 #ifdef __APPLE__
-    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root",
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root",
                    "Uninstall.app", NULL) < 0)
     {
       if (Verbosity)
@@ -1263,7 +1263,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Uninstall.app/Contents", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Uninstall.app/Contents", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -1273,7 +1273,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/MacOS", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/MacOS", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -1283,7 +1283,7 @@ write_dist(const char *title,		/* I - Title to show */
       return (-1);
     }
 
-    if (tar_header(tarfile, TAR_DIR, 755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/Resources", NULL) < 0)
+    if (tar_header(tarfile, TAR_DIR, 0755, 0, time(NULL), "root", "root", "Uninstall.app/Contents/Resources", NULL) < 0)
     {
       if (Verbosity)
         puts("");
@@ -2500,5 +2500,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.83 2003/02/13 18:33:41 mike Exp $".
+ * End of "$Id: portable.c,v 1.84 2003/02/13 21:34:00 mike Exp $".
  */

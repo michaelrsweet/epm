@@ -7,18 +7,18 @@ Function {make_window()} {open
   Fl_Window {} {
     label {ESP Software Installation Wizard}
     callback {if (CancelButton->active())
-  exit(0);} open selected
-    xywh {806 150 580 345}
+  exit(0);} open
+    xywh {438 150 580 345}
     code0 {\#include "gui-common.h"} visible
   } {
     Fl_Wizard Wizard {open
       xywh {0 0 580 300}
     } {
       Fl_Group WelcomePane {
-        xywh {10 10 560 280} box FLAT_BOX hide
+        xywh {10 10 560 280} box FLAT_BOX
       } {
         Fl_Box {} {
-          label {Welcome to the Installation Wizard}
+          label {Welcome to the Software Installation Wizard} selected
           xywh {10 10 560 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Box WelcomeImage {
@@ -153,7 +153,7 @@ list_cb(0,0);}
         }
       }
       Fl_Group InstallPane {open
-        xywh {10 10 555 280} box FLAT_BOX
+        xywh {10 10 555 280} box FLAT_BOX hide
       } {
         Fl_Box {} {
           label {Installing Software...}

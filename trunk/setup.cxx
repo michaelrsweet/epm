@@ -87,8 +87,7 @@ Fl_Window* make_window() {
     { Fl_Wizard* o = Wizard = new Fl_Wizard(0, 0, 580, 300);
       { Fl_Group* o = WelcomePane = new Fl_Group(10, 10, 560, 280);
         o->box(FL_FLAT_BOX);
-        o->hide();
-        { Fl_Box* o = new Fl_Box(10, 10, 560, 25, "Welcome to the Installation Wizard");
+        { Fl_Box* o = new Fl_Box(10, 10, 560, 25, "Welcome to the Software Installation Wizard");
           o->labelfont(1);
           o->labelsize(18);
           o->labelcolor(4);
@@ -244,6 +243,7 @@ t.");
       }
       { Fl_Group* o = InstallPane = new Fl_Group(10, 10, 555, 280);
         o->box(FL_FLAT_BOX);
+        o->hide();
         { Fl_Box* o = new Fl_Box(10, 10, 430, 25, "Installing Software...");
           o->labelfont(1);
           o->labelsize(18);
