@@ -1,0 +1,198 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="PACKAGING">Packaging Your Software with EPM</A></H1>
+
+<P>This chapter describes how to use EPM to package your own software
+packages.</P>
+
+<H2>The Basics</H2>
+
+<P>EPM reads one or more software "list" files that describe a
+single software package. Each list file contains one or more
+lines of ASCII text containing product or file information.
+Comments start with the <CODE>#</CODE> character, directives
+start with the <CODE>%</CODE> character, variable start with the
+<CODE>$</CODE> character, and files, directories, and symlinks
+start with a letter.</P>
+
+<H3>Product Information</H3>
+
+<P>Every list file needs to define the product name, copyright, description,
+license, README file, vendor, and version:</P>
+
+<UL><PRE>
+%product Kung Foo Firewall
+%copyright 1999-2001 by Foo Industries, All Rights Reserved.
+%vendor Foo Industries
+%license COPYING
+%readme README
+%description Kung Foo firewall software for your firewall.
+%version 1.2.3p4 1020304
+</PRE></UL>
+
+<P>The <CODE>%license</CODE> and <CODE>%readme</CODE> directives
+specify files for the license agreement and README files for the
+package, respectively.</P>
+
+<P>The <CODE>%product</CODE>, <CODE>%copyright</CODE>,
+<CODE>%vendor</CODE>, and <CODE>%description</CODE> directives
+take text directly from the line.
+
+<P>The <CODE>%version</CODE> directive specifies the version
+numbers of the package.  The first number is the human-readable
+version number, while the second number is the integer version
+number. If you omit the integer version number, EPM will
+calculate one for you.</P>
+
+<H3>Files, Directories, and Symlinks</H3>
+
+<P>Each file in the distribution is listed on a line starting
+with a letter. The format of all lines is:
+
+<UL><PRE>
+type mode owner group destination source
+</PRE></UL>
+
+<P>Regular files use the letter <CODE>f</CODE> for the type
+field:</P>
+
+<UL><PRE>
+f 755 root sys /usr/bin/foo foo
+</PRE></UL>
+
+<P>Configuration files use the letter <CODE>c</CODE> for the
+type field:</P>
+
+<UL><PRE>
+c 644 root sys /etc/foo.conf foo.conf
+</PRE></UL>
+
+<P>Directories use the letter <CODE>d</CODE> for the type field
+and use a source path of "-":</P>
+
+<UL><PRE>
+d 755 root sys /var/spool/foo -
+</PRE></UL>
+
+<P>Finally, symbolic links use the letter <CODE>l</CODE> (lowercase L) for the type field:</P>
+
+<UL><PRE>
+l 000 root sys /usr/bin/foobar foo
+</PRE></UL>
+
+<P>The source field specifies the file to link to and can be a
+relative path.</P>
+
+<H3>Wildcards</H3>
+
+<P>Wildcard patterns can be used in the source field to include multiple
+files on a single line:
+
+<UL><PRE>
+f 0444 root sys /usr/share/doc/foo *.html
+</PRE></UL>
+
+<H2>Building a Software Distribution</H2>
+
+<P>The <CODE>epm(1)</CODE> program is used to build software
+distributions from list files. To build a portable software
+distribution for an application called "foo", type the following
+command:</P>
+
+<UL><PRE>
+<KBD>epm foo <I>ENTER</I></KBD>
+</PRE></UL>
+
+<P>If your application uses a different base name than the list file,
+you can specify the list filename on the command-line as well:</P>
+
+<UL><PRE>
+<KBD>epm foo bar.list <I>ENTER</I></KBD>
+</PRE></UL>
+
+<P>EPM can also produce vendor-specific distributions using the
+<CODE>-f</CODE> option:
+
+<UL><PRE>
+<KBD>epm -f format foo bar.list <I>ENTER</I></KBD>
+</PRE></UL>
+
+<P>The <I>format</I> option can be one of the following keywords:
+
+<UL>
+
+	<LI><CODE>aix</CODE> - AIX software distribution.
+
+	<LI><CODE>bsd</CODE> - FreeBSD, NetBSD, or OpenBSD
+	software distribution.
+
+	<LI><CODE>depot</CODE> or <CODE>swinstall</CODE> - HP-UX
+	software distribution.
+
+	<LI><CODE>dpkg</CODE> - Debian software distribution.
+
+	<LI><CODE>inst</CODE> or <CODE>tardist</CODE> - IRIX
+	software distribution.
+
+	<LI><CODE>native</CODE> - "Native" software distribution
+	(RPM, INST, DEPOT, PKG, etc.) for the platform.
+
+	<LI><CODE>pkg</CODE> - Solaris software distribution.
+
+	<LI><CODE>portable</CODE> - Portable software
+	distribution (default).
+
+	<LI><CODE>rpm</CODE> - RedHat software distribution.
+
+	<LI><CODE>setld</CODE> - Tru64 (setld) software
+	distribution.
+
+</UL>
+
+<P>Everything in the software list file stays the same - you just use the
+<CODE>-f</CODE> option to select the format.  For example, to build an RPM
+distribution of EPM, type:</P>
+
+<UL><PRE>
+epm -f rpm epm
+</PRE></UL>
+
+<P>The result will be an RPM distribution file instead of the portable
+distribution file.</P>
+
+<H2>Installing the Software Package</H2>
+
+<P>Once you have created the software distribution, you can
+install it. Portable distributions create an install script
+called <VAR>product.install</VAR>, where "product" is the name
+of the package:
+
+<UL><PRE>
+<KBD>cd os-release-arch <I>ENTER</I>
+./product.install <I>ENTER</I></KBD>
+</PRE></UL>
+
+<P>After answering a few yes/no questions, the software will be
+installed. To bypass the questions, run the script with the
+<CODE>now</CODE> argument:</P>
+
+<UL><PRE>
+<KBD>cd os-release-arch <I>ENTER</I>
+./product.install now <I>ENTER</I></KBD>
+</PRE></UL>
+
+<H2>Including the Setup GUI</H2>
+
+<P>EPM also provides an optional graphical setup program. To
+include the setup program in your distributions, create a
+product logo image in XPM format and use the
+<CODE>--setup-image</CODE> option when creating your
+distribution:</P>
+
+<UL><PRE>
+<KBD>epm --setup-image foo.xpm foo <I>ENTER</I></KBD>
+</PRE></UL>
+
+</BODY>
+</HTML>
