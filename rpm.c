@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.24 2001/03/03 21:29:49 mike Exp $"
+ * "$Id: rpm.c,v 1.25 2001/03/06 17:13:39 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -136,8 +136,15 @@ make_rpm(const char     *prodname,	/* I - Product short name */
         fprintf(fp, " %s", file->dst);
 
     fputs("; do\n", fp);
-    fputs("		/bin/rm -f $rcdir/init.d/$file\n", fp);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", fp);
+    fputs("		if test -d $rcdir/init.d; then\n", fp);
+    fputs("			/bin/rm -f $rcdir/init.d/$file\n", fp);
+    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", fp);
+    fputs("		else\n", fp);
+    fputs("			if test -d /etc/init.d; then\n", fp);
+    fputs("				/bin/rm -f /etc/init.d/$file\n", fp);
+    fputs("				/bin/ln -s " EPM_SOFTWARE "/init.d/$file /etc/init.d/$file\n", fp);
+    fputs("			fi\n", fp);
+    fputs("		fi\n", fp);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", fp);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", fp);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", fp);
@@ -207,7 +214,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     switch (tolower(file->type))
     {
       case 'c' :
-          fprintf(fp, "%%attr(%04o,%s,%s) %%config %s\n", file->mode,
+          fprintf(fp, "%%attr(%04o,%s,%s) %%config(noreplace) %s\n", file->mode,
 	          file->user, file->group, file->dst);
           break;
       case 'd' :
@@ -358,5 +365,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.24 2001/03/03 21:29:49 mike Exp $".
+ * End of "$Id: rpm.c,v 1.25 2001/03/06 17:13:39 mike Exp $".
  */

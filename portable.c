@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.21 2001/03/05 13:24:18 mike Exp $"
+ * "$Id: portable.c,v 1.22 2001/03/06 17:13:39 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1122,8 +1122,15 @@ write_install(dist_t     *dist,		/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
+    fputs("		if test -d $rcdir/init.d; then\n", scriptfile);
+    fputs("			/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
+    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
+    fputs("		else\n", scriptfile);
+    fputs("			if test -d /etc/init.d; then\n", scriptfile);
+    fputs("				/bin/rm -f /etc/init.d/$file\n", scriptfile);
+    fputs("				/bin/ln -s " EPM_SOFTWARE "/init.d/$file /etc/init.d/$file\n", scriptfile);
+    fputs("			fi\n", scriptfile);
+    fputs("		fi\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
@@ -1404,8 +1411,15 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
         fprintf(scriptfile, " %s", file->dst);
 
     fputs("; do\n", scriptfile);
-    fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
+    fputs("		if test -d $rcdir/init.d; then\n", scriptfile);
+    fputs("			/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
+    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
+    fputs("		else\n", scriptfile);
+    fputs("			if test -d /etc/init.d; then\n", scriptfile);
+    fputs("				/bin/rm -f /etc/init.d/$file\n", scriptfile);
+    fputs("				/bin/ln -s " EPM_SOFTWARE "/init.d/$file /etc/init.d/$file\n", scriptfile);
+    fputs("			fi\n", scriptfile);
+    fputs("		fi\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", scriptfile);
@@ -1600,5 +1614,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.21 2001/03/05 13:24:18 mike Exp $".
+ * End of "$Id: portable.c,v 1.22 2001/03/06 17:13:39 mike Exp $".
  */
