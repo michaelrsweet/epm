@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.49 2001/07/02 19:18:03 mike Exp $"
+ * "$Id: portable.c,v 1.50 2001/07/02 19:42:25 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1032,32 +1032,35 @@ write_dist(const char *title,		/* I - Title to show */
     * And the types file...
     */
 
-    stat(types, &srcstat);
-    if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-	           srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
+    if (types)
     {
+      stat(types, &srcstat);
+      if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+	             srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
+      {
+	if (Verbosity)
+          puts("");
+
+	fprintf(stderr, "epm: Error writing file header - %s\n",
+		strerror(errno));
+	return (-1);
+      }
+
+      if (tar_file(tarfile, types) < 0)
+      {
+	if (Verbosity)
+          puts("");
+
+	fprintf(stderr, "epm: Error writing file data for setup.types -\n    %s\n",
+		strerror(errno));
+	return (-1);
+      }
+
       if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (tar_file(tarfile, types) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for setup.types -\n    %s\n",
-	      strerror(errno));
-      return (-1);
-    }
-
-    if (Verbosity)
-    {
-      printf(" setup.types");
-      fflush(stdout);
+      {
+	printf(" setup.types");
+	fflush(stdout);
+      }
     }
   }
 
@@ -1898,5 +1901,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.49 2001/07/02 19:18:03 mike Exp $".
+ * End of "$Id: portable.c,v 1.50 2001/07/02 19:42:25 mike Exp $".
  */
