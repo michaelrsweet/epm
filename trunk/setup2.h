@@ -1,9 +1,9 @@
 //
-// "$Id: setup2.h,v 1.2 1999/12/03 22:36:54 mike Exp $"
+// "$Id: setup2.h,v 1.3 2000/01/04 13:45:41 mike Exp $"
 //
 //   ESP Software Wizard header file for the ESP Package Manager (EPM).
 //
-//   Copyright 1999 by Easy Software Products.
+//   Copyright 1999-2000 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -66,5 +66,5 @@ int	sort_dists(const dist_t *d0, const dist_t *d1);
 
 
 //
-// End of "$Id: setup2.h,v 1.2 1999/12/03 22:36:54 mike Exp $".
+// End of "$Id: setup2.h,v 1.3 2000/01/04 13:45:41 mike Exp $".
 //

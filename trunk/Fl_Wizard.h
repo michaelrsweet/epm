@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Wizard.h,v 1.1 1999/11/03 17:10:29 mike Exp $"
+// "$Id: Fl_Wizard.h,v 1.2 2000/01/04 13:45:51 mike Exp $"
 //
 //   Fl_Wizard widget definitions.
 //
-//   Copyright 1999 by Easy Software Products.
+//   Copyright 1999-2000 by Easy Software Products.
 //
 //   These coded instructions, statements, and computer programs are the
 //   property of Easy Software Products and are protected by Federal
@@ -55,5 +55,5 @@ class Fl_Wizard : public Fl_Group
 #endif // !_FL_WIZARD_H_
 
 //
-// End of "$Id: Fl_Wizard.h,v 1.1 1999/11/03 17:10:29 mike Exp $".
+// End of "$Id: Fl_Wizard.h,v 1.2 2000/01/04 13:45:51 mike Exp $".
 //

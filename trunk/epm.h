@@ -1,9 +1,9 @@
 /*
- * "$Id: epm.h,v 1.4 1999/12/15 14:09:38 mike Exp $"
+ * "$Id: epm.h,v 1.5 2000/01/04 13:45:40 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999 by Easy Software Products.
+ *   Copyright 1999-2000 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -198,5 +198,5 @@ extern int	tar_header(tarf_t *tar, char type, int mode, int size,
 extern tarf_t	*tar_open(const char *filename, int compress);
 
 /*
- * End of "$Id: epm.h,v 1.4 1999/12/15 14:09:38 mike Exp $".
+ * End of "$Id: epm.h,v 1.5 2000/01/04 13:45:40 mike Exp $".
  */
