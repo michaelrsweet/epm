@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.43 2001/10/17 12:15:40 mike Exp $"
+dnl "$Id: configure.in,v 1.44 2001/10/17 12:16:08 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -369,7 +369,6 @@ if test "x$RPM" != "x"; then
 	# It would be nice if Red Hat could make up its mind...
 	rpmversion="`$RPM --version | awk '{print $3}' | awk -F. '{print $1 * 10000 + $2 * 100 + $3}'`"
 
-	echo RPM version is $rpmversion
 	if test $rpmversion -lt 30000; then
 		AC_DEFINE_UNQUOTED(EPM_RPMARCH, "--buildarch ")
 	else
@@ -387,5 +386,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist doc/Makefile)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.43 2001/10/17 12:15:40 mike Exp $".
+dnl End of "$Id: configure.in,v 1.44 2001/10/17 12:16:08 mike Exp $".
 dnl
