@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.5 2000/04/26 23:46:31 mike Exp $"
+ * "$Id: swinstall.c,v 1.6 2000/06/28 20:25:22 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -66,19 +66,21 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      for (j = 0; j < 6; j ++)
-        if (j != 1)
-	{
-	  file = add_file(dist);
+      file = add_file(dist);
+      file->type = 'l';
+      file->mode = 0;
+      strcpy(file->user, "root");
+      strcpy(file->group, "sys");
+      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
+      sprintf(file->dst, "/sbin/rc0.d/K000%s", dist->files[i].dst);
 
-          file->type = 'l';
-	  file->mode = 0;
-	  strcpy(file->user, "root");
-	  strcpy(file->group, "sys");
-	  sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-	  sprintf(file->dst, "/sbin/rc%d.d/%s%s", j, j == 0 ? "K000" : "S999",
-	          dist->files[i].dst);
-        }
+      file = add_file(dist);
+      file->type = 'l';
+      file->mode = 0;
+      strcpy(file->user, "root");
+      strcpy(file->group, "sys");
+      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
+      sprintf(file->dst, "/sbin/rc2d.d/S999%s", dist->files[i].dst);
 
       file = dist->files + i;
 
@@ -330,5 +332,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.5 2000/04/26 23:46:31 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.6 2000/06/28 20:25:22 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.5 2000/01/11 19:59:13 mike Exp $"
+ * "$Id: inst.c,v 1.6 2000/06/28 20:25:21 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -158,19 +158,21 @@ make_inst(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      for (j = 0; j < 6; j ++)
-        if (j != 1)
-	{
-	  file = add_file(dist);
+      file = add_file(dist);
+      file->type = 'l';
+      file->mode = 0;
+      strcpy(file->user, "root");
+      strcpy(file->group, "sys");
+      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
+      sprintf(file->dst, "/etc/rc0.d/K00%s", dist->files[i].dst);
 
-          file->type = 'l';
-	  file->mode = 0;
-	  strcpy(file->user, "root");
-	  strcpy(file->group, "sys");
-	  sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-	  sprintf(file->dst, "/etc/rc%d.d/%s%s", j, j == 0 ? "K00" : "S99",
-	          dist->files[i].dst);
-        }
+      file = add_file(dist);
+      file->type = 'l';
+      file->mode = 0;
+      strcpy(file->user, "root");
+      strcpy(file->group, "sys");
+      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
+      sprintf(file->dst, "/etc/rc2.d/S99%s", dist->files[i].dst);
 
       file = dist->files + i;
 
@@ -444,5 +446,5 @@ compare_files(const file_t *f0,	/* I - First file */
 
 
 /*
- * End of "$Id: inst.c,v 1.5 2000/01/11 19:59:13 mike Exp $".
+ * End of "$Id: inst.c,v 1.6 2000/06/28 20:25:21 mike Exp $".
  */
