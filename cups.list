@@ -1,5 +1,5 @@
 #
-# "$Id: cups.list,v 1.4 1999/05/20 18:12:26 mike Exp $"
+# "$Id: cups.list,v 1.5 1999/05/20 18:51:20 mike Exp $"
 #
 #   Installation list for the Common UNIX Printing System (CUPS).
 #
@@ -41,7 +41,6 @@ f 0555 root sys /var/cups/filter/imagetops filter/imagetops
 f 0555 root sys /var/cups/filter/pstops filter/pstops
 f 0555 root sys /var/cups/filter/texttops filter/texttops
 f 0555 root sys /var/cups/filter/rastertohp filter/rastertohp
-f 0555 root sys /var/cups/filter/rastertopcl filter/rastertopcl
 f 0555 root sys /var/cups/filter/hpgltops filter/hpgltops
 f 0555 root sys /var/cups/filter/imagetoraster filter/imagetoraster
 
@@ -290,5 +289,5 @@ l 0555 root sys /etc/rc0.d/K20lp ../init.d/cups
 l 0555 root sys /etc/rc2.d/S80lp ../init.d/cups
 
 #
-# End of "$Id: cups.list,v 1.4 1999/05/20 18:12:26 mike Exp $".
+# End of "$Id: cups.list,v 1.5 1999/05/20 18:51:20 mike Exp $".
 #

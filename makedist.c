@@ -1,5 +1,5 @@
 /*
- * "$Id: makedist.c,v 1.2 1999/05/20 16:16:47 mike Exp $"
+ * "$Id: makedist.c,v 1.3 1999/05/20 18:51:20 mike Exp $"
  *
  *   Patch file builder for espPrint, a collection of printer drivers.
  *
@@ -16,6 +16,11 @@
  * Revision History:
  *
  *   $Log: makedist.c,v $
+ *   Revision 1.3  1999/05/20 18:51:20  mike
+ *   Removed extra rastertopcl filter.
+ *
+ *   Fixed strip and echo commands for Linux...
+ *
  *   Revision 1.2  1999/05/20 16:16:47  mike
  *   Updated lp and lpadmin documentation.
  *
@@ -82,7 +87,7 @@
 #ifdef __sgi
 #  define STRIP		"/bin/strip -f -s -k -l -h %s"
 #else
-#  define STRIP		"/bin/strip %s"
+#  define STRIP		"strip %s"
 #endif /* __sgi */
 
 
@@ -347,7 +352,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(installfile, "echo \"software version %s on your system.\"\n", version);
   fputs("echo \"\"\n", installfile);
   fputs("while true ; do\n", installfile);
+#ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
+  fputs("	echo -n \"Do you wish to continue? \"\n", installfile);
+#else
   fputs("	echo \"Do you wish to continue? \\c\"\n", installfile);
+#endif /* __linux */
   fputs("	read yesno\n", installfile);
   fputs("	case \"$yesno\" in\n", installfile);
   fputs("		y | yes | Y | Yes | YES)\n", installfile);
@@ -362,8 +371,13 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("	esac\n", installfile);
   fputs("done\n", installfile);
   fprintf(installfile, "more %s.license\n", name);
+  fputs("echo \"\"\n", installfile);
   fputs("while true ; do\n", installfile);
+#ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
+  fputs("	echo -n \"Do you agree with the terms of this license? \"\n", installfile);
+#else
   fputs("	echo \"Do you agree with the terms of this license? \\c\"\n", installfile);
+#endif /* __linux */
   fputs("	read yesno\n", installfile);
   fputs("	case \"$yesno\" in\n", installfile);
   fputs("		y | yes | Y | Yes | YES)\n", installfile);
@@ -398,7 +412,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(removefile, "echo \"software version %s from your system.\"\n", version);
   fputs("echo \"\"\n", removefile);
   fputs("while true ; do\n", removefile);
+#ifdef __linux	/* AND YET ANOTHER GNU BLUNDER */
+  fputs("	echo -n \"Do you wish to continue? \"\n", removefile);
+#else
   fputs("	echo \"Do you wish to continue? \\c\"\n", removefile);
+#endif /* __linux */
   fputs("	read yesno\n", removefile);
   fputs("	case \"$yesno\" in\n", removefile);
   fputs("		y | yes | Y | Yes | YES)\n", removefile);
@@ -806,5 +824,5 @@ write_file(FILE *fp,
 
 
 /*
- * End of "$Id: makedist.c,v 1.2 1999/05/20 16:16:47 mike Exp $".
+ * End of "$Id: makedist.c,v 1.3 1999/05/20 18:51:20 mike Exp $".
  */
