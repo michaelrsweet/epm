@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.16 1999/08/16 18:31:41 mike Exp $"
+ * "$Id: epm.c,v 1.17 1999/08/19 16:10:03 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -400,7 +400,6 @@ main(int  argc,			/* I - Number of command-line arguments */
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     switch (tolower(file->type))
     {
-      case 'c' : /* Config file */
       case 'f' : /* Regular file */
           if ((file->mode & 0111) && strip)
 	  {
@@ -412,6 +411,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    system(command);
 	  }
 
+      case 'c' : /* Config file */
+      case 'i' : /* Init script */
           if (stat(file->src, &srcstat))
 	  {
 	    fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
@@ -426,9 +427,12 @@ main(int  argc,			/* I - Number of command-line arguments */
 	  * file location...
 	  */
 
-          strcpy(filename, file->dst);
 	  if (tolower(file->type) == 'c')
-            strcat(filename, ".N");
+	    sprintf(filename, "%s.N", file->dst);
+	  else if (tolower(file->type) == 'i')
+	    sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
+	  else
+            strcpy(filename, file->dst);
 
 	  printf("%s -> %s...\n", file->src, filename);
 
@@ -500,6 +504,7 @@ main(int  argc,			/* I - Number of command-line arguments */
       {
 	case 'C' : /* Config file */
 	case 'F' : /* Regular file */
+        case 'I' : /* Init script */
             if (stat(file->src, &srcstat))
 	    {
 	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
@@ -514,9 +519,12 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    * file location...
 	    */
 
-            strcpy(filename, file->dst);
 	    if (file->type == 'C')
-              strcat(filename, ".N");
+	      sprintf(filename, "%s.N", file->dst);
+	    else if (file->type == 'I')
+	      sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
+	    else
+              strcpy(filename, file->dst);
 
 	    printf("%s -> %s...\n", file->src, filename);
 
@@ -543,7 +551,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	    printf("%s...\n", file->dst);
 	    break;
 
-	case 'l' : /* Link file */
+	case 'L' : /* Link file */
 	    printf("%s -> %s...\n", file->src, file->dst);
 
 	    if (write_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
@@ -1567,12 +1575,56 @@ write_install(dist_t *dist,	/* I - Software distribution */
     fputs("done\n", scriptfile);
   }
 
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+      break;
+
+  if (i)
+  {
+    fputs("echo Setting up init scripts...\n", scriptfile);
+
+   /*
+    * Find where the frigging init scripts go...
+    */
+
+    fputs("rcdir=\"\"\n", scriptfile);
+    fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
+    fputs("	if test -d $dir/init.d ; then\n", scriptfile);
+    fputs("		rcdir=\"$dir\"\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("done\n", scriptfile);
+    fputs("if test \"$rcdir\" = \"\" ; then\n", scriptfile);
+    fputs("	echo Unable to determine location of startup scripts!\n", scriptfile);
+    fputs("else\n", scriptfile);
+    fputs("	for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
+#ifdef __sgi
+    fputs("		/etc/chkconfig -f $file on\n", scriptfile);
+#endif /* __sgi */
+    fputs("	done\n", scriptfile);
+    fputs("fi\n", scriptfile);
+  }
+
   if (dist->num_installs)
   {
     fputs("echo Running post-installation commands...\n", scriptfile);
 
     for (i = 0; i < dist->num_installs; i ++)
       fprintf(scriptfile, "%s\n", dist->installs[i]);
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s start\n", file->dst);
   }
 
   fputs("echo Installation is complete.\n", scriptfile);
@@ -1734,6 +1786,10 @@ write_patch(dist_t *dist,	/* I - Software distribution */
   {
     fputs("echo Running pre-patch commands...\n", scriptfile);
 
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
+
     for (i = 0; i < dist->num_removes; i ++)
       fprintf(scriptfile, "%s\n", dist->removes[i]);
   }
@@ -1832,12 +1888,56 @@ write_patch(dist_t *dist,	/* I - Software distribution */
     fputs("done\n", scriptfile);
   }
 
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (file->type == 'I')
+      break;
+
+  if (i)
+  {
+    fputs("echo Setting up init scripts...\n", scriptfile);
+
+   /*
+    * Find where the frigging init scripts go...
+    */
+
+    fputs("rcdir=\"\"\n", scriptfile);
+    fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
+    fputs("	if test -d $dir/init.d ; then\n", scriptfile);
+    fputs("		rcdir=\"$dir\"\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("done\n", scriptfile);
+    fputs("if test \"$rcdir\" = \"\" ; then\n", scriptfile);
+    fputs("	echo Unable to determine location of startup scripts!\n", scriptfile);
+    fputs("else\n", scriptfile);
+    fputs("	for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (file->type == 'I')
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", scriptfile);
+#ifdef __sgi
+    fputs("		/etc/chkconfig -f $file on\n", scriptfile);
+#endif /* __sgi */
+    fputs("	done\n", scriptfile);
+    fputs("fi\n", scriptfile);
+  }
+
   if (dist->num_patches)
   {
     fputs("echo Running post-installation commands...\n", scriptfile);
 
     for (i = 0; i < dist->num_patches; i ++)
       fprintf(scriptfile, "%s\n", dist->patches[i]);
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s start\n", file->dst);
   }
 
   fputs("echo Patching is complete.\n", scriptfile);
@@ -1926,8 +2026,49 @@ write_remove(dist_t *dist,	/* I - Software distribution */
   {
     fputs("echo Running pre-removal commands...\n", scriptfile);
 
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(scriptfile, EPM_SOFTWARE "/init.d/%s stop\n", file->dst);
+
     for (i = 0; i < dist->num_removes; i ++)
       fprintf(scriptfile, "%s\n", dist->removes[i]);
+  }
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    if (tolower(file->type) == 'i')
+      break;
+
+  if (i)
+  {
+    fputs("echo Cleaning up init scripts...\n", scriptfile);
+
+   /*
+    * Find where the frigging init scripts go...
+    */
+
+    fputs("rcdir=\"\"\n", scriptfile);
+    fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
+    fputs("	if test -d $dir/init.d ; then\n", scriptfile);
+    fputs("		rcdir=\"$dir\"\n", scriptfile);
+    fputs("	fi\n", scriptfile);
+    fputs("done\n", scriptfile);
+    fputs("if test \"$rcdir\" = \"\" ; then\n", scriptfile);
+    fputs("	echo Unable to determine location of startup scripts!\n", scriptfile);
+    fputs("else\n", scriptfile);
+    fputs("	for file in", scriptfile);
+    for (; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i')
+        fprintf(scriptfile, " %s", file->dst);
+
+    fputs("; do\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/init.d/$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", scriptfile);
+    fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", scriptfile);
+#ifdef __sgi
+    fputs("		/bin/rm -f /etc/config/$file\n", scriptfile);
+#endif /* __sgi */
+    fputs("	done\n", scriptfile);
+    fputs("fi\n", scriptfile);
   }
 
   fputs("echo Removing/restoring installed files...\n", scriptfile);
@@ -1955,5 +2096,5 @@ write_remove(dist_t *dist,	/* I - Software distribution */
 
 
 /*
- * End of "$Id: epm.c,v 1.16 1999/08/16 18:31:41 mike Exp $".
+ * End of "$Id: epm.c,v 1.17 1999/08/19 16:10:03 mike Exp $".
  */

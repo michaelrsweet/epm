@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 1.1
+README - ESP Package Manager (EPM) 1.2
 --------------------------------------
 
 WHAT IS EPM?
@@ -72,6 +72,17 @@ DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
     No!  EPM is free software and any installations you create are
     unencumbered by licensing of any kind (not even the GPL.)
 
+
+WHAT'S NEW IN EPM 1.2?
+
+    EPM 1.2 adds the following features and fixes to EPM 1.1:
+
+	- Patch distributions were not correctly named.
+	- Added new "initialization script" file types "i" and "I". The
+	  new file types place the scripts in /etc/software/init.d and
+	  make links to the appropriate system-specific rc.d
+	  directories and run the scripts to start and stop things
+	  accordingly.
 
 WHAT'S NEW IN EPM 1.1?
 

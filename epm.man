@@ -1,5 +1,5 @@
 .\"
-.\" "$Id: epm.man,v 1.2 1999/07/30 13:40:20 mike Exp $"
+.\" "$Id: epm.man,v 1.3 1999/08/19 16:10:04 mike Exp $"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
@@ -15,12 +15,12 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "26 July 1999" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "19 August 1999" "Easy Software Products"
 .SH NAME
 epm \- create software packages
 .SH SYNOPSIS
 .B epm
-[ \-g ] product [
+[ \-g ] [ \-n[mrs] ] [ \-t ] product [
 .I listfile
 ]
 .SH DESCRIPTION
@@ -31,6 +31,17 @@ for \fIproduct\fR are read from a file named "\fIproduct\fR.list".
 Executable files in the distribution are normally stripped of debugging
 information when packaged. To disable this functionality use the
 \fI\-g\fR option.
+.LP
+The \fI-t\fI option ("test") disables the generation of compressed archives
+containing the distribution.
+.LP
+Distribution archives normally are named
+"product-version-system-release-machine.tar.gz" and
+"product-version-system-release-machine-patch.tar.gz" (for patch distributions.)
+The "system-release-machine" information can be customized or eliminated using
+the \fI-n\fR option with the appropriate trailing letters. Using \fI-n\fR by
+itself will remove the "system-release-machine" string from the filename
+entirely.
 .SH LIST FILES
 Each product has an associated list file that describes the files to include
 with the product. Comment lines begin with the "#" character and are ignored.
@@ -123,6 +134,17 @@ Specifies a directory should be created when installing the software. The
 second form specifies that the directory is new and should be included as part
 of a patch.
 .TP 5
+i \fImode user group service-name source\fR
+.TP 5
+I \fImode user group service-name source\fR
+.br
+Specifies an initialization script for installation. The second form
+specifies that the file has changed or is new and should be included as
+part of a patch. Initialization scripts are stored in /etc/software/init.d and
+are linked to the appropriate system-specific directories for run levels 0
+and 3. Initialization scripts \fBmust\fR accepts at least the \fIstart\fR
+and \fIstop\fR commands.
+.TP 5
 l \fImode user group destination source\fR
 .TP 5
 L \fImode user group destination source\fR
@@ -148,5 +170,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.man,v 1.2 1999/07/30 13:40:20 mike Exp $".
+.\" End of "$Id: epm.man,v 1.3 1999/08/19 16:10:04 mike Exp $".
 .\"
