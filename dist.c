@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.26 2001/03/20 14:06:50 mike Exp $"
+ * "$Id: dist.c,v 1.27 2001/03/20 17:16:13 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -870,58 +870,73 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 static int				/* O - Version number */
 get_vernumber(const char *version)	/* I - Version string */
 {
+  int		numbers[4],		/* Raw version numbers */
+		nnumbers,		/* Number of numbers in version */
+		temp,			/* Temporary version number */
+		offset;			/* Offset for last version number */
   const char	*ptr;			/* Pointer into string */
-  int		tempnumber,		/* Temporary version number */
-		vernumber,		/* Version number */
-		veroffset,		/* Offset for last version number */
-		vermult;		/* Multiplier for last number */
 
 
  /*
   * Loop through the version number string and construct a version number.
   */
 
-  for (ptr = version, vernumber = 0, veroffset = 0, vermult = 10000, tempnumber = 0;
+  memset(numbers, 0, sizeof(numbers));
+
+  for (ptr = version, offset = 0, temp = 0, nnumbers = 0;
        *ptr && !isspace(*ptr);
        ptr ++)
     if (isdigit(*ptr))
-      tempnumber = tempnumber * 10 + *ptr - '0';
+      temp = temp * 10 + *ptr - '0';
     else
     {
      /*
-      * Add each mini version number (m.n.p) as hundreds...
+      * Add each mini version number (m.n.p) and patch/pre stuff...
       */
 
+      if (nnumbers < 4)
+      {
+        numbers[nnumbers] = temp;
+	nnumbers ++;
+      }
+
+      temp = 0;
+
       if (*ptr == '.')
-	veroffset = 0;
-      else if (*ptr == 'p')
+	offset = 0;
+      else if (*ptr == 'p' || *ptr == '-')
       {
 	if (strncmp(ptr, "pre", 3) == 0)
 	{
 	  ptr += 2;
-	  veroffset = -50;
+	  offset = -20;
 	}
 	else
-	  veroffset = 0;
+	  offset = 0;
 
-        vermult = 100;
+        nnumbers = 3;
       }
-      else
+      else if (*ptr == 'b')
       {
-	veroffset = -100;
-	vermult   = 100;
+	offset   = -50;
+        nnumbers = 3;
       }
-
-      vernumber  = vernumber * 100 + tempnumber;
-      tempnumber = 0;
+      else /* if (*ptr == 'a') */
+      {
+	offset   = -100;
+        nnumbers = 3;
+      }
     }
 
+  if (nnumbers < 4)
+    numbers[nnumbers] = temp;
+
  /*
-  * The final portion of the version number is offset by
-  * veroffset to handle patch and pre/beta releases...
+  * Compute the version number as MMmmPPpp + offset
   */
 
-  return (vernumber * vermult + tempnumber + veroffset);
+  return (((numbers[0] * 100 + numbers[1]) * 100 + numbers[2]) * 100 +
+          numbers[3] + offset);
 }
 
 
@@ -1034,5 +1049,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.26 2001/03/20 14:06:50 mike Exp $".
+ * End of "$Id: dist.c,v 1.27 2001/03/20 17:16:13 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.25 2001/03/20 15:23:21 mike Exp $"
+ * "$Id: portable.c,v 1.26 2001/03/20 17:16:13 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -644,7 +644,8 @@ write_depends(dist_t *dist,		/* I - Distribution */
 
   for (i = 0, d= dist->depends; i < dist->num_depends; i ++, d ++)
   {
-    fprintf(fp, "#%%%s %s\n", depends[(int)d->type], d->product);
+    fprintf(fp, "#%%%s %s %d %d\n", depends[(int)d->type], d->product,
+            d->vernumber[0], d->vernumber[1]);
 
     switch (d->type)
     {
@@ -681,6 +682,34 @@ write_depends(dist_t *dist,		/* I - Distribution */
             fputs("		exit 1\n", fp);
             fputs("	fi\n", fp);
             fputs("fi\n", fp);
+
+            if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
+	    {
+	     /*
+	      * Do version number checking...
+	      */
+
+              fprintf(fp, "installed=`grep \'^#%%version\' " EPM_SOFTWARE
+	                  "/%s.remove | awk \'{print $3}\'`\n", d->product);
+
+              fputs("if test x$installed = x; then\n", fp);
+	      fputs("	installed=0\n", fp);
+	      fputs("fi\n", fp);
+
+	      fprintf(fp, "if test $installed -lt %d -o $installed -gt %d; then\n",
+	              d->vernumber[0], d->vernumber[1]);
+              fprintf(fp, "	if test -x %s.install; then\n",
+                      d->product);
+              fprintf(fp, "		echo Installing required %s software...\n",
+                      d->product);
+              fprintf(fp, "		./%s.install now\n", d->product);
+              fputs("	else\n", fp);
+              fprintf(fp, "		echo Sorry, you must first install \\'%s\\' version %s to %s!\n",
+	              d->product, d->version[0], d->version[1]);
+              fputs("		exit 1\n", fp);
+              fputs("	fi\n", fp);
+              fputs("fi\n", fp);
+	    }
           }
 	  break;
 
@@ -707,11 +736,39 @@ write_depends(dist_t *dist,		/* I - Distribution */
 
             fprintf(fp, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
                     d->product);
-            fprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	            d->product);
-            fprintf(fp, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
-	            d->product);
-            fputs("	exit 1\n", fp);
+
+            if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
+	    {
+	     /*
+	      * Do version number checking...
+	      */
+
+              fprintf(fp, "	installed=`grep \'^#%%version\' " EPM_SOFTWARE
+	                  "/%s.remove | awk \'{print $3}\'`\n", d->product);
+
+              fputs("	if test x$installed = x; then\n", fp);
+	      fputs("		installed=0\n", fp);
+	      fputs("	fi\n", fp);
+
+	      fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
+	              d->vernumber[0], d->vernumber[1]);
+              fprintf(fp, "		echo Sorry, this software is incompatible with \\'%s\\' version %s to %s!\n",
+	              d->product, d->version[0], d->version[1]);
+              fprintf(fp, "		echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
+	              d->product);
+              fputs("		exit 1\n", fp);
+              fputs("	fi\n", fp);
+	    }
+	    else
+	    {
+              fprintf(fp, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	              d->product);
+              fprintf(fp, "	echo Please remove it first by running \\'/etc/software/%s.remove\\'.\n",
+	              d->product);
+              fputs("	exit 1\n", fp);
+              fputs("fi\n", fp);
+	    }
+
             fputs("fi\n", fp);
           }
 	  break;
@@ -719,11 +776,38 @@ write_depends(dist_t *dist,		/* I - Distribution */
       case DEPEND_REPLACES :
           fprintf(fp, "if test -x " EPM_SOFTWARE "/%s.remove; then\n",
                   d->product);
-          fprintf(fp, "	echo Automatically replacing \\'%s\\'...\n",
-	          d->product);
-          fprintf(fp, "	" EPM_SOFTWARE "/%s.remove now\n",
-	          d->product);
+
+          if (d->vernumber[0] > 0 || d->vernumber[1] < INT_MAX)
+	  {
+	   /*
+	    * Do version number checking...
+	    */
+
+            fprintf(fp, "	installed=`grep \'^#%%version\' " EPM_SOFTWARE
+	                "/%s.remove | awk \'{print $3}\'`\n", d->product);
+
+            fputs("	if test x$installed = x; then\n", fp);
+	    fputs("		installed=0\n", fp);
+	    fputs("	fi\n", fp);
+
+	    fprintf(fp, "	if test $installed -ge %d -a $installed -le %d; then\n",
+	            d->vernumber[0], d->vernumber[1]);
+            fprintf(fp, "		echo Automatically replacing \\'%s\\'...\n",
+	            d->product);
+            fprintf(fp, "		" EPM_SOFTWARE "/%s.remove now\n",
+	            d->product);
+            fputs("	fi\n", fp);
+	  }
+	  else
+	  {
+            fprintf(fp, "	echo Automatically replacing \\'%s\\'...\n",
+	            d->product);
+            fprintf(fp, "	" EPM_SOFTWARE "/%s.remove now\n",
+	            d->product);
+          }
+
           fputs("fi\n", fp);
+	  break;
     }
   }
 
@@ -1625,5 +1709,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.25 2001/03/20 15:23:21 mike Exp $".
+ * End of "$Id: portable.c,v 1.26 2001/03/20 17:16:13 mike Exp $".
  */
