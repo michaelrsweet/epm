@@ -1,5 +1,5 @@
-README - ESP Package Manager (EPM) 3.5.1
-----------------------------------------
+README - ESP Package Manager (EPM) 3.6
+--------------------------------------
 
 WHAT IS EPM?
 
@@ -19,9 +19,9 @@ WHAT IS EPM?
 	- Portable (installation and removal scripts with tar files)
         - Red Hat Package Manager ("rpm")
 
-    EPM also includes a graphical "setup" program that can be
-    provided with your distributions to make installation of
-    more than one package a snap.
+    EPM also includes graphical "setup" and "uninstall" programs
+    that can be provided with your distributions to make
+    installation and removal of more than one package a snap.
 
 
 WHY ANOTHER SOFTWARE PACKAGING TOOL?

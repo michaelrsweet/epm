@@ -1,5 +1,5 @@
-INSTALL - ESP Package Manager (EPM) 3.5.1
------------------------------------------
+INSTALL - ESP Package Manager (EPM) 3.6
+---------------------------------------
 
 WHAT IS REQUIRED FOR EPM?
 
@@ -10,26 +10,28 @@ WHAT IS REQUIRED FOR EPM?
     FLTK library, version 1.1 or higher, available at
     "http://www.fltk.org".
 
-    EPM can generate so-called "portable" distributions that are based
-    on shell scripts and tar files.  For these types of distributions
-    your customers/users will need the Bourne (or Korn or Bash) shell,
-    a tar program, and GNU zip. The first two are standard items, and
-    GNU zip is being shipped by most vendors as well.
+    EPM can generate so-called "portable" distributions that are
+    based on shell scripts and tar files.  For these types of
+    distributions your customers/users will need the Bourne (or
+    Korn or Bash) shell, a tar program, and GNU zip. The first
+    two are standard items, and GNU zip is being shipped by most
+    vendors as well.
 
-    EPM can also generate vendor-specific distributions.  These require
-    the particular vendor tool (rpm, dpkg, etc.) to load the software.
+    EPM can also generate vendor-specific distributions.  These
+    require the particular vendor tool (rpm, dpkg, etc.) to load
+    the software.
 
 
 HOW DO I COMPILE EPM?
 
-    EPM uses GNU autoconf to configure itself for your system.  To build
-    it, use:
+    EPM uses GNU autoconf to configure itself for your system. 
+    To build it, use:
 
         ./configure ENTER
 	make ENTER
 
-    The default installation prefix is /usr; if you want to put EPM in
-    /usr/local, do:
+    The default installation prefix is /usr; if you want to put
+    EPM in /usr/local, do:
 
         ./configure --prefix=/usr/local ENTER
 	make ENTER

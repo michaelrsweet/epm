@@ -1,5 +1,5 @@
 #
-# "$Id: epm.list.in,v 1.11 2003/01/30 04:27:45 mike Exp $"
+# "$Id: epm.list.in,v 1.12 2003/02/13 19:24:39 mike Exp $"
 #
 #   Sample software list file for the ESP Package Manager (EPM).
 #
@@ -49,9 +49,6 @@ $MAN1EXT=@MAN1EXT@
 $CAT5EXT=@CAT5EXT@
 $MAN5EXT=@MAN5EXT@
 
-# Is the setup GUI available?
-#GUIS=@GUIS@
-
 # Executables
 %system all
 f 0555 root sys ${bindir}/epm epm
@@ -76,17 +73,29 @@ f 0444 root sys ${mandir}/man1/mkepmlist.$MAN1EXT $srcdir/doc/mkepmlist.man
 f 0444 root sys ${mandir}/man5/epm.list.$MAN5EXT $srcdir/doc/epm.list.man
 
 # Setup GUI files...
+$GUIS=@GUIS@
+
 %if GUIS
 f 0555 root sys ${libdir}/epm/setup setup
-f 0555 root sys ${libdir}/epm/uninstall uninstall
+f 0555 root sys ${libdir}/epm/uninst uninst
 
 f 0444 root sys ${mandir}/cat1/setup.$CAT1EXT $srcdir/doc/setup.1
 f 0444 root sys ${mandir}/cat5/setup.types.$CAT5EXT $srcdir/doc/setup.types.5
 
 f 0444 root sys ${mandir}/man1/setup.$MAN1EXT $srcdir/doc/setup.man
 f 0444 root sys ${mandir}/man5/setup.types.$MAN5EXT $srcdir/doc/setup.types.man
+
+%system darwin
+f 0444 root sys ${datadir}/epm/setup.icns macosx/setup.icns
+f 0444 root sys ${datadir}/epm/setup.info macosx/setup.info
+f 0444 root sys ${datadir}/epm/setup.plist macosx/setup.plist
+
+f 0444 root sys ${datadir}/epm/uninst.icns macosx/uninst.icns
+f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
+f 0444 root sys ${datadir}/epm/uninst.plist macosx/uninst.plist
+%system all
 %endif
 
 #
-# End of "$Id: epm.list.in,v 1.11 2003/01/30 04:27:45 mike Exp $".
+# End of "$Id: epm.list.in,v 1.12 2003/02/13 19:24:39 mike Exp $".
 #
