@@ -6,3 +6,5 @@ TODO for EPM:
 	  relocatable packages in general?)
 	- Add %pre/postinstall/remove <filename
 	- Add %pre/postinstall/remove <<string
+	- Add epminstall command for building a list file from
+	  a "make INSTALL=epminstall install".

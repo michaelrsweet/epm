@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.39 2001/05/22 19:02:17 mike Exp $"
+ * "$Id: portable.c,v 1.40 2001/05/23 19:53:50 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1124,7 +1124,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
           strncmp(file->dst, "/usr", 4) != 0)
       {
         if (col > 80)
-	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	  col = fprintf(scriptfile, " \\\n%s", file->dst) - 2;
 	else
           col += fprintf(scriptfile, " %s", file->dst);
       }
@@ -1152,7 +1152,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
           strncmp(file->dst, "/usr", 4) == 0)
       {
         if (col > 80)
-	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	  col = fprintf(scriptfile, " \\\n%s", file->dst) - 2;
 	else
           col += fprintf(scriptfile, " %s", file->dst);
       }
@@ -1219,7 +1219,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
       if (tolower(file->type) == 'c')
       {
         if (col > 80)
-	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	  col = fprintf(scriptfile, " \\\n%s", file->dst) - 2;
 	else
           col += fprintf(scriptfile, " %s", file->dst);
       }
@@ -1652,7 +1652,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
           strncmp(file->dst, "/usr", 4) != 0)
       {
         if (col > 80)
-	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	  col = fprintf(scriptfile, " \\\n%s", file->dst) - 2;
 	else
           col += fprintf(scriptfile, " %s", file->dst);
       }
@@ -1681,7 +1681,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
           strncmp(file->dst, "/usr", 4) == 0)
       {
         if (col > 80)
-	  col = fprintf(scriptfile, "\\\n%s", file->dst) - 2;
+	  col = fprintf(scriptfile, " \\\n%s", file->dst) - 2;
 	else
           col += fprintf(scriptfile, " %s", file->dst);
       }
@@ -1783,5 +1783,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.39 2001/05/22 19:02:17 mike Exp $".
+ * End of "$Id: portable.c,v 1.40 2001/05/23 19:53:50 mike Exp $".
  */
