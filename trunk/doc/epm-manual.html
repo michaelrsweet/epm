@@ -988,11 +988,11 @@ i 755 root sys foo foo.sh
  the end-user system and will create symbolic links to run levels 0, 2,
  3, and 5 as needed, using a sequence number of 00 (or 000) for the
  shutdown script and 99 (or 999) for the startup script.</P>
-<P>To specify run levels and sequence numbers, use the <CODE>runlevels()</CODE>
+<P>To specify run levels and sequence numbers, use the <CODE>runlevel()</CODE>
 , <CODE>start()</CODE>, and <CODE>stop()</CODE> options:</P>
 <UL>
 <PRE>
-i 755 root sys foo foo.sh &quot;runlevels(02) start(50) stop(30)&quot;
+i 755 root sys foo foo.sh &quot;runlevel(02) start(50) stop(30)&quot;
 </PRE>
 </UL>
 <HR>
