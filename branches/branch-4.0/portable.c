@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.63.2.2 2002/05/06 04:11:06 mike Exp $"
+ * "$Id: portable.c,v 1.63.2.3 2002/05/10 00:19:47 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -20,7 +20,7 @@
  *   make_portable()      - Make a portable software distribution package.
  *   write_commands()     - Write commands.
  *   write_common()       - Write the common shell script header.
- *   write_dist()         - Write a software distribution...
+ *   write_distfiles()    - Write a software distribution...
  *   write_confcheck()    - Write the echo check to find the right echo options.
  *   write_install()      - Write the installation script.
  *   write_patch()        - Write the patch script.
@@ -44,10 +44,10 @@ static FILE	*write_common(dist_t *dist, const char *title,
 			      int rootsize, int usrsize,
 		              const char *filename);
 static int	write_depends(dist_t *dist, FILE *fp);
-static int	write_dist(const char *title, const char *directory,
-		           const char *prodname, const char *platname,
-			   dist_t *dist, const char **files,
-			   const char *setup, const char *types);
+static int	write_distfiles(const char *title, const char *directory,
+		                const char *prodname, const char *platname,
+			        dist_t *dist, const char **files,
+			        const char *setup, const char *types);
 static int	write_confcheck(FILE *fp);
 static int	write_install(dist_t *dist, const char *prodname,
 			      int rootsize, int usrsize,
@@ -541,8 +541,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
   * Create the distribution archives...
   */
 
-  if (write_dist("distribution", directory, prodname, platname, dist,
-                 distfiles, setup, types))
+  if (write_distfiles("distribution", directory, prodname, platname, dist,
+                      distfiles, setup, types))
     return (1);
 
   if (havepatchfiles)
@@ -550,8 +550,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
     snprintf(filename, sizeof(filename), "%s-patch", dist->version);
     strcpy(dist->version, filename);
 
-    if (write_dist("patch", directory, prodname, platname, dist, patchfiles,
-                   setup, types))
+    if (write_distfiles("patch", directory, prodname, platname, dist, patchfiles,
+                        setup, types))
       return (1);
   }
 
@@ -876,25 +876,25 @@ write_depends(dist_t *dist,		/* I - Distribution */
 
 
 /*
- * 'write_dist()' - Write a software distribution...
+ * 'write_distfiles()' - Write a software distribution...
  */
 
 static int				/* O - -1 on error, 0 on success */
-write_dist(const char *title,		/* I - Title to show */
-           const char *directory,	/* I - Directory */
-	   const char *prodname,	/* I - Product name */
-           const char *platname,	/* I - Platform name */
-	   dist_t     *dist,		/* I - Distribution */
-	   const char **files,		/* I - Filenames */
-           const char *setup,		/* I - Setup GUI image */
-           const char *types)		/* I - Setup GUI install types */
+write_distfiles(const char *title,	/* I - Title to show */
+                const char *directory,	/* I - Directory */
+	        const char *prodname,	/* I - Product name */
+                const char *platname,	/* I - Platform name */
+	        dist_t     *dist,	/* I - Distribution */
+	        const char **files,	/* I - Filenames */
+                const char *setup,	/* I - Setup GUI image */
+                const char *types)	/* I - Setup GUI install types */
 {
-  int		i;		/* Looping var */
-  tarf_t	*tarfile;	/* Distribution tar file */
-  char		filename[1024],	/* Name of temporary file */
-		srcname[1024],	/* Name of source file in distribution */
-		dstname[1024];	/* Name of destination file in distribution */
-  struct stat	srcstat;	/* Source file information */
+  int		i;			/* Looping var */
+  tarf_t	*tarfile;		/* Distribution tar file */
+  char		filename[1024],		/* Name of temporary file */
+		srcname[1024],		/* Name of source file in distribution */
+		dstname[1024];		/* Name of destination file in distribution */
+  struct stat	srcstat;		/* Source file information */
 
 
   if (Verbosity)
@@ -1975,5 +1975,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.63.2.2 2002/05/06 04:11:06 mike Exp $".
+ * End of "$Id: portable.c,v 1.63.2.3 2002/05/10 00:19:47 mike Exp $".
  */

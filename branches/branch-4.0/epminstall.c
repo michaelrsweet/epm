@@ -1,5 +1,5 @@
 /*
- * "$Id: epminstall.c,v 1.8.2.1 2002/04/27 13:41:14 mike Exp $"
+ * "$Id: epminstall.c,v 1.8.2.2 2002/05/10 00:19:47 mike Exp $"
  *
  *   Install program replacement for the ESP Package Manager (EPM).
  *
@@ -21,7 +21,6 @@
  *   find_file()  - Find a file in the distribution...
  *   info()       - Show the EPM copyright and license.
  *   usage()      - Show command-line usage instructions.
- *   write_dist() - Write a distribution list file...
  */
 
 /*
@@ -45,7 +44,6 @@ int		Verbosity = 0;
 static file_t	*find_file(dist_t *dist, const char *dst);
 static void	info(void);
 static void	usage(void);
-static int	write_dist(const char *listname, dist_t *dist);
 
 
 /*
@@ -409,138 +407,5 @@ usage(void)
 
 
 /*
- * 'write_dist()' - Write a distribution list file...
- */
-
-static int				/* O - 0 on success, -1 on failure */
-write_dist(const char *listname,	/* I - File to write to */
-           dist_t     *dist)		/* I - Distribution to write */
-{
-  int		i;			/* Looping var */
-  int		is_inline;		/* Inline text? */
-  char		listbck[1024],		/* Backup filename */
-		*ptr;			/* Pointer into command string */
-  FILE		*listfile;		/* Output file */
-  file_t	*file;			/* Current file entry */
-  static const char *commands[] =	/* Command strings */
-		{
-		  "%preinstall",
-		  "%postinstall",
-		  "%prepatch",
-		  "%postpatch",
-		  "%preremove",
-		  "%postremove"
-		},
-		*depends[] =		/* Dependency strings */
-		{
-		  "%requires",
-		  "%incompat",
-		  "%replaces",
-		  "%provides"
-		};
-
-
- /*
-  * Make a backup of the list file...
-  */
-
-  snprintf(listbck, sizeof(listbck), "%s.O", listname);
-
-  rename(listname, listbck);
-
- /*
-  * Open the list file...
-  */
-
-  if ((listfile = fopen(listname, "w")) == NULL)
-  {
-    rename(listbck, listname);
-    return (-1);
-  }
-
- /*
-  * Write the list file...
-  */
-
-  fputs("# List file created by epminstall\n", listfile);
-  fputs("# " EPM_VERSION "\n", listfile);
-
-  if (dist->product[0])
-    fprintf(listfile, "%%product %s\n", dist->product);
-  if (dist->version[0])
-    fprintf(listfile, "%%version %s %d\n", dist->version, dist->vernumber);
-  if (dist->relnumber)
-    fprintf(listfile, "%%release %d\n", dist->relnumber);
-  if (dist->copyright[0])
-    fprintf(listfile, "%%copyright %s\n", dist->copyright);
-  if (dist->vendor[0])
-    fprintf(listfile, "%%vendor %s\n", dist->vendor);
-  if (dist->packager[0])
-    fprintf(listfile, "%%packager %s\n", dist->packager);
-  if (dist->license[0])
-    fprintf(listfile, "%%license %s\n", dist->license);
-  if (dist->readme[0])
-    fprintf(listfile, "%%readme %s\n", dist->readme);
-
-  for (i = 0; i < dist->num_descriptions; i ++)
-    if (strchr(dist->descriptions[i].description, '\n') != NULL)
-      fprintf(listfile, "%%description <<EPM-END-INLINE\n%s\nEPM-END-INLINE\n",
-              dist->descriptions[i].description);
-    else
-      fprintf(listfile, "%%description %s\n",
-              dist->descriptions[i].description);
-
-  for (i = 0; i < dist->num_depends; i ++)
-  {
-    fprintf(listfile, "%s %s", depends[(int)dist->depends[i].type],
-            dist->depends[i].product);
-
-    if (dist->depends[i].version[0][0] ||
-        dist->depends[i].version[1][0])
-    {
-      fprintf(listfile, " %s %d %s %d\n",
-              dist->depends[i].version[0],
-	      dist->depends[i].vernumber[0],
-              dist->depends[i].version[1],
-	      dist->depends[i].vernumber[1]);
-    }
-    else
-      putc('\n', listfile);
-  }
-
-  for (i = 0; i < dist->num_commands; i ++)
-  {
-    fputs(commands[(int)dist->commands[i].type], listfile);
-
-    is_inline = strchr(dist->commands[i].command, '\n') != NULL;
-
-    if (is_inline)
-      fputs(" <<EPM-END-INLINE\n", listfile);
-    else
-      putc(' ', listfile);
-
-    for (ptr = dist->commands[i].command; *ptr; ptr ++)
-    {
-      if (*ptr == '$' && !is_inline)
-        putc(*ptr, listfile);
-
-      putc(*ptr, listfile);
-    }
-    putc('\n', listfile);
-
-    if (is_inline)
-      fputs("EPM-END-INLINE\n", listfile);
-  }
-
-  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
-    fprintf(listfile, "%c %04o %s %s %s %s\n",
-	    file->type, file->mode, file->user, file->group,
-	    file->dst, file->src);
-
-  return (fclose(listfile));
-}
-
-
-/*
- * End of "$Id: epminstall.c,v 1.8.2.1 2002/04/27 13:41:14 mike Exp $".
+ * End of "$Id: epminstall.c,v 1.8.2.2 2002/05/10 00:19:47 mike Exp $".
  */

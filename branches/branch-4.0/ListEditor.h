@@ -7,10 +7,17 @@
 #include "epm.h"
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Menu_Bar.H>
-#include <FL/Fl_Tile.H>
-#include <FL/Fl_Box.H>
+#include "ListManager.h"
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_File_Browser.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Choice.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Return_Button.H>
+#include <FL/Fl_Button.H>
 
 class ListEditor {
   static ListEditor *first_;
@@ -29,7 +36,7 @@ class ListEditor {
   static void copy_cb(ListEditor *le);
   static void cut_cb(ListEditor *le);
   static void delete_cb(ListEditor *le);
-  static void file_settings_cb(ListEditor *le);
+  static void file_settings_cb(ListEditor *le, int save);
   static void help_cb(ListEditor *le, const char *html);
   static void list_cb(ListEditor *le);
   static void margins_cb(ListEditor *le);
@@ -97,8 +104,15 @@ private:
   static void cb_Delete(Fl_Menu_*, void*);
   inline void cb_Paste_i(Fl_Menu_*, void*);
   static void cb_Paste(Fl_Menu_*, void*);
-  inline void cb_File_i(Fl_Menu_*, void*);
-  static void cb_File(Fl_Menu_*, void*);
+  inline void cb_Select_i(Fl_Menu_*, void*);
+  static void cb_Select(Fl_Menu_*, void*);
+  inline void cb_Select1_i(Fl_Menu_*, void*);
+  static void cb_Select1(Fl_Menu_*, void*);
+  inline void cb_Add_i(Fl_Menu_*, void*);
+  static void cb_Add(Fl_Menu_*, void*);
+  static Fl_Menu_Item *file_settings_item;
+  inline void cb_file_settings_item_i(Fl_Menu_*, void*);
+  static void cb_file_settings_item(Fl_Menu_*, void*);
   inline void cb_P_i(Fl_Menu_*, void*);
   static void cb_P(Fl_Menu_*, void*);
   inline void cb_Contents_i(Fl_Menu_*, void*);
@@ -111,10 +125,9 @@ private:
   static void cb_Advanced(Fl_Menu_*, void*);
   inline void cb_Version_i(Fl_Menu_*, void*);
   static void cb_Version(Fl_Menu_*, void*);
-  Fl_Tile *margin_tile;
-  inline void cb_margin_tile_i(Fl_Tile*, void*);
-  static void cb_margin_tile(Fl_Tile*, void*);
-  Fl_Box *margin_buttons[6];
+  ListManager *margin_manager;
+  inline void cb_margin_manager_i(ListManager*, void*);
+  static void cb_margin_manager(ListManager*, void*);
   Fl_Menu_Button *margin_menu;
   static Fl_Menu_Item menu_margin_menu[];
   static Fl_Menu_Item *margin_items;
@@ -133,6 +146,96 @@ private:
   Fl_File_Browser *list;
   inline void cb_list_i(Fl_File_Browser*, void*);
   static void cb_list(Fl_File_Browser*, void*);
+  Fl_Double_Window *file_window;
+  Fl_Choice *type_chooser;
+  inline void cb_type_chooser_i(Fl_Choice*, void*);
+  static void cb_type_chooser(Fl_Choice*, void*);
+  static Fl_Menu_Item menu_type_chooser[];
+  inline void cb_Regular_i(Fl_Menu_*, void*);
+  static void cb_Regular(Fl_Menu_*, void*);
+  inline void cb_Configuration_i(Fl_Menu_*, void*);
+  static void cb_Configuration(Fl_Menu_*, void*);
+  inline void cb_Manpage_i(Fl_Menu_*, void*);
+  static void cb_Manpage(Fl_Menu_*, void*);
+  inline void cb_Init_i(Fl_Menu_*, void*);
+  static void cb_Init(Fl_Menu_*, void*);
+  inline void cb_Directory_i(Fl_Menu_*, void*);
+  static void cb_Directory(Fl_Menu_*, void*);
+  inline void cb_Symbolic_i(Fl_Menu_*, void*);
+  static void cb_Symbolic(Fl_Menu_*, void*);
+  inline void cb_Removed_i(Fl_Menu_*, void*);
+  static void cb_Removed(Fl_Menu_*, void*);
+  Fl_Check_Button *upgrade_button;
+  inline void cb_upgrade_button_i(Fl_Check_Button*, void*);
+  static void cb_upgrade_button(Fl_Check_Button*, void*);
+  Fl_Group *perm_group;
+  inline void cb_perm_group_i(Fl_Group*, void*);
+  static void cb_perm_group(Fl_Group*, void*);
+  inline void cb_Permissions_i(Fl_Box*, void*);
+  static void cb_Permissions(Fl_Box*, void*);
+  Fl_Light_Button *user_read_button;
+  inline void cb_user_read_button_i(Fl_Light_Button*, void*);
+  static void cb_user_read_button(Fl_Light_Button*, void*);
+  Fl_Light_Button *user_write_button;
+  inline void cb_user_write_button_i(Fl_Light_Button*, void*);
+  static void cb_user_write_button(Fl_Light_Button*, void*);
+  Fl_Light_Button *user_exec_button;
+  inline void cb_user_exec_button_i(Fl_Light_Button*, void*);
+  static void cb_user_exec_button(Fl_Light_Button*, void*);
+  Fl_Light_Button *user_set_button;
+  inline void cb_user_set_button_i(Fl_Light_Button*, void*);
+  static void cb_user_set_button(Fl_Light_Button*, void*);
+  inline void cb_User1_i(Fl_Box*, void*);
+  static void cb_User1(Fl_Box*, void*);
+  Fl_Light_Button *group_read_button;
+  inline void cb_group_read_button_i(Fl_Light_Button*, void*);
+  static void cb_group_read_button(Fl_Light_Button*, void*);
+  Fl_Light_Button *group_write_button;
+  inline void cb_group_write_button_i(Fl_Light_Button*, void*);
+  static void cb_group_write_button(Fl_Light_Button*, void*);
+  Fl_Light_Button *group_exec_button;
+  inline void cb_group_exec_button_i(Fl_Light_Button*, void*);
+  static void cb_group_exec_button(Fl_Light_Button*, void*);
+  Fl_Light_Button *group_set_button;
+  inline void cb_group_set_button_i(Fl_Light_Button*, void*);
+  static void cb_group_set_button(Fl_Light_Button*, void*);
+  inline void cb_Group1_i(Fl_Box*, void*);
+  static void cb_Group1(Fl_Box*, void*);
+  Fl_Light_Button *other_read_button;
+  inline void cb_other_read_button_i(Fl_Light_Button*, void*);
+  static void cb_other_read_button(Fl_Light_Button*, void*);
+  Fl_Light_Button *other_write_button;
+  inline void cb_other_write_button_i(Fl_Light_Button*, void*);
+  static void cb_other_write_button(Fl_Light_Button*, void*);
+  Fl_Light_Button *other_exec_button;
+  inline void cb_other_exec_button_i(Fl_Light_Button*, void*);
+  static void cb_other_exec_button(Fl_Light_Button*, void*);
+  Fl_Light_Button *other_temp_button;
+  inline void cb_other_temp_button_i(Fl_Light_Button*, void*);
+  static void cb_other_temp_button(Fl_Light_Button*, void*);
+  inline void cb_Other_i(Fl_Box*, void*);
+  static void cb_Other(Fl_Box*, void*);
+  Fl_Input *user_field;
+  inline void cb_user_field_i(Fl_Input*, void*);
+  static void cb_user_field(Fl_Input*, void*);
+  Fl_Input *group_field;
+  inline void cb_group_field_i(Fl_Input*, void*);
+  static void cb_group_field(Fl_Input*, void*);
+  Fl_Input *src_path_field;
+  inline void cb_src_path_field_i(Fl_Input*, void*);
+  static void cb_src_path_field(Fl_Input*, void*);
+  Fl_Input *dst_path_field;
+  inline void cb_dst_path_field_i(Fl_Input*, void*);
+  static void cb_dst_path_field(Fl_Input*, void*);
+  Fl_Input *subpackage_field;
+  inline void cb_subpackage_field_i(Fl_Input*, void*);
+  static void cb_subpackage_field(Fl_Input*, void*);
+  Fl_Return_Button *file_ok_button;
+  inline void cb_file_ok_button_i(Fl_Return_Button*, void*);
+  static void cb_file_ok_button(Fl_Return_Button*, void*);
+  Fl_Button *file_cancel_button;
+  inline void cb_file_cancel_button_i(Fl_Button*, void*);
+  static void cb_file_cancel_button(Fl_Button*, void*);
 public:
   ~ListEditor();
   void hide();

@@ -1,5 +1,5 @@
 //
-// "$Id: ListEditor2.cxx,v 1.1.2.2 2002/05/08 17:59:15 mike Exp $"
+// "$Id: ListEditor2.cxx,v 1.1.2.3 2002/05/10 00:19:45 mike Exp $"
 //
 //   ESP List Editor file methods for the ESP Package Manager (EPM).
 //
@@ -80,6 +80,7 @@ ListEditor::~ListEditor()
   if (dist_) free_dist(dist_);
 
   delete window;
+  delete file_window;
 }
 
 
@@ -357,39 +358,39 @@ ListEditor::save(const char *filename)	// I - Name of distribution to save
 void
 ListEditor::update_margins()
 {
-  int	i, j, k;				// Looping var...
-  char	name[32];			// Attribute name
-  int	w;				// Width of margin...
+  int			i;		// Looping var
+  int			w;		// Column width
+  char			name[32];	// Attribute name
+  static const char	*labels[] =	// Labels for columns
+			{
+			  "Mode",
+			  "User",
+			  "Group",
+			  "Destination",
+			  "Source",
+			  "Subpackage"
+			};
 
 
-  for (i = 0, j = 0, k = 0; i < 6; i ++)
+  if (margin_manager->num_columns() == 0)
   {
-    sprintf(name, "margin%d", i);
-    prefs_.get(name, w, 50);
-
-    margin_buttons[i]->resize(j, 25, w, 20);
-
-    if (w)
+    // Initialize the margin list manager widget...
+    for (i = 0; i < 6; i ++)
     {
-      k = i;
-      margin_buttons[i]->show();
-      margin_buttons[i]->redraw();
-      margin_items[i].set();
-    }
-    else
-    {
-      margin_buttons[i]->hide();
-      margin_items[i].clear();
-    }
+      sprintf(name, "margin%d", i);
+      prefs_.get(name, w, 50);
 
-    j += w;
+      margin_manager->add(labels[i], w);
+
+      if (w)
+        margin_items[i].set();
+      else
+        margin_items[i].clear();
+    }
   }
-
-  if (j < window->w())
-    margin_buttons[k]->size(window->w() - margin_buttons[k]->x(), 20);
 }
 
 
 //
-// End of "$Id: ListEditor2.cxx,v 1.1.2.2 2002/05/08 17:59:15 mike Exp $".
+// End of "$Id: ListEditor2.cxx,v 1.1.2.3 2002/05/10 00:19:45 mike Exp $".
 //

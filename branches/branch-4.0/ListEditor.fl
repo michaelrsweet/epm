@@ -20,7 +20,7 @@ class ListEditor {open
   decl {static void copy_cb(ListEditor *le);} {}
   decl {static void cut_cb(ListEditor *le);} {}
   decl {static void delete_cb(ListEditor *le);} {}
-  decl {static void file_settings_cb(ListEditor *le);} {}
+  decl {static void file_settings_cb(ListEditor *le, int save);} {}
   decl {static void help_cb(ListEditor *le, const char *html);} {}
   decl {static void list_cb(ListEditor *le);} {}
   decl {static void margins_cb(ListEditor *le);} {}
@@ -46,15 +46,15 @@ set_title();} {}
     Fl_Window window {
       label {EPM List Editor 4.0}
       callback {close_cb(this);} open
-      private xywh {76 384 605 495} type Double resizable
+      private xywh {354 38 605 495} type Double resizable
       code0 {\#include "epm.h"}
       code1 {\#include <FL/Fl_Preferences.H>} visible
     } {
-      Fl_Menu_Bar menubar {
+      Fl_Menu_Bar menubar {open
         private xywh {0 0 605 25}
       } {
         submenu {} {
-          label {&File} open
+          label {&File}
           private xywh {0 0 100 20}
         } {
           menuitem {} {
@@ -149,7 +149,7 @@ set_title();} {}
           }
         }
         submenu {} {
-          label {&Edit} open
+          label {&Edit}
           private xywh {0 0 100 20}
         } {
           menuitem {} {
@@ -173,8 +173,23 @@ set_title();} {}
             private xywh {20 20 100 20} shortcut 0x40076 divider
           }
           menuitem {} {
+            label {&Select All}
+            callback {copy_cb(this);}
+            private xywh {20 20 100 20} shortcut 0x40061
+          }
+          menuitem {} {
+            label {Select &None}
+            callback {copy_cb(this);}
+            private xywh {30 30 100 20} shortcut 0x50061 divider
+          }
+          menuitem {} {
+            label {&Add File(s)...}
+            callback {copy_cb(this);}
+            private xywh {10 10 100 20} shortcut 0x40069
+          }
+          menuitem file_settings_item {
             label {&File Settings...}
-            callback {file_settings_cb(this);}
+            callback {file_settings_cb(this, 0);}
             private xywh {30 30 100 20} shortcut 0x40066
           }
           menuitem {} {
@@ -184,7 +199,7 @@ set_title();} {}
           }
         }
         submenu {} {
-          label {&Help} open
+          label {&Help}
           private xywh {0 0 100 20}
         } {
           menuitem {} {
@@ -214,34 +229,12 @@ set_title();} {}
           }
         }
       }
-      Fl_Tile margin_tile {
-        callback {margins_cb(this);} open
-        private xywh {0 25 605 20}
-      } {
-        Fl_Box {margin_buttons[0]} {
-          label Mode
-          private xywh {0 25 70 20} box THIN_UP_BOX labelsize 12 align 64
-        }
-        Fl_Box {margin_buttons[1]} {
-          label User
-          private xywh {70 25 60 20} box THIN_UP_BOX labelsize 12 align 64
-        }
-        Fl_Box {margin_buttons[2]} {
-          label Group
-          private xywh {130 25 60 20} box THIN_UP_BOX labelsize 12 align 64
-        }
-        Fl_Box {margin_buttons[3]} {
-          label {Destination Path}
-          private xywh {190 25 210 20} box THIN_UP_BOX labelsize 12 align 64
-        }
-        Fl_Box {margin_buttons[4]} {
-          label {Source Path}
-          private xywh {400 25 135 20} box THIN_UP_BOX labelsize 12 align 64
-        }
-        Fl_Box {margin_buttons[5]} {
-          label Package
-          private xywh {535 25 70 20} box THIN_UP_BOX labelsize 12 align 64
-        }
+      Fl_Box margin_manager {
+        label ListManager
+        callback {margins_cb(this);} selected
+        private xywh {0 25 605 20} box THIN_UP_BOX
+        code0 {\#include "ListManager.h"}
+        class ListManager
       }
       Fl_Menu_Button margin_menu {open
         private xywh {0 25 605 20} box NO_BOX
@@ -283,6 +276,181 @@ set_title();} {}
         code0 {list->has_scrollbar(Fl_Browser_::VERTICAL);}
       }
     }
+    Fl_Window file_window {
+      label {File Settings} open
+      private xywh {716 221 435 360} type Double modal visible
+    } {
+      Fl_Group {} {open
+        private xywh {10 10 415 305} box THIN_UP_BOX
+      } {
+        Fl_Choice type_chooser {
+          label {Type:}
+          callback {file_ok_button->activate();}
+          private xywh {150 20 160 25} down_box BORDER_BOX
+        } {
+          menuitem {} {
+            label {Regular &File}
+            callback {file_ok_button->activate();}
+            private xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {&Configuration File}
+            callback {file_ok_button->activate();}
+            private xywh {10 10 100 20}
+          }
+          menuitem {} {
+            label {&Manpage File}
+            callback {file_ok_button->activate();}
+            private xywh {50 50 100 20}
+          }
+          menuitem {} {
+            label {&Init Script}
+            callback {file_ok_button->activate();}
+            private xywh {20 20 100 20}
+          }
+          menuitem {} {
+            label {&Directory}
+            callback {file_ok_button->activate();}
+            private xywh {30 30 100 20}
+          }
+          menuitem {} {
+            label {Symbolic &Link}
+            callback {file_ok_button->activate();}
+            private xywh {40 40 100 20}
+          }
+          menuitem {} {
+            label {&Removed File}
+            callback {file_ok_button->activate();}
+            private xywh {60 60 100 20}
+          }
+        }
+        Fl_Check_Button upgrade_button {
+          label Upgrade
+          callback {file_ok_button->activate();}
+          private xywh {320 20 90 25} down_box DOWN_BOX
+        }
+        Fl_Group perm_group {
+          callback {file_ok_button->activate();}
+          private xywh {50 55 365 75}
+        } {
+          Fl_Box {} {
+            label {Permissions:}
+            callback {file_ok_button->activate();}
+            private xywh {50 55 100 25} align 24
+          }
+          Fl_Light_Button user_read_button {
+            label R
+            callback {file_ok_button->activate();}
+            private xywh {150 55 40 25}
+          }
+          Fl_Light_Button user_write_button {
+            label W
+            callback {file_ok_button->activate();}
+            private xywh {190 55 40 25}
+          }
+          Fl_Light_Button user_exec_button {
+            label X
+            callback {file_ok_button->activate();}
+            private xywh {230 55 40 25}
+          }
+          Fl_Light_Button user_set_button {
+            label S
+            callback {file_ok_button->activate();}
+            private xywh {270 55 40 25}
+          }
+          Fl_Box {} {
+            label User
+            callback {file_ok_button->activate();}
+            private xywh {315 55 95 25} align 20
+          }
+          Fl_Light_Button group_read_button {
+            label R
+            callback {file_ok_button->activate();}
+            private xywh {150 80 40 25}
+          }
+          Fl_Light_Button group_write_button {
+            label W
+            callback {file_ok_button->activate();}
+            private xywh {190 80 40 25}
+          }
+          Fl_Light_Button group_exec_button {
+            label X
+            callback {file_ok_button->activate();}
+            private xywh {230 80 40 25}
+          }
+          Fl_Light_Button group_set_button {
+            label S
+            callback {file_ok_button->activate();}
+            private xywh {270 80 40 25}
+          }
+          Fl_Box {} {
+            label Group
+            callback {file_ok_button->activate();}
+            private xywh {315 80 95 25} align 20
+          }
+          Fl_Light_Button other_read_button {
+            label R
+            callback {file_ok_button->activate();}
+            private xywh {150 105 40 25}
+          }
+          Fl_Light_Button other_write_button {
+            label W
+            callback {file_ok_button->activate();}
+            private xywh {190 105 40 25}
+          }
+          Fl_Light_Button other_exec_button {
+            label X
+            callback {file_ok_button->activate();}
+            private xywh {230 105 40 25}
+          }
+          Fl_Light_Button other_temp_button {
+            label T
+            callback {file_ok_button->activate();}
+            private xywh {270 105 40 25}
+          }
+          Fl_Box {} {
+            label Other
+            callback {file_ok_button->activate();}
+            private xywh {315 105 95 25} align 20
+          }
+        }
+        Fl_Input user_field {
+          label {User:}
+          callback {file_ok_button->activate();}
+          private xywh {150 140 115 25} when 1
+        }
+        Fl_Input group_field {
+          label {Group:}
+          callback {file_ok_button->activate();}
+          private xywh {150 175 115 25} when 1
+        }
+        Fl_Input src_path_field {
+          label {Source Path:}
+          callback {file_ok_button->activate();}
+          private xywh {150 210 260 25} when 1
+        }
+        Fl_Input dst_path_field {
+          label {Destination Path:}
+          callback {file_ok_button->activate();}
+          private xywh {150 245 260 25} when 1
+        }
+        Fl_Input subpackage_field {
+          label {Subpackage:}
+          callback {file_ok_button->activate();}
+          private xywh {150 280 115 25} when 1
+        }
+      }
+      Fl_Return_Button file_ok_button {
+        label OK
+        callback {file_settings_cb(this, 1);}
+        private xywh {235 325 95 25}
+      }
+      Fl_Button file_cancel_button {
+        label Cancel
+        callback {file_window->hide();}
+        private xywh {340 325 85 25}
+      }
+    }
     code {dist_        = (dist_t *)0;
 filename_[0] = '\\0';
 modified_    = 0;
@@ -292,8 +460,7 @@ update_margins();
 open(listfile);
 
 next_  = first_;
-first_ = this;} {selected
-    }
+first_ = this;} {}
   }
   decl {~ListEditor();} {public
   }
