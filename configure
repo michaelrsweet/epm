@@ -1203,8 +1203,8 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-VERSION=3.6.0
-VERNUMBER=360
+VERSION=3.7.0
+VERNUMBER=370
 
 
 cat >>confdefs.h <<_ACEOF
@@ -1225,7 +1225,7 @@ CFLAGS="${CFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 LDFLAGS="${LDFLAGS:=}"
 
-OPTIM="-O"
+OPTIM="${OPTIM:=-O}"
 
 
 # Check whether --enable-debug or --disable-debug was given.

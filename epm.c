@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.74 2003/02/13 16:52:30 mike Exp $"
+ * "$Id: epm.c,v 1.75 2003/07/24 01:20:54 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -81,6 +81,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 		  "pkg",
 		  "rpm",
 		  "setld",
+		  "slackware",
 		  "swinstall"
 		};
 
@@ -172,6 +173,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      format = PACKAGE_RPM;
 	    else if (strcasecmp(temp, "setld") == 0)
 	      format = PACKAGE_SETLD;
+	    else if (strcasecmp(temp, "slackware") == 0)
+	      format = PACKAGE_SLACKWARE;
 	    else if (strcasecmp(temp, "swinstall") == 0 ||
 	             strcasecmp(temp, "depot") == 0)
 	      format = PACKAGE_SWINSTALL;
@@ -480,6 +483,9 @@ main(int  argc,			/* I - Number of command-line arguments */
     case PACKAGE_BSD :
         i = make_bsd(prodname, directory, platname, dist, &platform);
 	break;
+	case PACKAGE_SLACKWARE :
+        i = make_slackware(prodname, directory, platname, dist, &platform);
+	break;
     case PACKAGE_DEB :
         if (geteuid())
 	  fputs("epm: Warning - file permissions and ownership may not be correct\n"
@@ -562,7 +568,7 @@ usage(void)
   puts("Options:");
   puts("-g");
   puts("    Don't strip executables in distributions.");
-  puts("-f {aix,bsd,deb,depot,inst,native,pkg,portable,rpm,setld,swinstall,tardist}");
+  puts("-f {aix,bsd,deb,depot,inst,native,pkg,portable,rpm,setld,slackware,swinstall,tardist}");
   puts("    Set distribution format.");
   puts("-k");
   puts("    Keep intermediate files (spec files, etc.)");
@@ -595,5 +601,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.74 2003/02/13 16:52:30 mike Exp $".
+ * End of "$Id: epm.c,v 1.75 2003/07/24 01:20:54 mike Exp $".
  */

@@ -7,6 +7,57 @@
 EPM software.</P>
 
 
+<H2>Changes in EPM v3.7</H2>
+
+<UL>
+
+	<LI>RPM output did not work with filenames that contained
+	a dollar sign ($).
+
+	<LI>Added Slackware packager support based upon a patch
+	contributed by Alec Thomas.
+
+	<LI>The file copy code reported write errors for the
+	source filename and not the (correct) destination
+	filename.
+
+	<LI>Fixed the handling of absolute output directories when
+	generating RPM packages.
+
+	<LI>The configure script did not support the OPTIM
+	environment variable for custom optimization settings.
+
+	<LI>Portable packages updated the permissions of
+	configuration files before they were copied.
+
+	<LI>Portable installations did not remove empty
+	installation directories when the remove script was
+	run.
+
+	<LI>Portable patch installation did not correctly
+	determine when root or /usr files were present in the
+	patch.
+
+	<LI>OSX packages incorrectly looked in /System/Library for
+	the init scripts instead of /Library.
+
+	<LI>RPM building did not work properly when --output-dir
+	was specified using an absolute path.
+
+	<LI>Made cosmetic changes to the setup/uninstall GUIs.
+
+	<LI>The setup GUI did not support software patches.
+
+	<LI>The epm.list man page incorrectly specified runlevels()
+	instead of runlevel().
+
+	<LI>The portable distributions incorrectly used
+	/usr/local/src/rc.d as a fallback location for init
+	scripts.
+
+</UL>
+
+
 <H2>Changes in EPM v3.6</H2>
 
 <UL>

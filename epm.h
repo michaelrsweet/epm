@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.35 2003/02/13 16:52:30 mike Exp $"
+ * "$Id: epm.h,v 1.36 2003/07/24 01:20:54 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -95,6 +95,7 @@ enum
   PACKAGE_PKG,				/* AT&T package format (AIX, Solaris) */
   PACKAGE_RPM,				/* RedHat package format */
   PACKAGE_SETLD,			/* Tru64 package format */
+  PACKAGE_SLACKWARE,			/* Slackware package format */
   PACKAGE_SWINSTALL			/* HP-UX package format */
 };
 
@@ -266,6 +267,9 @@ extern int	make_rpm(const char *prodname, const char *directory,
 extern int	make_setld(const char *prodname, const char *directory,
 		           const char *platname, dist_t *dist,
 			   struct utsname *platform);
+extern int	make_slackware(const char *prodname, const char *directory,
+		               const char *platname, dist_t *dist,
+			       struct utsname *platform);
 extern int	make_swinstall(const char *prodname, const char *directory,
 		               const char *platname, dist_t *dist,
 			       struct utsname *platform);
@@ -286,5 +290,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.35 2003/02/13 16:52:30 mike Exp $".
+ * End of "$Id: epm.h,v 1.36 2003/07/24 01:20:54 mike Exp $".
  */
