@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.17 2001/06/26 16:22:22 mike Exp $"
+ * "$Id: inst.c,v 1.18 2001/07/23 17:56:09 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -218,8 +218,10 @@ make_inst(const char     *prodname,	/* I - Product short name */
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    snprintf(file->src, sizeof(file->src), "%s/%s.preinstall", directory, prodname);
-    snprintf(file->dst, sizeof(file->dst), "/etc/software/%s.preinstall", prodname);
+    snprintf(file->src, sizeof(file->src), "%s/%s.preinstall", directory,
+             prodname);
+    snprintf(file->dst, sizeof(file->dst), "%s/%s.preinstall", SoftwareDir,
+             prodname);
 
    /*
     * Then create the install script...
@@ -270,8 +272,10 @@ make_inst(const char     *prodname,	/* I - Product short name */
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    snprintf(file->src, sizeof(file->src), "%s/%s.postinstall", directory, prodname);
-    snprintf(file->dst, sizeof(file->dst), "/etc/software/%s.postinstall", prodname);
+    snprintf(file->src, sizeof(file->src), "%s/%s.postinstall", directory,
+             prodname);
+    snprintf(file->dst, sizeof(file->dst), "%s/%s.postinstall", SoftwareDir,
+             prodname);
 
    /*
     * Then create the install script...
@@ -322,8 +326,10 @@ make_inst(const char     *prodname,	/* I - Product short name */
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    snprintf(file->src, sizeof(file->src), "%s/%s.preremove", directory, prodname);
-    snprintf(file->dst, sizeof(file->dst), "/etc/software/%s.preremove", prodname);
+    snprintf(file->src, sizeof(file->src), "%s/%s.preremove", directory,
+             prodname);
+    snprintf(file->dst, sizeof(file->dst), "%s/%s.preremove", SoftwareDir,
+             prodname);
 
    /*
     * Then create the install script...
@@ -374,8 +380,10 @@ make_inst(const char     *prodname,	/* I - Product short name */
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    snprintf(file->src, sizeof(file->src), "%s/%s.postremove", directory, prodname);
-    snprintf(file->dst, sizeof(file->dst), "/etc/software/%s.postremove", prodname);
+    snprintf(file->src, sizeof(file->src), "%s/%s.postremove", directory,
+             prodname);
+    snprintf(file->dst, sizeof(file->dst), "%s/%s.postremove", SoftwareDir,
+             prodname);
 
    /*
     * Then create the remove script...
@@ -583,5 +591,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.17 2001/06/26 16:22:22 mike Exp $".
+ * End of "$Id: inst.c,v 1.18 2001/07/23 17:56:09 mike Exp $".
  */
