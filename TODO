@@ -4,9 +4,6 @@ TODO for EPM:
 	  non-root packages in general.
 	- Add support for executables and libraries created with
 	  libtool.
-	- Add a small script that can be installed with every
-	  portable software package to list and remove installed
-	  packages.
 	- Add better manpage installation support -
 	  specifically, add code to automatically locate the
 	  correct man directory for each file depending on the

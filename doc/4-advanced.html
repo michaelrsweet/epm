@@ -16,14 +16,17 @@
 <P>Includes can be nested, usually up to 250 levels (depends on the
 host operating system and libraries.)</P>
 
-<H2>Conflicts, Replaces, and Requires</H2>
+<H2>Conflicts, Provides, Replaces, and Requires</H2>
 
 <P>Software conflicts and requirements are specified using the
 <CODE>%incompat</CODE> and <CODE>%requires</CODE> directives. If
 your software replaces another package, you can specify that
-using the <CODE>%replaces</CODE> directive (<CODE>%replaces</CODE>
-is silently mapped to <CODE>%conflicts</CODE> when the distribution
-format does not support package replacement.)
+using the <CODE>%replaces</CODE> directive
+(<CODE>%replaces</CODE> is silently mapped to
+<CODE>%conflicts</CODE> when the distribution format does not
+support package replacement.) If your package provides certain
+functionality associated with a standard name, the
+<CODE>%provides</CODE> directive can be used.
 
 <P>Dependencies are specified using the package name and optionally the
 lower and upper version numbers:
@@ -35,6 +38,7 @@ lower and upper version numbers:
 %incompat foobar 0.9
 %replaces foobar
 %replaces foobar 1.2 3.4
+%provides foobar
 </PRE></UL>
 
 <P>or the filename:
