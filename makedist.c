@@ -1,5 +1,5 @@
 /*
- * "$Id: makedist.c,v 1.1 1999/05/20 14:18:59 mike Exp $"
+ * "$Id: makedist.c,v 1.2 1999/05/20 16:16:47 mike Exp $"
  *
  *   Patch file builder for espPrint, a collection of printer drivers.
  *
@@ -16,6 +16,17 @@
  * Revision History:
  *
  *   $Log: makedist.c,v $
+ *   Revision 1.2  1999/05/20 16:16:47  mike
+ *   Updated lp and lpadmin documentation.
+ *
+ *   Added startup script for CUPS.
+ *
+ *   Added README file for package.
+ *
+ *   Added missing files to CUPS package.
+ *
+ *   Updated makedist program.
+ *
  *   Revision 1.1  1999/05/20 14:18:59  mike
  *   Added installation script generator (I'm sick of making a different
  *   distribution for every platform!)
@@ -219,6 +230,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   copyright[0] = '\0';
   vendor[0]    = '\0';
   license[0]   = '\0';
+  readme[0]    = '\0';
 
   skip = 0;
   while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
@@ -226,7 +238,7 @@ main(int  argc,			/* I - Number of command-line arguments */
     {
       if (strncmp(line, "%product ", 9) == 0)
         strcpy(product, line + 9);
-      else if (strncmp(line, "%copyright", 11) == 0)
+      else if (strncmp(line, "%copyright ", 11) == 0)
         strcpy(copyright, line + 11);
       else if (strncmp(line, "%vendor ", 8) == 0)
         strcpy(vendor, line + 8);
@@ -256,8 +268,16 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Create the output files...
   */
 
-  sprintf(directory, "%s-%s-%s-%s", name, platform.sysname, platform.release,
-          platform.machine);
+  sprintf(directory, "%s-%s-%s-%s-%s", name, version, platform.sysname,
+          platform.release, platform.machine);
+
+  sprintf(command, "rm -rf %s", directory);
+  system(command);
+  sprintf(command, "rm -f %s.tar.gz", directory);
+  system(command);
+  sprintf(command, "rm -f %s.tar.bz2", directory);
+  system(command);
+
   mkdir(directory, 0777);
 
   sprintf(tarname, "%s.sw", argv[1]);
@@ -299,9 +319,9 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Copy the license and readme files...
   */
 
-  sprintf(command, "cp %s %s/%s.license", license, directory, name);
+  sprintf(command, "/bin/cp %s %s/%s.license", license, directory, name);
   system(command);
-  sprintf(command, "cp %s %s/%s.readme", readme, directory, name);
+  sprintf(command, "/bin/cp %s %s/%s.readme", readme, directory, name);
   system(command);
 
  /*
@@ -406,6 +426,8 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   rewind(listfile);
 
+  fputs("echo \"Removing installed files...\"\n", removefile);
+
  /*
   * Loop through the list file and add files...
   */
@@ -416,6 +438,9 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
   {
+    if (line[0] == '%')
+      continue;
+
     if (sscanf(line, "%c%o%s%s%s%s", &type, &mode, user, group,
                tempdst, tempsrc) < 5)
     {
@@ -444,15 +469,6 @@ main(int  argc,			/* I - Number of command-line arguments */
           strcat(dst, ".N");
 
       case 'f' :
-          if (stat(src, &srcstat))
-	  {
-	    fprintf(stderr, "makedist: Cannot stat %s - %s\n", src,
-	            strerror(errno));
-	    continue;
-	  }
-
-          fprintf(removefile, "/bin/rm -f %s\n", dst);
-
           if (mode & 0111)
 	  {
 	   /*
@@ -462,6 +478,15 @@ main(int  argc,			/* I - Number of command-line arguments */
             sprintf(command, STRIP " 2>&1 >/dev/null", src);
 	    system(command);
 	  }
+
+          if (stat(src, &srcstat))
+	  {
+	    fprintf(stderr, "makedist: Cannot stat %s - %s\n", src,
+	            strerror(errno));
+	    continue;
+	  }
+
+          fprintf(removefile, "/bin/rm -f %s\n", dst);
 
 	  printf("%s -> %s...\n", src, dst);
 
@@ -614,13 +639,18 @@ get_line(char           *buffer,
       */
 
       if (strstr(buffer + 9, platform->sysname) != NULL ||
-          strcmp(buffer + 7, "all\n") == 0)
+          strcmp(buffer + 9, "all\n") == 0)
         *skip = 0;
       else
         *skip = 1;
     }
     else if (!*skip)
+    {
+      if (buffer[strlen(buffer) - 1] == '\n')
+        buffer[strlen(buffer) - 1] = '\0';
+
       return (buffer);
+    }
   }
 
   return (NULL);
@@ -776,5 +806,5 @@ write_file(FILE *fp,
 
 
 /*
- * End of "$Id: makedist.c,v 1.1 1999/05/20 14:18:59 mike Exp $".
+ * End of "$Id: makedist.c,v 1.2 1999/05/20 16:16:47 mike Exp $".
  */
