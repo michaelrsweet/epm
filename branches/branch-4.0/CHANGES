@@ -12,6 +12,15 @@ WHAT'S NEW IN EPM 4.0?
 	  subpackages, depending on the package format.
 
 
+WHAT'S NEW IN EPM 3.5.2?
+
+    EPM 3.5.2 adds the following features, fixes, and changes to
+    EPM 3.5.1:
+
+	- EPM would quote the ":" character in filenames but
+	  didn't need to.
+
+
 WHAT'S NEW IN EPM 3.5.1?
 
     EPM 3.5.1 adds the following features, fixes, and changes to
