@@ -1,5 +1,5 @@
 /*
- * "$Id: makedist.c,v 1.9 1999/06/04 21:12:11 mike Exp $"
+ * "$Id: makedist.c,v 1.10 1999/06/10 16:15:24 mike Exp $"
  *
  *   Makedist, a simple binary distribution generator for UNIX.
  *
@@ -458,7 +458,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   mkdir(directory, 0777);
 
-  sprintf(swname, "%s.sw", argv[1]);
+  sprintf(swname, "%s.sw", prodname);
   sprintf(line, "%s/%s", directory, swname);
 
   if ((swfile = fopen(line, "wb")) == NULL)
@@ -470,7 +470,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   fchmod(fileno(swfile), 0444);
 
-  sprintf(pswname, "%s.psw", argv[1]);
+  sprintf(pswname, "%s.psw", prodname);
   sprintf(line, "%s/%s", directory, pswname);
 
   if ((pswfile = fopen(line, "wb")) == NULL)
@@ -1350,5 +1350,5 @@ usage(void)
 
 
 /*
- * End of "$Id: makedist.c,v 1.9 1999/06/04 21:12:11 mike Exp $".
+ * End of "$Id: makedist.c,v 1.10 1999/06/10 16:15:24 mike Exp $".
  */
