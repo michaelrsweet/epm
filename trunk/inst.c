@@ -601,8 +601,11 @@ inst_subsys(FILE       *fp,		/* I - File to write to */
   int		i;			/* Looping var */
   depend_t	*d;			/* Current dependency */
   const char	*product;		/* Product for dependency */
+  char		selfname[1024];		/* Self product name */
   char		title[1024];		/* Product description/title */
 
+
+  snprintf(selfname, sizeof(selfname), "%s.%s.eoe", prodname, section);
 
   if (subpackage)
   {
@@ -642,7 +645,7 @@ inst_subsys(FILE       *fp,		/* I - File to write to */
       if (d->type == DEPEND_REQUIRES && d->subpackage == subpackage)
       {
 	if (!strcmp(d->product, "_self"))
-          product = prodname;
+          product = selfname;
 	else
           product = d->product;
 
@@ -650,8 +653,8 @@ inst_subsys(FILE       *fp,		/* I - File to write to */
   	  fprintf(fp, "				%s %d %d\n",
          	  product, d->vernumber[0], d->vernumber[1]);
         else if (product[0] != '/')
-  	  fprintf(fp, "				%s.sw.eoe %d %d\n",
-         	  product, d->vernumber[0], d->vernumber[1]);
+  	  fprintf(fp, "				%s.%s.* %d %d\n",
+         	  product, section, d->vernumber[0], d->vernumber[1]);
       }
     fputs("			)\n", fp);
   }
@@ -660,7 +663,7 @@ inst_subsys(FILE       *fp,		/* I - File to write to */
     if (d->type == DEPEND_REPLACES && d->subpackage == subpackage)
     {
       if (!strcmp(d->product, "_self"))
-        product = prodname;
+        product = selfname;
       else
         product = d->product;
 
@@ -673,16 +676,16 @@ inst_subsys(FILE       *fp,		/* I - File to write to */
       }
       else if (product[0] != '/')
       {
-        fprintf(fp, "			replaces %s.sw.eoe %d %d\n",
-         	product, d->vernumber[0], d->vernumber[1]);
-        fprintf(fp, "			updates %s.sw.eoe %d %d\n",
-         	product, d->vernumber[0], d->vernumber[1]);
+        fprintf(fp, "			replaces %s.%s.* %d %d\n",
+         	product, section, d->vernumber[0], d->vernumber[1]);
+        fprintf(fp, "			updates %s.%s.* %d %d\n",
+         	product, section, d->vernumber[0], d->vernumber[1]);
       }
     }
     else if (d->type == DEPEND_INCOMPAT && d->subpackage == subpackage)
     {
       if (!strcmp(d->product, "_self"))
-        product = prodname;
+        product = selfname;
       else
         product = d->product;
 
@@ -690,8 +693,8 @@ inst_subsys(FILE       *fp,		/* I - File to write to */
         fprintf(fp, "			incompat %s %d %d\n",
          	product, d->vernumber[0], d->vernumber[1]);
       else if (product[0] != '/')
-        fprintf(fp, "			incompat %s.sw.eoe %d %d\n",
-         	product, d->vernumber[0], d->vernumber[1]);
+        fprintf(fp, "			incompat %s.%s.* %d %d\n",
+         	product, section, d->vernumber[0], d->vernumber[1]);
     }
 
   fputs("		endsubsys\n", fp);
