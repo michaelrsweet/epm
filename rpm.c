@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.44 2002/12/20 17:27:22 swdev Exp $"
+ * "$Id: rpm.c,v 1.45 2003/01/14 16:51:11 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -52,6 +52,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   const char	*runlevels;		/* Run levels */
   int		number;			/* Start/stop number */
   char		rpmdir[1024];		/* RPMDIR env var */
+  const char	*dname;			/* Dependency name */
 
 
   if (Verbosity)
@@ -137,12 +138,17 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
   {
-    if (d->type == DEPEND_REQUIRES)
-      fprintf(fp, "Requires: %s", d->product);
-    else if (d->type == DEPEND_PROVIDES)
-      fprintf(fp, "Provides: %s", d->product);
+    if ((dname = strrchr(d->product, '/')) != NULL)
+      dname ++;
     else
-      fprintf(fp, "Conflicts: %s", d->product);
+      dname = d->product;
+
+    if (d->type == DEPEND_REQUIRES)
+      fprintf(fp, "Requires: %s", dname);
+    else if (d->type == DEPEND_PROVIDES)
+      fprintf(fp, "Provides: %s", dname);
+    else
+      fprintf(fp, "Conflicts: %s", dname);
 
     if (d->vernumber[0] == 0)
     {
@@ -395,11 +401,11 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   if (strcmp(platform->machine, "intel") == 0)
   {
-    if (run_command(NULL, "rpm %s -bb " EPM_RPMARCH "i386 %s",
+    if (run_command(NULL, EPM_RPMBUILD " %s -bb " EPM_RPMARCH "i386 %s",
                     Verbosity == 0 ? "--quiet" : "", specname))
       return (1);
   }
-  else if (run_command(NULL, "rpm %s -bb " EPM_RPMARCH "%s %s",
+  else if (run_command(NULL, EPM_RPMBUILD " %s -bb " EPM_RPMARCH "%s %s",
                        Verbosity == 0 ? "--quiet" : "", platform->machine,
 		       specname))
     return (1);
@@ -438,5 +444,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.44 2002/12/20 17:27:22 swdev Exp $".
+ * End of "$Id: rpm.c,v 1.45 2003/01/14 16:51:11 mike Exp $".
  */

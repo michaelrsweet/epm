@@ -6,6 +6,8 @@ WHAT'S NEW IN EPM 3.5.2?
     EPM 3.5.2 adds the following features, fixes, and changes to
     EPM 3.5.1:
 
+	- File dependencies were incorrectly specified in RPM
+	  spec files.
 	- IRIX portable distributions didn't write the chkconfig
 	  commands properly.
 	- The mkepmlist utility didn't support files as well as
