@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.38 2002/08/30 02:00:42 mike Exp $"
+ * "$Id: rpm.c,v 1.39 2002/10/07 19:29:45 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -43,7 +43,6 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   char		name[1024];		/* Full product name */
   char		specname[1024];		/* Spec filename */
   char		filename[1024];		/* Destination filename */
-  const char	*rpmdir;		/* RPM directory */
   file_t	*file;			/* Current distribution file */
   command_t	*c;			/* Current command */
   depend_t	*d;			/* Current dependency */
@@ -97,6 +96,28 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   qprintf(fp, "Vendor: %s\n", dist->vendor);
   qprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
   fputs("Group: Applications\n", fp);
+
+ /*
+  * Tell RPM to put the distributions in the output directory...
+  */
+
+  qprintf(fp, "%%define _topdir %s/%s\n", current, directory);
+
+  snprintf(filename, sizeof(filename), "%s/RPMS", directory);
+
+  make_directory(filename, 0777, getuid(), getgid());
+
+  if (strcmp(platform->machine, "intel") == 0)
+    snprintf(filename, sizeof(filename), "%s/RPMS/i386", directory);
+  else
+    snprintf(filename, sizeof(filename), "%s/RPMS/%s", directory,
+             platform->machine);
+
+  make_directory(filename, 0777, getuid(), getgid());
+
+ /*
+  * Now list all of the dependencies...
+  */
 
   for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
   {
@@ -368,33 +389,17 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     return (1);
 
  /*
-  * Figure out where the RPMS are stored...
-  */
-
-  if ((rpmdir = getenv("RPMDIR")) == NULL)
-  {
-    if (!access("/usr/src/redhat/RPMS", 0))		/* Red Hat */
-      rpmdir = "/usr/src/redhat";
-    else if (!access("/usr/src/RPM/RPMS", 0))		/* Mandrake */
-      rpmdir = "/usr/src/RPM";
-    else if (!access("/usr/src/packages/RPMS", 0))	/* SuSE */
-      rpmdir = "/usr/src/packages";
-    else
-      rpmdir = "/usr/local/src/RPM";			/* Others? */
-  }
-
- /*
   * Move the RPM to the local directory and rename the RPM using the
   * product name specified by the user...
   */
 
   if (strcmp(platform->machine, "intel") == 0)
     run_command(NULL, "/bin/mv %s/RPMS/i386/%s-%s-%d.i386.rpm %s/%s.rpm",
-        	rpmdir, prodname, dist->version, dist->relnumber,
+        	directory, prodname, dist->version, dist->relnumber,
 		directory, name);
   else
     run_command(NULL, "/bin/mv %s/RPMS/%s/%s-%s-1.%s.rpm %s/%s.rpm",
-        	rpmdir, platform->machine, prodname, dist->version,
+        	directory, platform->machine, prodname, dist->version,
 		platform->machine, directory, name);
 
  /*
@@ -406,6 +411,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
+    run_command(NULL, "/bin/rm -rf %s/RPMS", directory);
     run_command(NULL, "/bin/rm -rf %s/buildroot", directory);
 
     unlink(specname);
@@ -416,5 +422,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.38 2002/08/30 02:00:42 mike Exp $".
+ * End of "$Id: rpm.c,v 1.39 2002/10/07 19:29:45 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.69 2002/08/01 01:50:24 mike Exp $"
+ * "$Id: epm.c,v 1.70 2002/10/07 19:29:45 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -433,7 +433,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Make build directory...
   */
 
-  mkdir(directory, 0777);
+  make_directory(directory, 0777, getuid(), getgid());
 
  /*
   * Make the distribution in the correct format...
@@ -555,5 +555,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.69 2002/08/01 01:50:24 mike Exp $".
+ * End of "$Id: epm.c,v 1.70 2002/10/07 19:29:45 mike Exp $".
  */
