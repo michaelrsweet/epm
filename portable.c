@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.36 2001/05/11 20:07:19 mike Exp $"
+ * "$Id: portable.c,v 1.37 2001/05/22 00:41:27 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1686,34 +1686,32 @@ write_space_checks(const char *prodname,/* I - Distribution name */
                    const char *sw,	/* I - / archive */
 		   const char *ss)	/* I - /usr archive */
 {
+  fputs("dfroot=`df -k / | tr '\\n' ' '`\n", fp);
+  fputs("dfusr=`df -k /usr | tr '\\n' ' '`\n", fp);
   fputs("case `uname` in\n", fp);
   fputs("	AIX)\n", fp);
-  fputs("	fsroot=`df -k / | tail -1 | awk '{print $7}'`\n", fp);
-  fputs("	sproot=`df -k / | tail -1 | awk '{print $3}'`\n", fp);
-  fputs("	fsusr=`df -k /usr | tail -1 | awk '{print $7}'`\n", fp);
-  fputs("	spusr=`df -k /usr | tail -1 | awk '{print $3}'`\n", fp);
+  fputs("	fsroot=`echo $dfroot | awk '{print $15}'`\n", fp);
+  fputs("	sproot=`echo $dfroot | awk '{print $11}'`\n", fp);
+  fputs("	fsusr=`echo $dfusr | awk '{print $15}'`\n", fp);
+  fputs("	spusr=`echo $dfusr | awk '{print $11}'`\n", fp);
   fputs("	;;\n\n", fp);
   fputs("	HP-UX)\n", fp);
-  fputs("	fsroot=`df -k / | head -1 | awk '{print $1}'`\n", fp);
-  fputs("	sproot=`df -k / | grep free | awk '{print $1}'`\n", fp);
-  fputs("	fsusr=`df -k /usr | head -1 | awk '{print $1}'`\n", fp);
-  fputs("	spusr=`df -k /usr | grep free | awk '{print $1}'`\n", fp);
+  fputs("	fsroot=`echo $dfroot | awk '{print $1}'`\n", fp);
+  fputs("	sproot=`echo $dfroot | awk '{print $9}'`\n", fp);
+  fputs("	fsusr=`echo $dfusr | awk '{print $1}'`\n", fp);
+  fputs("	spusr=`echo $dfusr | awk '{print $9}'`\n", fp);
   fputs("	;;\n\n", fp);
   fputs("	IRIX*)\n", fp);
-  fputs("	fsroot=`df -k / | tail -1 | awk '{print $7}'`\n", fp);
-  fputs("	sproot=`df -k / | tail -1 | awk '{print $5}'`\n", fp);
-  fputs("	fsusr=`df -k /usr | tail -1 | awk '{print $7}'`\n", fp);
-  fputs("	spusr=`df -k /usr | tail -1 | awk '{print $5}'`\n", fp);
+  fputs("	fsroot=`echo $dfroot | awk '{print $15}'`\n", fp);
+  fputs("	sproot=`echo $dfroot | awk '{print $13}'`\n", fp);
+  fputs("	fsusr=`echo $dfusr | awk '{print $15}'`\n", fp);
+  fputs("	spusr=`echo $dfusr | awk '{print $13}'`\n", fp);
   fputs("	;;\n\n", fp);
   fputs("	*)\n", fp);
-  fputs("	fsroot=`df -k / | tail -1 | "
-        "awk '{if ($NF == 6) print $6; else print $5}'`\n", fp);
-  fputs("	sproot=`df -k / | tail -1 | "
-        "awk '{if ($NF == 6) print $4; else print $3}'`\n", fp);
-  fputs("	fsusr=`df -k /usr | tail -1 | "
-        "awk '{if ($NF == 6) print $6; else print $5}'`\n", fp);
-  fputs("	spusr=`df -k /usr | tail -1 | "
-        "awk '{if ($NF == 6) print $4; else print $3}'`\n", fp);
+  fputs("	fsroot=`echo $dfroot | awk '{print $13}'`\n", fp);
+  fputs("	sproot=`echo $dfroot | awk '{print $11}'`\n", fp);
+  fputs("	fsusr=`echo $dfusr | awk '{print $13}'`\n", fp);
+  fputs("	spusr=`echo $dfusr | awk '{print $11}'`\n", fp);
   fputs("	;;\n", fp);
   fputs("esac\n", fp);
   fputs("\n", fp);
@@ -1725,23 +1723,27 @@ write_space_checks(const char *prodname,/* I - Distribution name */
   fputs("\n", fp);
   fputs("spall=`expr $spsw + $spss`\n", fp);
   fputs("\n", fp);
-  fputs("if test x$fsroot = x$fsusr; then\n", fp);
-  fputs("	if test $spall -gt $sproot; then\n", fp);
-  fputs("		echo Not enough free disk space for software:\n", fp);
-  fputs("		echo You need $spall kbytes but only have $sproot kbytes available.\n", fp);
-  fputs("		exit 1\n", fp);
-  fputs("	fi\n", fp);
+  fputs("if test x$sproot = x -o x$spusr = x; then\n", fp);
+  fputs("	echo WARNING: Unable to determine available disk space; installing blindly...\n", fp);
   fputs("else\n", fp);
-  fputs("	if test $spsw -gt $sproot; then\n", fp);
-  fputs("		echo Not enough free disk space for software:\n", fp);
-  fputs("		echo You need $spsw kbytes in / but only have $sproot kbytes available.\n", fp);
-  fputs("		exit 1\n", fp);
-  fputs("	fi\n", fp);
+  fputs("	if test x$fsroot = x$fsusr; then\n", fp);
+  fputs("		if test $spall -gt $sproot; then\n", fp);
+  fputs("			echo Not enough free disk space for software:\n", fp);
+  fputs("			echo You need $spall kbytes but only have $sproot kbytes available.\n", fp);
+  fputs("			exit 1\n", fp);
+  fputs("		fi\n", fp);
+  fputs("	else\n", fp);
+  fputs("		if test $spsw -gt $sproot; then\n", fp);
+  fputs("			echo Not enough free disk space for software:\n", fp);
+  fputs("			echo You need $spsw kbytes in / but only have $sproot kbytes available.\n", fp);
+  fputs("			exit 1\n", fp);
+  fputs("		fi\n", fp);
   fputs("\n", fp);
-  fputs("	if test $spss -gt $spusr; then\n", fp);
-  fputs("		echo Not enough free disk space for software:\n", fp);
-  fputs("		echo You need $spss kbytes in /usr but only have $spusr kbytes available.\n", fp);
-  fputs("		exit 1\n", fp);
+  fputs("		if test $spss -gt $spusr; then\n", fp);
+  fputs("			echo Not enough free disk space for software:\n", fp);
+  fputs("			echo You need $spss kbytes in /usr but only have $spusr kbytes available.\n", fp);
+  fputs("			exit 1\n", fp);
+  fputs("		fi\n", fp);
   fputs("	fi\n", fp);
   fputs("fi\n", fp);
 
@@ -1750,5 +1752,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.36 2001/05/11 20:07:19 mike Exp $".
+ * End of "$Id: portable.c,v 1.37 2001/05/22 00:41:27 mike Exp $".
  */
