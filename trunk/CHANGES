@@ -6,7 +6,8 @@ WHAT'S NEW IN EPM 3.6.1?
     EPM 3.6.1 adds the following features, fixes, and changes to
     EPM 3.6:
 
-
+	- RPM building did not work properly when --output-dir
+	  was specified using an absolute path.
 	- Made cosmetic changes to the setup/uninstall GUIs.
 
 
