@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.7 2000/06/27 18:20:32 mike Exp $"
+ * "$Id: pkg.c,v 1.8 2000/06/28 20:25:21 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -207,19 +207,21 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   for (i = 0; i < dist->num_files; i ++)
     if (tolower(dist->files[i].type) == 'i')
     {
-      for (j = 0; j < 4; j ++)
-        if (j != 1)
-	{
-	  file = add_file(dist);
+      file = add_file(dist);
+      file->type = 'l';
+      file->mode = 0;
+      strcpy(file->user, "root");
+      strcpy(file->group, "sys");
+      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
+      sprintf(file->dst, "/etc/rc0.d/K00%s", dist->files[i].dst);
 
-          file->type = 'l';
-	  file->mode = 0;
-	  strcpy(file->user, "root");
-	  strcpy(file->group, "sys");
-	  sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-	  sprintf(file->dst, "/etc/rc%d.d/%s%s", j, j == 0 ? "K00" : "S99",
-	          dist->files[i].dst);
-        }
+      file = add_file(dist);
+      file->type = 'l';
+      file->mode = 0;
+      strcpy(file->user, "root");
+      strcpy(file->group, "sys");
+      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
+      sprintf(file->dst, "/etc/rc2.d/S99%s", dist->files[i].dst);
 
       file = dist->files + i;
 
@@ -341,5 +343,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.7 2000/06/27 18:20:32 mike Exp $".
+ * End of "$Id: pkg.c,v 1.8 2000/06/28 20:25:21 mike Exp $".
  */

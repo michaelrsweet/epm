@@ -1,5 +1,5 @@
-README - ESP Package Manager (EPM) 2.0.1
-----------------------------------------
+README - ESP Package Manager (EPM) 2.1
+--------------------------------------
 
 WHAT IS EPM?
 
@@ -45,6 +45,9 @@ WHAT IS REQUIRED FOR EPM?
     your customers/users will need the Bourne (or Korn or Bash) shell,
     a tar program, and GNU zip. The first two are standard items, and
     GNU zip is being shipped by most vendors as well.
+
+    EPM can also generate vendor-specific distributions.  These require
+    the particular vendor tool (rpm, dpkg, etc.) to load the software.
 
 
 HOW DO I COMPILE EPM?
@@ -98,6 +101,10 @@ WHAT'S NEW IN EPM 2.1?
 	- Now check for write permission in /usr by writing a
 	  test file (/usr/.writetest); this should make diskless
 	  client installations more reliable.
+	- Added support for variables on the command line
+	  (name=value); insert into project filenames using
+	  $name.
+	- Now only specify run levels 0 and 2 for init scripts.
 
 
 WHAT'S NEW IN EPM 2.0?
