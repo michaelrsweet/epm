@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.45 2003/01/14 16:51:11 mike Exp $"
+ * "$Id: rpm.c,v 1.46 2003/05/30 04:38:44 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -96,7 +96,10 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "Copyright: %s\n", dist->copyright);
   fprintf(fp, "Packager: %s\n", dist->packager);
   fprintf(fp, "Vendor: %s\n", dist->vendor);
-  fprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
+  if (directory[0] == '/')
+    fprintf(fp, "BuildRoot: %s/buildroot\n", directory);
+  else
+    fprintf(fp, "BuildRoot: %s/%s/buildroot\n", current, directory);
   fputs("Group: Applications\n", fp);
 
  /*
@@ -104,8 +107,17 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   */
 
 #ifdef EPM_RPMTOPDIR
-  fprintf(fp, "%%define _topdir %s/%s\n", current, directory);
-  snprintf(rpmdir, sizeof(rpmdir), "%s/%s", current, directory);
+  if (directory[0] == '/')
+  {
+    fprintf(fp, "%%define _topdir %s\n", directory);
+    strncpy(rpmdir, directory, sizeof(rpmdir) - 1);
+    rpmdir[sizeof(rpmdir) - 1] = '\0';
+  }
+  else
+  {
+    fprintf(fp, "%%define _topdir %s/%s\n", current, directory);
+    snprintf(rpmdir, sizeof(rpmdir), "%s/%s", current, directory);
+  }
 #else
   if (getenv("RPMDIR"))
   {
@@ -444,5 +456,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.45 2003/01/14 16:51:11 mike Exp $".
+ * End of "$Id: rpm.c,v 1.46 2003/05/30 04:38:44 mike Exp $".
  */
