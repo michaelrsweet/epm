@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.60 2001/07/02 19:18:03 mike Exp $"
+ * "$Id: epm.c,v 1.61 2001/07/23 17:54:21 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -36,6 +36,7 @@
 int		Verbosity = 0;
 int		KeepFiles = 0;
 const char	*SetupProgram = EPM_LIBDIR "/setup";
+const char	*SoftwareDir = EPM_SOFTWARE;
 
 
 /*
@@ -263,6 +264,17 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      else
               {
                 puts("epm: Expected setup.types file.");
+	        usage();
+              }
+            }
+	    else if (strcmp(argv[i], "--software-dir") == 0)
+	    {
+	      i ++;
+	      if (i < argc)
+	        SoftwareDir = argv[i];
+	      else
+              {
+                puts("epm: Expected software directory.");
 	        usage();
               }
             }
@@ -510,5 +522,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.60 2001/07/02 19:18:03 mike Exp $".
+ * End of "$Id: epm.c,v 1.61 2001/07/23 17:54:21 mike Exp $".
  */

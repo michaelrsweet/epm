@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.32 2001/06/28 16:20:10 mike Exp $"
+ * "$Id: rpm.c,v 1.33 2001/07/23 17:54:21 mike Exp $"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -159,24 +159,30 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     fputs("; do\n", fp);
     fputs("		if test -d $rcdir/init.d; then\n", fp);
     fputs("			/bin/rm -f $rcdir/init.d/$file\n", fp);
-    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/init.d/$file\n", fp);
+    fprintf(fp, "			/bin/ln -s %s/init.d/$file "
+                "$rcdir/init.d/$file\n", SoftwareDir);
     fputs("		else\n", fp);
     fputs("			if test -d /etc/init.d; then\n", fp);
     fputs("				/bin/rm -f /etc/init.d/$file\n", fp);
-    fputs("				/bin/ln -s " EPM_SOFTWARE "/init.d/$file /etc/init.d/$file\n", fp);
+    fprintf(fp, "				/bin/ln -s %s/init.d/$file "
+                "/etc/init.d/$file\n", SoftwareDir);
     fputs("			fi\n", fp);
     fputs("		fi\n", fp);
     fputs("		/bin/rm -f $rcdir/rc0.d/K00$file\n", fp);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc0.d/K00$file\n", fp);
+    fprintf(fp, "		/bin/ln -s %s/init.d/$file "
+                "$rcdir/rc0.d/K00$file\n", SoftwareDir);
     fputs("		/bin/rm -f $rcdir/rc2.d/S99$file\n", fp);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc2.d/S99$file\n", fp);
+    fprintf(fp, "		/bin/ln -s %s/init.d/$file "
+                "$rcdir/rc2.d/S99$file\n", SoftwareDir);
     fputs("		/bin/rm -f $rcdir/rc3.d/S99$file\n", fp);
-    fputs("		/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc3.d/S99$file\n", fp);
+    fprintf(fp, "		/bin/ln -s %s/init.d/$file "
+                "$rcdir/rc3.d/S99$file\n", SoftwareDir);
     fputs("		if test -d $rcdir/rc5.d; then\n", fp);
     fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", fp);
-    fputs("			/bin/ln -s " EPM_SOFTWARE "/init.d/$file $rcdir/rc5.d/S99$file\n", fp);
+    fprintf(fp, "		/bin/ln -s %s/init.d/$file "
+                "$rcdir/rc5.d/S99$file\n", SoftwareDir);
     fputs("		fi\n", fp);
-    fputs("		" EPM_SOFTWARE "/init.d/$file start\n", fp);
+    fprintf(fp, "		%s/init.d/$file start\n", SoftwareDir);
     fputs("	done\n", fp);
     fputs("fi\n", fp);
   }
@@ -216,7 +222,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     fputs("		if test -d $rcdir/rc5.d; then\n", fp);
     fputs("			/bin/rm -f $rcdir/rc5.d/S99$file\n", fp);
     fputs("		fi\n", fp);
-    fputs("		" EPM_SOFTWARE "/init.d/$file stop\n", fp);
+    fprintf(fp, "		%s/init.d/$file stop\n", SoftwareDir);
     fputs("	done\n", fp);
     fputs("fi\n", fp);
   }
@@ -248,7 +254,8 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	          file->group, file->dst);
           break;
       case 'i' :
-          fprintf(fp, "%%attr(0555,root,root) /etc/software/init.d/%s\n", file->dst);
+          fprintf(fp, "%%attr(0555,root,root) %s/init.d/%s\n", SoftwareDir,
+	          file->dst);
           break;
     }
 
@@ -291,8 +298,8 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'i' :
-          snprintf(filename, sizeof(filename), "%s/buildroot/etc/software/init.d/%s", directory,
-	          file->dst);
+          snprintf(filename, sizeof(filename), "%s/buildroot%s/init.d/%s",
+	           directory, SoftwareDir, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -388,5 +395,5 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.32 2001/06/28 16:20:10 mike Exp $".
+ * End of "$Id: rpm.c,v 1.33 2001/07/23 17:54:21 mike Exp $".
  */

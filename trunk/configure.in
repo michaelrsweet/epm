@@ -1,5 +1,5 @@
 dnl
-dnl "$Id: configure.in,v 1.37 2001/06/29 16:33:07 mike Exp $"
+dnl "$Id: configure.in,v 1.38 2001/07/23 17:54:21 mike Exp $"
 dnl
 dnl   Configuration script for the ESP Package Manager (EPM).
 dnl
@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=3.0
-VERNUMBER=300
+VERSION=3.1
+VERNUMBER=310
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -68,6 +68,10 @@ AC_ARG_WITH(docdir, [  --with-docdir           set directory for documentation],
 	docdir="\${datadir}/doc/epm")
 
 AC_SUBST(docdir)
+
+AC_ARG_WITH(softwaredir, [  --with-softwaredir        set directory for EPM uninstall files and init scripts],
+	softwaredir="$withval",
+	softwaredir="")
 
 dnl Checks for programs...
 AC_PROG_CC
@@ -334,10 +338,14 @@ AC_SUBST(CAT5EXT)
 AC_SUBST(MAN5EXT)
 
 dnl EPM_SOFTWARE needs special attention for the default location...
-if test "$prefix" = "/usr"; then
-	EPM_SOFTWARE="/etc/software"
+if test x$softwaredir = x; then
+	if test "$prefix" = "/usr"; then
+		EPM_SOFTWARE="/etc/software"
+	else
+		EPM_SOFTWARE="$prefix/etc/software"
+	fi
 else
-	EPM_SOFTWARE="$prefix/etc/software"
+	EPM_SOFTWARE="$softwaredir"
 fi
 
 AC_DEFINE_UNQUOTED(EPM_SOFTWARE, "$EPM_SOFTWARE")
@@ -372,5 +380,5 @@ AC_OUTPUT(Makefile epm.list mkepmlist doc/Makefile)
 chmod +x mkepmlist
 
 dnl
-dnl End of "$Id: configure.in,v 1.37 2001/06/29 16:33:07 mike Exp $".
+dnl End of "$Id: configure.in,v 1.38 2001/07/23 17:54:21 mike Exp $".
 dnl
