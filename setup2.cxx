@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.8 2001/01/03 20:41:34 mike Exp $"
+// "$Id: setup2.cxx,v 1.9 2001/03/27 20:54:15 mike Exp $"
 //
 //   ESP Software Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -98,7 +98,8 @@ get_dists(const char *d)	// I - Directory to look in
   const char	*ext;		// Extension
   dist_t	*temp;		// Pointer to current distribution
   FILE		*fp;		// File to read from
-  char		line[1024];	// Line from file...
+  char		line[1024],	// Line from file...
+		*ptr;		// Pointer into line...
   char		filename[1024];	// Filename
 
 
@@ -167,11 +168,21 @@ get_dists(const char *d)	// I - Directory to look in
 	else if (strncmp(line, "#%version ", 10) == 0)
 	  sscanf(line + 10, "%31s", temp->version);
 	else if (strncmp(line, "#%incompat ", 11) == 0)
+	{
+	  if ((ptr = strchr(line + 11, ' ')) != NULL)
+	    *ptr = '\0';
+
 	  temp->num_incompats = add_string(temp->num_incompats,
 	                                   &(temp->incompats), line + 11);
+        }
 	else if (strncmp(line, "#%requires ", 11) == 0)
+        {
+	  if ((ptr = strchr(line + 11, ' ')) != NULL)
+	    *ptr = '\0';
+
 	  temp->num_requires = add_string(temp->num_requires,
 	                                   &(temp->requires), line + 11);
+	}
       }
 
       fclose(fp);
@@ -601,5 +612,5 @@ log_cb(int fd,			// I - Pipe to read from
 
 
 //
-// End of "$Id: setup2.cxx,v 1.8 2001/01/03 20:41:34 mike Exp $".
+// End of "$Id: setup2.cxx,v 1.9 2001/03/27 20:54:15 mike Exp $".
 //
