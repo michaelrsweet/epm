@@ -1,5 +1,5 @@
 /*
- * "$Id: pkg.c,v 1.17 2001/03/30 02:26:03 mike Exp $"
+ * "$Id: pkg.c,v 1.18 2001/06/26 16:22:22 mike Exp $"
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
@@ -46,7 +46,6 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 		postinstall[1024],	/* Post install script */
 		preremove[1024],	/* Pre remove script */
 		postremove[1024];	/* Post remove script */
-  char		command[1024];		/* Command to run */
   char		current[1024];		/* Current directory */
   file_t	*file;			/* Current distribution file */
   command_t	*c;			/* Current command */
@@ -62,15 +61,15 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   if (dist->relnumber)
   {
     if (platname[0])
-      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
               platname);
     else
-      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
   }
   else if (platname[0])
-    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+    snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
   else
-    sprintf(name, "%s-%s", prodname, dist->version);
+    snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
   getcwd(current, sizeof(current));
 
@@ -81,7 +80,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating package information file...");
 
-  sprintf(filename, "%s/%s.pkginfo", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.pkginfo", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -121,7 +120,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating package dependency file...");
 
-  sprintf(filename, "%s/%s.depend", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.depend", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -155,7 +154,8 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating preinstall script...");
 
-    sprintf(preinstall, "%s/%s.preinstall", directory, prodname);
+    snprintf(preinstall, sizeof(preinstall), "%s/%s.preinstall", directory,
+             prodname);
 
     if ((fp = fopen(preinstall, "w")) == NULL)
     {
@@ -200,7 +200,8 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating postinstall script...");
 
-    sprintf(postinstall, "%s/%s.postinstall", directory, prodname);
+    snprintf(postinstall, sizeof(postinstall), "%s/%s.postinstall", directory,
+             prodname);
 
     if ((fp = fopen(postinstall, "w")) == NULL)
     {
@@ -249,7 +250,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating preremove script...");
 
-    sprintf(preremove, "%s/%s.preremove", directory, prodname);
+    snprintf(preremove, sizeof(preremove), "%s/%s.preremove", directory, prodname);
 
     if ((fp = fopen(preremove, "w")) == NULL)
     {
@@ -293,7 +294,8 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating postremove script...");
 
-    sprintf(postremove, "%s/%s.postremove", directory, prodname);
+    snprintf(postremove, sizeof(postremove), "%s/%s.postremove", directory,
+             prodname);
 
     if ((fp = fopen(postremove, "w")) == NULL)
     {
@@ -328,20 +330,20 @@ make_pkg(const char     *prodname,	/* I - Product short name */
       file->mode = 0;
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
-      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/etc/rc0.d/K00%s", dist->files[i].dst);
+      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
+      snprintf(file->dst, sizeof(file->dst), "/etc/rc0.d/K00%s", dist->files[i].dst);
 
       file = add_file(dist);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
-      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/etc/rc3.d/S99%s", dist->files[i].dst);
+      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
+      snprintf(file->dst, sizeof(file->dst), "/etc/rc3.d/S99%s", dist->files[i].dst);
 
       file = dist->files + i;
 
-      sprintf(filename, "/etc/init.d/%s", file->dst);
+      snprintf(filename, sizeof(filename), "/etc/init.d/%s", file->dst);
       strcpy(file->dst, filename);
     }
 
@@ -352,7 +354,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating prototype file...");
 
-  sprintf(filename, "%s/%s.prototype", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.prototype", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -420,10 +422,8 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building PKG binary distribution...");
 
-  sprintf(command, "pkgmk -o -f %s/%s.prototype -d %s/%s",
-          directory, prodname, current, directory);
-
-  if (system(command))
+  if (run_command(NULL, "pkgmk -o -f %s/%s.prototype -d %s/%s",
+                  directory, prodname, current, directory))
     return (1);
 
  /*
@@ -433,12 +433,12 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating tar.gz file for distribution...");
 
-  sprintf(filename, "%s/%s.tar.gz", directory, name);
+  snprintf(filename, sizeof(filename), "%s/%s.tar.gz", directory, name);
 
   if ((tarfile = tar_open(filename, 1)) == NULL)
     return (1);
 
-  sprintf(filename, "%s/%s", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s", directory, prodname);
 
   if (tar_directory(tarfile, filename, prodname))
   {
@@ -455,10 +455,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Copying into package stream file...");
 
-  sprintf(command, "cd %s; pkgtrans -s . %s.pkg %s",
-          directory, name, prodname);
-
-  if (system(command))
+  if (run_command(directory, "pkgtrans -s . %s.pkg %s", name, prodname))
     return (1);
 
  /*
@@ -470,11 +467,11 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    sprintf(filename, "%s/%s.pkginfo", directory, prodname);
+    snprintf(filename, sizeof(filename), "%s/%s.pkginfo", directory, prodname);
     unlink(filename);
-    sprintf(filename, "%s/%s.depend", directory, prodname);
+    snprintf(filename, sizeof(filename), "%s/%s.depend", directory, prodname);
     unlink(filename);
-    sprintf(filename, "%s/%s.prototype", directory, prodname);
+    snprintf(filename, sizeof(filename), "%s/%s.prototype", directory, prodname);
     unlink(filename);
     if (preinstall[0])
       unlink(preinstall);
@@ -491,5 +488,5 @@ make_pkg(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: pkg.c,v 1.17 2001/03/30 02:26:03 mike Exp $".
+ * End of "$Id: pkg.c,v 1.18 2001/06/26 16:22:22 mike Exp $".
  */

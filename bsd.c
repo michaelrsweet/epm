@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.1 2001/06/25 17:27:17 mike Exp $"
+ * "$Id: bsd.c,v 1.2 2001/06/26 16:22:21 mike Exp $"
  *
  *   FreeBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -45,7 +45,6 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   char		descrname[1024];	/* pkg descr filename */
   char		plistname[1024];	/* pkg plist filename */
   char		filename[1024];		/* Destination filename */
-  char		command[1024];		/* pkg command to run */
   char		*old_user,		/* Old owner UID */
 		*old_group;		/* Old group ID */
   int		old_mode;		/* Old permissions */
@@ -57,6 +56,8 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   char		current[1024];		/* Current directory */
 
 
+  REF(platform);
+
   if (Verbosity)
     puts("Creating FreeBSD pkg distribution...");
 
@@ -65,15 +66,15 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   if (dist->relnumber)
   {
     if (platname[0])
-      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
               platname);
     else
-      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
   }
   else if (platname[0])
-    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+    snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
   else
-    sprintf(name, "%s-%s", prodname, dist->version);
+    snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
  /*
   * Write the descr file for pkg...
@@ -82,7 +83,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating descr file...");
 
-  sprintf(descrname, "%s/%s.descr", directory, prodname);
+  snprintf(descrname, sizeof(descrname), "%s/%s.descr", directory, prodname);
 
   if ((fp = fopen(descrname, "w")) == NULL)
   {
@@ -102,7 +103,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating comment file...");
 
-  sprintf(commentname, "%s/%s.comment", directory, prodname);
+  snprintf(commentname, sizeof(commentname), "%s/%s.comment", directory, prodname);
 
   if ((fp = fopen(commentname, "w")) == NULL)
   {
@@ -134,7 +135,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating plist file...");
 
-  sprintf(plistname, "%s/%s.plist", directory, prodname);
+  snprintf(plistname, sizeof(plistname), "%s/%s.plist", directory, prodname);
 
   if ((fp = fopen(plistname, "w")) == NULL)
   {
@@ -246,7 +247,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
     {
       case 'c' :
       case 'f' :
-          sprintf(filename, "%s/buildroot%s", directory, file->dst);
+          snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -256,7 +257,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'i' :
-          sprintf(filename, "%s/buildroot/etc/rc.d/%s", directory,
+          snprintf(filename, sizeof(filename), "%s/buildroot/etc/rc.d/%s", directory,
 	          file->dst);
 
 	  if (Verbosity > 1)
@@ -267,7 +268,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'd' :
-          sprintf(filename, "%s/buildroot%s", directory, file->dst);
+          snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", filename);
@@ -276,7 +277,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 			 grp ? grp->gr_gid : 0);
           break;
       case 'l' :
-          sprintf(filename, "%s/buildroot%s", directory, file->dst);
+          snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -293,10 +294,8 @@ make_bsd(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building FreeBSD pkg binary distribution...");
 
-  sprintf(command, "pkg_create -p / -s %s -c %s -d %s -f %s %s",
-          current, commentname, descrname, plistname, prodname);
-
-  if (system(command))
+  if (run_command(NULL, "pkg_create -p / -s %s -c %s -d %s -f %s %s",
+                  current, commentname, descrname, plistname, prodname))
     return (1);
 
  /*
@@ -308,8 +307,7 @@ make_bsd(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    sprintf(command, "/bin/rm -rf %s/buildroot", directory);
-    system(command);
+    run_command(NULL, "/bin/rm -rf %s/buildroot", directory);
 
     unlink(plistname);
     unlink(commentname);
@@ -321,5 +319,5 @@ make_bsd(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: bsd.c,v 1.1 2001/06/25 17:27:17 mike Exp $".
+ * End of "$Id: bsd.c,v 1.2 2001/06/26 16:22:21 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.16 2001/04/25 20:27:48 mike Exp $"
+ * "$Id: inst.c,v 1.17 2001/06/26 16:22:22 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -47,7 +47,6 @@ make_inst(const char     *prodname,	/* I - Product short name */
   char		filename[1024],		/* Destination filename */
 		srcname[1024],		/* Name of source file in distribution */
 		dstname[1024];		/* Name of destination file in distribution */
-  char		command[1024];		/* Command to run */
   char		preinstall[1024],	/* Pre install script */
 		postinstall[1024],	/* Post install script */
 		preremove[1024],	/* Pre remove script */
@@ -74,15 +73,15 @@ make_inst(const char     *prodname,	/* I - Product short name */
   if (dist->relnumber)
   {
     if (platname[0])
-      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
               platname);
     else
-      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
   }
   else if (platname[0])
-    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+    snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
   else
-    sprintf(name, "%s-%s", prodname, dist->version);
+    snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
  /*
   * Write the spec file for gendist...
@@ -91,7 +90,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating spec file...");
 
-  sprintf(specname, "%s/spec", directory);
+  snprintf(specname, sizeof(specname), "%s/spec", directory);
 
   if ((fp = fopen(specname, "w")) == NULL)
   {
@@ -183,20 +182,20 @@ make_inst(const char     *prodname,	/* I - Product short name */
       file->mode = 0;
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
-      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/etc/rc0.d/K00%s", dist->files[i].dst);
+      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
+      snprintf(file->dst, sizeof(file->dst), "/etc/rc0.d/K00%s", dist->files[i].dst);
 
       file = add_file(dist);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
-      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/etc/rc2.d/S99%s", dist->files[i].dst);
+      snprintf(file->src, sizeof(file->src), "../init.d/%s", dist->files[i].dst);
+      snprintf(file->dst, sizeof(file->dst), "/etc/rc2.d/S99%s", dist->files[i].dst);
 
       file = dist->files + i;
 
-      sprintf(filename, "/etc/init.d/%s", file->dst);
+      snprintf(filename, sizeof(filename), "/etc/init.d/%s", file->dst);
       strcpy(file->dst, filename);
     }
 
@@ -219,8 +218,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    sprintf(file->src, "%s/%s.preinstall", directory, prodname);
-    sprintf(file->dst, "/etc/software/%s.preinstall", prodname);
+    snprintf(file->src, sizeof(file->src), "%s/%s.preinstall", directory, prodname);
+    snprintf(file->dst, sizeof(file->dst), "/etc/software/%s.preinstall", prodname);
 
    /*
     * Then create the install script...
@@ -229,7 +228,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating preinstall script...");
 
-    sprintf(preinstall, "%s/%s.preinstall", directory, prodname);
+    snprintf(preinstall, sizeof(preinstall), "%s/%s.preinstall", directory, prodname);
 
     if ((fp = fopen(preinstall, "w")) == NULL)
     {
@@ -271,8 +270,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    sprintf(file->src, "%s/%s.postinstall", directory, prodname);
-    sprintf(file->dst, "/etc/software/%s.postinstall", prodname);
+    snprintf(file->src, sizeof(file->src), "%s/%s.postinstall", directory, prodname);
+    snprintf(file->dst, sizeof(file->dst), "/etc/software/%s.postinstall", prodname);
 
    /*
     * Then create the install script...
@@ -281,7 +280,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating postinstall script...");
 
-    sprintf(postinstall, "%s/%s.postinstall", directory, prodname);
+    snprintf(postinstall, sizeof(postinstall), "%s/%s.postinstall", directory, prodname);
 
     if ((fp = fopen(postinstall, "w")) == NULL)
     {
@@ -323,8 +322,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    sprintf(file->src, "%s/%s.preremove", directory, prodname);
-    sprintf(file->dst, "/etc/software/%s.preremove", prodname);
+    snprintf(file->src, sizeof(file->src), "%s/%s.preremove", directory, prodname);
+    snprintf(file->dst, sizeof(file->dst), "/etc/software/%s.preremove", prodname);
 
    /*
     * Then create the install script...
@@ -333,7 +332,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating preremove script...");
 
-    sprintf(preremove, "%s/%s.preremove", directory, prodname);
+    snprintf(preremove, sizeof(preremove), "%s/%s.preremove", directory, prodname);
 
     if ((fp = fopen(preremove, "w")) == NULL)
     {
@@ -375,8 +374,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
     file->mode = 0555;
     strcpy(file->user, "root");
     strcpy(file->group, "sys");
-    sprintf(file->src, "%s/%s.postremove", directory, prodname);
-    sprintf(file->dst, "/etc/software/%s.postremove", prodname);
+    snprintf(file->src, sizeof(file->src), "%s/%s.postremove", directory, prodname);
+    snprintf(file->dst, sizeof(file->dst), "/etc/software/%s.postremove", prodname);
 
    /*
     * Then create the remove script...
@@ -385,7 +384,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating postremove script...");
 
-    sprintf(postremove, "%s/%s.postremove", directory, prodname);
+    snprintf(postremove, sizeof(postremove), "%s/%s.postremove", directory, prodname);
 
     if ((fp = fopen(postremove, "w")) == NULL)
     {
@@ -422,7 +421,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating idb file...");
 
-  sprintf(idbname, "%s/idb", directory);
+  snprintf(idbname, sizeof(idbname), "%s/idb", directory);
 
   if ((fp = fopen(idbname, "w")) == NULL)
   {
@@ -435,9 +434,9 @@ make_inst(const char     *prodname,	/* I - Product short name */
   {
     if (strstr(file->dst, "/man/") != NULL ||
         strstr(file->dst, "/catman/") != NULL)
-      sprintf(subsys, "%s.man.eoe", prodname);
+      snprintf(subsys, sizeof(subsys), "%s.man.eoe", prodname);
     else
-      sprintf(subsys, "%s.sw.eoe", prodname);
+      snprintf(subsys, sizeof(subsys), "%s.sw.eoe", prodname);
 
     switch (tolower(file->type))
     {
@@ -490,10 +489,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building INST binary distribution...");
 
-  sprintf(command, "gendist %s -dist %s -sbase . -idb %s -spec %s",
-          Verbosity == 0 ? "" : "-v", directory, idbname, specname);
-
-  if (system(command))
+  if (run_command(NULL, "gendist %s -dist %s -sbase . -idb %s -spec %s",
+                  Verbosity == 0 ? "" : "-v", directory, idbname, specname))
     return (1);
 
  /*
@@ -503,7 +500,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     printf("Writing tardist file:");
 
-  sprintf(filename, "%s/%s.tardist", directory, name);
+  snprintf(filename, sizeof(filename), "%s/%s.tardist", directory, name);
   if ((tarfile = tar_open(filename, 0)) == NULL)
   {
     if (Verbosity)
@@ -516,8 +513,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
   for (i = 0; i < 4; i ++)
   {
-    sprintf(srcname, "%s/%s%s", directory, prodname, extensions[i]);
-    sprintf(dstname, "%s%s", prodname, extensions[i]);
+    snprintf(srcname, sizeof(srcname), "%s/%s%s", directory, prodname, extensions[i]);
+    snprintf(dstname, sizeof(dstname), "%s%s", prodname, extensions[i]);
 
     stat(srcname, &fileinfo);
     if (tar_header(tarfile, TAR_NORMAL, fileinfo.st_mode, fileinfo.st_size,
@@ -586,5 +583,5 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.16 2001/04/25 20:27:48 mike Exp $".
+ * End of "$Id: inst.c,v 1.17 2001/06/26 16:22:22 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.2 2001/06/25 21:40:19 mike Exp $"
+ * "$Id: aix.c,v 1.3 2001/06/26 16:22:21 mike Exp $"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -46,7 +46,6 @@ make_aix(const char     *prodname,	/* I - Product short name */
   FILE			*fp;		/* Control file */
   char			name[1024];	/* Full product name */
   char			filename[1024];	/* Destination filename */
-  char			command[1024];	/* Command to run */
   char			current[1024];	/* Current directory */
   int			blocks;		/* Number of blocks needed */
   struct stat		fileinfo;	/* File information */
@@ -67,21 +66,23 @@ make_aix(const char     *prodname,	/* I - Product short name */
 			};
 
 
+  REF(platform);
+
   if (Verbosity)
     puts("Creating AIX distribution...");
 
   if (dist->relnumber)
   {
     if (platname[0])
-      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
               platname);
     else
-      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
   }
   else if (platname[0])
-    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+    snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
   else
-    sprintf(name, "%s-%s", prodname, dist->version);
+    snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
   getcwd(current, sizeof(current));
 
@@ -92,7 +93,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating lpp_name file...");
 
-  sprintf(filename, "%s/lpp_name", directory);
+  snprintf(filename, sizeof(filename), "%s/lpp_name", directory);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -176,7 +177,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating .al file...");
 
-  sprintf(filename, "%s/%s.al", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.al", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -205,7 +206,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating .cfgfiles file...");
 
-  sprintf(filename, "%s/%s.cfgfiles", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.cfgfiles", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -229,7 +230,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating .copyright file...");
 
-  sprintf(filename, "%s/%s.copyright", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.copyright", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -250,7 +251,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating .pre_i file...");
 
-  sprintf(filename, "%s/%s.pre_i", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.pre_i", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -277,7 +278,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating .post_i file...");
 
-  sprintf(filename, "%s/%s.post_i", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.post_i", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -304,7 +305,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating .pre_rm file...");
 
-  sprintf(filename, "%s/%s.pre_rm", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.pre_rm", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -331,7 +332,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating .inventory file...");
 
-  sprintf(filename, "%s/%s.inventory", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.inventory", directory, prodname);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -385,7 +386,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
   * Write the lpp.README file...
   */
 
-  sprintf(filename, "%s/lpp.README", directory);
+  snprintf(filename, sizeof(filename), "%s/lpp.README", directory);
   copy_file(filename, dist->license, 0644, 0, 0);
 
  /*
@@ -395,19 +396,17 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating liblpp.a archive...");
 
-  sprintf(filename, "%s/usr/lpp/%s/inst_root", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/usr/lpp/%s/inst_root", directory, prodname);
   make_directory(filename, 0755, 0, 0);
 
-  sprintf(command, "cd %s; ar rc usr/lpp/%s/inst_root/liblpp.a lpp.README",
-          directory, prodname);
-  if (system(command))
+  if (run_command(directory, "ar rc usr/lpp/%s/inst_root/liblpp.a lpp.README",
+                  prodname))
     return (1);
 
   for (i = 0; i < (sizeof(files) / sizeof(files[0])); i ++)
   {
-    sprintf(command, "cd %s; ar rc usr/lpp/%s/inst_root/liblpp.a %s.%s",
-            directory, prodname, prodname, files[i]);
-    if (system(command))
+    if (run_command(directory, "ar rc usr/lpp/%s/inst_root/liblpp.a %s.%s",
+                    prodname, prodname, files[i]))
       return (1);
   }
 
@@ -439,9 +438,9 @@ make_aix(const char     *prodname,	/* I - Product short name */
       case 'c' :
       case 'f' :
           if (strncmp(file->dst, "/usr/", 5) == 0)
-            sprintf(filename, "%s%s", directory, file->dst);
+            snprintf(filename, sizeof(filename), "%s%s", directory, file->dst);
 	  else
-            sprintf(filename, "%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
+            snprintf(filename, sizeof(filename), "%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
 	            directory, prodname, file->dst);
 
 	  if (Verbosity > 1)
@@ -452,7 +451,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'i' :
-          sprintf(filename, "%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
+          snprintf(filename, sizeof(filename), "%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
 	          directory, prodname, file->dst);
 
 	  if (Verbosity > 1)
@@ -464,9 +463,9 @@ make_aix(const char     *prodname,	/* I - Product short name */
           break;
       case 'd' :
           if (strncmp(file->dst, "/usr/", 5) == 0)
-            sprintf(filename, "%s%s", directory, file->dst);
+            snprintf(filename, sizeof(filename), "%s%s", directory, file->dst);
 	  else
-            sprintf(filename, "%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
+            snprintf(filename, sizeof(filename), "%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
 	            directory, prodname, file->dst);
 
 	  if (Verbosity > 1)
@@ -477,9 +476,9 @@ make_aix(const char     *prodname,	/* I - Product short name */
           break;
       case 'l' :
           if (strncmp(file->dst, "/usr/", 5) == 0)
-            sprintf(filename, "%s%s", directory, file->dst);
+            snprintf(filename, sizeof(filename), "%s%s", directory, file->dst);
 	  else
-            sprintf(filename, "%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
+            snprintf(filename, sizeof(filename), "%s/usr/lpp/%s/inst_root/etc/rc.d/rc2.d/%s",
 	            directory, prodname, file->dst);
 
 	  if (Verbosity > 1)
@@ -497,9 +496,9 @@ make_aix(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building AIX binary distribution...");
 
-  sprintf(command, "cd %s; (echo lpp_name; find usr -print) | backup -i -f %s.bff -q %s",
-          directory, prodname, Verbosity ? "-v" : "");
-  if (system(command))
+  if (run_command(directory, "sh -c (echo lpp_name; find usr -print) | "
+                             "backup -i -f %s.bff -q %s",
+                  prodname, Verbosity ? "-v" : ""))
     return (1);
 
  /*
@@ -511,18 +510,17 @@ make_aix(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    sprintf(command, "/bin/rm -rf %s/usr", directory);
-    system(command);
+    run_command(NULL, "/bin/rm -rf %s/usr", directory);
 
     for (i = 0; i < (sizeof(files) / sizeof(files[0])); i ++)
     {
-      sprintf(filename, "%s/%s.%s", directory, prodname, files[i]);
+      snprintf(filename, sizeof(filename), "%s/%s.%s", directory, prodname, files[i]);
       unlink(filename);
     }
 
-    sprintf(filename, "%s/lpp_name", directory);
+    snprintf(filename, sizeof(filename), "%s/lpp_name", directory);
     unlink(filename);
-    sprintf(filename, "%s/lpp.README", directory);
+    snprintf(filename, sizeof(filename), "%s/lpp.README", directory);
     unlink(filename);
   }
 
@@ -531,5 +529,5 @@ make_aix(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: aix.c,v 1.2 2001/06/25 21:40:19 mike Exp $".
+ * End of "$Id: aix.c,v 1.3 2001/06/26 16:22:21 mike Exp $".
  */

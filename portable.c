@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.45 2001/06/21 16:05:57 mike Exp $"
+ * "$Id: portable.c,v 1.46 2001/06/26 16:22:22 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -125,11 +125,11 @@ make_portable(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Copying license and readme files...");
 
-  sprintf(filename, "%s/%s.license", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.license", directory, prodname);
   if (copy_file(filename, dist->license, 0444, getuid(), getgid()))
     return (1);
 
-  sprintf(filename, "%s/%s.readme", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.readme", directory, prodname);
   if (copy_file(filename, dist->readme, 0444, getuid(), getgid()))
     return (1);
 
@@ -154,8 +154,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating non-shared software distribution file...");
 
-  sprintf(swname, "%s.sw", prodname);
-  sprintf(filename, "%s/%s", directory, swname);
+  snprintf(swname, sizeof(swname), "%s.sw", prodname);
+  snprintf(filename, sizeof(filename), "%s/%s", directory, swname);
 
   unlink(filename);
   if ((tarfile = tar_open(filename, 0)) == NULL)
@@ -188,9 +188,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    */
 
 	    if (tolower(file->type) == 'c')
-	      sprintf(filename, "%s.N", file->dst);
+	      snprintf(filename, sizeof(filename), "%s.N", file->dst);
 	    else if (tolower(file->type) == 'i')
-	      sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
+	      snprintf(filename, sizeof(filename), EPM_SOFTWARE "/init.d/%s", file->dst);
 	    else
               strcpy(filename, file->dst);
 
@@ -245,8 +245,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating shared software distribution file...");
 
-  sprintf(swname, "%s.ss", prodname);
-  sprintf(filename, "%s/%s", directory, swname);
+  snprintf(swname, sizeof(swname), "%s.ss", prodname);
+  snprintf(filename, sizeof(filename), "%s/%s", directory, swname);
 
   unlink(filename);
   if ((tarfile = tar_open(filename, 0)) == NULL)
@@ -279,9 +279,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	    */
 
 	    if (tolower(file->type) == 'c')
-	      sprintf(filename, "%s.N", file->dst);
+	      snprintf(filename, sizeof(filename), "%s.N", file->dst);
 	    else if (tolower(file->type) == 'i')
-	      sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
+	      snprintf(filename, sizeof(filename), EPM_SOFTWARE "/init.d/%s", file->dst);
 	    else
               strcpy(filename, file->dst);
 
@@ -338,8 +338,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating non-shared software patch file...");
 
-    sprintf(pswname, "%s.psw", prodname);
-    sprintf(filename, "%s/%s", directory, pswname);
+    snprintf(pswname, sizeof(pswname), "%s.psw", prodname);
+    snprintf(filename, sizeof(filename), "%s/%s", directory, pswname);
 
     unlink(filename);
     if ((tarfile = tar_open(filename, 0)) == NULL)
@@ -372,9 +372,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      */
 
 	      if (file->type == 'C')
-		sprintf(filename, "%s.N", file->dst);
+		snprintf(filename, sizeof(filename), "%s.N", file->dst);
 	      else if (file->type == 'I')
-		sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
+		snprintf(filename, sizeof(filename), EPM_SOFTWARE "/init.d/%s", file->dst);
 	      else
         	strcpy(filename, file->dst);
 
@@ -425,8 +425,8 @@ make_portable(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating shared software patch file...");
 
-    sprintf(pswname, "%s.pss", prodname);
-    sprintf(filename, "%s/%s", directory, pswname);
+    snprintf(pswname, sizeof(pswname), "%s.pss", prodname);
+    snprintf(filename, sizeof(filename), "%s/%s", directory, pswname);
 
     unlink(filename);
     if ((tarfile = tar_open(filename, 0)) == NULL)
@@ -459,9 +459,9 @@ make_portable(const char     *prodname,	/* I - Product short name */
 	      */
 
 	      if (file->type == 'C')
-		sprintf(filename, "%s.N", file->dst);
+		snprintf(filename, sizeof(filename), "%s.N", file->dst);
 	      else if (file->type == 'I')
-		sprintf(filename, EPM_SOFTWARE "/init.d/%s", file->dst);
+		snprintf(filename, sizeof(filename), EPM_SOFTWARE "/init.d/%s", file->dst);
 	      else
         	strcpy(filename, file->dst);
 
@@ -520,7 +520,7 @@ make_portable(const char     *prodname,	/* I - Product short name */
 
   if (havepatchfiles)
   {
-    sprintf(filename, "%s-patch", dist->version);
+    snprintf(filename, sizeof(filename), "%s-patch", dist->version);
     strcpy(dist->version, filename);
 
     if (write_dist("patch", directory, prodname, platname, dist, patchfiles,
@@ -867,17 +867,17 @@ write_dist(const char *title,		/* I - Title to show */
   if (dist->relnumber)
   {
     if (platname[0])
-      sprintf(filename, "%s/%s-%s-%d-%s.tar.gz", directory, prodname,
+      snprintf(filename, sizeof(filename), "%s/%s-%s-%d-%s.tar.gz", directory, prodname,
               dist->version, dist->relnumber, platname);
     else
-      sprintf(filename, "%s/%s-%s-%d.tar.gz", directory, prodname,
+      snprintf(filename, sizeof(filename), "%s/%s-%s-%d.tar.gz", directory, prodname,
               dist->version, dist->relnumber);
   }
   else if (platname[0])
-    sprintf(filename, "%s/%s-%s-%s.tar.gz", directory, prodname,
+    snprintf(filename, sizeof(filename), "%s/%s-%s-%s.tar.gz", directory, prodname,
             dist->version, platname);
   else
-    sprintf(filename, "%s/%s-%s.tar.gz", directory, prodname, dist->version);
+    snprintf(filename, sizeof(filename), "%s/%s-%s.tar.gz", directory, prodname, dist->version);
 
   if ((tarfile = tar_open(filename, 1)) == NULL)
   {
@@ -891,8 +891,8 @@ write_dist(const char *title,		/* I - Title to show */
 
   for (i = 0; files[i] != NULL; i ++)
   {
-    sprintf(srcname, "%s/%s.%s", directory, prodname, files[i]);
-    sprintf(dstname, "%s.%s", prodname, files[i]);
+    snprintf(srcname, sizeof(srcname), "%s/%s.%s", directory, prodname, files[i]);
+    snprintf(dstname, sizeof(dstname), "%s.%s", prodname, files[i]);
 
     stat(srcname, &srcstat);
 
@@ -1074,7 +1074,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   if (Verbosity)
     puts("Writing installation script...");
 
-  sprintf(filename, "%s/%s.install", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.install", directory, prodname);
 
   if ((scriptfile = write_common(dist, "Installation", filename)) == NULL)
   {
@@ -1341,7 +1341,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   if (Verbosity)
     puts("Writing patch script...");
 
-  sprintf(filename, "%s/%s.patch", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.patch", directory, prodname);
 
   if ((scriptfile = write_common(dist, "Patch", filename)) == NULL)
   {
@@ -1572,7 +1572,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
   if (Verbosity)
     puts("Writing removal script...");
 
-  sprintf(filename, "%s/%s.remove", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s.remove", directory, prodname);
 
   if ((scriptfile = write_common(dist, "Removal", filename)) == NULL)
   {
@@ -1825,5 +1825,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.45 2001/06/21 16:05:57 mike Exp $".
+ * End of "$Id: portable.c,v 1.46 2001/06/26 16:22:22 mike Exp $".
  */

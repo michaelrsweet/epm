@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.21 2001/05/31 19:03:03 mike Exp $"
+ * "$Id: config.h.in,v 1.22 2001/06/26 16:22:21 mike Exp $"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -22,11 +22,13 @@
 
 #define EPM_VERSION	""
 
+
 /*
  * Where are files stored?
  */
 
 #define EPM_SOFTWARE	"/etc/software"
+
 
 /*
  * Where are binaries stored?
@@ -35,17 +37,20 @@
 #define EPM_BINDIR	"/usr/bin"
 #define EPM_LIBDIR	"/usr/lib/epm"
 
+
 /*
  * What options does the strip command take?
  */
 
 #define EPM_STRIP	"/bin/strip"
 
+
 /*
  * What option is used to specify the RPM architecture?
  */
 
 #define EPM_RPMARCH	"--target"
+
 
 /*
  * Compiler stuff...
@@ -54,11 +59,13 @@
 #undef const
 #undef __CHAR_UNSIGNED__
 
+
 /*
  * Do we have the <strings.h> header file?
  */
 
 #undef HAVE_STRINGS_H
+
 
 /*
  * Do we have the strXXX() functions?
@@ -67,6 +74,15 @@
 #undef HAVE_STRDUP
 #undef HAVE_STRCASECMP
 #undef HAVE_STRNCASECMP
+
+
+/*
+ * Do we have the (v)snprintf() functions?
+ */
+
+#undef HAVE_SNPRINTF
+#undef HAVE_VSNPRINTF
+
 
 /*
  * Which directory functions and headers do we use?
@@ -77,12 +93,14 @@
 #undef HAVE_SYS_NDIR_H
 #undef HAVE_NDIR_H
 
+
 /*
  * Where is the "gzip" executable?
  */
 
 #define EPM_GZIP	"gzip"
 
+
 /*
- * End of "$Id: config.h.in,v 1.21 2001/05/31 19:03:03 mike Exp $".
+ * End of "$Id: config.h.in,v 1.22 2001/06/26 16:22:21 mike Exp $".
  */

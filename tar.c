@@ -1,5 +1,5 @@
 /*
- * "$Id: tar.c,v 1.14 2001/04/26 14:19:46 mike Exp $"
+ * "$Id: tar.c,v 1.15 2001/06/26 16:22:22 mike Exp $"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
@@ -155,11 +155,14 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
     * Get source file info...
     */
 
-    sprintf(src, "%s/%s", srcpath, dent->d_name);
+    snprintf(src, sizeof(src), "%s/%s", srcpath, dent->d_name);
     if (dstpath[0])
-      sprintf(dst, "%s/%s", dstpath, dent->d_name);
+      snprintf(dst, sizeof(dst), "%s/%s", dstpath, dent->d_name);
     else
-      strcpy(dst, dent->d_name);
+    {
+      strncpy(dst, dent->d_name, sizeof(dst) - 1);
+      dst[sizeof(dst) - 1] = '\0';
+    }
 
     if (stat(src, &srcinfo))
     {
@@ -391,7 +394,7 @@ tar_open(const char *filename,	/* I - File to create */
 
   if (compress)
   {
-    sprintf(command, EPM_GZIP " > %s", filename);
+    snprintf(command, sizeof(command), EPM_GZIP " > %s", filename);
     fp->file = popen(command, "w");
   }
   else
@@ -418,5 +421,5 @@ tar_open(const char *filename,	/* I - File to create */
 
 
 /*
- * End of "$Id: tar.c,v 1.14 2001/04/26 14:19:46 mike Exp $".
+ * End of "$Id: tar.c,v 1.15 2001/06/26 16:22:22 mike Exp $".
  */

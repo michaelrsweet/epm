@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.10 2001/06/25 19:48:47 mike Exp $"
+ * "$Id: deb.c,v 1.11 2001/06/26 16:22:21 mike Exp $"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -42,7 +42,6 @@ make_deb(const char     *prodname,	/* I - Product short name */
   FILE			*fp;		/* Control file */
   char			name[1024];	/* Full product name */
   char			filename[1024];	/* Destination filename */
-  char			command[1024];	/* Command to run */
   command_t		*c;		/* Current command */
   depend_t		*d;		/* Current dependency */
   file_t		*file;		/* Current distribution file */
@@ -62,15 +61,15 @@ make_deb(const char     *prodname,	/* I - Product short name */
   if (dist->relnumber)
   {
     if (platname[0])
-      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
               platname);
     else
-      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
   }
   else if (platname[0])
-    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+    snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
   else
-    sprintf(name, "%s-%s", prodname, dist->version);
+    snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
  /*
   * Write the control file for DPKG...
@@ -79,7 +78,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating control file...");
 
-  sprintf(filename, "%s/%s", directory, name);
+  snprintf(filename, sizeof(filename), "%s/%s", directory, name);
   mkdir(filename, 0777);
   strcat(filename, "/DEBIAN");
   mkdir(filename, 0777);
@@ -142,7 +141,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating preinst script...");
 
-    sprintf(filename, "%s/%s/DEBIAN/preinst", directory, name);
+    snprintf(filename, sizeof(filename), "%s/%s/DEBIAN/preinst", directory, name);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
@@ -181,7 +180,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating postinst script...");
 
-    sprintf(filename, "%s/%s/DEBIAN/postinst", directory, name);
+    snprintf(filename, sizeof(filename), "%s/%s/DEBIAN/postinst", directory, name);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
@@ -228,7 +227,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating prerm script...");
 
-    sprintf(filename, "%s/%s/DEBIAN/prerm", directory, name);
+    snprintf(filename, sizeof(filename), "%s/%s/DEBIAN/prerm", directory, name);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
@@ -272,7 +271,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating postrm script...");
 
-    sprintf(filename, "%s/%s/DEBIAN/postrm", directory, name);
+    snprintf(filename, sizeof(filename), "%s/%s/DEBIAN/postrm", directory, name);
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
@@ -300,7 +299,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating conffiles...");
 
-  sprintf(filename, "%s/%s/DEBIAN/conffiles", directory, name);
+  snprintf(filename, sizeof(filename), "%s/%s/DEBIAN/conffiles", directory, name);
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
@@ -344,7 +343,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
     {
       case 'c' :
       case 'f' :
-          sprintf(filename, "%s/%s%s", directory, name, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s%s", directory, name, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -354,7 +353,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'i' :
-          sprintf(filename, "%s/%s/etc/init.d/%s", directory, name, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s/etc/init.d/%s", directory, name, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -364,7 +363,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
 	    return (1);
           break;
       case 'd' :
-          sprintf(filename, "%s/%s%s", directory, name, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s%s", directory, name, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", filename);
@@ -373,7 +372,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
 			 grp ? grp->gr_gid : 0);
           break;
       case 'l' :
-          sprintf(filename, "%s/%s%s", directory, name, file->dst);
+          snprintf(filename, sizeof(filename), "%s/%s%s", directory, name, file->dst);
 
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
@@ -390,9 +389,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building Debian binary distribution...");
 
-  sprintf(command, "cd %s; dpkg --build %s", directory, name);
-
-  if (system(command))
+  if (run_command(directory, "dpkg --build %s", name))
     return (1);
 
  /*
@@ -404,8 +401,7 @@ make_deb(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    sprintf(command, "/bin/rm -rf %s/%s", directory, name);
-    system(command);
+    run_command(NULL, "/bin/rm -rf %s/%s", directory, name);
   }
 
   return (0);
@@ -413,5 +409,5 @@ make_deb(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: deb.c,v 1.10 2001/06/25 19:48:47 mike Exp $".
+ * End of "$Id: deb.c,v 1.11 2001/06/26 16:22:21 mike Exp $".
  */

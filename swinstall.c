@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.13 2001/03/26 20:11:09 mike Exp $"
+ * "$Id: swinstall.c,v 1.14 2001/06/26 16:22:22 mike Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -49,7 +49,6 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 		preremove[1024],	/* preremove script */
 		postremove[1024];	/* postremove script */
   char		filename[1024];		/* Destination filename */
-  char		command[1024];		/* Command to run */
   file_t	*file;			/* Current distribution file */
   command_t	*c;			/* Current command */
   depend_t	*d;			/* Current dependency */
@@ -63,15 +62,16 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   if (dist->relnumber)
   {
     if (platname[0])
-      sprintf(name, "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
-              platname);
+      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname,
+               dist->version, dist->relnumber, platname);
     else
-      sprintf(name, "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%d", prodname,
+               dist->version, dist->relnumber);
   }
   else if (platname[0])
-    sprintf(name, "%s-%s-%s", prodname, dist->version, platname);
+    snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
   else
-    sprintf(name, "%s-%s", prodname, dist->version);
+    snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
  /*
   * Add symlinks for init scripts...
@@ -85,20 +85,24 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
       file->mode = 0;
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
-      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/sbin/rc0.d/K000%s", dist->files[i].dst);
+      snprintf(file->src, sizeof(file->src), "../init.d/%s",
+               dist->files[i].dst);
+      snprintf(file->dst, sizeof(file->dst), "/sbin/rc0.d/K000%s",
+               dist->files[i].dst);
 
       file = add_file(dist);
       file->type = 'l';
       file->mode = 0;
       strcpy(file->user, "root");
       strcpy(file->group, "sys");
-      sprintf(file->src, "../init.d/%s", dist->files[i].dst);
-      sprintf(file->dst, "/sbin/rc2d.d/S999%s", dist->files[i].dst);
+      snprintf(file->src, sizeof(file->src), "../init.d/%s",
+               dist->files[i].dst);
+      snprintf(file->dst, sizeof(file->dst), "/sbin/rc2d.d/S999%s",
+               dist->files[i].dst);
 
       file = dist->files + i;
 
-      sprintf(filename, "/sbin/init.d/%s", file->dst);
+      snprintf(filename, sizeof(filename), "/sbin/init.d/%s", file->dst);
       strcpy(file->dst, filename);
     }
 
@@ -116,7 +120,8 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     * Create the preinstall script...
     */
 
-    sprintf(preinstall, "%s/%s.preinst", directory, prodname);
+    snprintf(preinstall, sizeof(preinstall), "%s/%s.preinst", directory,
+             prodname);
 
     if (Verbosity)
       puts("Creating preinstall script...");
@@ -165,7 +170,8 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     * Create the postinstall script...
     */
 
-    sprintf(postinstall, "%s/%s.postinst", directory, prodname);
+    snprintf(postinstall, sizeof(postinstall), "%s/%s.postinst", directory,
+             prodname);
 
     if (Verbosity)
       puts("Creating postinstall script...");
@@ -217,7 +223,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Creating preremove script...");
 
-    sprintf(preremove, "%s/%s.prerm", directory, prodname);
+    snprintf(preremove, sizeof(preremove), "%s/%s.prerm", directory, prodname);
 
     if ((fp = fopen(preremove, "w")) == NULL)
     {
@@ -258,7 +264,8 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     * Create the postremove script...
     */
 
-    sprintf(postremove, "%s/%s.postrm", directory, prodname);
+    snprintf(postremove, sizeof(postremove), "%s/%s.postrm", directory,
+             prodname);
 
     if (Verbosity)
       puts("Creating postremove script...");
@@ -300,7 +307,8 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
        i --, file ++)
     if (tolower(file->type) == 'l')
     {
-      sprintf(filename, "%s/%s.link%04d", directory, prodname, linknum);
+      snprintf(filename, sizeof(filename), "%s/%s.link%04d", directory,
+               prodname, linknum);
       symlink(file->src, filename);
       linknum ++;
     }
@@ -312,7 +320,7 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating info file...");
 
-  sprintf(infoname, "%s/%s.info", directory, prodname);
+  snprintf(infoname, sizeof(infoname), "%s/%s.info", directory, prodname);
 
   if ((fp = fopen(infoname, "w")) == NULL)
   {
@@ -412,7 +420,8 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 	          file->user, file->group, file->src, file->dst);
           break;
       case 'l' :
-          sprintf(filename, "%s/%s.link%04d", directory, prodname, linknum);
+          snprintf(filename, sizeof(filename), "%s/%s.link%04d", directory,
+	           prodname, linknum);
           linknum ++;
           fprintf(fp, "    file -o %s -g %s %s %s\n", file->user, file->group,
 	          filename, file->dst);
@@ -432,15 +441,13 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building swinstall binary distribution...");
 
-  sprintf(filename, "%s/%s", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s", directory, prodname);
   mkdir(filename, 0777);
 
-  sprintf(command, "/usr/sbin/swpackage %s-s %s -d %s/%s "
-                   "-x write_remote_files=true %s",
-          Verbosity == 0 ? "" : "-v ", infoname, directory, prodname,
-	  prodname);
-
-  if (system(command))
+  if (run_command(NULL, "/usr/sbin/swpackage %s-s %s -d %s/%s "
+                        "-x write_remote_files=true %s",
+        	  Verbosity == 0 ? "" : "-v ", infoname, directory,
+		  prodname, prodname))
     return (1);
 
  /*
@@ -450,12 +457,12 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating tar.gz file for distribution...");
 
-  sprintf(filename, "%s/%s.tar.gz", directory, name);
+  snprintf(filename, sizeof(filename), "%s/%s.tar.gz", directory, name);
 
   if ((tarfile = tar_open(filename, 1)) == NULL)
     return (1);
 
-  sprintf(filename, "%s/%s", directory, prodname);
+  snprintf(filename, sizeof(filename), "%s/%s", directory, prodname);
 
   if (tar_directory(tarfile, filename, prodname))
   {
@@ -488,7 +495,8 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
     while (linknum > 0)
     {
       linknum --;
-      sprintf(filename, "%s/%s.link%04d", directory, prodname, linknum);
+      snprintf(filename, sizeof(filename), "%s/%s.link%04d", directory,
+               prodname, linknum);
       unlink(filename);
     }
   }
@@ -498,5 +506,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.13 2001/03/26 20:11:09 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.14 2001/06/26 16:22:22 mike Exp $".
  */
