@@ -1,6 +1,15 @@
 CHANGES - ESP Package Manager (EPM) 2.6
 ---------------------------------------
 
+WHAT'S NEW IN EPM 2.7?
+
+    EPM 2.7 adds the following features, fixes, and changes to
+    EPM 2.6:
+
+	- Fixed a bug in the configuration script with the
+	  --with-fltk-includes option.
+
+
 WHAT'S NEW IN EPM 2.6?
 
     EPM 2.6 adds the following features, fixes, and changes to
