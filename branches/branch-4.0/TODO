@@ -1,5 +1,12 @@
 TODO for EPM:
 
+	- "%subpackage foo" to tag files, descriptions,
+	  dependencies etc. for a subpackage.
+	- "epm --build ..." to build software from source and
+	  make a distribution
+	- "%build foo" for build instructions
+	- Look for .list and .list.in; reload if building and
+	  filename == .list.in.
 	- Fix special char handling for strings that are in
 	  portable scripts.
 	- Add /opt relocation hack and allow for relocatable and

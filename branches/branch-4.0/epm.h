@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.27 2002/01/02 20:39:40 mike Exp $"
+ * "$Id: epm.h,v 1.27.2.1 2002/04/26 13:03:00 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -163,13 +163,15 @@ typedef struct				/**** File to install ****/
   char	user[32],			/* Owner of file */
 	group[32],			/* Group of file */
 	src[512],			/* Source path */
-	dst[512];			/* Destination path */
+	dst[512],			/* Destination path */
+	*subpackage;			/* Sub-package name */
 } file_t;
 
 typedef struct				/**** Install/Patch/Remove Commands ****/
 {
-  char	type;				/* Command type */
-  char	*command;			/* Command string */
+  char	type,				/* Command type */
+	*command,			/* Command string */
+	*subpackage;			/* Sub-package name */
 } command_t;
 
 typedef struct				/**** Dependencies ****/
@@ -178,7 +180,14 @@ typedef struct				/**** Dependencies ****/
   char	product[256];			/* Product name */
   char	version[2][256];		/* Product version string */
   int	vernumber[2];			/* Product version number */
+  char	*subpackage;			/* Sub-package name */
 } depend_t;
+
+typedef struct				/**** Description Structure ****/
+{
+  char	*description;			/* Description */
+  char	*subpackage;			/* Sub-package name */
+} description_t;
 
 typedef struct				/**** Distribution Structure ****/
 {
@@ -189,8 +198,10 @@ typedef struct				/**** Distribution Structure ****/
 		packager[256],		/* Packager name */
 		license[256],		/* License file to copy */
 		readme[256];		/* README file to copy */
+  int		num_subpackages;	/* Number of subpackages */
+  char		**subpackages;		/* Subpackage names */
   int		num_descriptions;	/* Number of description strings */
-  char		**descriptions;		/* Description strings */
+  description_t	*descriptions;		/* Description strings */
   int		vernumber;		/* Version number */
   int		relnumber;		/* Release number */
   int		num_commands;		/* Number of commands */
@@ -217,11 +228,16 @@ extern const char	*SoftwareDir;	/* Software directory path */
  */
 
 extern void	add_command(dist_t *dist, FILE *fp, char type,
-		            const char *command);
-extern void	add_depend(dist_t *dist, char type, const char *line);
-extern file_t	*add_file(dist_t *dist);
+		            const char *command, const char *subpkg);
+extern void	add_depend(dist_t *dist, char type, const char *line,
+		           const char *subpkg);
+extern void	add_description(dist_t *dist, const char *description,
+		                const char *subpkg);
+extern file_t	*add_file(dist_t *dist, const char *subpkg);
+extern char	*add_subpackage(dist_t *dist, const char *subpkg);
 extern int	copy_file(const char *dst, const char *src,
 		          int mode, int owner, int group);
+extern char	*find_subpackage(dist_t *dist, const char *subpkg);
 extern void	free_dist(dist_t *dist);
 extern void	get_platform(struct utsname *platform);
 extern int	make_aix(const char *prodname, const char *directory,
@@ -271,5 +287,5 @@ extern tarf_t	*tar_open(const char *filename, int compress);
 
 
 /*
- * End of "$Id: epm.h,v 1.27 2002/01/02 20:39:40 mike Exp $".
+ * End of "$Id: epm.h,v 1.27.2.1 2002/04/26 13:03:00 mike Exp $".
  */

@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.44 2002/02/20 21:41:36 mike Exp $"
+ * "$Id: dist.c,v 1.44.2.1 2002/04/26 13:03:00 mike Exp $"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -272,6 +272,18 @@ add_depend(dist_t     *dist,		/* I - Distribution */
 
 
 /*
+ * 'add_description()' - Add a description to the distribution.
+ */
+
+void
+add_description(dist_t     *dist,
+                const char *description,
+                const char *subpkg)
+{
+}
+
+
+/*
  * 'add_file()' - Add a file to the distribution.
  */
 
@@ -291,6 +303,28 @@ add_file(dist_t *dist)	/* I - Distribution */
   dist->num_files ++;
 
   return (file);
+}
+
+
+/*
+ * 'add_subpackage()' - Add a subpackage to the distribution.
+ */
+
+char *
+add_subpackage(dist_t     *dist,
+               const char *subpkg)
+{
+}
+
+
+/*
+ * 'find_subpackage()' - Find a subpackage in the distribution.
+ */
+
+char *
+find_subpackage(dist_t     *dist,
+                const char *subpkg)
+{
 }
 
 
@@ -1648,5 +1682,5 @@ patmatch(const char *s,		/* I - String to match against */
 
 
 /*
- * End of "$Id: dist.c,v 1.44 2002/02/20 21:41:36 mike Exp $".
+ * End of "$Id: dist.c,v 1.44.2.1 2002/04/26 13:03:00 mike Exp $".
  */
