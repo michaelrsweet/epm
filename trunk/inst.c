@@ -1,5 +1,5 @@
 /*
- * "$Id: inst.c,v 1.29 2005/01/11 21:36:57 mike Exp $"
+ * "$Id: inst.c,v 1.30 2005/02/10 20:54:55 mike Exp $"
  *
  *   IRIX package gateway for the ESP Package Manager (EPM).
  *
@@ -18,6 +18,7 @@
  * Contents:
  *
  *   make_inst() - Make an IRIX software distribution package.
+ * 'inst_subsys()' - Write a subsystem definition for the product.
  */
 
 /*
@@ -25,6 +26,15 @@
  */
 
 #include "epm.h"
+
+
+/*
+ * Local functions...
+ */
+
+void	inst_subsys(FILE *fp, const char *prodname, dist_t *dist,
+		    const char *subpackage, const char *category,
+		    const char *section);
 
 
 /*
@@ -52,10 +62,8 @@ make_inst(const char     *prodname,	/* I - Product short name */
 		preremove[1024],	/* Pre remove script */
 		postremove[1024];	/* Post remove script */
   char		subsys[255];		/* Subsystem name */
-  const char	*product;		/* Product for dependency */
   file_t	*file;			/* Current distribution file */
   command_t	*c;			/* Current command */
-  depend_t	*d;			/* Current dependency */
   struct stat	fileinfo;		/* File information */
   const char	*runlevels;		/* Run levels */
   static const char *extensions[] =	/* INST file extensions */
@@ -108,79 +116,22 @@ make_inst(const char     *prodname,	/* I - Product short name */
   qprintf(fp, "		id \"%s, Software, %s\"\n", dist->product,
           dist->version);
   fprintf(fp, "		version %d\n", dist->vernumber);
-  fputs("		subsys eoe default\n", fp);
-  qprintf(fp, "			id \"%s, Software, %s\"\n", dist->product,
-          dist->version);
-  fprintf(fp, "			exp \"%s.sw.eoe\"\n", prodname);
 
-  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (d->type == DEPEND_REQUIRES)
-      break;
+  inst_subsys(fp, prodname, dist, NULL, "Software", "sw");
+  for (i = 0; i < dist->num_subpackages; i ++)
+    inst_subsys(fp, prodname, dist, dist->subpackages[i], "Software", "sw");
 
-  if (i)
-  {
-    fputs("			prereq\n", fp);
-    fputs("			(\n", fp);
-    for (; i > 0; i --, d ++)
-      if (d->type == DEPEND_REQUIRES)
-      {
-	if (!strcmp(d->product, "_self"))
-          product = prodname;
-	else
-          product = d->product;
-
-        if (strchr(product, '.') != NULL)
-  	  fprintf(fp, "				%s %d %d\n",
-         	  product, d->vernumber[0], d->vernumber[1]);
-        else if (product[0] != '/')
-  	  fprintf(fp, "				%s.sw.eoe %d %d\n",
-         	  product, d->vernumber[0], d->vernumber[1]);
-      }
-    fputs("			)\n", fp);
-  }
-
-  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
-    if (d->type == DEPEND_REPLACES)
-    {
-      if (!strcmp(d->product, "_self"))
-        product = prodname;
-      else
-        product = d->product;
-
-      if (strchr(product, '.') != NULL)
-        fprintf(fp, "			replaces %s %d %d\n",
-         	product, d->vernumber[0], d->vernumber[1]);
-      else if (product[0] != '/')
-        fprintf(fp, "			replaces %s.sw.eoe %d %d\n",
-         	product, d->vernumber[0], d->vernumber[1]);
-    }
-    else if (d->type == DEPEND_INCOMPAT)
-    {
-      if (!strcmp(d->product, "_self"))
-        product = prodname;
-      else
-        product = d->product;
-
-      if (strchr(product, '.') != NULL)
-        fprintf(fp, "			incompat %s %d %d\n",
-         	product, d->vernumber[0], d->vernumber[1]);
-      else if (product[0] != '/')
-        fprintf(fp, "			incompat %s.sw.eoe %d %d\n",
-         	product, d->vernumber[0], d->vernumber[1]);
-    }
-
-  fputs("		endsubsys\n", fp);
   fputs("	endimage\n", fp);
 
   fputs("	image man\n", fp);
   qprintf(fp, "		id \"%s, Man Pages, %s\"\n", dist->product,
           dist->version);
   fprintf(fp, "		version %d\n", dist->vernumber);
-  fputs("		subsys eoe default\n", fp);
-  qprintf(fp, "			id \"%s, Man Pages, %s\"\n", dist->product,
-          dist->version);
-  fprintf(fp, "			exp \"%s.man.eoe\"\n", prodname);
-  fputs("		endsubsys\n", fp);
+
+  inst_subsys(fp, prodname, dist, NULL, "Man Pages", "man");
+  for (i = 0; i < dist->num_subpackages; i ++)
+    inst_subsys(fp, prodname, dist, dist->subpackages[i], "Man Pages", "man");
+
   fputs("	endimage\n", fp);
 
   fputs("endproduct\n", fp);
@@ -630,5 +581,109 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: inst.c,v 1.29 2005/01/11 21:36:57 mike Exp $".
+ * 'inst_subsys()' - Write a subsystem definition for the product.
+ */
+
+void
+inst_subsys(FILE       *fp,		/* I - File to write to */
+            const char *prodname,	/* I - Product short name */
+	    dist_t     *dist,		/* I - Distribution */
+	    const char *subpackage,	/* I - Subpackage name or NULL */
+	    const char *category,	/* I - "Software" or "Man Pages" */
+	    const char *section)	/* I - "sw" or "man" */
+{
+  int		i;			/* Looping var */
+  depend_t	*d;			/* Current dependency */
+  const char	*product;		/* Product for dependency */
+  char		title[1024];		/* Product description/title */
+
+
+  if (subpackage)
+  {
+    fprintf(fp, "		subsys %s\n", subpackage);
+
+    for (i = 0; i < dist->num_descriptions; i ++)
+      if (dist->descriptions[i].subpackage == subpackage)
+        break;
+
+    if (i < dist->num_descriptions)
+      snprintf(title, sizeof(title), "%s %s", dist->product,
+               dist->descriptions[i].description);
+    else
+      strlcpy(title, dist->product, sizeof(title));
+  }
+  else
+  {
+    fputs("		subsys eoe default\n", fp);
+
+    strlcpy(title, dist->product, sizeof(title));
+  }
+
+  qprintf(fp, "			id \"%s, %s, %s\"\n", title, category,
+          dist->version);
+  fprintf(fp, "			exp \"%s.%s.%s\"\n", prodname, section,
+          subpackage ? subpackage : "eoe");
+
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REQUIRES && d->subpackage == subpackage)
+      break;
+
+  if (i)
+  {
+    fputs("			prereq\n", fp);
+    fputs("			(\n", fp);
+    for (; i > 0; i --, d ++)
+      if (d->type == DEPEND_REQUIRES && d->subpackage == subpackage)
+      {
+	if (!strcmp(d->product, "_self"))
+          product = prodname;
+	else
+          product = d->product;
+
+        if (strchr(product, '.') != NULL)
+  	  fprintf(fp, "				%s %d %d\n",
+         	  product, d->vernumber[0], d->vernumber[1]);
+        else if (product[0] != '/')
+  	  fprintf(fp, "				%s.sw.eoe %d %d\n",
+         	  product, d->vernumber[0], d->vernumber[1]);
+      }
+    fputs("			)\n", fp);
+  }
+
+  for (i = dist->num_depends, d = dist->depends; i > 0; i --, d ++)
+    if (d->type == DEPEND_REPLACES && d->subpackage == subpackage)
+    {
+      if (!strcmp(d->product, "_self"))
+        product = prodname;
+      else
+        product = d->product;
+
+      if (strchr(product, '.') != NULL)
+        fprintf(fp, "			replaces %s %d %d\n",
+         	product, d->vernumber[0], d->vernumber[1]);
+      else if (product[0] != '/')
+        fprintf(fp, "			replaces %s.sw.eoe %d %d\n",
+         	product, d->vernumber[0], d->vernumber[1]);
+    }
+    else if (d->type == DEPEND_INCOMPAT && d->subpackage == subpackage)
+    {
+      if (!strcmp(d->product, "_self"))
+        product = prodname;
+      else
+        product = d->product;
+
+      if (strchr(product, '.') != NULL)
+        fprintf(fp, "			incompat %s %d %d\n",
+         	product, d->vernumber[0], d->vernumber[1]);
+      else if (product[0] != '/')
+        fprintf(fp, "			incompat %s.sw.eoe %d %d\n",
+         	product, d->vernumber[0], d->vernumber[1]);
+    }
+
+  fputs("		endsubsys\n", fp);
+}
+
+
+/*
+ * End of "$Id: inst.c,v 1.30 2005/02/10 20:54:55 mike Exp $".
  */
