@@ -2,12 +2,39 @@
 
 #include "setup.h"
 
-static Fl_Button *NextButton=(Fl_Button *)0;
+Fl_Window *LicenseWindow=(Fl_Window *)0;
 
-static void cb_NextButton(Fl_Button*, void*) {
-  Wizard->next();
-NextButton->deactivate();
+static void cb_LicenseWindow(Fl_Window*, void*) {
+  if (ContinueButton->active())
+  LicenseWindow->hide();
 }
+
+Fl_Browser *LicenseBrowser=(Fl_Browser *)0;
+
+Fl_Button *ContinueButton=(Fl_Button *)0;
+
+static void cb_ContinueButton(Fl_Button*, void*) {
+  LicenseWindow->hide();
+}
+
+Fl_Round_Button *AcceptRadio=(Fl_Round_Button *)0;
+
+static void cb_AcceptRadio(Fl_Round_Button*, void*) {
+  ContinueButton->activate();
+}
+
+Fl_Round_Button *DeclineRadio=(Fl_Round_Button *)0;
+
+static void cb_DeclineRadio(Fl_Round_Button*, void*) {
+  ContinueButton->activate();
+}
+
+static void cb_ESP(Fl_Window*, void*) {
+  if (CancelButton->active())
+  exit(0);
+}
+
+Fl_Button *NextButton=(Fl_Button *)0;
 
 #include <FL/Fl_Bitmap.H>
 static unsigned char bits_next[] =
@@ -16,7 +43,7 @@ static unsigned char bits_next[] =
 \4""3\23\t\34\0\4\343\31""3\f\0\0\0\0\0\4\0\0\0\0\0\0\0\0\0\0\0\0\0";
 static Fl_Bitmap bitmap_next(bits_next, 42, 16);
 
-static Fl_Button *CancelButton=(Fl_Button *)0;
+Fl_Button *CancelButton=(Fl_Button *)0;
 
 static void cb_CancelButton(Fl_Button*, void*) {
   exit(0);
@@ -26,16 +53,11 @@ Fl_Wizard *Wizard=(Fl_Wizard *)0;
 
 Fl_Group *WelcomePane=(Fl_Group *)0;
 
+Fl_Box *WelcomeImage=(Fl_Box *)0;
+
 Fl_Group *SoftwarePane=(Fl_Group *)0;
 
 Fl_Check_Browser *SoftwareList=(Fl_Check_Browser *)0;
-
-static void cb_SoftwareList(Fl_Check_Browser*, void*) {
-  if (SoftwareList->nchecked())
-  NextButton->activate();
-else
-  NextButton->deactivate();
-}
 
 Fl_Group *InstallPane=(Fl_Group *)0;
 
@@ -45,11 +67,42 @@ Fl_Browser *InstallLog=(Fl_Browser *)0;
 
 Fl_Window* make_window() {
   Fl_Window* w;
+  { Fl_Window* o = LicenseWindow = new Fl_Window(580, 400, "Software License");
+    w = o;
+    o->callback((Fl_Callback*)cb_LicenseWindow);
+    { Fl_Browser* o = LicenseBrowser = new Fl_Browser(10, 10, 560, 300);
+      o->textfont(4);
+      o->textsize(12);
+      Fl_Group::current()->resizable(o);
+    }
+    { Fl_Button* o = ContinueButton = new Fl_Button(500, 365, 70, 25, "Continue");
+      o->callback((Fl_Callback*)cb_ContinueButton);
+      o->deactivate();
+    }
+    { Fl_Group* o = new Fl_Group(10, 315, 485, 45);
+      { Fl_Round_Button* o = AcceptRadio = new Fl_Round_Button(10, 315, 425, 20, "Yes, I accept the terms and conditions of the software license.");
+        o->type(102);
+        o->down_box(FL_ROUND_DOWN_BOX);
+        o->selection_color(4);
+        o->callback((Fl_Callback*)cb_AcceptRadio);
+      }
+      { Fl_Round_Button* o = DeclineRadio = new Fl_Round_Button(10, 335, 455, 20, "No, I do not accept the terms and conditions of the software license.");
+        o->type(102);
+        o->down_box(FL_ROUND_DOWN_BOX);
+        o->selection_color(4);
+        o->callback((Fl_Callback*)cb_DeclineRadio);
+      }
+      o->end();
+    }
+    o->set_modal();
+    o->end();
+  }
   { Fl_Window* o = new Fl_Window(450, 345, "ESP Software Wizard");
     w = o;
+    o->callback((Fl_Callback*)cb_ESP);
     { Fl_Button* o = NextButton = new Fl_Button(315, 310, 55, 25);
       bitmap_next.label(o);
-      o->callback((Fl_Callback*)cb_NextButton);
+      o->callback((Fl_Callback*)next_cb);
     }
     { Fl_Button* o = CancelButton = new Fl_Button(380, 310, 60, 25, "Cancel");
       o->callback((Fl_Callback*)cb_CancelButton);
@@ -68,7 +121,7 @@ Fl_Window* make_window() {
  software for installation, please click on the \"Next\" button below.");
           o->align(133|FL_ALIGN_INSIDE);
         }
-        { Fl_Box* o = new Fl_Box(40, 150, 370, 140);
+        { Fl_Box* o = WelcomeImage = new Fl_Box(40, 150, 370, 140);
           o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
         }
         o->end();
@@ -89,7 +142,7 @@ Fl_Window* make_window() {
         { Fl_Check_Browser* o = SoftwareList = new Fl_Check_Browser(40, 120, 370, 170, " Available Software:");
           o->type(1);
           o->box(FL_DOWN_BOX);
-          o->callback((Fl_Callback*)cb_SoftwareList);
+          o->callback((Fl_Callback*)list_cb);
           o->align(FL_ALIGN_TOP_LEFT);
           o->when(FL_WHEN_RELEASE);
         }
@@ -107,7 +160,7 @@ Fl_Window* make_window() {
         { Fl_Slider* o = InstallPercent = new Fl_Slider(40, 75, 365, 15, "Progress Label...");
           o->type(3);
           o->selection_color(63);
-          o->labelfont(3);
+          o->labelfont(2);
           o->maximum(100);
           o->value(50);
           o->align(FL_ALIGN_TOP_LEFT);

@@ -4,20 +4,31 @@
 #define setup_h
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "setup2.h"
+extern Fl_Window *LicenseWindow;
+#include <FL/Fl_Browser.H>
+extern Fl_Browser *LicenseBrowser;
 #include <FL/Fl_Button.H>
+extern Fl_Button *ContinueButton;
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Round_Button.H>
+extern Fl_Round_Button *AcceptRadio;
+extern Fl_Round_Button *DeclineRadio;
+#include "setup2.h"
+extern void next_cb(Fl_Button*, void*);
+extern Fl_Button *NextButton;
+extern Fl_Button *CancelButton;
 #include "Fl_Wizard.h"
 extern Fl_Wizard *Wizard;
-#include <FL/Fl_Group.H>
 extern Fl_Group *WelcomePane;
 #include <FL/Fl_Box.H>
+extern Fl_Box *WelcomeImage;
 extern Fl_Group *SoftwarePane;
 #include "Fl_Check_Browser.h"
+extern void list_cb(Fl_Check_Browser*, void*);
 extern Fl_Check_Browser *SoftwareList;
 extern Fl_Group *InstallPane;
 #include <FL/Fl_Slider.H>
 extern Fl_Slider *InstallPercent;
-#include <FL/Fl_Browser.H>
 extern Fl_Browser *InstallLog;
 Fl_Window* make_window();
 #endif

@@ -197,6 +197,7 @@ void Fl_Check_Browser::checked(int i, int b) {
 		} else {
 			nchecked_--;
 		}
+		redraw();
 	}
 }
 

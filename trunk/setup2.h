@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.h,v 1.1 1999/12/02 22:27:42 mike Exp $"
+// "$Id: setup2.h,v 1.2 1999/12/03 22:36:54 mike Exp $"
 //
 //   ESP Software Wizard header file for the ESP Package Manager (EPM).
 //
@@ -60,10 +60,11 @@ VAR dist_t	*Dists;		// Distributions in directory
 //
 
 void	get_dists(const char *d);
+int	install_dist(const dist_t *dist);
+void	load_image(void);
 int	sort_dists(const dist_t *d0, const dist_t *d1);
-void	install_dist(const dist_t *dist);
 
 
 //
-// End of "$Id: setup2.h,v 1.1 1999/12/02 22:27:42 mike Exp $".
+// End of "$Id: setup2.h,v 1.2 1999/12/03 22:36:54 mike Exp $".
 //
