@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.71 2002/07/08 16:56:10 mike Exp $"
+ * "$Id: portable.c,v 1.72 2002/08/29 02:10:41 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -661,11 +661,15 @@ write_common(dist_t     *dist,		/* I - Distribution */
 
   fputs("PATH=/usr/xpg4/bin:/bin:/usr/bin:/usr/ucb:${PATH}\n", fp);
   fputs("SHELL=/bin/sh\n", fp);
-  fputs("if test \"`id -u`\" -ne 0; then\n", fp);
-  fprintf(fp, "	echo Sorry, you must be root to %s this software.\n",
+  fputs("case \"`id`\" in\n", fp);
+  fputs("\tuid=0*)\n", fp);
+  fputs("\t\t;;\n", fp);
+  fputs("\t*)\n", fp);
+  fprintf(fp, "\t\techo Sorry, you must be root to %s this software.\n",
           title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
-  fputs("	exit 1\n", fp);
-  fputs("fi\n", fp);
+  fputs("\t\texit 1\n", fp);
+  fputs("\t\t;;\n", fp);
+  fputs("esac\n", fp);
   fprintf(fp, "echo \'Copyright %s\'\n", dist->copyright);
   fprintf(fp, "# Reset umask for %s...\n",
           title[0] == 'I' ? "install" : title[0] == 'R' ? "remove" : "patch");
@@ -2083,5 +2087,5 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
 
 /*
- * End of "$Id: portable.c,v 1.71 2002/07/08 16:56:10 mike Exp $".
+ * End of "$Id: portable.c,v 1.72 2002/08/29 02:10:41 mike Exp $".
  */

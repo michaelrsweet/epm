@@ -10,9 +10,9 @@ WHAT'S NEW IN EPM 3.5?
 	  the list of init scripts to remove.
 	- Added a new --output-dir option contributed by
 	  Geoffrey Wossum.
-	- QNX returns " 0" instead of "0" for the UID from the
-	  "id -u" command, which caused problems with portable
-	  installation script.
+	- Not all implementations of the "id" command support
+	  the "-u" option, so EPM now looks at the default
+	  output.
 	- RPM dependencies with a single version number didn't
 	  get written to the spec file properly.
 	- Added support for file options - nostrip() and
