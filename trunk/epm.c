@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.5 1999/06/24 18:35:07 mike Exp $"
+ * "$Id: epm.c,v 1.6 1999/06/30 21:08:55 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -110,7 +110,8 @@ main(int  argc,			/* I - Number of command-line arguments */
   int		strip;		/* 1 if we should strip executables */
   int		havepatchfiles;	/* 1 if we have patch files, 0 otherwise */
   int		vernumber;	/* Version number */
-  FILE		*listfile,	/* File list */
+  int		listlevel;	/* Level in file list */
+  FILE		*listfiles[10],	/* File lists */
 		*installfile,	/* Install script */
 		*removefile,	/* Remove script */
 		*swfile,	/* Distribution tar file */
@@ -285,7 +286,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Open the list file...
   */
 
-  if ((listfile = fopen(listname, "r")) == NULL)
+  if ((listfiles[0] = fopen(listname, "r")) == NULL)
   {
     fprintf(stderr, "epm: Unable to open list file \"%s\" -\n          %s\n",
             listname, strerror(errno));
@@ -299,7 +300,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   puts("Searching for product information...");
 
   skip = 0;
-  while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
+  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
     if (line[0] == '%')
     {
       if (strncmp(line, "%product ", 9) == 0)
@@ -360,7 +361,7 @@ main(int  argc,			/* I - Number of command-line arguments */
       }
     }
 
-  rewind(listfile);
+  rewind(listfiles[0]);
 
   if (!product[0] ||
       !copyright[0] ||
@@ -372,7 +373,7 @@ main(int  argc,			/* I - Number of command-line arguments */
     fputs("epm: Error - missing %product, %copyright, %vendor, %license,\n", stderr);
     fputs("          %readme, or %version attributes in list file!\n", stderr);
 
-    fclose(listfile);
+    fclose(listfiles[0]);
 
     return (1);
   }
@@ -545,6 +546,32 @@ main(int  argc,			/* I - Number of command-line arguments */
   fprintf(installfile, "	" EPM_SOFTWARE "/%s.remove now\n", prodname);
   fputs("fi\n", installfile);
 
+  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
+    if (strncmp(line, "%requires ", 10) == 0)
+    {
+      sscanf(line + 10, "%s", src);
+
+      fprintf(installfile, "#%s\n", line);
+      fprintf(installfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n", src);
+      fprintf(installfile, "	echo Sorry, you must first install \\'%s\\'!\n",
+	      src);
+      fputs("	exit 1\n", installfile);
+      fputs("fi\n", installfile);
+    }
+    else if (strncmp(line, "%incompat ", 10) == 0)
+    {
+      sscanf(line + 10, "%s", src);
+
+      fprintf(installfile, "#%s\n", line);
+      fprintf(installfile, "if test -f " EPM_SOFTWARE "/%s.remove; then\n", src);
+      fprintf(installfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	      src);
+      fputs("	exit 1\n", installfile);
+      fputs("fi\n", installfile);
+    }
+
+  rewind(listfiles[0]);
+
   fputs("echo \"Installing software...\"\n", installfile);
   fprintf(installfile, "$tar %s.sw\n", prodname);
 
@@ -641,11 +668,34 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("echo \"Running pre-patch commands...\"\n", patchfile);
 
   skip = 0;
-  while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
+  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
     if (strncmp(line, "%patch ", 7) == 0)
       fprintf(patchfile, "%s\n", line + 7);
+    else if (strncmp(line, "%requires ", 10) == 0)
+    {
+      sscanf(line + 10, "%s", src);
 
-  rewind(listfile);
+      fprintf(patchfile, "#%s\n", line);
+      fprintf(patchfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n", src);
+      fprintf(patchfile, "	echo Sorry, you must first install \\'%s\\'!\n",
+	      src);
+      fputs("	exit 1\n", patchfile);
+      fputs("fi\n", patchfile);
+    }
+    else if (strncmp(line, "%incompat ", 10) == 0)
+    {
+      sscanf(line + 10, "%s", src);
+
+      fprintf(patchfile, "#%s\n", line);
+      fprintf(patchfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n",
+	      line + 10);
+      fprintf(patchfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
+	      line + 10);
+      fputs("	exit 1\n", patchfile);
+      fputs("fi\n", patchfile);
+    }
+
+  rewind(listfiles[0]);
 
   fputs("echo \"Patching software...\"\n", patchfile);
   fprintf(patchfile, "$tar %s.psw\n", prodname);
@@ -707,11 +757,11 @@ main(int  argc,			/* I - Number of command-line arguments */
   fputs("echo \"Running pre-removal commands...\"\n", removefile);
 
   skip = 0;
-  while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
+  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
     if (strncmp(line, "%remove ", 8) == 0)
       fprintf(removefile, "%s\n", line + 8);
 
-  rewind(listfile);
+  rewind(listfiles[0]);
 
   fputs("echo \"Removing installed files...\"\n", removefile);
 
@@ -721,130 +771,90 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   puts("Adding product files...");
 
-  deftime = time(NULL);
-  skip    = 0;
+  deftime   = time(NULL);
+  skip      = 0;
+  listlevel = 0;
 
-  while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
+  do
   {
-    if (line[0] == '%')
+    while (get_line(line, sizeof(line), listfiles[listlevel], &platform, &skip) != NULL)
     {
-      if (strncmp(line, "%requires ", 10) == 0)
+      if (line[0] == '%')
       {
-        sscanf(line + 10, "%s", src);
+	if (strncmp(line, "%include ", 9) == 0)
+	{
+          sscanf(line + 9, "%s", src);
+	  listlevel ++;
 
-        fprintf(installfile, "#%s\n", line);
-        fprintf(installfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n", src);
-	fprintf(installfile, "	echo Sorry, you must first install \\'%s\\'!\n",
-	        src);
-	fputs("	exit 1\n", installfile);
-	fputs("fi\n", installfile);
-
-        fprintf(patchfile, "#%s\n", line);
-        fprintf(patchfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n", src);
-	fprintf(patchfile, "	echo Sorry, you must first install \\'%s\\'!\n",
-	        src);
-	fputs("	exit 1\n", patchfile);
-	fputs("fi\n", patchfile);
-      }
-      else if (strncmp(line, "%incompat ", 10) == 0)
-      {
-        sscanf(line + 10, "%s", src);
-
-        fprintf(installfile, "#%s\n", line);
-        fprintf(installfile, "if test -f " EPM_SOFTWARE "/%s.remove; then\n", src);
-	fprintf(installfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	        src);
-	fputs("	exit 1\n", installfile);
-	fputs("fi\n", installfile);
-
-        fprintf(patchfile, "#%s\n", line);
-        fprintf(patchfile, "if test ! -f " EPM_SOFTWARE "/%s.remove; then\n",
-	        line + 10);
-	fprintf(patchfile, "	echo Sorry, this software is incompatible with \\'%s\\'!\n",
-	        line + 10);
-	fputs("	exit 1\n", patchfile);
-	fputs("fi\n", patchfile);
-      }
-
-      continue;
-    }
-
-    if (sscanf(line, "%c%o%s%s%s%s", &type, &mode, user, group,
-               tempdst, tempsrc) < 5)
-    {
-      fprintf(stderr, "epm: Bad line - %s\n", line);
-      continue;
-    }
-
-    expand_name(dst, tempdst);
-    if (tolower(type) != 'd' && type != 'R')
-      expand_name(src, tempsrc);
-
-    switch (type)
-    {
-      case 'c' : /* Config file */
-      case 'C' :
-         /*
-	  * Configuration files are extracted to the config file name with
-	  * .N appended; add a bit of script magic to check if the config
-	  * file already exists, and if not we move the .N to the config
-	  * file location...
-	  */
-
-          fprintf(installfile, "if test ! -f %s; then\n", dst);
-	  fprintf(installfile, "	/bin/mv %s.N %s\n", dst, dst);
-	  fputs("fi\n", installfile);
-
-          if (type == 'C')
+	  if ((listfiles[listlevel] = fopen(src, "r")) == NULL)
 	  {
-            fprintf(patchfile, "if test ! -f %s; then\n", dst);
-	    fprintf(patchfile, "	/bin/mv %s.N %s\n", dst, dst);
-	    fputs("fi\n", patchfile);
+	    fprintf(stderr, "epm: Unable to include \"%s\"...\n", src);
+	    listlevel --;
 	  }
+	}
 
-          strcat(dst, ".N");
+	continue;
+      }
 
-      case 'f' : /* Regular file */
-      case 'F' :
-          if ((mode & 0111) && strip)
-	  {
-	   /*
-	    * Strip executables...
+      if (sscanf(line, "%c%o%s%s%s%s", &type, &mode, user, group,
+        	 tempdst, tempsrc) < 5)
+      {
+	fprintf(stderr, "epm: Bad line - %s\n", line);
+	continue;
+      }
+
+      expand_name(dst, tempdst);
+      if (tolower(type) != 'd' && type != 'R')
+	expand_name(src, tempsrc);
+
+      switch (type)
+      {
+	case 'c' : /* Config file */
+	case 'C' :
+           /*
+	    * Configuration files are extracted to the config file name with
+	    * .N appended; add a bit of script magic to check if the config
+	    * file already exists, and if not we move the .N to the config
+	    * file location...
 	    */
 
-            sprintf(command, EPM_STRIP " %s 2>&1 >/dev/null", src);
-	    system(command);
-	  }
+            fprintf(installfile, "if test ! -f %s; then\n", dst);
+	    fprintf(installfile, "	/bin/mv %s.N %s\n", dst, dst);
+	    fputs("fi\n", installfile);
 
-          if (stat(src, &srcstat))
-	  {
-	    fprintf(stderr, "epm: Cannot stat %s - %s\n", src,
-	            strerror(errno));
-	    continue;
-	  }
+            if (type == 'C')
+	    {
+              fprintf(patchfile, "if test ! -f %s; then\n", dst);
+	      fprintf(patchfile, "	/bin/mv %s.N %s\n", dst, dst);
+	      fputs("fi\n", patchfile);
+	    }
 
-          fprintf(removefile, "/bin/rm -f %s\n", dst);
+            strcat(dst, ".N");
 
-	  printf("%s -> %s...\n", src, dst);
+	case 'f' : /* Regular file */
+	case 'F' :
+            if ((mode & 0111) && strip)
+	    {
+	     /*
+	      * Strip executables...
+	      */
 
-	  if (write_header(swfile, TAR_NORMAL, mode, srcstat.st_size,
-	                   srcstat.st_mtime, user, group, dst, NULL) < 0)
-	  {
-	    fprintf(stderr, "epm: Error writing file header - %s\n",
-	            strerror(errno));
-	    return (1);
-	  }
+              sprintf(command, EPM_STRIP " %s 2>&1 >/dev/null", src);
+	      system(command);
+	    }
 
-	  if (write_file(swfile, src) < 0)
-	  {
-	    fprintf(stderr, "epm: Error writing file data - %s\n",
-	            strerror(errno));
-	    return (1);
-	  }
+            if (stat(src, &srcstat))
+	    {
+	      fprintf(stderr, "epm: Cannot stat %s - %s\n", src,
+	              strerror(errno));
+	      continue;
+	    }
 
-          if (isupper(type))
-	  {
-	    if (write_header(pswfile, TAR_NORMAL, mode, srcstat.st_size,
+            fprintf(removefile, "/bin/rm -f %s\n", dst);
+
+	    printf("%s -> %s...\n", src, dst);
+
+	    if (write_header(swfile, TAR_NORMAL, mode, srcstat.st_size,
 	                     srcstat.st_mtime, user, group, dst, NULL) < 0)
 	    {
 	      fprintf(stderr, "epm: Error writing file header - %s\n",
@@ -852,72 +862,97 @@ main(int  argc,			/* I - Number of command-line arguments */
 	      return (1);
 	    }
 
-	    if (write_file(pswfile, src) < 0)
+	    if (write_file(swfile, src) < 0)
 	    {
 	      fprintf(stderr, "epm: Error writing file data - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
-	  }
-	  break;
 
-      case 'd' : /* Create directory */
-      case 'D' :
-	  printf("%s...\n", dst);
+            if (isupper(type))
+	    {
+	      if (write_header(pswfile, TAR_NORMAL, mode, srcstat.st_size,
+	                       srcstat.st_mtime, user, group, dst, NULL) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file header - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
 
-	  if (write_header(swfile, TAR_DIR, mode, 0, deftime, user, group,
-	                   dst, NULL) < 0)
-	  {
-	    fprintf(stderr, "epm: Error writing directory header - %s\n",
-	            strerror(errno));
-	    return (1);
-	  }
+	      if (write_file(pswfile, src) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing file data - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
+	    }
+	    break;
 
-	  if (type == 'D')
-	  {
-	    if (write_header(pswfile, TAR_DIR, mode, 0, deftime, user, group,
+	case 'd' : /* Create directory */
+	case 'D' :
+	    printf("%s...\n", dst);
+
+	    if (write_header(swfile, TAR_DIR, mode, 0, deftime, user, group,
 	                     dst, NULL) < 0)
 	    {
 	      fprintf(stderr, "epm: Error writing directory header - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
-	  }
-	  break;
 
-      case 'l' : /* Link file */
-      case 'L' :
-          fprintf(removefile, "/bin/rm -f %s\n", dst);
+	    if (type == 'D')
+	    {
+	      if (write_header(pswfile, TAR_DIR, mode, 0, deftime, user, group,
+	                       dst, NULL) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing directory header - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
+	    }
+	    break;
 
-	  printf("%s -> %s...\n", src, dst);
+	case 'l' : /* Link file */
+	case 'L' :
+            fprintf(removefile, "/bin/rm -f %s\n", dst);
 
-	  if (write_header(swfile, TAR_SYMLINK, mode, 0, deftime, user, group,
-	                   dst, src) < 0)
-	  {
-	    fprintf(stderr, "epm: Error writing link header - %s\n",
-	            strerror(errno));
-	    return (1);
-	  }
+	    printf("%s -> %s...\n", src, dst);
 
-	  if (type == 'L')
-	  {
-	    if (write_header(pswfile, TAR_SYMLINK, mode, 0, deftime, user, group,
+	    if (write_header(swfile, TAR_SYMLINK, mode, 0, deftime, user, group,
 	                     dst, src) < 0)
 	    {
 	      fprintf(stderr, "epm: Error writing link header - %s\n",
 	              strerror(errno));
 	      return (1);
 	    }
-          }
-	  break;
 
-      case 'R' : /* Remove file (patch) */
-          fprintf(patchfile, "/bin/rm -f %s\n", dst);
-	  break;
+	    if (type == 'L')
+	    {
+	      if (write_header(pswfile, TAR_SYMLINK, mode, 0, deftime, user, group,
+	                       dst, src) < 0)
+	      {
+		fprintf(stderr, "epm: Error writing link header - %s\n",
+	        	strerror(errno));
+		return (1);
+	      }
+            }
+	    break;
+
+	case 'R' : /* Remove file (patch) */
+            fprintf(patchfile, "/bin/rm -f %s\n", dst);
+	    break;
+      }
+    }
+
+    if (listlevel > 0)
+    {
+      fclose(listfiles[listlevel]);
+      listlevel --;
     }
   }
+  while (listlevel > 0);
 
-  rewind(listfile);
+  rewind(listfiles[0]);
 
  /*
   * Output the final zeroed record to indicate the end of file.
@@ -967,7 +1002,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   puts("Finishing installation and patch scripts...");
 
   skip = 0;
-  while (get_line(line, sizeof(line), listfile, &platform, &skip) != NULL)
+  while (get_line(line, sizeof(line), listfiles[0], &platform, &skip) != NULL)
     if (strncmp(line, "%install ", 9) == 0)
     {
       fprintf(installfile, "%s\n", line + 9);
@@ -978,7 +1013,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   * Close files...
   */
 
-  fclose(listfile);
+  fclose(listfiles[0]);
   fclose(swfile);
   fclose(pswfile);
   fclose(installfile);
@@ -992,11 +1027,10 @@ main(int  argc,			/* I - Number of command-line arguments */
   printf("Creating distribution archive...");
   fflush(stdout);
 
-  sprintf(command, "/bin/tar cf %s.tar %s/%s.install %s/%s.license "
-                   "%s/%s.readme %s/%s.remove %s/%s.sw", directory,
-		   directory, prodname, directory, prodname,
-		   directory, prodname, directory, prodname,
-		   directory, prodname);
+  sprintf(command, "cd %s; /bin/tar cf ../%s-%s-%s.tar %s.install %s.license "
+		   "%s.readme %s.remove %s.sw", directory, prodname,
+		   version, platname, prodname, prodname, prodname,
+		   prodname, prodname);
   system(command);
 
   sprintf(line, "%s-%s-%s.tar", prodname, version, platname);
@@ -1026,12 +1060,10 @@ main(int  argc,			/* I - Number of command-line arguments */
   {
     printf("Creating patch archive...");
     fflush(stdout);
-    sprintf(command, "tar cf %s-patch-%s-%s.tar %s/%s.patch "
-                     "%s/%s.license %s/%s.readme %s/%s.remove %s/%s.psw",
-		     prodname, version, platname,
-		     directory, prodname, directory, prodname,
-		     directory, prodname, directory, prodname,
-		     directory, prodname);
+    sprintf(command, "cd %s; tar cf ../%s-patch-%s-%s.tar %s.patch "
+		     "%s.license %s.readme %s.remove %s.psw", directory,
+		     prodname, version, platname, prodname, prodname, prodname,
+		     prodname, prodname);
     system(command);
 
     sprintf(line, "%s-patch-%s-%s.tar", prodname, version, platname);
@@ -1394,5 +1426,5 @@ write_header(FILE   *fp,	/* I - Tar file to write to */
 
 
 /*
- * End of "$Id: epm.c,v 1.5 1999/06/24 18:35:07 mike Exp $".
+ * End of "$Id: epm.c,v 1.6 1999/06/30 21:08:55 mike Exp $".
  */
