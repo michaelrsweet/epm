@@ -1,5 +1,5 @@
 /*
- * "$Id: swinstall.c,v 1.22 2002/12/11 22:07:35 mike Exp $"
+ * "$Id: swinstall.c,v 1.23 2002/12/11 22:27:52 swdev Exp $"
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
@@ -446,11 +446,11 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
   snprintf(filename, sizeof(filename), "%s/%s", directory, prodname);
   mkdir(filename, 0777);
 
-  if (run_command(NULL, "/usr/sbin/swpackage %s-s %s -d '|" EPM_GZIP " -9 >%s/%s.depot.gz' "
-                        "-x target_type=tape-s "
-			"-x write_remote_files=true %s",
+  if (run_command(NULL, "/usr/sbin/swpackage %s-s %s "
+                        "-x target_type=tape "
+			"-d '|" EPM_GZIP " -9 >%s/%s.depot.gz' %s",
         	  Verbosity == 0 ? "" : "-v ", infoname, directory,
-		  prodname, prodname))
+		  name, prodname))
     return (1);
 
  /*
@@ -525,5 +525,5 @@ make_swinstall(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: swinstall.c,v 1.22 2002/12/11 22:07:35 mike Exp $".
+ * End of "$Id: swinstall.c,v 1.23 2002/12/11 22:27:52 swdev Exp $".
  */
