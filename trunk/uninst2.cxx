@@ -1,5 +1,5 @@
 //
-// "$Id: uninst2.cxx,v 1.2 2003/02/13 21:34:01 mike Exp $"
+// "$Id: uninst2.cxx,v 1.3 2003/05/20 20:06:15 mike Exp $"
 //
 //   ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -86,10 +86,12 @@ main(int  argc,			// I - Number of command-line arguments
   Fl_Window	*w;		// Main window...
 
 
-#ifdef __APPLE__
-  // MacOS X always gets "plastic" scheme...
+#if !defined(__hpux) && !defined(__sun) && !defined(__osf) && !defined(_AIX)
+  // Use modern "skin" for modern OS's...
   Fl::scheme("plastic");
+#endif // !__hpux && !__sun && !__osf && !_AIX
 
+#ifdef __APPLE__
   // OSX passes an extra command-line option when run from the Finder.
   // If the first command-line argument is "-psn..." then skip it and use the full path
   // to the executable to figure out the distribution directory...
@@ -134,8 +136,9 @@ main(int  argc,			// I - Number of command-line arguments
 #ifdef __APPLE__
   OSStatus status;
 
-  status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, kAuthorizationFlagDefaults,
-				&SetupAuthorizationRef);
+  status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment,
+                               kAuthorizationFlagDefaults,
+			       &SetupAuthorizationRef);
   if (status != errAuthorizationSuccess)
   {
     fl_alert("You must have administrative priviledges to remove this software!");
@@ -146,8 +149,10 @@ main(int  argc,			// I - Number of command-line arguments
   AuthorizationRights	rights = { 1, &items };
 
   status = AuthorizationCopyRights(SetupAuthorizationRef, &rights, NULL,
-				    kAuthorizationFlagDefaults |  kAuthorizationFlagInteractionAllowed |
-					kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights, NULL);
+				   kAuthorizationFlagDefaults |
+				       kAuthorizationFlagInteractionAllowed |
+				       kAuthorizationFlagPreAuthorize |
+				       kAuthorizationFlagExtendRights, NULL);
 
   if (status != errAuthorizationSuccess)
   {
@@ -648,5 +653,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: uninst2.cxx,v 1.2 2003/02/13 21:34:01 mike Exp $".
+// End of "$Id: uninst2.cxx,v 1.3 2003/05/20 20:06:15 mike Exp $".
 //

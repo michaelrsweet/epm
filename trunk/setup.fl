@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0103 
+version 1.0104 
 header_name {.h} 
 code_name {.cxx}
 Function {make_window()} {open
@@ -11,177 +11,177 @@ Function {make_window()} {open
     xywh {438 150 580 345}
     code0 {\#include "gui-common.h"} visible
   } {
-    Fl_Wizard Wizard {open
-      xywh {0 0 580 300}
+    Fl_Wizard Wizard {open selected
+      xywh {10 10 560 290}
     } {
       Fl_Group WelcomePane {
-        xywh {10 10 560 280} box FLAT_BOX
+        xywh {10 10 560 280} hide
       } {
         Fl_Box {} {
-          label {Welcome to the Software Installation Wizard} selected
-          xywh {10 10 560 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+          label {Welcome to the Software Installation Wizard}
+          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Box WelcomeImage {
-          xywh {40 50 500 180} align 21
+          xywh {20 50 540 180} align 16
         }
         Fl_Box {} {
           label {This wizard will install the software you select on your system.
 
 To select software for installation, please click on the "Next" button below.}
-          xywh {40 235 500 55} align 149
+          xywh {20 235 540 55} align 149
         }
       }
-      Fl_Group TypePane {open
-        xywh {10 10 555 280} box FLAT_BOX hide
+      Fl_Group TypePane {
+        xywh {10 10 555 280} hide
       } {
         Fl_Box {} {
           label {Installation Type}
-          xywh {10 10 555 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Box {} {
           label {Please select the type of software installation and click on the "Next" button below.}
-          xywh {40 55 475 35} align 149
+          xywh {20 55 540 35} align 149
         }
         Fl_Group {} {
-          xywh {65 100 500 185}
+          xywh {20 100 540 185}
         } {
           Fl_Round_Button {TypeButton[0]} {
             callback type_cb
-            xywh {70 100 495 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 100 540 20} type Radio down_box ROUND_DOWN_BOX
           }
           Fl_Round_Button {TypeButton[1]} {
             callback type_cb
-            xywh {70 120 495 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 120 540 20} type Radio down_box ROUND_DOWN_BOX
           }
           Fl_Round_Button {TypeButton[2]} {
             callback type_cb
-            xywh {70 140 495 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 140 540 20} type Radio down_box ROUND_DOWN_BOX
           }
           Fl_Round_Button {TypeButton[3]} {
             callback type_cb
-            xywh {70 160 495 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 160 540 20} type Radio down_box ROUND_DOWN_BOX
           }
           Fl_Round_Button {TypeButton[4]} {
             callback type_cb
-            xywh {70 180 495 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 180 540 20} type Radio down_box ROUND_DOWN_BOX
           }
           Fl_Round_Button {TypeButton[5]} {
             callback type_cb
-            xywh {70 200 495 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 200 540 20} type Radio down_box ROUND_DOWN_BOX
           }
           Fl_Round_Button {TypeButton[6]} {
             callback type_cb
-            xywh {70 220 495 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 220 540 20} type Radio down_box ROUND_DOWN_BOX
           }
           Fl_Round_Button {TypeButton[7]} {
             callback type_cb
-            xywh {70 240 495 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 240 540 20} type Radio down_box ROUND_DOWN_BOX
           }
         }
       }
-      Fl_Group SoftwarePane {open
-        xywh {10 10 560 285} box FLAT_BOX hide
+      Fl_Group SoftwarePane {
+        xywh {10 10 560 290} hide
       } {
         Fl_Box {} {
           label {Software Selection}
-          xywh {10 10 560 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Box {} {
           label {Please select the software you would like to install and click on the "Next" button below.}
-          xywh {40 55 500 35} align 149
+          xywh {20 55 540 35} align 149
         }
         Fl_Check_Browser SoftwareList {
           label { Available Software:}
           callback list_cb
-          xywh {40 120 500 135} type Multi box DOWN_BOX selection_color 7 align 5 when 3
+          xywh {20 120 540 135} type Multi box DOWN_BOX selection_color 7 align 5 when 3
         }
         Fl_Box SoftwareSize {
           label {0k marked for installation.}
-          xywh {40 260 320 35} box FLAT_BOX align 20
+          xywh {20 265 285 25} align 20
         }
         Fl_Button InstallAllButton {
           label {Install All}
           callback {SoftwareList->check_all();
 list_cb(0,0);}
-          xywh {365 265 75 25}
+          xywh {315 265 110 25}
         }
         Fl_Button InstallNoneButton {
           label {Install None}
           callback {SoftwareList->check_none();
 list_cb(0,0);}
-          xywh {450 265 90 25}
+          xywh {435 265 125 25}
         }
       }
-      Fl_Group ConfirmPane {open
-        xywh {10 10 560 280} box FLAT_BOX hide
+      Fl_Group ConfirmPane {
+        xywh {10 10 560 280} hide
       } {
         Fl_Box {} {
           label {Confirm Installation}
-          xywh {10 10 560 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Box {} {
           label {You have selected the software below for installation. Click on the "Next" button to start the software installation or the "Back" button to change your selections.}
-          xywh {40 55 500 50} align 149
+          xywh {20 55 540 50} align 149
         }
         Fl_Browser ConfirmList {
-          xywh {40 110 500 180}
+          xywh {20 110 540 180}
         }
       }
-      Fl_Group LicensePane {open
-        xywh {10 10 560 280} box FLAT_BOX hide
+      Fl_Group LicensePane {
+        xywh {10 10 560 280} hide
       } {
         Fl_Box LicenseLabel {
           label {License Agreement for Some Product}
-          xywh {10 10 560 40} labelfont 1 labelsize 18 labelcolor 4 align 149
+          xywh {20 20 540 40} labelfont 1 labelsize 18 labelcolor 4 align 149
         }
         Fl_Browser LicenseBrowser {
-          xywh {10 55 560 185} textfont 4 textsize 12 resizable
+          xywh {20 65 540 175} textfont 4 textsize 12 resizable
         }
         Fl_Group {} {open
-          xywh {10 245 560 45} box FLAT_BOX
+          xywh {20 245 540 45}
         } {
           Fl_Round_Button LicenseAccept {
             label {Yes, I accept the terms and conditions of the software license agreement.}
             callback {NextButton->activate();}
-            xywh {10 245 560 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 245 540 20} type Radio down_box ROUND_DOWN_BOX
           }
           Fl_Round_Button LicenseDecline {
             label {No, I do not accept the terms and conditions of the software license agreement.}
             callback {NextButton->activate();}
-            xywh {10 270 560 20} type Radio down_box ROUND_DOWN_BOX
+            xywh {20 270 540 20} type Radio down_box ROUND_DOWN_BOX
           }
         }
       }
-      Fl_Group InstallPane {open
-        xywh {10 10 555 280} box FLAT_BOX hide
+      Fl_Group InstallPane {
+        xywh {10 10 560 290}
       } {
         Fl_Box {} {
           label {Installing Software...}
-          xywh {10 10 430 25} labelfont 1 labelsize 18 labelcolor 4 align 20
+          xywh {20 20 540 25} labelfont 1 labelsize 18 labelcolor 4 align 20
         }
         Fl_Progress InstallPercent {
           label {Progress Label...}
-          xywh {40 75 525 15} selection_color 63 labelfont 2 align 5
+          xywh {20 75 540 15} selection_color 63 labelfont 2 align 5
         }
         Fl_Browser InstallLog {
-          xywh {40 100 525 190}
+          xywh {20 100 540 190}
         }
       }
     }
     Fl_Button PrevButton {
       label {@-2< Back}
       callback {Wizard->prev();}
-      xywh {345 310 70 25}
+      xywh {280 310 90 25}
     }
     Fl_Button NextButton {
       label {Next @-2>}
       callback next_cb
-      xywh {425 310 70 25}
+      xywh {380 310 90 25}
     }
     Fl_Button CancelButton {
       label Cancel
       callback {exit(0);}
-      xywh {505 310 65 25}
+      xywh {480 310 90 25}
     }
   }
 } 
