@@ -1,5 +1,5 @@
 /*
- * "$Id: portable.c,v 1.12 2000/06/28 20:25:21 mike Exp $"
+ * "$Id: portable.c,v 1.13 2000/08/04 14:52:50 mike Exp $"
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
@@ -1046,7 +1046,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
     */
 
     fputs("rcdir=\"\"\n", scriptfile);
-    fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
+    fputs("for dir in /sbin /etc/rc.d /etc ; do\n", scriptfile);
     fputs("	if test -d $dir/rc2.d -o " SYMLINK " $dir/rc2.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
@@ -1332,7 +1332,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
     */
 
     fputs("rcdir=\"\"\n", scriptfile);
-    fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
+    fputs("for dir in /sbin /etc/rc.d /etc ; do\n", scriptfile);
     fputs("	if test -d $dir/rc2.d -o " SYMLINK " $dir/rc2.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
@@ -1463,7 +1463,7 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
     */
 
     fputs("rcdir=\"\"\n", scriptfile);
-    fputs("for dir in /etc/rc.d /etc /sbin ; do\n", scriptfile);
+    fputs("for dir in /sbin /etc/rc.d /etc ; do\n", scriptfile);
     fputs("	if test -d $dir/rc2.d -o " SYMLINK " $dir/rc2.d; then\n", scriptfile);
     fputs("		rcdir=\"$dir\"\n", scriptfile);
     fputs("	fi\n", scriptfile);
@@ -1543,5 +1543,5 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
 
 /*
- * End of "$Id: portable.c,v 1.12 2000/06/28 20:25:21 mike Exp $".
+ * End of "$Id: portable.c,v 1.13 2000/08/04 14:52:50 mike Exp $".
  */
