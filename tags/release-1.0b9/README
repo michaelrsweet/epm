@@ -1,0 +1,150 @@
+README - ESP Package Manager (EPM) 1.4
+--------------------------------------
+
+WHAT IS EPM?
+
+    EPM is the software packaging tool that we now use at Easy Software
+    Products.  It is a simple tool that generates compressed tar files
+    containing installation and removal scripts, a README and license
+    file, and a tar file containing the actual software files.  EPM can
+    also generate patch distributions and keeps track of software that
+    is installed using the EPM-generated scripts.
+
+
+WHY ANOTHER SOFTWARE PACKAGING TOOL?
+
+    We developed EPM because we are sick of developing and testing N
+    different software distributions for the operating systems we
+    support.  Also, when we started looking at selling software for
+    Linux we saw that there are at least four different "standard"
+    distribution formats, and none of them are compatible with the
+    other.  Also, many of these formats required that you install the
+    software on your development system (or perform some voodoo magic)
+    before you could build your distribution!
+
+    Clearly we needed something that could be used for all platforms,
+    *without* requiring special software packages on the customer's
+    system!
+
+
+WHAT IS REQUIRED FOR EPM?
+
+    On your development system you just need a C compiler, a make
+    program, the Bourne (or Korn or Bash) shell, and GNU zip.
+
+    On the destination system your customers/users will need the Bourne
+    (or Korn or Bash) shell, a tar program, and GNU zip. The first two
+    are standard items, and GNU zip is being shipped by most vendors as
+    well.
+
+
+HOW DO I COMPILE EPM?
+
+    EPM uses GNU autoconf to configure itself for your system.  To build
+    it, use:
+
+        ./configure ENTER
+	make ENTER
+
+    Once EPM is compiled you can type:
+
+        su ENTER
+	make install ENTER
+
+    to install the software in /usr/bin.
+
+
+HOW DO I USE EPM?
+
+    Please look at the EPM man page; a preformatted copy is included in
+    the file "epm.1":
+
+        more epm.1
+
+    An example of an EPM software list file can be found in the CUPS
+    software distribution at:
+
+        http://www.cups.org/software.html
+
+
+DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
+
+    No!  EPM is free software and any installations you create are
+    unencumbered by licensing of any kind (not even the GPL.)
+
+
+WHAT'S NEW IN EPM 1.4?
+
+    EPM 1.4 adds the following features and fixes to EPM 1.3:
+
+	- Now map group "sys" to "system" for Digital UNIX and "root" for
+	  Linux.
+	- The initialization script installation now checks for the presence
+	  of run levels 4 and 5.
+
+
+WHAT'S NEW IN EPM 1.3?
+
+    EPM 1.3 adds the following features and fixes to EPM 1.2:
+
+	- Now use the "p" option to tar to ensure that file permissions
+	  are created properly.  This is normally the default for the
+	  super-user, but not under Digital UNIX!
+	- Initialization scripts are now linked to run levels 0, 2, 3, 4,
+	  and 5.
+
+
+WHAT'S NEW IN EPM 1.2?
+
+    EPM 1.2 adds the following features and fixes to EPM 1.1:
+
+	- Patch distributions were not correctly named.
+	- Added new "initialization script" file types "i" and "I". The
+	  new file types place the scripts in /etc/software/init.d and
+	  make links to the appropriate system-specific rc.d
+	  directories and run the scripts to start and stop things
+	  accordingly.
+
+
+WHAT'S NEW IN EPM 1.1?
+
+    EPM 1.1 adds the following features and fixes to EPM 1.0:
+
+	- The "whoami" command isn't always in the user's path, so
+	  scripts now use a hard-coded path (setup by the configure
+	  script) to the program.
+	- Added a check for IRIX64 (64-bit kernel instead of n32.)
+	- The %system directive now supports release numbers, e.g.
+	  "irix-6.5".
+	- The %system directive now supports "!" (not) operator so you
+	  can do things like "%system irix !irix-6.5" to select any
+	  IRIX release except IRIX 6.5.
+	- Files that already exist on the system are renamed to
+	  "filename.O" on installation and back to "filename" when
+	  removed (except for config files, which don't overwrite and
+	  aren't removed.)
+	- Prerequisites (%required directive) now look for required
+	  product in the current directory and install it automatically
+	  if it is available and not already installed.
+	- The copyright notice in the installation script was not
+	  displayed if the user used the "now" option.
+
+
+REPORTING PROBLEMS
+
+    Report all problems and submit all patches to "epm@easysw.com".
+
+
+COPYRIGHT AND LICENSE INFO
+
+    EPM is Copyright 1999 by Easy Software Products, All Rights Reserved.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2, or (at your option)
+    any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
