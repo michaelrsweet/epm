@@ -210,26 +210,30 @@ supported by <I>EPM</I>:</P>
 	the directory is new and should be included as part of a
 	patch.</DD>
 
-	<DT>f <I>mode user group destination source</I></DT>
+	<DT>f <I>mode user group destination source [nostrip()]</I></DT>
 
-	<DT>F <I>mode user group destination source</I></DT>
+	<DT>F <I>mode user group destination source [nostrip()]</I></DT>
 
 	<DD>Specifies a file for installation. The second form
 	specifies that the file has changed or is new and should
-	be included as part of a patch.</DD>
+	be included as part of a patch. If the "nostrip()"
+	option is included, the file will not be stripped before
+	the installation is created.</DD>
 
-	<DT>f <I>mode user group destination source/pattern</I></DT>
+	<DT>f <I>mode user group destination source/pattern [nostrip()]</I></DT>
 
-	<DT>F <I>mode user group destination source/pattern</I></DT>
+	<DT>F <I>mode user group destination source/pattern [nostrip()]</I></DT>
 
 	<DD>Specifies one or more files for installation using
 	shell wildcard patterns. The second form specifies that
 	the files have changed or are new and should be included
-	as part of a patch.</DD>
+	as part of a patch. If the "nostrip()" option is
+	included, the file will not be stripped before the
+	installation is created.</DD>
 
-	<DT>i <I>mode user group service-name source</I></DT>
+	<DT>i <I>mode user group service-name source ["options"]</I></DT>
 
-	<DT>I <I>mode user group service-name source</I></DT>
+	<DT>I <I>mode user group service-name source ["options"]</I></DT>
 
 	<DD>Specifies an initialization script for installation.
 	The second form specifies that the file has changed or
@@ -239,7 +243,48 @@ supported by <I>EPM</I>:</P>
 	appropriate system-specific directories for run levels
 	0, 2, 3, and 5. Initialization scripts <B>must</B>
 	accept at least the <I>start</I> and <I>stop</I>
-	commands.</DD>
+	commands. The optional <I>options</I> following the
+	source filename can be any of the following:
+	
+	<DL>
+
+		<DT>order(<I>string</I>)</DT>
+
+		<DD>Specifies the relative startup order
+		compared to the required and used system
+		functions. Supported values include First,
+		Early, None, Late, and Last (OSX only).</DD>
+
+		<DT>provides(<I>name(s)</I>)</DT>
+
+		<DD>Specifies names of system functions that are
+		provided by this startup item (OSX only).</DD>
+
+		<DT>requires(<I>name(s)</I>)</DT>
+
+		<DD>Specifies names of system functions that are
+		required by this startup item (OSX only).</DD>
+
+		<DT>runlevels(<I>levels</I>)</DT>
+
+		<DD>Specifies the run levels to use.</DD>
+
+		<DT>start(<I>number</I>)</DT>
+
+		<DD>Specifies the starting sequence number from
+		00 to 99.</DD>
+
+		<DT>stop(<I>number</I>)</DT>
+
+		<DD>Specifies the ending sequence number from 00
+		to 99.</DD>
+
+		<DT>uses(<I>name(s)</I>)</DT>
+
+		<DD>Specifies names of system functions that are
+		used by this startup item (OSX only).</DD>
+
+	</DL></DD>
 
 	<DT>l <I>mode user group destination source</I></DT>
 

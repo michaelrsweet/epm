@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.67.2.4 2002/10/17 15:42:46 mike Exp $"
+ * "$Id: epm.c,v 1.67.2.5 2002/10/18 15:02:34 mike Exp $"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -75,6 +75,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 		  "bsd",
 		  "deb",
 		  "inst",
+		  "osx",
 		  "pkg",
 		  "rpm",
 		  "setld",
@@ -562,5 +563,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.67.2.4 2002/10/17 15:42:46 mike Exp $".
+ * End of "$Id: epm.c,v 1.67.2.5 2002/10/18 15:02:34 mike Exp $".
  */

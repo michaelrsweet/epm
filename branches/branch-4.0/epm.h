@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.27.2.10 2002/10/17 15:42:46 mike Exp $"
+ * "$Id: epm.h,v 1.27.2.11 2002/10/18 15:02:35 mike Exp $"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -252,6 +252,7 @@ extern int	copy_file(const char *dst, const char *src,
 		          int mode, int owner, int group);
 extern char	*find_subpackage(dist_t *dist, const char *subpkg);
 extern void	free_dist(dist_t *dist);
+extern const char *get_option(file_t *file, const char *name, const char *defval);
 extern void	get_platform(struct utsname *platform);
 extern const char *get_runlevels(file_t *file, const char *deflevels);
 extern int	get_start(file_t *file, int defstart);
@@ -316,5 +317,5 @@ extern int	write_dist(const char *listname, dist_t *dist);
 
 
 /*
- * End of "$Id: epm.h,v 1.27.2.10 2002/10/17 15:42:46 mike Exp $".
+ * End of "$Id: epm.h,v 1.27.2.11 2002/10/18 15:02:35 mike Exp $".
  */
