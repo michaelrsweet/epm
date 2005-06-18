@@ -1,5 +1,5 @@
 /*
- * "$Id: rpm.c,v 1.56 2005/02/09 19:54:11 mike Exp $"
+ * "$Id$"
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
@@ -126,8 +126,10 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   make_directory(filename, 0777, getuid(), getgid());
 
-  if (strcmp(platform->machine, "intel") == 0)
+  if (!strcmp(platform->machine, "intel"))
     snprintf(filename, sizeof(filename), "%s/RPMS/i386", directory);
+  else if (!strcmp(platform->machine, "ppc"))
+    snprintf(filename, sizeof(filename), "%s/RPMS/powerpc", directory);
   else
     snprintf(filename, sizeof(filename), "%s/RPMS/%s", directory,
              platform->machine);
@@ -222,9 +224,15 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Building RPM binary distribution...");
 
-  if (strcmp(platform->machine, "intel") == 0)
+  if (!strcmp(platform->machine, "intel"))
   {
     if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "i386 %s",
+                    specname))
+      return (1);
+  }
+  else if (!strcmp(platform->machine, "ppc"))
+  {
+    if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "powerpc %s",
                     specname))
       return (1);
   }
@@ -359,8 +367,12 @@ move_rpms(const char     *prodname,	/* I - Product short name */
 
   strlcat(rpmname, ".rpm", sizeof(rpmname));
 
-  if (strcmp(platform->machine, "intel") == 0)
+  if (!strcmp(platform->machine, "intel"))
     run_command(NULL, "/bin/mv %s/RPMS/i386/%s-%s-%d.i386.rpm %s",
+		rpmdir, prodfull, dist->version, dist->relnumber,
+		rpmname);
+  else if (!strcmp(platform->machine, "ppc"))
+    run_command(NULL, "/bin/mv %s/RPMS/powerpc/%s-%s-%d.powerpc.rpm %s",
 		rpmdir, prodfull, dist->version, dist->relnumber,
 		rpmname);
   else
@@ -655,5 +667,5 @@ write_spec(const char *prodname,	/* I - Product name */
 
 
 /*
- * End of "$Id: rpm.c,v 1.56 2005/02/09 19:54:11 mike Exp $".
+ * End of "$Id$".
  */

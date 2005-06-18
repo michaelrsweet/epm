@@ -1,5 +1,5 @@
 /*
- * "$Id: deb.c,v 1.28 2005/02/09 19:54:11 mike Exp $"
+ * "$Id$"
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
@@ -221,8 +221,10 @@ make_subpackage(const char     *prodname,
   * (which we change in get_platform to a common name)
   */
 
-  if (strcmp(platform->machine, "intel") == 0)
+  if (!strcmp(platform->machine, "intel"))
     fputs("Architecture: i386\n", fp);
+  else if (!strcmp(platform->machine, "ppc"))
+    fputs("Architecture: powerpc\n", fp);
   else
     fprintf(fp, "Architecture: %s\n", platform->machine);
 
@@ -567,5 +569,5 @@ make_subpackage(const char     *prodname,
 
 
 /*
- * End of "$Id: deb.c,v 1.28 2005/02/09 19:54:11 mike Exp $".
+ * End of "$Id$".
  */
