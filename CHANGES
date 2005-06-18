@@ -10,6 +10,9 @@ EPM 4.0
 	- Fixed NetBSD and OpenBSD packaging support - no longer
 	  use FreeBSD-specific extensions to pkg_create on those
 	  variants.
+	- Fixed PowerPC platform support for RPM and Debian
+	  packages.
+
 
 EPM 3.7.1
 
