@@ -1,5 +1,5 @@
 /*
- * "$Id: aix.c,v 1.19 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
@@ -499,6 +499,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   file_t		*file;		/* Current distribution file */
   int			configcount;	/* Number of config files */
   int 			shared_file;	/* Shared file? */
+  const char		*runlevels;	/* Run levels */
 
 
  /*
@@ -536,7 +537,12 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
       {
 	case 'i' :
             if (root)
-              qprintf(fp, "./etc/rc.d/rc2.d/S99%s\n", file->dst);
+	    {
+              for (runlevels = get_runlevels(file, "2");
+		   isdigit(*runlevels & 255);
+		   runlevels ++)
+                qprintf(fp, "./etc/rc.d/rc%c.d/%s\n", *runlevels, file->dst);
+            }
 	    break;
 
 	default :
@@ -771,7 +777,10 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     switch (tolower(file->type))
     {
       case 'i' :
-          qprintf(fp, "/etc/rc.d/rc2.d/S99%s:\n", file->dst);
+          for (runlevels = get_runlevels(file, "2");
+	       isdigit(*runlevels & 255);
+	       runlevels ++)
+            qprintf(fp, "/etc/rc.d/rc%c.d/%s:\n", *runlevels, file->dst);
 	  break;
       default :
           qprintf(fp, "%s:\n", file->dst);
@@ -858,5 +867,5 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: aix.c,v 1.19 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id$".
  */

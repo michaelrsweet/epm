@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.c,v 1.79 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
@@ -365,6 +365,13 @@ main(int  argc,			/* I - Number of command-line arguments */
     usage();
   }
 
+  for (i = 0; prodname[i]; i ++)
+    if (!isalnum(prodname[i] & 255))
+    {
+      puts("epm: Product names can only contain letters and numbers!");
+      usage();
+    }
+
   if (!listname[0])
     snprintf(listname, sizeof(listname), "%s.list", prodname);
 
@@ -599,5 +606,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epm.c,v 1.79 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id$".
  */
