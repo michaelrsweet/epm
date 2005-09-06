@@ -7,6 +7,9 @@ EPM 4.0
 	- New subpackage support for creating multiple dependent
 	  packages or a combined package with selectable
 	  subpackages, depending on the package format.
+	- The setup GUI now sets the EPM_INSTALL_TYPE environment
+	  variable to the value of the selected TYPE line in the
+	  setup.types file.
 	- Fixed NetBSD and OpenBSD packaging support - no longer
 	  use FreeBSD-specific extensions to pkg_create on those
 	  variants.

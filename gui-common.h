@@ -63,7 +63,8 @@ struct dist_t			//// Distributions
 
 struct dtype_t			//// Installation types
 {
-  char		label[80];	// Type name;
+  char		name[80];	// Type name
+  char		label[80];	// Type label
   int		num_products;	// Number of products to install (0 = select)
   int		products[200];	// Products to install
   int		size;		// Size of products in kbytes
