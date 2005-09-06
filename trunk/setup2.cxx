@@ -1,5 +1,5 @@
 //
-// "$Id: setup2.cxx,v 1.42 2005/01/11 21:36:57 mike Exp $"
+// "$Id$"
 //
 //   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -640,7 +640,8 @@ load_types(void)
   int		i;		// Looping var
   FILE		*fp;		// File to read from
   char		line[1024],	// Line from file
-		*lineptr;	// Pointer into line
+		*lineptr,	// Pointer into line
+		*sep;		// Separator
   dtype_t	*dt;		// Current install type
   dist_t	*dist;		// Distribution
 
@@ -660,7 +661,7 @@ load_types(void)
       if (*lineptr == '\n')
         *lineptr = '\0';
 
-      if (strncasecmp(line, "TYPE", 4) == 0 && isspace(line[4]))
+      if (!strncasecmp(line, "TYPE", 4) && isspace(line[4]))
       {
         // New type...
 	if (NumInstTypes >= (int)(sizeof(InstTypes) / sizeof(InstTypes[0])))
@@ -671,15 +672,23 @@ load_types(void)
 	  exit(1);
 	}
 
+        // Skip whitespace...
         for (lineptr = line + 5; isspace(*lineptr); lineptr ++);
 
+	// Copy name and label string...
         dt = InstTypes + NumInstTypes;
 	NumInstTypes ++;
 
 	memset(dt, 0, sizeof(dtype_t));
-	strncpy(dt->label, lineptr, sizeof(dt->label) - 10);
+	if ((sep = strchr(lineptr, '/')) != NULL)
+	  *sep++ = '\0';
+	else
+	  sep = lineptr;
+
+	strncpy(dt->name, lineptr, sizeof(dt->name));
+	strncpy(dt->label, sep, sizeof(dt->label) - 10);
       }
-      else if (strncasecmp(line, "INSTALL", 7) == 0 && dt && isspace(line[7]))
+      else if (!strncasecmp(line, "INSTALL", 7) && dt && isspace(line[7]))
       {
         // Install a product...
 	if (dt->num_products >= (int)(sizeof(dt->products) / sizeof(dt->products[0])))
@@ -690,8 +699,10 @@ load_types(void)
 	  exit(1);
 	}
 
+        // Skip whitespace...
         for (lineptr = line + 8; isspace(*lineptr); lineptr ++);
 
+	// Add product to list...
         if ((dist = find_dist(lineptr, NumDists, Dists)) != NULL)
 	{
           dt->products[dt->num_products] = dist - Dists;
@@ -724,7 +735,11 @@ load_types(void)
     else if (dt->size)
       sprintf(dt->label + strlen(dt->label), " (+%dk disk space)", dt->size);
 
-    TypeButton[i]->label(dt->label);
+    if ((lineptr = strchr(dt->label, '/')) != NULL)
+      TypeButton[i]->label(lineptr + 1);
+    else
+      TypeButton[i]->label(dt->label);
+
     TypeButton[i]->show();
   }
 
@@ -791,11 +806,12 @@ log_cb(int fd,			// I - Pipe to read from
 void
 next_cb(Fl_Button *, void *)
 {
-  int		i;		// Looping var
-  int		progress;	// Progress so far...
-  int		error;		// Errors?
-  static char	message[1024];	// Progress message...
-  static int	installing = 0;	// Installing software?
+  int		i;			// Looping var
+  int		progress;		// Progress so far...
+  int		error;			// Errors?
+  static char	message[1024];		// Progress message...
+  static char	install_type[1024];	// EPM_INSTALL_TYPE env variable
+  static int	installing = 0;		// Installing software?
 
 
   Wizard->next();
@@ -812,13 +828,22 @@ next_cb(Fl_Button *, void *)
     if (NumInstTypes)
       PrevButton->activate();
 
+    // Figure out which type is chosen...
     for (i = 0; i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])); i ++)
       if (TypeButton[i]->value())
         break;
 
-    if (i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])) &&
-        InstTypes[i].num_products > 0)
-      Wizard->next();
+    if (i < (int)(sizeof(TypeButton) / sizeof(TypeButton[0])))
+    {
+      // Set the EPM_INSTALL_TYPE environment variable...
+      snprintf(install_type, sizeof(install_type), "EPM_INSTALL_TYPE=%s",
+               InstTypes[i].name);
+      putenv(install_type);
+
+      // Skip product selection if this type has a list already...
+      if (InstTypes[i].num_products > 0)
+        Wizard->next();
+    }
   }
 
   if (Wizard->value() == ConfirmPane)
@@ -1016,7 +1041,6 @@ update_sizes(void)
 }
 
 
-
 //
-// End of "$Id: setup2.cxx,v 1.42 2005/01/11 21:36:57 mike Exp $".
+// End of "$Id$".
 //
