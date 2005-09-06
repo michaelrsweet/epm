@@ -536,13 +536,14 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
       switch (tolower(file->type))
       {
 	case 'i' :
-            if (root)
-	    {
-              for (runlevels = get_runlevels(file, "2");
-		   isdigit(*runlevels & 255);
-		   runlevels ++)
-                qprintf(fp, "./etc/rc.d/rc%c.d/%s\n", *runlevels, file->dst);
-            }
+            for (runlevels = get_runlevels(file, "2");
+		 isdigit(*runlevels & 255);
+		 runlevels ++)
+              if (root)
+        	qprintf(fp, ".%s/etc/rc.d/rc%c.d/%s\n", *runlevels, file->dst);
+	      else
+        	qprintf(fp, "./usr/lpp/%s/inst_root/etc/rc.d/rc%c.d/%s\n",
+	        	prodfull, *runlevels, file->dst);
 	    break;
 
 	default :
