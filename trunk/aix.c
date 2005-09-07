@@ -540,7 +540,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 		 isdigit(*runlevels & 255);
 		 runlevels ++)
               if (root)
-        	qprintf(fp, ".%s/etc/rc.d/rc%c.d/%s\n", *runlevels, file->dst);
+        	qprintf(fp, "./etc/rc.d/rc%c.d/%s\n", *runlevels, file->dst);
 	      else
         	qprintf(fp, "./usr/lpp/%s/inst_root/etc/rc.d/rc%c.d/%s\n",
 	        	prodfull, *runlevels, file->dst);
@@ -781,35 +781,58 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
           for (runlevels = get_runlevels(file, "2");
 	       isdigit(*runlevels & 255);
 	       runlevels ++)
-            qprintf(fp, "/etc/rc.d/rc%c.d/%s:\n", *runlevels, file->dst);
+          {
+	    qprintf(fp, "/etc/rc.d/rc%c.d/%s:\n", *runlevels, file->dst);
+	    fprintf(fp, "    class=apply,inventory,%s\n", prodfull);
+
+	    switch (tolower(file->type))
+	    {
+	      case 'd' :
+        	  fputs("    type=DIRECTORY\n", fp);
+        	  break;
+	      case 'l' :
+        	  fputs("    type=SYMLINK\n", fp);
+		  qprintf(fp, "    target=%s\n", file->src);
+        	  break;
+	      default :
+        	  fputs("    type=FILE\n", fp);
+        	  if (!stat(file->src, &fileinfo))
+		    fprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
+		  break;
+	    }
+
+	    fprintf(fp, "    owner=%s\n", file->user);
+	    fprintf(fp, "    group=%s\n", file->group);
+	    fprintf(fp, "    mode=%04o\n", file->mode);
+	    fputs("\n", fp);
+	  }
 	  break;
       default :
           qprintf(fp, "%s:\n", file->dst);
+	  fprintf(fp, "    class=apply,inventory,%s\n", prodfull);
+
+	  switch (tolower(file->type))
+	  {
+	    case 'd' :
+        	fputs("    type=DIRECTORY\n", fp);
+        	break;
+	    case 'l' :
+        	fputs("    type=SYMLINK\n", fp);
+		qprintf(fp, "    target=%s\n", file->src);
+        	break;
+	    default :
+        	fputs("    type=FILE\n", fp);
+        	if (!stat(file->src, &fileinfo))
+		  fprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
+		break;
+	  }
+
+	  fprintf(fp, "    owner=%s\n", file->user);
+	  fprintf(fp, "    group=%s\n", file->group);
+	  fprintf(fp, "    mode=%04o\n", file->mode);
+	  fputs("\n", fp);
 	  break;
     }
-
-    fprintf(fp, "    class=apply,inventory,%s\n", prodfull);
-
-    switch (tolower(file->type))
-    {
-      case 'd' :
-          fputs("    type=DIRECTORY\n", fp);
-          break;
-      case 'l' :
-          fputs("    type=SYMLINK\n", fp);
-	  qprintf(fp, "    target=%s\n", file->src);
-          break;
-      default :
-          fputs("    type=FILE\n", fp);
-          if (!stat(file->src, &fileinfo))
-	    fprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
-	  break;
-    }
-
-    fprintf(fp, "    owner=%s\n", file->user);
-    fprintf(fp, "    group=%s\n", file->group);
-    fprintf(fp, "    mode=%04o\n", file->mode);
-    fputs("\n", fp);
   }
 
   fclose(fp);
