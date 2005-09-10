@@ -1,5 +1,5 @@
 /*
- * "$Id: bsd.c,v 1.14 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
  *   Free/Net/OpenBSD package gateway for the ESP Package Manager (EPM).
  *
@@ -398,7 +398,7 @@ make_subpackage(const char     *prodname,
                         "-c %s "
 			"-d %s "
                         "-f %s "
-			"%s",
+			"%s.tgz",
                   directory, prodfull,
 		  commentname,
 		  descrname,
@@ -442,5 +442,5 @@ make_subpackage(const char     *prodname,
 
 
 /*
- * End of "$Id: bsd.c,v 1.14 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id$".
  */
