@@ -1,3 +1,4 @@
+#define __OpenBSD__
 /*
  * "$Id$"
  *
@@ -210,13 +211,19 @@ make_subpackage(const char     *prodname,
       continue;
 
     if (d->type == DEPEND_REQUIRES)
+#ifdef __OpenBSD__
+      fprintf(fp, "@depend %s", d->product);
+#else
       fprintf(fp, "@pkgdep %s", d->product);
+#endif /* __OpenBSD__ */
     else
 #ifdef __FreeBSD__
      /*
       * FreeBSD uses @conflicts...
       */
       fprintf(fp, "@conflicts %s", d->product);
+#elif defined(__OpenBSD__)
+      fprintf(fp, "@conflict %s", d->product);
 #else
       fprintf(fp, "@pkgcfl %s", d->product);
 #endif /* __FreeBSD__ */
@@ -295,7 +302,13 @@ make_subpackage(const char     *prodname,
       case 'c' :
       case 'f' :
       case 'l' :
+#ifdef __OpenBSD__
+          qprintf(fp, "@file %s\n", file->dst + 1);
+	  if (tolower(file->type) == 'c')
+            qprintf(fp, "@sample %s\n", file->dst + 1);
+#else
           qprintf(fp, "%s\n", file->dst + 1);
+#endif /* __OpenBSD__ */
           break;
     }
   }
