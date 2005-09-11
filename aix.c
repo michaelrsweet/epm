@@ -206,8 +206,21 @@ make_aix(const char     *prodname,	/* I - Product short name */
 	       runlevels ++)
 	  {
             snprintf(filename, sizeof(filename),
-	             "%s/%s/usr/lpp/%s/inst_root/etc/rc.d/rc%c.d/%s",
-	             directory, prodname, prodname, *runlevels, file->dst);
+	             "%s/%s/usr/lpp/%s/inst_root/etc/rc.d/rc%c.d/S%02d%s",
+	             directory, prodname, prodname, *runlevels,
+		     get_start(file, 99), file->dst);
+
+	    if (Verbosity > 1)
+	      printf("%s -> %s...\n", file->src, filename);
+
+	    if (copy_file(filename, file->src, file->mode,
+	                  pwd ? pwd->pw_uid : 0, grp ? grp->gr_gid : 0))
+	      return (1);
+
+            snprintf(filename, sizeof(filename),
+	             "%s/%s/usr/lpp/%s/inst_root/etc/rc.d/rc%c.d/K%02d%s",
+	             directory, prodname, prodname, *runlevels,
+		     get_stop(file, 0), file->dst);
 
 	    if (Verbosity > 1)
 	      printf("%s -> %s...\n", file->src, filename);
