@@ -816,7 +816,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
 	    fprintf(fp, "    owner=%s\n", file->user);
 	    fprintf(fp, "    group=%s\n", file->group);
-	    fprintf(fp, "    mode=%04o\n", file->mode);
+	    fprintf(fp, "    mode=%04o\n", (unsigned)file->mode);
 	    fputs("\n", fp);
 	  }
 	  break;
@@ -836,13 +836,13 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 	    default :
         	fputs("    type=FILE\n", fp);
         	if (!stat(file->src, &fileinfo))
-		  fprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
+		  fprintf(fp, "    size=%ld\n", (long)fileinfo.st_size);
 		break;
 	  }
 
 	  fprintf(fp, "    owner=%s\n", file->user);
 	  fprintf(fp, "    group=%s\n", file->group);
-	  fprintf(fp, "    mode=%04o\n", file->mode);
+	  fprintf(fp, "    mode=%04o\n", (unsigned)file->mode);
 	  fputs("\n", fp);
 	  break;
     }

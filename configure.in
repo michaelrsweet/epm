@@ -155,8 +155,7 @@ if test -n "$GCC"; then
 	fi
 
 	# Add useful warning options...
-	OPTIM="-Wall -Wformat -Wunused -Wconversion $OPTIM"
-	OPTIM="-Wno-shadow -Wno-return-type -Wno-format-y2k $OPTIM"
+	OPTIM="-Wall -Wformat -Wno-format-y2k -Wunused $OPTIM"
 
 	# See if GCC supports -fno-rtti...
 	AC_MSG_CHECKING(if GCC supports -fno-rtti)
