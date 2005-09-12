@@ -1,4 +1,3 @@
-#define __OpenBSD__
 /*
  * "$Id$"
  *
