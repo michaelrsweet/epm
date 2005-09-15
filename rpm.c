@@ -126,6 +126,9 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   make_directory(filename, 0777, getuid(), getgid());
 
+  snprintf(filename, sizeof(filename), "%s/rpms", directory);
+  symlink("RPMS", filename);
+
   if (!strcmp(platform->machine, "intel"))
     snprintf(filename, sizeof(filename), "%s/RPMS/i386", directory);
   else if (!strcmp(platform->machine, "ppc"))
@@ -315,6 +318,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
       puts("Removing temporary distribution files...");
 
     run_command(NULL, "/bin/rm -rf %s/RPMS", directory);
+    run_command(NULL, "/bin/rm -f %s/rpms", directory);
     run_command(NULL, "/bin/rm -rf %s/buildroot", directory);
 
     unlink(specname);
