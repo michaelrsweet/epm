@@ -552,11 +552,19 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
             for (runlevels = get_runlevels(file, "2");
 		 isdigit(*runlevels & 255);
 		 runlevels ++)
-              if (root)
-        	qprintf(fp, "./etc/rc.d/rc%c.d/%s\n", *runlevels, file->dst);
+            {
+	      if (root)
+	        putc('.', fp);
 	      else
-        	qprintf(fp, "./usr/lpp/%s/inst_root/etc/rc.d/rc%c.d/%s\n",
-	        	prodfull, *runlevels, file->dst);
+        	qprintf(fp, "./usr/lpp/%s/inst_root", prodfull);
+
+              if (*runlevels == '0')
+        	qprintf(fp, "/etc/rc.d/rc0.d/K%02d%s\n",
+		        get_stop(file, 0), file->dst);
+	      else
+        	qprintf(fp, "/etc/rc.d/rc%c.d/S%02d%s\n",
+	        	*runlevels, get_start(file, 99), file->dst);
+            }
 	    break;
 
 	default :
@@ -795,24 +803,18 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 	       isdigit(*runlevels & 255);
 	       runlevels ++)
           {
-	    qprintf(fp, "/etc/rc.d/rc%c.d/%s:\n", *runlevels, file->dst);
+	    if (*runlevels == '0')
+	      qprintf(fp, "/etc/rc.d/rc0.d/K%02d%s:\n",
+	              get_stop(file, 0), file->dst);
+            else
+	      qprintf(fp, "/etc/rc.d/rc%c.d/S%02d%s:\n",
+	              *runlevels, get_start(file, 99), file->dst);
+
 	    fprintf(fp, "    class=apply,inventory,%s\n", prodfull);
 
-	    switch (tolower(file->type))
-	    {
-	      case 'd' :
-        	  fputs("    type=DIRECTORY\n", fp);
-        	  break;
-	      case 'l' :
-        	  fputs("    type=SYMLINK\n", fp);
-		  qprintf(fp, "    target=%s\n", file->src);
-        	  break;
-	      default :
-        	  fputs("    type=FILE\n", fp);
-        	  if (!stat(file->src, &fileinfo))
-		    fprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
-		  break;
-	    }
+            fputs("    type=FILE\n", fp);
+            if (!stat(file->src, &fileinfo))
+	      fprintf(fp, "    size=%d\n", (int)fileinfo.st_size);
 
 	    fprintf(fp, "    owner=%s\n", file->user);
 	    fprintf(fp, "    group=%s\n", file->group);
