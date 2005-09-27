@@ -99,7 +99,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "Name: %s\n", prodname);
   fprintf(fp, "Version: %s\n", dist->version);
   fprintf(fp, "Release: %d\n", dist->relnumber);
-  fprintf(fp, "Copyright: %s\n", dist->copyright);
+  fprintf(fp, "License: %s\n", dist->copyright);
   fprintf(fp, "Packager: %s\n", dist->packager);
   fprintf(fp, "Vendor: %s\n", dist->vendor);
   fprintf(fp, "BuildRoot: %s/buildroot\n", absdir);
