@@ -1,6 +1,7 @@
 TODO - ESP Package Manager (EPM) 4.0
 ------------------------------------
 
+	- Automatically create a disk image for MacOS X packages?
 	- %option to pass in format-specific command-line options
 	  to the packaging program.
 	- %category to set the application category.
