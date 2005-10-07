@@ -837,6 +837,10 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
         	fputs("    type=SYMLINK\n", fp);
 		qprintf(fp, "    target=%s\n", file->src);
         	break;
+	    case 'c' :
+        	fputs("    type=FILE\n", fp);
+        	fputs("    size=VOLATILE\n", fp);
+		break;
 	    default :
         	fputs("    type=FILE\n", fp);
         	if (!stat(file->src, &fileinfo))
