@@ -273,8 +273,9 @@ make_aix(const char     *prodname,	/* I - Product short name */
 
   snprintf(filename, sizeof(filename), "%s/%s", directory, prodname);
 
-  if (run_command(filename, "sh -c \'find . -print | backup -i -f ../%s.bff -q %s\'",
-                  prodname, Verbosity ? "-v" : "", prodname))
+  if (run_command(filename,
+		  "sh -c \'find . -print | backup -i -f ../%s.bff -q %s\'",
+                  prodname, Verbosity ? "-v" : ""))
     return (1);
 
  /*

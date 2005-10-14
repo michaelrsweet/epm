@@ -1,5 +1,5 @@
 #
-# "$Id: Makefile.in,v 1.48 2005/01/11 21:36:57 mike Exp $"
+# "$Id$"
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
@@ -307,7 +307,7 @@ test:	$(TARGETS)
 		echo Portable distribution build test FAILED.; \
 		cat test.log; \
 	fi
-	if ./epm -v -f native epm >test.log; then \
+	if ./epm -v -s doc/epmlogo.tif -f native epm >test.log; then \
 		echo Native distribution build test PASSED.; \
 	else \
 		echo Native distribution build test FAILED.; \
@@ -333,7 +333,7 @@ deb: $(TARGETS)
 	./epm -f deb -v epm
 
 gui: $(TARGETS)
-	./epm -v -s epm.xpm --setup-program setup \
+	./epm -v -s doc/epmlogo.gif --setup-program setup \
 		--uninstall-program uninst --data-dir macosx epm
 
 inst tardist: $(TARGETS)
@@ -346,7 +346,7 @@ native: $(TARGETS)
 	./epm -f native -v epm
 
 osx: $(TARGETS)
-	./epm -f osx -v epm
+	./epm -f osx -v -s doc/epmlogo.tif epm
 
 portable: $(TARGETS)
 	./epm -v epm
@@ -449,5 +449,5 @@ $(OBJS):	Makefile config.h
 
 
 #
-# End of "$Id: Makefile.in,v 1.48 2005/01/11 21:36:57 mike Exp $".
+# End of "$Id$".
 #
