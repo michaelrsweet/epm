@@ -1333,7 +1333,7 @@ CFLAGS="${CFLAGS:=}"
 CXXFLAGS="${CXXFLAGS:=}"
 LDFLAGS="${LDFLAGS:=}"
 
-OPTIM="${OPTIM:=-O}"
+OPTIM="${OPTIM:=}"
 
 
 # Check whether --enable-debug or --disable-debug was given.
@@ -5511,7 +5511,7 @@ fi
 if test -n "$GCC"; then
 	# Add standard optimization options...
 	if test -z "$OPTIM"; then
-        	OPTIM="-O2 -fforce-mem -fforce-addr -fcaller-saves"
+        	OPTIM="-Os -g"
 	fi
 
 	# Add useful warning options...
