@@ -48,8 +48,8 @@ static const char * const pm_paths[] =	/* Paths to PackageMaker program */
 static int	make_subpackage(const char *prodname, const char *directory,
 		                dist_t *dist, const char *subpackage,
 				const char *setup);
-static int	write_rtf(dist_t *dist, const char *subpackage,
-			  const char *welcome);
+static int	write_rtf(dist_t *dist, const char *title,
+			  const char *subpackage, const char *welcome);
 
 
 /*
@@ -140,7 +140,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
 
     snprintf(filename, sizeof(filename), "%s/MetaResources/Welcome.rtf",
              directory);
-    if (write_rtf(dist, NULL, filename))
+    if (write_rtf(dist, dist->product, NULL, filename))
       return (1);
 
     snprintf(filename, sizeof(filename), "%s/%s-metadesc.plist", directory,
@@ -201,7 +201,7 @@ make_osx(const char     *prodname,	/* I - Product short name */
     fputs("        <key>IFPkgFlagAllowBackRev</key>\n", fp);
     fputs("        <true/>\n", fp);
     fputs("        <key>IFPkgFlagComponentDirectory</key>\n", fp);
-    fputs("        <string>../Packages</string>\n", fp);
+    fputs("        <string>Contents/Packages</string>\n", fp);
     fputs("        <key>IFPkgFlagPackageList</key>\n", fp);
     fputs("        <array>\n", fp);
     fputs("                <dict>\n", fp);
@@ -216,6 +216,8 @@ make_osx(const char     *prodname,	/* I - Product short name */
       fputs("                        <key>IFPkgFlagPackageLocation</key>\n", fp);
       fprintf(fp, "                        <string>%s-%s.pkg</string>\n",
               prodname, dist->subpackages[i]);
+      fputs("                        <key>IFPkgFlagPackageSelection</key>\n", fp);
+      fputs("                        <string>selected</string>\n", fp);
       fputs("                </dict>\n", fp);
     }
     fputs("        </array>\n", fp);
@@ -270,6 +272,12 @@ make_osx(const char     *prodname,	/* I - Product short name */
       return (1);
 
    /*
+    * Move subpackages into the .mpkg directory...
+    */
+
+    run_command(directory, "/bin/mv Packages %s.mpkg/Contents", prodname);
+
+   /*
     * Remove temporary files...
     */
 
@@ -311,9 +319,13 @@ make_osx(const char     *prodname,	/* I - Product short name */
     strlcat(filename, platname, sizeof(filename));
   }
 
-  run_command(NULL, "hdiutil create -ov -srcfolder %s/%s.%s %s/%s.dmg",
-              directory, dist->num_subpackages ? "mpkg" : "pkg",
-	      directory, filename);
+  if (run_command(NULL, "hdiutil create -ov -srcfolder %s/%s.%s %s/%s.dmg",
+                  directory, prodname, dist->num_subpackages ? "mpkg" : "pkg",
+	          directory, filename))
+  {
+    fputs("epm: Unable to create disk image!\n", stderr);
+    return (1);
+  }
 
   return (0);
 }
@@ -333,6 +345,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
   int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
   char		prodfull[1024],		/* Full product name */
+		title[1024],		/* Software title */
 		filename[1024],		/* Destination filename */
 		pkgdir[1024],		/* Package directory */
 		pkgname[1024];		/* Package name */
@@ -346,9 +359,24 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
 
   if (subpackage)
+  {
     snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+
+    for (i = 0; i < dist->num_descriptions; i ++)
+      if (dist->descriptions[i].subpackage == subpackage)
+	break;
+
+    if (i < dist->num_descriptions)
+      snprintf(title, sizeof(title), "%s - %s", dist->product,
+               dist->descriptions[i].description);
+    else
+      strlcpy(title, dist->product, sizeof(title));
+  }
   else
+  {
     strlcpy(prodfull, prodname, sizeof(prodfull));
+    strlcpy(title, dist->product, sizeof(title));
+  }
 
   if (Verbosity)
     printf("Creating %s MacOS X package...\n", prodfull);
@@ -396,7 +424,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
   snprintf(filename, sizeof(filename), "%s/%s/Resources/Welcome.rtf",
            directory, prodfull);
-  if (write_rtf(dist, subpackage, filename))
+  if (write_rtf(dist, title, subpackage, filename))
    return (1);
 
   snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory, prodfull);
@@ -420,7 +448,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
       fprintf(fp, "%s\n", dist->descriptions[i].description);
   fputs("</string>\n", fp);
   fputs("        <key>IFPkgDescriptionTitle</key>\n", fp);
-  fprintf(fp, "        <string>%s</string>\n", dist->product);
+  fprintf(fp, "        <string>%s</string>\n", title);
   fputs("        <key>IFPkgDescriptionVersion</key>\n", fp);
   fprintf(fp, "        <string>%s</string>\n", dist->version);
   fputs("</dict>\n", fp);
@@ -459,10 +487,13 @@ make_subpackage(const char *prodname,	/* I - Product short name */
   fputs("        <string>bottomleft</string>\n", fp);
   fputs("        <key>IFPkgFlagBackgroundScaling</key>\n", fp);
   fputs("        <string>none</string>\n", fp);
+  fputs("        <key>CFBundleIdentifier</key>\n", fp);
+  fprintf(fp, "        <string>%s.%s</string>\n", prodname,
+          subpackage ? subpackage : "base");
   fputs("        <key>CFBundleName</key>\n", fp);
-  fprintf(fp, "        <string>%s</string>\n", dist->product);
+  fprintf(fp, "        <string>%s</string>\n", title);
   fputs("        <key>CFBundleGetInfoString</key>\n", fp);
-  fprintf(fp, "        <string>%s %s</string>\n", dist->product, dist->version);
+  fprintf(fp, "        <string>%s %s</string>\n", title, dist->version);
   fputs("        <key>CFBundleShortVersionString</key>\n", fp);
   fprintf(fp, "        <string>%s</string>\n", dist->version);
   fputs("</dict>\n", fp);
@@ -771,6 +802,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
 static int				/* O - 0 on success, 1 on failure */
 write_rtf(dist_t     *dist,		/* I - Distribution  information */
+          const char *title,		/* I - Title of package */
           const char *subpackage,	/* I - Subpackage */
 	  const char *welcome)		/* I - Welcome file */
 {
@@ -788,7 +820,7 @@ write_rtf(dist_t     *dist,		/* I - Distribution  information */
   }
 
   fputs("{\\rtf\n", fp);
-  fprintf(fp, "\\par %s version %s\n", dist->product, dist->version);
+  fprintf(fp, "\\par %s version %s\n", title, dist->version);
   fprintf(fp, "\\par Copyright %s\n", dist->copyright);
 
   for (i = 0, newpar = 1; i < dist->num_descriptions; i ++)

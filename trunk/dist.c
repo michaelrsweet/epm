@@ -1,5 +1,5 @@
 /*
- * "$Id: dist.c,v 1.59 2005/02/08 16:42:45 swdev Exp $"
+ * "$Id$"
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
@@ -1507,8 +1507,9 @@ get_file(const char *filename,		/* I  - File to read from */
 
   if (info.st_size > (size - 1))
   {
-    fprintf(stderr, "epm: File \"%s\" is too large (%d bytes) for buffer (%d bytes)\n",
-            filename, (int)info.st_size, size - 1);
+    fprintf(stderr,
+            "epm: File \"%s\" is too large (%d bytes) for buffer (%d bytes)\n",
+            filename, (int)info.st_size, (int)size - 1);
     return (NULL);
   }
 
@@ -2326,5 +2327,5 @@ sort_subpackages(char **a,		/* I - First subpackage */
 
 
 /*
- * End of "$Id: dist.c,v 1.59 2005/02/08 16:42:45 swdev Exp $".
+ * End of "$Id$".
  */

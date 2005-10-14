@@ -356,17 +356,19 @@ get_dists(const char *d)	// I - Directory to look in
 // 'install_dist()' - Install a distribution...
 //
 
-int				// O - Install status
-install_dist(const dist_t *dist)// I - Distribution to install
+int					// O - Install status
+install_dist(const dist_t *dist)	// I - Distribution to install
 {
-  char		command[1024];	// Command string
-  int		fds[2];		// Pipe FDs
-  int		status;		// Exit status
-  int		pid;		// Process ID
-  char		licfile[1024];	// License filename
-  struct stat	licinfo;	// License file info
-  static int	liclength = 0;	// Size of license file
-  static char	liclabel[1024];	// Label for license pane
+  char		command[1024];		// Command string
+  int		fds[2];			// Pipe FDs
+  int		status;			// Exit status
+#ifndef __APPLE__
+  int		pid;			// Process ID
+#endif // !__APPLE__
+  char		licfile[1024];		// License filename
+  struct stat	licinfo;		// License file info
+  static int	liclength = 0;		// Size of license file
+  static char	liclabel[1024];		// Label for license pane
 
 
   sprintf(command, "**** %s ****", dist->name);
@@ -422,7 +424,8 @@ install_dist(const dist_t *dist)// I - Distribution to install
   OSStatus	astatus;
 
 
-  astatus = AuthorizationExecuteWithPrivileges(SetupAuthorizationRef, command, kAuthorizationFlagDefaults,
+  astatus = AuthorizationExecuteWithPrivileges(SetupAuthorizationRef, command,
+                                               kAuthorizationFlagDefaults,
                                                args, &fp);
 
   if (astatus != errAuthorizationSuccess)
@@ -483,9 +486,11 @@ install_dist(const dist_t *dist)// I - Distribution to install
     // Wait for events...
     Fl::wait();
 
+#ifndef __APPLE__
     // Check to see if the child went away...
     if (waitpid(0, &status, WNOHANG) == pid)
       break;
+#endif // !__APPLE__
   }
 
 #ifdef __APPLE__

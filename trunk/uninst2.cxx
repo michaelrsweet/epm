@@ -1,5 +1,5 @@
 //
-// "$Id: uninst2.cxx,v 1.8 2005/01/11 21:36:57 mike Exp $"
+// "$Id$"
 //
 //   ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
@@ -437,14 +437,15 @@ next_cb(Fl_Button *, void *)
 // 'remove_dist()' - Remove a distribution...
 //
 
-int				// O - Remove status
-remove_dist(const dist_t *dist)// I - Distribution to remove
+int					// O - Remove status
+remove_dist(const dist_t *dist)		// I - Distribution to remove
 {
-  char		command[1024];	// Command string
-  int		fds[2];		// Pipe FDs
-  int		status;		// Exit status
-  int		pid;		// Process ID
-
+  char		command[1024];		// Command string
+  int		fds[2];			// Pipe FDs
+  int		status;			// Exit status
+#ifndef __APPLE__
+  int		pid;			// Process ID
+#endif // !__APPLE__
 
   snprintf(command, sizeof(command), "**** %s ****", dist->name);
   RemoveLog->add(command);
@@ -519,9 +520,11 @@ remove_dist(const dist_t *dist)// I - Distribution to remove
     // Wait for events...
     Fl::wait();
 
+#ifndef __APPLE__
     // Check to see if the child went away...
     if (waitpid(0, &status, WNOHANG) == pid)
       break;
+#endif // !__APPLE__
   }
 
 #ifdef __APPLE__
@@ -674,5 +677,5 @@ update_sizes(void)
 
 
 //
-// End of "$Id: uninst2.cxx,v 1.8 2005/01/11 21:36:57 mike Exp $".
+// End of "$Id$".
 //

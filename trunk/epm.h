@@ -301,7 +301,11 @@ extern dist_t	*new_dist(void);
 extern int	qprintf(FILE *fp, const char *format, ...);
 extern dist_t	*read_dist(const char *filename, struct utsname *platform,
 		           const char *format);
-extern int	run_command(const char *directory, const char *command, ...);
+extern int	run_command(const char *directory, const char *command, ...)
+#    ifdef __GNUC__
+__attribute__ ((__format__ (__printf__, 2, 3)))
+#    endif /* __GNUC__ */
+;
 extern void	sort_dist_files(dist_t *dist);
 extern void	strip_execs(dist_t *dist);
 extern int	tar_close(tarf_t *tar);
