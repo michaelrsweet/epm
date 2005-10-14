@@ -1,5 +1,5 @@
 /*
- * "$Id: epm.h,v 1.40 2005/02/09 19:54:11 mike Exp $"
+ * "$Id$"
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
@@ -277,7 +277,7 @@ extern int	make_inst(const char *prodname, const char *directory,
 extern int	make_link(const char *dst, const char *src);
 extern int	make_osx(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
-			 struct utsname *platform);
+			 struct utsname *platform, const char *setup);
 extern int	make_pkg(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform);
@@ -327,5 +327,5 @@ extern int	write_dist(const char *listname, dist_t *dist);
 
 
 /*
- * End of "$Id: epm.h,v 1.40 2005/02/09 19:54:11 mike Exp $".
+ * End of "$Id$".
  */

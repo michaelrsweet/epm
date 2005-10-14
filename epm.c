@@ -431,8 +431,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   if (!dist->product[0] ||
       !dist->copyright[0] ||
       !dist->vendor[0] ||
-      !dist->license[0] ||
-      !dist->readme[0] ||
+      (!dist->license[0] && !dist->readme[0]) ||
       !dist->version[0])
   {
     fputs("epm: Error - missing %product, %copyright, %vendor, %license,\n", stderr);
@@ -500,7 +499,7 @@ main(int  argc,			/* I - Number of command-line arguments */
         i = make_inst(prodname, directory, platname, dist, &platform);
 	break;
     case PACKAGE_OSX :
-        i = make_osx(prodname, directory, platname, dist, &platform);
+        i = make_osx(prodname, directory, platname, dist, &platform, setup);
 	break;
     case PACKAGE_PKG :
         i = make_pkg(prodname, directory, platname, dist, &platform);

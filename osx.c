@@ -1,5 +1,5 @@
 /*
- * "$Id: osx.c,v 1.14 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
  *   MacOS X package gateway for the ESP Package Manager (EPM).
  *
@@ -17,7 +17,9 @@
  *
  * Contents:
  *
- *   make_osx() - Make a MacOS X software distribution package.
+ *   make_osx()        - Make a MacOS X software distribution package.
+ *   make_subpackage() - Make a OSX subpackage.
+ *   write_rtf()       - Write an RTF welcome file.
  */
 
 /*
@@ -44,7 +46,10 @@ static const char * const pm_paths[] =	/* Paths to PackageMaker program */
  */
 
 static int	make_subpackage(const char *prodname, const char *directory,
-		                dist_t *dist, const char *subpackage);
+		                dist_t *dist, const char *subpackage,
+				const char *setup);
+static int	write_rtf(dist_t *dist, const char *subpackage,
+			  const char *welcome);
 
 
 /*
@@ -56,12 +61,14 @@ make_osx(const char     *prodname,	/* I - Product short name */
          const char     *directory,	/* I - Directory for distribution files */
          const char     *platname,	/* I - Platform name */
          dist_t         *dist,		/* I - Distribution information */
-	 struct utsname *platform)	/* I - Platform information */
+	 struct utsname *platform,	/* I - Platform information */
+	 const char	*setup)		/* I - Setup GUI image */
 {
   int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
   char		filename[1024];		/* Destination filename */
   char		current[1024];		/* Current directory */
+  const char	*ext;			/* Filename extension */
 
 
   REF(platname);
@@ -71,11 +78,11 @@ make_osx(const char     *prodname,	/* I - Product short name */
   * Create the main package and subpackages (if any)...
   */
 
-  if (make_subpackage(prodname, directory, dist, NULL))
+  if (make_subpackage(prodname, directory, dist, NULL, setup))
     return (1);
 
   for (i = 0; i < dist->num_subpackages; i ++)
-    if (make_subpackage(prodname, directory, dist, dist->subpackages[i]))
+    if (make_subpackage(prodname, directory, dist, dist->subpackages[i], setup))
       return (1);
 
   if (dist->num_subpackages)
@@ -103,31 +110,38 @@ make_osx(const char     *prodname,	/* I - Product short name */
     snprintf(filename, sizeof(filename), "%s/MetaResources", directory);
     make_directory(filename, 0777, 0, 0);
 
-    snprintf(filename, sizeof(filename), "%s/MetaResources/License.txt",
-             directory);
-    copy_file(filename, dist->license, 0644, 0, 0);
-
-    snprintf(filename, sizeof(filename), "%s/MetaResources/ReadMe.txt",
-             directory);
-    copy_file(filename, dist->readme, 0644, 0, 0);
-
-    snprintf(filename, sizeof(filename), "%s/MetaResources/Welcome.txt",
-             directory);
-    if ((fp = fopen(filename, "w")) == NULL)
+    if (dist->license[0])
     {
-      fprintf(stderr, "epm: Unable to create welcome file \"%s\" - %s\n",
-              filename, strerror(errno));
-      return (1);
+      if ((ext = strrchr(dist->license, '.')) == NULL || strcmp(ext, ".rtf"))
+	ext = ".txt";
+
+      snprintf(filename, sizeof(filename), "%s/MetaResources/License%s",
+               directory, ext);
+      copy_file(filename, dist->license, 0644, 0, 0);
     }
 
-    fprintf(fp, "%s version %s\n", dist->product, dist->version);
-    fprintf(fp, "Copyright %s\n", dist->copyright);
+    if (dist->readme[0])
+    {
+      if ((ext = strrchr(dist->readme, '.')) == NULL || strcmp(ext, ".rtf"))
+	ext = ".txt";
 
-    for (i = 0; i < dist->num_descriptions; i ++)
-      if (!dist->descriptions[i].subpackage)
-        fprintf(fp, "%s\n", dist->descriptions[i].description);
+      snprintf(filename, sizeof(filename), "%s/MetaResources/ReadMe%s",
+               directory, ext);
+      copy_file(filename, dist->readme, 0644, 0, 0);
+    }
 
-    fclose(fp);
+    if (setup && (ext = strrchr(setup, '.')) != NULL &&
+	(!strcmp(ext, ".gif") || !strcmp(ext, ".jpg") || !strcmp(ext, ".tif")))
+    {
+      snprintf(filename, sizeof(filename), "%s/MetaResources/background%s",
+               directory, ext);
+      copy_file(filename, setup, 0644, 0, 0);
+    }
+
+    snprintf(filename, sizeof(filename), "%s/MetaResources/Welcome.rtf",
+             directory);
+    if (write_rtf(dist, NULL, filename))
+      return (1);
 
     snprintf(filename, sizeof(filename), "%s/%s-metadesc.plist", directory,
              prodname);
@@ -180,6 +194,12 @@ make_osx(const char     *prodname,	/* I - Product short name */
     fputs("        <real>0.1</real>\n", fp);
     fputs("        <key>IFPkgFlagAuthorizationAction</key>\n", fp);
     fputs("        <string>RootAuthorization</string>\n", fp);
+    fputs("        <key>IFPkgFlagBackgroundAlignment</key>\n", fp);
+    fputs("        <string>bottomleft</string>\n", fp);
+    fputs("        <key>IFPkgFlagBackgroundScaling</key>\n", fp);
+    fputs("        <string>none</string>\n", fp);
+    fputs("        <key>IFPkgFlagAllowBackRev</key>\n", fp);
+    fputs("        <true/>\n", fp);
     fputs("        <key>IFPkgFlagComponentDirectory</key>\n", fp);
     fputs("        <string>../Packages</string>\n", fp);
     fputs("        <key>IFPkgFlagPackageList</key>\n", fp);
@@ -272,19 +292,43 @@ make_osx(const char     *prodname,	/* I - Product short name */
     }
   }
 
+ /*
+  * Create a disk image of the package...
+  */
+
+  if (Verbosity)
+    puts("Creating disk image...");
+
+  if (dist->relnumber)
+    snprintf(filename, sizeof(filename), "%s-%s-%d", prodname, dist->version,
+             dist->relnumber);
+  else
+    snprintf(filename, sizeof(filename), "%s-%s", prodname, dist->version);
+
+  if (platname[0])
+  {
+    strlcat(filename, "-", sizeof(filename));
+    strlcat(filename, platname, sizeof(filename));
+  }
+
+  run_command(NULL, "hdiutil create -ov -srcfolder %s/%s.%s %s/%s.dmg",
+              directory, dist->num_subpackages ? "mpkg" : "pkg",
+	      directory, filename);
+
   return (0);
 }
 
 
 /*
- * 'make_subpackage()' - Make a OSX subpackage.
+ * 'make_subpackage()' - Make an OSX subpackage.
  */
 
 static int
 make_subpackage(const char *prodname,	/* I - Product short name */
                 const char *directory,	/* I - Directory for distribution files */
 		dist_t     *dist,	/* I - Distribution  information */
-                const char *subpackage)	/* I - Subpackage */
+                const char *subpackage,	/* I - Subpackage */
+		const char *setup)	/* I - Setup GUI image */
 {
   int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
@@ -298,6 +342,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
   struct group	*grp;			/* Pointer to group record */
   char		current[1024];		/* Current directory */
   const char	*option;		/* Init script option */
+  const char	*ext;			/* Filename extension */
 
 
   if (subpackage)
@@ -321,31 +366,38 @@ make_subpackage(const char *prodname,	/* I - Product short name */
   snprintf(filename, sizeof(filename), "%s/%s/Resources", directory, prodfull);
   make_directory(filename, 0777, 0, 0);
 
-  snprintf(filename, sizeof(filename), "%s/%s/Resources/License.txt",
-           directory, prodfull);
-  copy_file(filename, dist->license, 0644, 0, 0);
-
-  snprintf(filename, sizeof(filename), "%s/%s/Resources/ReadMe.txt",
-           directory, prodfull);
-  copy_file(filename, dist->readme, 0644, 0, 0);
-
-  snprintf(filename, sizeof(filename), "%s/%s/Resources/Welcome.txt",
-           directory, prodfull);
-  if ((fp = fopen(filename, "w")) == NULL)
+  if (dist->license[0])
   {
-    fprintf(stderr, "epm: Unable to create welcome file \"%s\" - %s\n",
-            filename, strerror(errno));
-    return (1);
+    if ((ext = strrchr(dist->license, '.')) == NULL || strcmp(ext, ".rtf"))
+      ext = ".txt";
+
+    snprintf(filename, sizeof(filename), "%s/%s/Resources/License%s",
+             directory, prodfull, ext);
+    copy_file(filename, dist->license, 0644, 0, 0);
   }
 
-  fprintf(fp, "%s version %s\n", dist->product, dist->version);
-  fprintf(fp, "Copyright %s\n", dist->copyright);
+  if (dist->readme[0])
+  {
+    if ((ext = strrchr(dist->readme, '.')) == NULL || strcmp(ext, ".rtf"))
+      ext = ".txt";
 
-  for (i = 0; i < dist->num_descriptions; i ++)
-    if (dist->descriptions[i].subpackage == subpackage)
-      fprintf(fp, "%s\n", dist->descriptions[i].description);
+    snprintf(filename, sizeof(filename), "%s/%s/Resources/ReadMe%s",
+             directory, prodfull, ext);
+    copy_file(filename, dist->readme, 0644, 0, 0);
+  }
 
-  fclose(fp);
+  if (setup && (ext = strrchr(setup, '.')) != NULL &&
+      (!strcmp(ext, ".gif") || !strcmp(ext, ".jpg") || !strcmp(ext, ".tif")))
+  {
+    snprintf(filename, sizeof(filename), "%s/%s/Resources/background%s",
+             directory, prodfull, ext);
+    copy_file(filename, setup, 0644, 0, 0);
+  }
+
+  snprintf(filename, sizeof(filename), "%s/%s/Resources/Welcome.rtf",
+           directory, prodfull);
+  if (write_rtf(dist, subpackage, filename))
+   return (1);
 
   snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory, prodfull);
   if ((fp = fopen(filename, "w")) == NULL)
@@ -401,6 +453,12 @@ make_subpackage(const char *prodname,	/* I - Product short name */
     fputs("        <key>IFPkgFlagIsRequired</key>\n", fp);
     fputs("        <true/>\n", fp);
   }
+  fputs("        <key>IFPkgFlagAllowBackRev</key>\n", fp);
+  fputs("        <true/>\n", fp);
+  fputs("        <key>IFPkgFlagBackgroundAlignment</key>\n", fp);
+  fputs("        <string>bottomleft</string>\n", fp);
+  fputs("        <key>IFPkgFlagBackgroundScaling</key>\n", fp);
+  fputs("        <string>none</string>\n", fp);
   fputs("        <key>CFBundleName</key>\n", fp);
   fprintf(fp, "        <string>%s</string>\n", dist->product);
   fputs("        <key>CFBundleGetInfoString</key>\n", fp);
@@ -708,5 +766,66 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: osx.c,v 1.14 2005/01/11 21:36:57 mike Exp $".
+ * 'write_rtf()' - Write an RTF welcome file.
+ */
+
+static int				/* O - 0 on success, 1 on failure */
+write_rtf(dist_t     *dist,		/* I - Distribution  information */
+          const char *subpackage,	/* I - Subpackage */
+	  const char *welcome)		/* I - Welcome file */
+{
+  int		i;			/* Looping var */
+  FILE		*fp;			/* Welcome file */
+  int		newpar;			/* New paragraph needed */
+  const char	*desc;			/* Description text */
+
+
+  if ((fp = fopen(welcome, "w")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to create welcome file \"%s\" - %s\n",
+            welcome, strerror(errno));
+    return (1);
+  }
+
+  fputs("{\\rtf\n", fp);
+  fprintf(fp, "\\par %s version %s\n", dist->product, dist->version);
+  fprintf(fp, "\\par Copyright %s\n", dist->copyright);
+
+  for (i = 0, newpar = 1; i < dist->num_descriptions; i ++)
+    if (dist->descriptions[i].subpackage == subpackage)
+    {
+      for (desc = dist->descriptions[i].description; *desc; desc ++)
+      {
+        if (newpar)
+	{
+	  fputs("\\par ", fp);
+	  newpar = 0;
+	}
+
+        if (*desc == '\\')
+	  fputs("\\\\", fp);
+	else
+	{
+	  putc(*desc, fp);
+
+	  if (*desc == '\n' && desc[1] == '\n')
+	  {
+	    newpar = 1;
+	    desc ++;
+	  }
+        }
+      }
+    }
+    else
+      newpar = 1;
+
+  fputs("}\n", fp);
+
+  fclose(fp);
+
+  return (0);
+}
+
+/*
+ * End of "$Id$".
  */

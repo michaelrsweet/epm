@@ -1165,13 +1165,19 @@ write_distfiles(const char *directory,	/* I - Directory */
   if (Verbosity)
     printf("Copying %s license and readme files...\n", prodfull);
 
-  snprintf(filename, sizeof(filename), "%s/%s.license", directory, prodfull);
-  if (copy_file(filename, dist->license, 0444, getuid(), getgid()))
-    return (1);
+  if (dist->license[0])
+  {
+    snprintf(filename, sizeof(filename), "%s/%s.license", directory, prodfull);
+    if (copy_file(filename, dist->license, 0444, getuid(), getgid()))
+      return (1);
+  }
 
-  snprintf(filename, sizeof(filename), "%s/%s.readme", directory, prodfull);
-  if (copy_file(filename, dist->readme, 0444, getuid(), getgid()))
-    return (1);
+  if (dist->readme[0])
+  {
+    snprintf(filename, sizeof(filename), "%s/%s.readme", directory, prodfull);
+    if (copy_file(filename, dist->readme, 0444, getuid(), getgid()))
+      return (1);
+  }
 
  /*
   * Create the non-shared software distribution file...
@@ -1661,23 +1667,27 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
 
-  fprintf(scriptfile, "	more %s.license\n", prodfull);
-  fputs("	echo \"\"\n", scriptfile);
-  fputs("	while true ; do\n", scriptfile);
-  fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
-  fputs("		read yesno\n", scriptfile);
-  fputs("		case \"$yesno\" in\n", scriptfile);
-  fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
-  fputs("			break\n", scriptfile);
-  fputs("			;;\n", scriptfile);
-  fputs("			n | no | N | No | NO)\n", scriptfile);
-  fputs("			exit 1\n", scriptfile);
-  fputs("			;;\n", scriptfile);
-  fputs("			*)\n", scriptfile);
-  fputs("			echo Please enter yes or no.\n", scriptfile);
-  fputs("			;;\n", scriptfile);
-  fputs("		esac\n", scriptfile);
-  fputs("	done\n", scriptfile);
+  if (dist->license[0])
+  {
+    fprintf(scriptfile, "	more %s.license\n", prodfull);
+    fputs("	echo \"\"\n", scriptfile);
+    fputs("	while true ; do\n", scriptfile);
+    fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
+    fputs("		read yesno\n", scriptfile);
+    fputs("		case \"$yesno\" in\n", scriptfile);
+    fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
+    fputs("			break\n", scriptfile);
+    fputs("			;;\n", scriptfile);
+    fputs("			n | no | N | No | NO)\n", scriptfile);
+    fputs("			exit 1\n", scriptfile);
+    fputs("			;;\n", scriptfile);
+    fputs("			*)\n", scriptfile);
+    fputs("			echo Please enter yes or no.\n", scriptfile);
+    fputs("			;;\n", scriptfile);
+    fputs("		esac\n", scriptfile);
+    fputs("	done\n", scriptfile);
+  }
+
   fputs("fi\n", scriptfile);
   fprintf(scriptfile, "if test -x %s/%s.remove; then\n", SoftwareDir, prodfull);
   fprintf(scriptfile, "	echo Removing old versions of %s software...\n",
@@ -2076,23 +2086,27 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("		esac\n", scriptfile);
   fputs("	done\n", scriptfile);
 
-  fprintf(scriptfile, "	more %s.license\n", prodfull);
-  fputs("	echo \"\"\n", scriptfile);
-  fputs("	while true ; do\n", scriptfile);
-  fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
-  fputs("		read yesno\n", scriptfile);
-  fputs("		case \"$yesno\" in\n", scriptfile);
-  fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
-  fputs("			break\n", scriptfile);
-  fputs("			;;\n", scriptfile);
-  fputs("			n | no | N | No | NO)\n", scriptfile);
-  fputs("			exit 1\n", scriptfile);
-  fputs("			;;\n", scriptfile);
-  fputs("			*)\n", scriptfile);
-  fputs("			echo Please enter yes or no.\n", scriptfile);
-  fputs("			;;\n", scriptfile);
-  fputs("		esac\n", scriptfile);
-  fputs("	done\n", scriptfile);
+  if (dist->license[0])
+  {
+    fprintf(scriptfile, "	more %s.license\n", prodfull);
+    fputs("	echo \"\"\n", scriptfile);
+    fputs("	while true ; do\n", scriptfile);
+    fputs("		echo $ac_n \"Do you agree with the terms of this license? $ac_c\"\n", scriptfile);
+    fputs("		read yesno\n", scriptfile);
+    fputs("		case \"$yesno\" in\n", scriptfile);
+    fputs("			y | yes | Y | Yes | YES)\n", scriptfile);
+    fputs("			break\n", scriptfile);
+    fputs("			;;\n", scriptfile);
+    fputs("			n | no | N | No | NO)\n", scriptfile);
+    fputs("			exit 1\n", scriptfile);
+    fputs("			;;\n", scriptfile);
+    fputs("			*)\n", scriptfile);
+    fputs("			echo Please enter yes or no.\n", scriptfile);
+    fputs("			;;\n", scriptfile);
+    fputs("		esac\n", scriptfile);
+    fputs("	done\n", scriptfile);
+  }
+
   fputs("fi\n", scriptfile);
 
   write_space_checks(prodfull, scriptfile, rootsize ? "psw" : NULL,
@@ -2653,7 +2667,7 @@ write_space_checks(const char *prodname,/* I - Distribution name */
   fputs("\n", fp);
 
   fputs("if test x$sproot = x -o x$spusr = x; then\n", fp);
-  fputs("	echo WARNING: Unable to determine available disk space; installing blindly...\n", fp);
+  fputs("	echo WARNING: Unable to determine available disk space\\; installing blindly...\n", fp);
   fputs("else\n", fp);
   fputs("	if test x$fsroot = x$fsusr; then\n", fp);
   fputs("		if test $spall -gt $sproot; then\n", fp);
