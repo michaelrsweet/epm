@@ -400,13 +400,7 @@ make_subpackage(const char     *prodname,
 
     for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
       if (tolower(file->type) == 'i' && file->subpackage == subpackage)
-      {
         fprintf(fp, "/etc/init.d/%s stop\n", file->dst);
-
-        fputs("if [ purge = \"$1\" ]; then\n", fp);
-        fprintf(fp, "	update-rc.d %s remove >/dev/null\n", file->dst);
-        fputs("fi\n", fp);
-      }
 
     fclose(fp);
   }
@@ -418,6 +412,11 @@ make_subpackage(const char     *prodname,
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_POST_REMOVE && c->subpackage == subpackage)
       break;
+
+  if (!i)
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
+        break;
 
   if (i)
   {
@@ -438,9 +437,17 @@ make_subpackage(const char     *prodname,
     fputs("#!/bin/sh\n", fp);
     fputs("# " EPM_VERSION "\n", fp);
 
-    for (; i > 0; i --, c ++)
+    for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
       if (c->type == COMMAND_POST_REMOVE && c->subpackage == subpackage)
-        fprintf(fp, "%s\n", c->command);
+	fprintf(fp, "%s\n", c->command);
+
+    for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+      if (tolower(file->type) == 'i' && file->subpackage == subpackage)
+      {
+        fputs("if [ purge = \"$1\" ]; then\n", fp);
+        fprintf(fp, "	update-rc.d %s remove >/dev/null\n", file->dst);
+        fputs("fi\n", fp);
+      }
 
     fclose(fp);
   }
