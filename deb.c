@@ -209,7 +209,7 @@ make_subpackage(const char     *prodname,
     return (1);
   }
 
-  fprintf(fp, "Package: %s\n", prodname);
+  fprintf(fp, "Package: %s\n", prodfull);
   if (dist->relnumber)
     fprintf(fp, "Version: %s-%d\n", dist->version, dist->relnumber);
   else
