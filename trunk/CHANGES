@@ -7,6 +7,9 @@ EPM 4.0
 	- New subpackage support for creating multiple dependent
 	  packages or a combined package with selectable
 	  subpackages, depending on the package format.
+	- Added support for compressing the package files in
+	  portable packages (reduces disk space requirements on
+	  platforms that provide gzip...)
 	- The setup GUI now sets the EPM_INSTALL_TYPE environment
 	  variable to the value of the selected TYPE line in the
 	  setup.types file.
@@ -15,6 +18,7 @@ EPM 4.0
 	  variants.
 	- Fixed PowerPC platform support for RPM and Debian
 	  packages.
+	- Many fixes to AIX package support.
 
 
 EPM 3.7.1

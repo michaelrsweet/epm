@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h.in,v 1.31 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
  *   Configuration file for the ESP Package Manager (EPM).
  *
@@ -129,5 +129,12 @@
 
 
 /*
- * End of "$Id: config.h.in,v 1.31 2005/01/11 21:36:57 mike Exp $".
+ * Compress files by default?
+ */
+
+#define EPM_COMPRESS 0
+
+
+/*
+ * End of "$Id$".
  */

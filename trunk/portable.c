@@ -75,7 +75,8 @@ static int	write_remove(dist_t *dist, const char *prodname,
 		             const char *directory,
 		             const char *subpackage);
 static int	write_space_checks(const char *prodname, FILE *fp,
-		                   const char *sw, const char *ss);
+		                   const char *sw, const char *ss,
+				   int rootsize, int usrsize);
 
 
 /*
@@ -1190,7 +1191,7 @@ write_distfiles(const char *directory,	/* I - Directory */
   snprintf(filename, sizeof(filename), "%s/%s", directory, swname);
 
   unlink(filename);
-  if ((tarfile = tar_open(filename, 0)) == NULL)
+  if ((tarfile = tar_open(filename, CompressFiles)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
             filename, strerror(errno));
@@ -1299,7 +1300,7 @@ write_distfiles(const char *directory,	/* I - Directory */
   snprintf(filename, sizeof(filename), "%s/%s", directory, swname);
 
   unlink(filename);
-  if ((tarfile = tar_open(filename, 0)) == NULL)
+  if ((tarfile = tar_open(filename, CompressFiles)) == NULL)
   {
     fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
             filename, strerror(errno));
@@ -1410,7 +1411,7 @@ write_distfiles(const char *directory,	/* I - Directory */
     snprintf(filename, sizeof(filename), "%s/%s", directory, pswname);
 
     unlink(filename);
-    if ((tarfile = tar_open(filename, 0)) == NULL)
+    if ((tarfile = tar_open(filename, CompressFiles)) == NULL)
     {
       fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
               filename, strerror(errno));
@@ -1498,7 +1499,7 @@ write_distfiles(const char *directory,	/* I - Directory */
     snprintf(filename, sizeof(filename), "%s/%s", directory, pswname);
 
     unlink(filename);
-    if ((tarfile = tar_open(filename, 0)) == NULL)
+    if ((tarfile = tar_open(filename, CompressFiles)) == NULL)
     {
       fprintf(stderr, "epm: Unable to create file \"%s\" -\n     %s\n",
               filename, strerror(errno));
@@ -1696,7 +1697,7 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("fi\n", scriptfile);
 
   write_space_checks(prodfull, scriptfile, rootsize ? "sw" : NULL,
-                     usrsize ? "ss" : NULL);
+                     usrsize ? "ss" : NULL, rootsize, usrsize);
   write_depends(prodname, dist, scriptfile, subpackage);
   write_commands(dist, scriptfile, COMMAND_PRE_INSTALL, subpackage);
 
@@ -1787,13 +1788,19 @@ write_install(dist_t     *dist,		/* I - Software distribution */
 
   if (rootsize)
   {
-    fprintf(scriptfile, "$ac_tar %s.sw\n", prodfull);
+    if (CompressFiles)
+      fprintf(scriptfile, "gzip -dc %s.sw | $ac_tar -\n", prodfull);
+    else
+      fprintf(scriptfile, "$ac_tar %s.sw\n", prodfull);
   }
 
   if (usrsize)
   {
     fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-    fprintf(scriptfile, "	$ac_tar %s.ss\n", prodfull);
+    if (CompressFiles)
+      fprintf(scriptfile, "	gzip -dc %s.ss | $ac_tar -\n", prodfull);
+    else
+      fprintf(scriptfile, "	$ac_tar %s.ss\n", prodfull);
     fputs("fi\n", scriptfile);
   }
 
@@ -2110,7 +2117,7 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("fi\n", scriptfile);
 
   write_space_checks(prodfull, scriptfile, rootsize ? "psw" : NULL,
-                     usrsize ? "pss" : NULL);
+                     usrsize ? "pss" : NULL, rootsize, usrsize);
   write_depends(prodname, dist, scriptfile, subpackage);
 
   fprintf(scriptfile, "if test ! -x %s/%s.remove; then\n",
@@ -2158,13 +2165,19 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
 
   if (rootsize)
   {
-    fprintf(scriptfile, "$ac_tar %s.psw\n", prodfull);
+    if (CompressFiles)
+      fprintf(scriptfile, "gzip -dc %s.psw | $ac_tar -\n", prodfull);
+    else
+      fprintf(scriptfile, "$ac_tar %s.psw\n", prodfull);
   }
 
   if (usrsize)
   {
     fputs("if echo Write Test >/usr/.writetest 2>/dev/null; then\n", scriptfile);
-    fprintf(scriptfile, "	$ac_tar %s.pss\n", prodfull);
+    if (CompressFiles)
+      fprintf(scriptfile, "	gzip -dc %s.pss | $ac_tar -\n", prodfull);
+    else
+      fprintf(scriptfile, "	$ac_tar %s.pss\n", prodfull);
     fputs("fi\n", scriptfile);
   }
 
@@ -2599,7 +2612,9 @@ static int				/* O - 0 on success, -1 on error */
 write_space_checks(const char *prodname,/* I - Distribution name */
                    FILE       *fp,	/* I - File to write to */
                    const char *sw,	/* I - / archive */
-		   const char *ss)	/* I - /usr archive */
+		   const char *ss,	/* I - /usr archive */
+		   int        rootsize,	/* I - / install size in kbytes */
+		   int        usrsize)	/* I - /usr install size in kbytes */
 {
   fputs("case `uname` in\n", fp);
   fputs("	AIX)\n", fp);
@@ -2645,46 +2660,32 @@ write_space_checks(const char *prodname,/* I - Distribution name */
   fputs("esac\n", fp);
   fputs("\n", fp);
 
-  if (sw)
-  {
-    fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, sw);
-    fputs("spsw=`expr $temp / 1024`\n", fp);
-  }
-  else
-    fputs("spsw=0\n", fp);
-  fputs("\n", fp);
-
-  if (ss)
-  {
-    fprintf(fp, "temp=`ls -ln %s.%s | awk '{print $5}'`\n", prodname, ss);
-    fputs("spss=`expr $temp / 1024`\n", fp);
-  }
-  else
-    fputs("spss=0\n", fp);
-  fputs("\n", fp);
-
-  fputs("spall=`expr $spsw + $spss`\n", fp);
-  fputs("\n", fp);
-
   fputs("if test x$sproot = x -o x$spusr = x; then\n", fp);
-  fputs("	echo WARNING: Unable to determine available disk space\\; installing blindly...\n", fp);
+  fputs("	echo WARNING: Unable to determine available disk space\\; "
+        "installing blindly...\n", fp);
   fputs("else\n", fp);
   fputs("	if test x$fsroot = x$fsusr; then\n", fp);
-  fputs("		if test $spall -gt $sproot; then\n", fp);
-  fputs("			echo Not enough free disk space for software:\n", fp);
-  fputs("			echo You need $spall kbytes but only have $sproot kbytes available.\n", fp);
+  fprintf(fp, "		if test %d -gt $sproot; then\n", rootsize + usrsize);
+  fputs("			echo Not enough free disk space for "
+        "software:\n", fp);
+  fprintf(fp, "			echo You need %d kbytes but only have "
+              "$sproot kbytes available.\n", rootsize + usrsize);
   fputs("			exit 1\n", fp);
   fputs("		fi\n", fp);
   fputs("	else\n", fp);
-  fputs("		if test $spsw -gt $sproot; then\n", fp);
-  fputs("			echo Not enough free disk space for software:\n", fp);
-  fputs("			echo You need $spsw kbytes in / but only have $sproot kbytes available.\n", fp);
+  fprintf(fp, "		if test %d -gt $sproot; then\n", rootsize);
+  fputs("			echo Not enough free disk space for "
+        "software:\n", fp);
+  fprintf(fp, "			echo You need %d kbytes in / but only have "
+              "$sproot kbytes available.\n", rootsize);
   fputs("			exit 1\n", fp);
   fputs("		fi\n", fp);
   fputs("\n", fp);
-  fputs("		if test $spss -gt $spusr; then\n", fp);
-  fputs("			echo Not enough free disk space for software:\n", fp);
-  fputs("			echo You need $spss kbytes in /usr but only have $spusr kbytes available.\n", fp);
+  fprintf(fp, "		if test %d -gt $spusr; then\n", usrsize);
+  fputs("			echo Not enough free disk space for "
+        "software:\n", fp);
+  fprintf(fp, "			echo You need %d kbytes in /usr but only have "
+              "$spusr kbytes available.\n", usrsize);
   fputs("			exit 1\n", fp);
   fputs("		fi\n", fp);
   fputs("	fi\n", fp);

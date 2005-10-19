@@ -147,6 +147,19 @@ AC_SUBST(INSTALL_OSX)
 AC_SUBST(GUIS)
 AC_SUBST(GUILIBS)
 
+dnl Set the default compression value...
+case "$uname" in
+	Darwin* | *BSD | Linux*)
+		# MacOS X, *BSD, and Linux come with gzip standard
+		AC_DEFINE(EPM_COMPRESS, 1)
+		;;
+
+	*)
+		# All other OS's do not.
+		AC_DEFINE(EPM_COMPRESS, 0)
+		;;
+esac
+		
 dnl Update compiler options...
 if test -n "$GCC"; then
 	# Add standard optimization options...

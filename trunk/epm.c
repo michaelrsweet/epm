@@ -33,6 +33,7 @@
  * Globals...
  */
 
+int		CompressFiles = EPM_COMPRESS;
 const char	*DataDir = EPM_DATADIR;
 int		KeepFiles = 0;
 const char	*SetupProgram = EPM_LIBDIR "/setup";
@@ -246,12 +247,20 @@ main(int  argc,			/* I - Number of command-line arguments */
 	          stderr);
 	    break;
 
+        case 'u' : /* Uncompressed output */
+	    CompressFiles = 0;
+	    break;
+
         case 'v' : /* Be verbose */
 	    Verbosity += strlen(argv[i]) - 1;
 	    break;
 
+        case 'z' : /* Compress output */
+	    CompressFiles = 1;
+	    break;
+
         case '-' : /* --option */
-	    if (strcmp(argv[i], "--data-dir") == 0)
+	    if (!strcmp(argv[i], "--data-dir"))
 	    {
 	      i ++;
 	      if (i < argc)
@@ -262,9 +271,9 @@ main(int  argc,			/* I - Number of command-line arguments */
 		usage();
 	      }
 	    }
-	    else if (strcmp(argv[i], "--keep-files") == 0)
+	    else if (!strcmp(argv[i], "--keep-files"))
 	      KeepFiles = 1;
-	    else if (strcmp(argv[i], "--output-dir") == 0)
+	    else if (!strcmp(argv[i], "--output-dir"))
 	    {
 	      i ++;
 	      if (i < argc)
@@ -275,7 +284,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 		usage();
 	      }
 	    }
-	    else if (strcmp(argv[i], "--setup-image") == 0)
+	    else if (!strcmp(argv[i], "--setup-image"))
 	    {
 	      i ++;
 	      if (i < argc)
@@ -286,7 +295,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	        usage();
               }
             }
-	    else if (strcmp(argv[i], "--setup-program") == 0)
+	    else if (!strcmp(argv[i], "--setup-program"))
 	    {
 	      i ++;
 	      if (i < argc)
@@ -297,7 +306,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	        usage();
               }
             }
-	    else if (strcmp(argv[i], "--setup-types") == 0)
+	    else if (!strcmp(argv[i], "--setup-types"))
 	    {
 	      i ++;
 	      if (i < argc)
@@ -308,7 +317,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	        usage();
               }
             }
-	    else if (strcmp(argv[i], "--software-dir") == 0)
+	    else if (!strcmp(argv[i], "--software-dir"))
 	    {
 	      i ++;
 	      if (i < argc)
@@ -319,7 +328,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	        usage();
               }
             }
-	    else if (strcmp(argv[i], "--uninstall-program") == 0)
+	    else if (!strcmp(argv[i], "--uninstall-program"))
 	    {
 	      i ++;
 	      if (i < argc)
@@ -329,6 +338,11 @@ main(int  argc,			/* I - Number of command-line arguments */
 		puts("epm: Expected uninstall program.");
 		usage();
 	      }
+	    }
+	    else if (!strcmp(argv[i], "--version"))
+	    {
+	      info();
+	      return (0);
 	    }
 	    else
             {
@@ -579,10 +593,22 @@ usage(void)
   puts("-n[mrs]");
   puts("    Set distribution filename to include machine (m), OS release (r),");
   puts("    and/or OS name (s).");
-  puts("-v");
-  puts("    Be verbose.");
   puts("-s setup.xpm");
   puts("    Enable the setup GUI and use \"setup.xpm\" for the setup image.");
+  puts("-u");
+#if EPM_COMPRESS == 0
+  puts("    Do not compress files in packages (default).");
+#else
+  puts("    Do not compress files in packages.");
+#endif /* EPM_COMPRESS == 0 */
+  puts("-v");
+  puts("    Be verbose.");
+  puts("-z");
+#if EPM_COMPRESS == 1
+  puts("    Compress files in packages (default).");
+#else
+  puts("    Compress files in packages.");
+#endif /* EPM_COMPRESS == 1 */
   puts("--data-dir /foo/bar/directory");
   puts("    Use the named setup data file directory instead of " EPM_DATADIR ".");
   puts("--help");
@@ -599,6 +625,8 @@ usage(void)
   puts("    Include the named setup.types file with the distribution.");
   puts("--uninstalll-program /foo/bar/uninst");
   puts("    Use the named uninstall program instead of " EPM_LIBDIR "/uninst.");
+  puts("--version");
+  puts("    Show EPM version.");
 
   exit(1);
 }
