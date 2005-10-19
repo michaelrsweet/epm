@@ -231,6 +231,7 @@ typedef struct				/**** Distribution Structure ****/
  * Globals...
  */
 
+extern int		CompressFiles;	/* Compress package files? */
 extern const char	*DataDir;	/* Directory for setup data files */
 extern int		KeepFiles;	/* Keep intermediate files? */
 extern const char	*SetupProgram;	/* Setup program */
