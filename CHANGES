@@ -19,6 +19,8 @@ EPM 4.0
 	- Fixed PowerPC platform support for RPM and Debian
 	  packages.
 	- Many fixes to AIX package support.
+	- Tru64 packages with init scripts now work when
+	  installing for the first time.
 
 
 EPM 3.7.1
