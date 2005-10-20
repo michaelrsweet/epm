@@ -1,5 +1,5 @@
 /*
- * "$Id: setld.c,v 1.20 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
@@ -220,7 +220,11 @@ make_setld(const char     *prodname,	/* I - Product short name */
   fputs("PRE_L)\n", fp);
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i')
-      qprintf(fp, "%s stop\n", file->dst);
+    {
+      qprintf(fp, "if test -x %s; then\n", file->dst);
+      qprintf(fp, "	%s stop\n", file->dst);
+      fputs("fi\n", fp);
+    }
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_PRE_INSTALL)
       fprintf(fp, "%s\n", c->command);
@@ -457,5 +461,5 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
 
 /*
- * End of "$Id: setld.c,v 1.20 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id$".
  */
