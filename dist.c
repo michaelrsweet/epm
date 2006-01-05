@@ -585,8 +585,13 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   strcpy(platform->machine, "mips");
 #elif defined(__hpux)
   strcpy(platform->machine, "hppa");
-#elif defined(_AIX) || defined(__APPLE__)
+#elif defined(_AIX)
   strcpy(platform->machine, "powerpc");
+#elif defined(__APPLE__)
+  if (strstr(platform->machine, "86") != NULL)
+    strcpy(platform->machine, "intel");
+  else
+    strcpy(platform->machine, "powerpc");
 #else
   for (temp = platform->machine; *temp != '\0'; temp ++)
     if (*temp == '-' || *temp == '_')
@@ -598,7 +603,12 @@ get_platform(struct utsname *platform)	/* O - Platform info */
       *temp = tolower(*temp);
 
   if (strstr(platform->machine, "86") != NULL)
-    strcpy(platform->machine, "intel");
+  {
+    if (strstr(platform->machine, "64") != NULL)
+      strcpy(platform->machine, "x86_64");
+    else
+      strcpy(platform->machine, "intel");
+  }
   else if (strncmp(platform->machine, "sun", 3) == 0)
     strcpy(platform->machine, "sparc");
 #endif /* __sgi */
