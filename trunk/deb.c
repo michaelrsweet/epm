@@ -149,7 +149,8 @@ make_subpackage(const char     *prodname,
   file_t		*file;		/* Current distribution file */
   struct passwd		*pwd;		/* Pointer to user record */
   struct group		*grp;		/* Pointer to group record */
-  const char		*runlevels;	/* Run levels */
+  const char		*runlevels,	/* Run levels */
+			*rlptr;		/* Pointer into runlevels */
   static const char	*depends[] =	/* Dependency names */
 			{
 			  "Depends:",
@@ -348,9 +349,9 @@ make_subpackage(const char     *prodname,
         fprintf(fp, "update-rc.d %s start %02d", file->dst,
 	        get_start(file, 99));
 
-        for (; isdigit(*runlevels & 255); runlevels ++)
-	  if (*runlevels != '0')
-	    fprintf(fp, " %c", *runlevels);
+        for (rlptr = runlevels; isdigit(*rlptr & 255); rlptr ++)
+	  if (*rlptr != '0')
+	    fprintf(fp, " %c", *rlptr);
 
 	if (strchr(runlevels, '0') != NULL)
           fprintf(fp, " . stop %02d 0", get_stop(file, 0));
