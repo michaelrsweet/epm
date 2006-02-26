@@ -3,7 +3,7 @@
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2006 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -1647,9 +1647,9 @@ write_install(dist_t     *dist,		/* I - Software distribution */
   fputs("	echo Software license silently accepted via command-line option.\n", scriptfile);
   fputs("else\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
-  qprintf(scriptfile, "	echo This installation script will install the \'%s\'\n",
+  qprintf(scriptfile, "	echo This installation script will install the %s\n",
           dist->product);
-  qprintf(scriptfile, "	echo software version \'%s\' on your system.\n",
+  qprintf(scriptfile, "	echo software version %s on your system.\n",
           dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
@@ -2073,9 +2073,9 @@ write_patch(dist_t     *dist,		/* I - Software distribution */
   fputs("	echo Software license silently accepted via command-line option.\n", scriptfile);
   fputs("else\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
-  qprintf(scriptfile, "	echo This installation script will patch the \'%s\'\n",
+  qprintf(scriptfile, "	echo This installation script will patch the %s\n",
           dist->product);
-  qprintf(scriptfile, "	echo software to version \'%s\' on your system.\n", dist->version);
+  qprintf(scriptfile, "	echo software to version %s on your system.\n", dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);
   fputs("		echo $ac_n \"Do you wish to continue? $ac_c\"\n", scriptfile);
@@ -2390,9 +2390,9 @@ write_remove(dist_t     *dist,		/* I - Software distribution */
 
   fputs("if test ! \"$*\" = \"now\"; then\n", scriptfile);
   fputs("	echo \"\"\n", scriptfile);
-  qprintf(scriptfile, "	echo This removal script will remove the \'%s\'\n",
+  qprintf(scriptfile, "	echo This removal script will remove the %s\n",
           dist->product);
-  qprintf(scriptfile, "	echo software version \'%s\' from your system.\n",
+  qprintf(scriptfile, "	echo software version %s from your system.\n",
           dist->version);
   fputs("	echo \"\"\n", scriptfile);
   fputs("	while true ; do\n", scriptfile);

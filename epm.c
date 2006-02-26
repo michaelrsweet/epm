@@ -3,7 +3,7 @@
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2006 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -54,24 +54,25 @@ static void	usage(void);
  * 'main()' - Read a product list and produce a distribution.
  */
 
-int				/* O - Exit status */
-main(int  argc,			/* I - Number of command-line arguments */
-     char *argv[])		/* I - Command-line arguments */
+int					/* O - Exit status */
+main(int  argc,				/* I - Number of command-line args */
+     char *argv[])			/* I - Command-line arguments */
 {
-  int		i;		/* Looping var */
-  int		strip;		/* 1 if we should strip executables */
-  struct utsname platform;	/* UNIX name info */
-  char		*namefmt,	/* Name format to use */
-		platname[255],	/* Base platform name */
-		prodname[256],	/* Product name */
-		listname[256],	/* List file name */
-		directory[255],	/* Name of install directory */
-		*temp,		/* Temporary string pointer */
-		*setup,		/* Setup GUI image */
-		*types;		/* Setup GUI install types */
-  dist_t	*dist;		/* Software distribution */
-  int		format;		/* Distribution format */
-  static char	*formats[] =	/* Distribution format strings */
+  int		i;			/* Looping var */
+  int		strip;			/* 1 if we should strip executables */
+  struct utsname platform;		/* UNIX name info */
+  char		*namefmt,		/* Name format to use */
+		*custom_name,		/* User-supplied system name */
+		platname[255],		/* Base platform name */
+		prodname[256],		/* Product name */
+		listname[256],		/* List file name */
+		directory[255],		/* Name of install directory */
+		*temp,			/* Temporary string pointer */
+		*setup,			/* Setup GUI image */
+		*types;			/* Setup GUI install types */
+  dist_t	*dist;			/* Software distribution */
+  int		format;			/* Distribution format */
+  static char	*formats[] =		/* Distribution format strings */
 		{
 		  "portable",
 		  "aix",
@@ -108,6 +109,7 @@ main(int  argc,			/* I - Number of command-line arguments */
   setup        = NULL;
   types        = NULL;
   namefmt      = "srm";
+  custom_name  = 0;
   prodname[0]  = '\0';
   listname[0]  = '\0';
   directory[0] = '\0';
@@ -220,6 +222,22 @@ main(int  argc,			/* I - Number of command-line arguments */
 
         case 'k' : /* Keep intermediate files */
 	    KeepFiles = 1;
+	    break;
+
+	case 'm' : /* Custom sysname-release-machine string */
+	    if (argv[i][2])
+	      custom_name = argv[i] + 2;
+	    else
+	    {
+	      i ++;
+	      if (i >= argc)
+	      {
+	        puts("epm: Expected custom system name string.");
+	        usage();
+	      }
+
+	      custom_name = argv[i];
+	    }
 	    break;
 
         case 'n' : /* Name with sysname, machine, and/or release */
@@ -399,28 +417,36 @@ main(int  argc,			/* I - Number of command-line arguments */
     * User did not specify an output directory, so use our default...
     */
 
-    snprintf(directory, sizeof(directory), "%s-%s-%s", platform.sysname,
+    if (custom_name)
+      sprintf(directory, "%s", custom_name);
+    else
+      snprintf(directory, sizeof(directory), "%s-%s-%s", platform.sysname,
              platform.release, platform.machine);
   }
 
   platname[0] = '\0';
 
-  for (temp = namefmt; *temp != '\0'; temp ++)
+  if (custom_name)
+    strlcat(platname, custom_name, sizeof(platname));
+  else
   {
-    if (platname[0])
-      strlcat(platname, "-", sizeof(platname));
-
-    if (*temp == 'm')
-      strlcat(platname, platform.machine, sizeof(platname));
-    else if (*temp == 'r')
-      strlcat(platname, platform.release, sizeof(platname));
-    else if (*temp == 's')
-      strlcat(platname, platform.sysname, sizeof(platname));
-    else
+    for (temp = namefmt; *temp != '\0'; temp ++)
     {
-      printf("epm: Bad name format character \"%c\" in \"%s\".\n", *temp,
-             namefmt);
-      usage();
+      if (platname[0])
+        strlcat(platname, "-", sizeof(platname));
+
+      if (*temp == 'm')
+        strlcat(platname, platform.machine, sizeof(platname));
+      else if (*temp == 'r')
+        strlcat(platname, platform.release, sizeof(platname));
+      else if (*temp == 's')
+        strlcat(platname, platform.sysname, sizeof(platname));
+      else
+      {
+        printf("epm: Bad name format character \"%c\" in \"%s\".\n", *temp,
+               namefmt);
+        usage();
+      }
     }
   }
 
@@ -590,6 +616,9 @@ usage(void)
   puts("    Set distribution format.");
   puts("-k");
   puts("    Keep intermediate files (spec files, etc.)");
+  puts("-m name");
+  puts("    Set distribution filename to include the specified platform name.");
+  puts("    This overrides \"-n\".");
   puts("-n[mrs]");
   puts("    Set distribution filename to include machine (m), OS release (r),");
   puts("    and/or OS name (s).");
