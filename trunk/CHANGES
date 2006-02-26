@@ -10,6 +10,8 @@ EPM 4.0
 	- Added support for compressing the package files in
 	  portable packages (reduces disk space requirements on
 	  platforms that provide gzip...)
+	- Added support for custom platform names via the new
+	  "-m name" option.
 	- The setup GUI now sets the EPM_INSTALL_TYPE environment
 	  variable to the value of the selected TYPE line in the
 	  setup.types file.
@@ -21,7 +23,9 @@ EPM 4.0
 	- Many fixes to AIX package support.
 	- Tru64 packages with init scripts now work when
 	  installing for the first time.
-
+	- RPM file dependencies should now work properly.
+	- Portable product names containing spaces will now
+	  display properly.
 
 EPM 3.7.1
 
