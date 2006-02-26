@@ -33,3 +33,7 @@ TODO - ESP Package Manager (EPM) 4.0
 	- Add support for checksums (probably just "sum"
 	  command) to verify the tar files and installed files.
 	- Support package categories (RPM, Debian, AT&T PKG, etc.)
+	- Support for RPM features:
+		- Icon: filename.xpm/gif
+		- Serial: #
+		- %post: detect upgrades via $1 > 1
