@@ -3,7 +3,7 @@
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2006 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -413,7 +413,6 @@ write_spec(const char *prodname,	/* I - Product name */
   depend_t	*d;			/* Current dependency */
   const char	*runlevels;		/* Run levels */
   int		number;			/* Start/stop number */
-  const char	*dname;			/* Dependency name */
   int		have_commands;		/* Have commands in current section? */
 
 
@@ -450,17 +449,12 @@ write_spec(const char *prodname,	/* I - Product name */
     else
       product = d->product;
 
-    if ((dname = strrchr(product, '/')) != NULL)
-      dname ++;
-    else
-      dname = product;
-
     if (d->type == DEPEND_REQUIRES)
-      fprintf(fp, "Requires: %s", dname);
+      fprintf(fp, "Requires: %s", product);
     else if (d->type == DEPEND_PROVIDES)
-      fprintf(fp, "Provides: %s", dname);
+      fprintf(fp, "Provides: %s", product);
     else
-      fprintf(fp, "Conflicts: %s", dname);
+      fprintf(fp, "Conflicts: %s", product);
 
     if (d->vernumber[0] == 0)
     {
