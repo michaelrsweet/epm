@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "26 February 2006" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "3 April 2006" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -38,7 +38,7 @@ epm \- create software packages.
 .I setup.types
 ] [ -v ] [
 .I name=value
-...
+\...
 .I name=value
 ] product [
 .I listfile
@@ -159,8 +159,6 @@ man page.
 .SH KNOWN BUGS
 EPM does not currently support generation of IRIX software patches.
 .SH SEE ALSO
-epmeditor(1) - edit software list files
-.br
 epminstall(1) - add a directory, file, or symlink to a list file
 .br
 mkepmlist(1) - make an epm list file from a directory

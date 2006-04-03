@@ -3,11 +3,11 @@
 <HEAD>
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
-<META NAME="copyright" CONTENT="Copyright 1999-2005 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20050111">
+<META NAME="copyright" CONTENT="Copyright 1999-2006 by Easy Software Products">
+<META NAME="docnumber" CONTENT="ESP-004-20060403">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-iso-8859-1">
 <STYLE TYPE="text/css"><!--
-BODY { font-family: serif }
+BODY { font-family: sans-serif }
 H1 { font-family: sans-serif }
 H2 { font-family: sans-serif }
 H3 { font-family: sans-serif }
@@ -17,14 +17,15 @@ H6 { font-family: sans-serif }
 SUB { font-size: smaller }
 SUP { font-size: smaller }
 PRE { font-family: monospace }
+A { text-decoration: none }
 --></STYLE>
 </HEAD>
 <BODY>
 <CENTER><A HREF="#CONTENTS"><IMG SRC="epmlogo.gif" BORDER="0" WIDTH="256" HEIGHT="256" ALT="Software Distribution Using the ESP Package Manager"><BR>
 <H1>Software Distribution Using the ESP Package Manager</H1></A><BR>
-ESP-004-20050111<BR>
+ESP-004-20060403<BR>
 Michael Sweet<BR>
-Copyright 1999-2005 by Easy Software Products<BR>
+Copyright 1999-2006 by Easy Software Products<BR>
 </CENTER>
 <HR NOSHADE>
 <H1 ALIGN="CENTER"><A NAME="CONTENTS">Table of Contents</A></H1>
@@ -68,15 +69,18 @@ Copyright 1999-2005 by Easy Software Products<BR>
 <LI><A HREF="#5_6">Software Patches</A></LI>
 <LI><A HREF="#5_7">Variables</A></LI>
 <LI><A HREF="#5_8">Init Scripts</A></LI>
+<LI><A HREF="#5_9">Subpackages</A></LI>
 </UL>
 <B><A HREF="#LICENSE">A - GNU General Public License</A></B>
-<BR>
-<BR><B><A HREF="#MANPAGES">B - Command Reference</A></B>
 <UL>
-<LI><A HREF="#epm">epm</A></LI>
-<LI><A HREF="#epminstall">epminstall</A></LI>
-<LI><A HREF="#mkepmlist">mkepmlist</A></LI>
-<LI><A HREF="#setup">setup</A></LI>
+<LI><A HREF="#6_1">How to Apply These Terms to Your New Programs</A></LI>
+</UL>
+<B><A HREF="#MANPAGES">B - Command Reference</A></B>
+<UL>
+<LI><A HREF="#7_1">epm(1)</A></LI>
+<LI><A HREF="#7_2">epminstall(1)</A></LI>
+<LI><A HREF="#7_3">mkepmlist(1)</A></LI>
+<LI><A HREF="#7_4">setup(1)</A></LI>
 </UL>
 <B><A HREF="#REFERENCE">C - List File Reference</A></B>
 <UL>
@@ -85,33 +89,7 @@ Copyright 1999-2005 by Easy Software Products<BR>
 </UL>
 <B><A HREF="#RELNOTES">D - Release Notes</A></B>
 <UL>
-<LI><A HREF="#9_1">Changes in EPM v3.7.1</A></LI>
-<LI><A HREF="#9_2">Changes in EPM v3.7</A></LI>
-<LI><A HREF="#9_3">Changes in EPM v3.6</A></LI>
-<LI><A HREF="#9_4">Changes in EPM v3.5.1</A></LI>
-<LI><A HREF="#9_5">Changes in EPM v3.5</A></LI>
-<LI><A HREF="#9_6">Changes in EPM v3.4</A></LI>
-<LI><A HREF="#9_7">Changes in EPM v3.3</A></LI>
-<LI><A HREF="#9_8">Changes in EPM v3.2.1</A></LI>
-<LI><A HREF="#9_9">Changes in EPM v3.2</A></LI>
-<LI><A HREF="#9_10">Changes in EPM v3.1</A></LI>
-<LI><A HREF="#9_11">Changes in EPM v3.0</A></LI>
-<LI><A HREF="#9_12">Changes in EPM v2.8</A></LI>
-<LI><A HREF="#9_13">Changes in EPM v2.7</A></LI>
-<LI><A HREF="#9_14">Changes in EPM v2.6</A></LI>
-<LI><A HREF="#9_15">Changes in EPM v2.5</A></LI>
-<LI><A HREF="#9_16">Changes in EPM v2.4</A></LI>
-<LI><A HREF="#9_17">Changes in EPM v2.3</A></LI>
-<LI><A HREF="#9_18">Changes in EPM v2.2</A></LI>
-<LI><A HREF="#9_19">Changes in EPM v2.1</A></LI>
-<LI><A HREF="#9_20">Changes in EPM v2.0</A></LI>
-<LI><A HREF="#9_21">Changes in EPM v1.7</A></LI>
-<LI><A HREF="#9_22">Changes in EPM v1.6</A></LI>
-<LI><A HREF="#9_23">Changes in EPM v1.5</A></LI>
-<LI><A HREF="#9_24">Changes in EPM v1.4</A></LI>
-<LI><A HREF="#9_25">Changes in EPM v1.3</A></LI>
-<LI><A HREF="#9_26">Changes in EPM v1.2</A></LI>
-<LI><A HREF="#9_27">Changes in EPM v1.1</A></LI>
+<LI><A HREF="#9_1">Changes in EPM v4.0</A></LI>
 </UL>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="1">Preface</A></H1>
@@ -137,7 +115,7 @@ Copyright 1999-2005 by Easy Software Products<BR>
 <P>Various font and syntax conventions are used in this guide. Examples
  and their meanings and uses are explained below:</P>
 <CENTER>
-<TABLE WIDTH="80%">
+<TABLE WIDTH="90%">
 <TR><TH>Example</TH><TD>&nbsp;&nbsp;&nbsp;</TD><TH>Description</TH></TR>
 <TR><TD>&nbsp;</TD></TR>
 <TR VALIGN="TOP"><TD><CODE>epm</CODE>
@@ -252,54 +230,76 @@ http://www.cups.org/</A>) in 1998, our initial goal was to add support
 <P></P>
 <TABLE ALIGN="CENTER" BORDER="1"><CAPTION> <A NAME="TABLE_1_1">Table
  1.1: Software Packaging Formats</A></CAPTION>
-<TR><TH><SMALL>Format</SMALL></TH><TH><SMALL>Operating Systems<SUP>1</SUP>
-</SMALL></TH><TH><SMALL>Binaries?</SMALL></TH><TH><SMALL>Cross-
- Platform?</SMALL></TH><TH><SMALL>Patches?</SMALL></TH><TH><SMALL>
-Upgrades?</SMALL></TH><TH><SMALL>Conflicts?</SMALL></TH><TH><SMALL>
-Requires?</SMALL></TH><TH><SMALL>Replaces?</SMALL></TH><TH><SMALL>Config
- Files?</SMALL></TH><TH><SMALL>Map Files?</SMALL></TH></TR>
-<TR><TD ALIGN="CENTER">installp</TD><TD ALIGN="CENTER">AIX</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">
-No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-No</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">No</TD></TR>
-<TR><TD ALIGN="CENTER">pkg_add</TD><TD ALIGN="CENTER">FreeBSD</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">Yes<SUP>2</SUP></TD><TD ALIGN="CENTER">No</TD><TD
-ALIGN="CENTER">No</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">No</TD><TD
-ALIGN="CENTER">No</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">No</TD>
-</TR>
-<TR><TD ALIGN="CENTER">pkg_add</TD><TD ALIGN="CENTER">NetBSD
-<BR> OpenBSD</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes<SUP>2</SUP>
-</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">
-No</TD><TD ALIGN="CENTER">No</TD></TR>
-<TR><TD ALIGN="CENTER">dpkg</TD><TD ALIGN="CENTER">Corel Linux
-<BR> Debian GNU/Linux</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-Yes<SUP>2</SUP></TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">Yes</TD><TD
-ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD><TD
-ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">No</TD></TR>
-<TR><TD ALIGN="CENTER">swinstall</TD><TD ALIGN="CENTER">HP-UX</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD></TR>
-<TR><TD ALIGN="CENTER">inst</TD><TD ALIGN="CENTER">IRIX</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD></TR>
-<TR><TD ALIGN="CENTER">pkgadd</TD><TD ALIGN="CENTER">Solaris</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD></TR>
-<TR><TD ALIGN="CENTER">rpm</TD><TD ALIGN="CENTER">Mandrake
+<TR><TH><FONT SIZE="-4">Format</FONT></TH><TH><FONT SIZE="-4">Operating
+ Systems<SUP>1</SUP></FONT></TH><TH><FONT SIZE="-4">Binaries?</FONT></TH><TH>
+<FONT SIZE="-4">Cross- Platform?</FONT></TH><TH><FONT SIZE="-4">Patches?</FONT>
+</TH><TH><FONT SIZE="-4">Upgrades?</FONT></TH><TH><FONT SIZE="-4">
+Conflicts?</FONT></TH><TH><FONT SIZE="-4">Requires?</FONT></TH><TH><FONT SIZE="-4">
+Replaces?</FONT></TH><TH><FONT SIZE="-4">Config Files?</FONT></TH><TH><FONT
+SIZE="-4">Map Files?</FONT></TH></TR>
+<TR><TD ALIGN="CENTER"><SMALL>installp</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+AIX</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>pkg_add</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+FreeBSD</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes<SUP>2</SUP></SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD
+ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL>
+</TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>pkg_add</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+NetBSD
+<BR> OpenBSD</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes<SUP>2</SUP></SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD
+ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL>
+</TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>dpkg</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+Corel Linux
+<BR> Debian GNU/Linux</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD
+ALIGN="CENTER"><SMALL>Yes<SUP>2</SUP></SMALL></TD><TD ALIGN="CENTER"><SMALL>
+No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>swinstall</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+HP-UX</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>inst</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+IRIX</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>pkgadd</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+Solaris</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>rpm</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+Mandrake
 <BR> RedHat
 <BR> SuSE
-<BR> TurboLinux</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes<SUP>
-2</SUP></TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">No</TD></TR>
-<TR><TD ALIGN="CENTER">setld</TD><TD ALIGN="CENTER">Tru64 UNIX</TD><TD ALIGN="CENTER">
-Yes</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">
-No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">
-No</TD><TD ALIGN="CENTER">No</TD><TD ALIGN="CENTER">No</TD></TR>
+<BR> TurboLinux</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD
+ALIGN="CENTER"><SMALL>Yes<SUP>2</SUP></SMALL></TD><TD ALIGN="CENTER"><SMALL>
+No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>setld</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+Tru64 UNIX</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD></TR>
 </TABLE>
 <OL>
 <LI>Standard packaging system for named operating systems.</LI>
@@ -352,6 +352,8 @@ fakeroot</CODE> software, introducing potential security risks and
 <P>Over the years, additional features have made their way into EPM to
  support more advanced software packages. Whenever possible, EPM
  emulates a feature if the vendor packager does not support it natively.</P>
+
+<!-- NEED 3in -->
 <H2><A NAME="2_5">Resources</A></H2>
 <P>The EPM web site provides access to the current software and
  documentation for EPM:</P>
@@ -361,8 +363,8 @@ fakeroot</CODE> software, introducing potential security risks and
 </PRE>
 </UL>
 <P>The EPM source code can be downloaded in compressed tar files or via
- the popular CVS software. Please see the EPM web site for complete
- instructions.</P>
+ the popular Subversion software. Please see the EPM web site for
+ complete instructions.</P>
 <P>The Easy Software Products news server provides several newsgroups
  for EPM. You can access it at:</P>
 <UL>
@@ -371,11 +373,11 @@ fakeroot</CODE> software, introducing potential security risks and
 </PRE>
 </UL>
 <P>Commercial support for EPM is available from Easy Software Products
- and is one way to contribute to the continued development of EPM. The
- other way to contribute is by donating code, examples, and bug fixes.
- If you have adapted EPM for another operating system or have added a
- new feature that you feel will be generally useful, please contribute
- it!</P>
+ and is one way to contribute to the continued development of EPM. You
+ can also purchase a hardcopy of this manual. The third way to
+ contribute is by donating code, examples, and bug fixes. If you have
+ adapted EPM for another operating system or have added a new feature
+ that you feel will be generally useful, please contribute it!</P>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="BUILDING">2 - Building EPM</A></H1>
 <P>This chapter shows how to configure, build, and install the ESP
@@ -399,12 +401,6 @@ fakeroot</CODE> software, introducing potential security risks and
  program, and the <CODE>gzip(1)</CODE> program to install portable
  distributions. All but the last are standard items, and most vendors
  include <CODE>gzip</CODE> as well.</P>
-<BLOCKQUOTE><B>Note:</B>
-<BR>
-<BR> The <CODE>gzip</CODE> program is only required to uncompress the
- software distribution<VAR> .tar.gz</VAR> file. If you supply the
- uncompressed<VAR> .tar</VAR> file or its contents, then <CODE>gzip</CODE>
- is not required on the end-user system.</BLOCKQUOTE>
 <P>EPM can also generate vendor-specific distributions. These require
  the particular vendor tool, such as <CODE>rpm(8)</CODE> and <CODE>
 dpkg(8)</CODE>, to generate the software distribution on the development
@@ -541,12 +537,11 @@ Installing EPM documentation in /usr/share/doc/epm
 <TR><TD>Compaq Tru64 UNIX
 <BR> Digital UNIX
 <BR> OSF/1</TD><TD><CODE>tru64</CODE></TD></TR>
-<TR><TD>Darwin</TD><TD><CODE>darwin</CODE></TD></TR>
 <TR><TD>FreeBSD</TD><TD><CODE>freebsd</CODE></TD></TR>
 <TR><TD>HP-UX</TD><TD><CODE>hpux</CODE></TD></TR>
 <TR><TD>IRIX</TD><TD><CODE>irix</CODE></TD></TR>
 <TR><TD>Linux</TD><TD><CODE>linux</CODE></TD></TR>
-<TR><TD>MacOS X</TD><TD><CODE>darwin</CODE></TD></TR>
+<TR><TD>MacOS X</TD><TD><CODE>macosx</CODE></TD></TR>
 <TR><TD>NetBSD</TD><TD><CODE>netbsd</CODE></TD></TR>
 <TR><TD>OpenBSD</TD><TD><CODE>openbsd</CODE></TD></TR>
 <TR><TD>Solaris</TD><TD><CODE>solaris</CODE></TD></TR>
@@ -558,23 +553,7 @@ Installing EPM documentation in /usr/share/doc/epm
  example, HP-UX version B.11.11 will result in a version number string
  of <CODE>11.11</CODE>.</P>
 <P>The <CODE>architecture</CODE> string identifies the target processor.
- Table 2.2 lists the supported processors:</P>
-<CENTER>
-<TABLE BORDER><CAPTION> <A NAME="TABLE_2_2">Table 2.2: Processor
- Architecture Abbreviations</A></CAPTION>
-<TR><TH>Processor(s)</TH><TH>Abbreviation</TH></TR>
-<TR><TD>Compaq Alpha</TD><TD><CODE>alpha</CODE></TD></TR>
-<TR><TD>HP Precision Architecture</TD><TD><CODE>hppa</CODE></TD></TR>
-<TR><TD>INTEL 80x86</TD><TD><CODE>intel</CODE></TD></TR>
-<TR><TD>MIPS RISC</TD><TD><CODE>mips</CODE></TD></TR>
-<TR><TD>IBM Power PC</TD><TD><CODE>powerpc</CODE></TD></TR>
-<TR><TD>SPARC
-<BR> MicroSPARC
-<BR> UltraSPARC</TD><TD><CODE>sparc</CODE></TD></TR>
-</TABLE>
-</CENTER>
-
-<!-- NEED 3in -->
+ Table 2.2 lists the supported processors.</P>
 <P>Once you have determined the subdirectory containing the
  distribution, type the following commands to install EPM from the
  portable distribution:</P>
@@ -586,6 +565,23 @@ Installing EPM documentation in /usr/share/doc/epm
 </UL>
 <P>The software will be installed after answering a few yes/no
  questions.</P>
+
+<!-- NEED 3in -->
+<CENTER>
+<TABLE BORDER><CAPTION> <A NAME="TABLE_2_2">Table 2.2: Processor
+ Architecture Abbreviations</A></CAPTION>
+<TR><TH>Processor(s)</TH><TH>Abbreviation</TH></TR>
+<TR><TD>Compaq Alpha</TD><TD><CODE>alpha</CODE></TD></TR>
+<TR><TD>HP Precision Architecture</TD><TD><CODE>hppa</CODE></TD></TR>
+<TR><TD>INTEL 80x86</TD><TD><CODE>intel</CODE></TD></TR>
+<TR><TD>INTEL 80x86 w/64bit Extensions</TD><TD><CODE>x86_64</CODE></TD></TR>
+<TR><TD>MIPS RISC</TD><TD><CODE>mips</CODE></TD></TR>
+<TR><TD>IBM Power PC</TD><TD><CODE>powerpc</CODE></TD></TR>
+<TR><TD>SPARC
+<BR> MicroSPARC
+<BR> UltraSPARC</TD><TD><CODE>sparc</CODE></TD></TR>
+</TABLE>
+</CENTER>
 <H3>Installing Using the Native Distribution</H3>
 <P>The <CODE>test</CODE> target also builds a distribution in the native
  operating system format, if supported. Table 2.3 lists the native
@@ -600,7 +596,7 @@ directory</I> epm</CODE></TD></TR>
 <TR><TD>Compaq Tru64 UNIX
 <BR> Digital UNIX
 <BR> OSF/1</TD><TD><CODE>setld</CODE></TD><TD NOWRAP><CODE>setld -a<I>
- directory</I>???</CODE></TD></TR>
+ directory</I></CODE></TD></TR>
 <TR><TD>FreeBSD
 <BR> NetBSD
 <BR> OpenBSD</TD><TD><CODE>bsd</CODE></TD><TD NOWRAP><CODE>cd<I>
@@ -611,9 +607,9 @@ directory</I> epm</CODE></TD></TR>
 <TR><TD>IRIX</TD><TD><CODE>inst</CODE></TD><TD NOWRAP><CODE>swmgr -f<I>
  directory</I></CODE></TD></TR>
 <TR><TD>Linux</TD><TD><CODE>rpm</CODE></TD><TD NOWRAP><CODE>rpm -i<I>
- directory</I>/epm-3.0.rpm</CODE></TD></TR>
-<TR><TD>MacOS X</TD><TD><CODE>osx</CODE></TD><TD NOWRAP>Double-click on
- the <CODE>.pkg</CODE> folder in the finder.</TD></TR>
+ directory</I>/epm-4.0.rpm</CODE></TD></TR>
+<TR><TD>MacOS X</TD><TD><CODE>osx</CODE></TD><TD NOWRAP><CODE>open<I>
+ directory</I>/<CODE>epm-4.0.pkg</CODE></CODE></TD></TR>
 <TR><TD>Solaris</TD><TD><CODE>pkg</CODE></TD><TD NOWRAP><CODE>pkgadd -d<I>
  directory</I> epm</CODE></TD></TR>
 </TABLE>
@@ -739,6 +735,7 @@ f 0444 root sys /usr/share/doc/foo *.html
 <LI><CODE>portable</CODE> - Portable software distribution (default).</LI>
 <LI><CODE>rpm</CODE> - RedHat software distribution.</LI>
 <LI><CODE>setld</CODE> - Tru64 (setld) software distribution.</LI>
+<LI><CODE>slackware</CODE> - Slackware software distribution.</LI>
 </UL>
 <P>Everything in the software list file stays the same - you just use
  the <CODE>-f</CODE> option to select the format. For example, to build
@@ -771,9 +768,9 @@ epm -f rpm epm
 </UL>
 <H2><A NAME="4_4">Including the Setup GUI</A></H2>
 <P>EPM also provides an optional graphical setup program. To include the
- setup program in your distributions, create a product logo image in XPM
- format and use the <CODE>--setup-image</CODE> option when creating your
- distribution:</P>
+ setup program in your distributions, create a product logo image in GIF
+ or XPM format and use the <CODE>--setup-image</CODE> option when
+ creating your distribution:</P>
 <UL>
 <PRE>
 <KBD>epm --setup-image foo.xpm foo <I>ENTER</I></KBD>
@@ -799,7 +796,9 @@ epm -f rpm epm
  <CODE>%conflicts</CODE> when the distribution format does not support
  package replacement.) If your package provides certain functionality
  associated with a standard name, the <CODE>%provides</CODE> directive
- can be used.</P>
+ can be used.
+<!-- NEED 2in -->
+</P>
 <P>Dependencies are specified using the package name and optionally the
  lower and upper version numbers:</P>
 <UL>
@@ -861,6 +860,8 @@ epm -f rpm epm
 %postinstall &lt;filename
 </PRE>
 </UL>
+
+<!-- NEED 2in -->
 <P>To include multiple lines directly, use the <CODE>&lt;&lt;string</CODE>
  notation (a.k.a. a &quot;here&quot; document):</P>
 <UL>
@@ -963,7 +964,9 @@ $bindir=$exec_prefix/bin
  depending on your choice of variable names.</P>
 <P>As you can see, variables are referenced using the dollar sign (<CODE>
 $</CODE>). As with most shells, variable names can be surrounded by
- curly braces (<CODE>${variable}</CODE>) to explicitly delimit the name.</P>
+ curly braces (<CODE>${variable}</CODE>) to explicitly delimit the name.
+<!-- NEED 2in -->
+</P>
 <P>If you need to insert a <CODE>$</CODE> in a filename or a script, use
  <CODE>$$</CODE>:</P>
 <UL>
@@ -996,6 +999,51 @@ i 755 root sys foo foo.sh
 i 755 root sys foo foo.sh &quot;runlevel(02) start(50) stop(30)&quot;
 </PRE>
 </UL>
+<H2><A NAME="5_9">Subpackages</A></H2>
+<P>Subpackages are optional parts of your software package. For example,
+ if your package includes developer files, you might provide them as a
+ subpackage so that users that will not be developing add-ons to your
+ software can omit them from the installation.</P>
+<BLOCKQUOTE><B>Note:</B> Subpackages are implemented as native subsets
+ of the main package for the AIX, HPUX, IRIX, Solaris, and Tru64 formats
+ and as separate packages that depend on the main (parent) package for
+ all other formats.</BLOCKQUOTE>
+<P>To define a subpackage, use the <CODE>%subpackage</CODE> directive
+ followed by a <CODE>%description</CODE> directive:</P>
+<UL>
+<PRE>
+%subpackage foo
+%description One-Line Description of Foo
+</PRE>
+</UL>
+<P>Files, scripts, and dependencies that follow the <CODE>%subpackage</CODE>
+ directive are treated as part of that subpackage. Specifying the <CODE>
+%subpackage</CODE> directive with no name returns processing to the main
+ (parent) package.</P>
+
+<!-- NEED 2in -->
+<P>You can alternate between subpackages as many times as you like:</P>
+<UL>
+<PRE>
+%description Main package description
+f 0755 /usr/bin/bar bar
+
+%subpackage foo
+%description Foo programs
+f 0755 /usr/bin/foo foo
+%require bla
+
+%subpackage
+f 0644 /usr/share/man/man1/bar.1
+
+%subpackage foo
+f 0644 /usr/share/man/man1/foo.1
+</PRE>
+</UL>
+<P>The above example creates a package containing the &quot;bar&quot; program and
+ man page with a subpackage containing the &quot;foo&quot; program and man page.
+ The &quot;foo&quot; subpackage depends both on the main package (implicit
+ requires) and another package called &quot;bla&quot;.</P>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="LICENSE">A - GNU General Public License</A></H1>
 <P ALIGN="CENTER">GNU GENERAL PUBLIC LICENSE
@@ -1199,29 +1247,86 @@ i 755 root sys foo foo.sh &quot;runlevel(02) start(50) stop(30)&quot;
  SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
  DAMAGES.</P>
 <P ALIGN="CENTER"><B>END OF TERMS AND CONDITIONS</B></P>
+<H2><A NAME="6_1">How to Apply These Terms to Your New Programs</A></H2>
+<P>If you develop a new program, and you want it to be of the greatest
+ possible use to the public, the best way to achieve this is to make it
+ free software which everyone can redistribute and change under these
+ terms.</P>
+<P>To do so, attach the following notices to the program. It is safest
+ to attach them to the start of each source file to most effectively
+ convey the exclusion of warranty; and each file should have at least
+ the &quot;copyright&quot; line and a pointer to where the full notice is found.</P>
+<PRE>
+<VAR>one line to give the program's name and an idea of what it does.</VAR>
+Copyright (C) <VAR>yyyy</VAR>  <VAR>name of author</VAR>
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+</PRE>
+<P>Also add information on how to contact you by electronic and paper
+ mail.</P>
+<P>If the program is interactive, make it output a short notice like
+ this when it starts in an interactive mode:</P>
+<PRE>
+Gnomovision version 69, Copyright (C) <VAR>year</VAR> <VAR>name of author</VAR>
+Gnomovision comes with ABSOLUTELY NO WARRANTY; for details
+type `show w'.  This is free software, and you are welcome
+to redistribute it under certain conditions; type `show c' 
+for details.
+</PRE>
+<P>The hypothetical commands <SAMP>`show w'</SAMP> and <SAMP>`show c'</SAMP>
+ should show the appropriate parts of the General Public License. Of
+ course, the commands you use may be called something other than <SAMP>
+`show w'</SAMP> and <SAMP>`show c'</SAMP>; they could even be
+ mouse-clicks or menu items--whatever suits your program.</P>
+<P>You should also get your employer (if you work as a programmer) or
+ your school, if any, to sign a &quot;copyright disclaimer&quot; for the program,
+ if necessary. Here is a sample; alter the names:</P>
+<PRE>
+Yoyodyne, Inc., hereby disclaims all copyright
+interest in the program `Gnomovision'
+(which makes passes at compilers) written 
+by James Hacker.
+
+<VAR>signature of Ty Coon</VAR>, 1 April 1989
+Ty Coon, President of Vice
+</PRE>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="MANPAGES">B - Command Reference</A></H1>
 
 <!-- NEW PAGE -->
-<H2><A NAME="epm">epm</A></H2>
-<HR>
-<P>Create software packages</P>
-<H3>Synopsis</H3>
-<P><B>epm</B> [ -a<I> architecture</I> ] [ -f<I> format</I> ] [ -g ] [
- -k ] [ -n[mrs] ] [ -s<I> setup.xpm</I> ] [ --output-dir<I> directory</I>
- ] [ --setup-image<I> setup.xpm</I> ] [ --setup-program<I>
- /foo/bar/setup</I> ] [ --setup-types<I> setup.types</I> ] [ -v ] [<I>
- name=value name=value</I> ] product [<I> listfile</I> ]</P>
-<H3>Description</H3>
-<P><B>epm</B> generates software packages complete with installation,
+
+<!-- SECTION: Man Pages -->
+<H2><A NAME="7_1">epm(1)</A></H2>
+<H3><A name="NAME">Name</A></H3>
+ epm - create software packages.
+<H3><A name="SYNOPSIS">Synopsis</A></H3>
+<B> epm</B> [ -a<I> architecture</I> ] [ -f<I> format</I> ] [ -g ] [ -k
+ ] [ -m<I> name</I> ] [ -n[mrs] ] [ -s<I> setup.xpm</I> ] [ --help ] [
+ --keep-files ] [ --output-dir<I> directory</I> ] [ --setup-image<I>
+ setup.xpm</I> ] [ --setup-program<I> /foo/bar/setup</I> ] [
+ --setup-types<I> setup.types</I> ] [ -v ] [<I> name=value</I> ...<I>
+ name=value</I> ] product [<I> listfile</I> ]
+<H3><A name="DESCRIPTION">Description</A></H3>
+<B> epm</B> generates software packages complete with installation,
  removal, and (if necessary) patch scripts. Unless otherwise specified,
  the files required for<I> product</I> are read from a file named &quot;<I>
-product</I>.list&quot;.</P>
+product</I>.list&quot;.
 <P>The<I> -a</I> option (&quot;architecture&quot;) specifies the actual
  architecture for the software. Without this option the generic
  processor architecture is used (&quot;intel&quot;, &quot;sparc&quot;, &quot;mips&quot;, etc.)</P>
 <P>The<I> -f</I> option (&quot;format&quot;) specifies the distribution format:</P>
-<UL>
 <DL>
 <DT>aix</DT>
 <DD>Generate an AIX distribution suitable for installation on an AIX
@@ -1259,7 +1364,6 @@ product</I>.list&quot;.</P>
 <DT>swinstall, depot</DT>
 <DD>Generate a HP-UX software distribution.</DD>
 </DL>
-</UL>
 <P>Executable files in the distribution are normally stripped of
  debugging information when packaged. To disable this functionality use
  the<I> -g</I> option.</P>
@@ -1273,8 +1377,8 @@ product</I>.list&quot;.</P>
 <P>The<I> --setup-program</I> option specifies the setup executable to
  use with the distribution. This option is currently only supported by
  portable distributions.</P>
-<P>The<I> --setup-types</I> option specifies the<VAR> setup.types</VAR>
- file to include with the distribution. This option is currently only
+<P>The<I> --setup-types</I> option specifies the<I> setup.types</I> file
+ to include with the distribution. This option is currently only
  supported by portable distributions.</P>
 <P>The<I> --output-dir</I> option specifies the directory to place
  output file into. The default directory is based on the operating
@@ -1287,46 +1391,23 @@ product</I>.list&quot;.</P>
  distributions.) The &quot;system-release-machine&quot; information can be
  customized or eliminated using the<I> -n</I> option with the
  appropriate trailing letters. Using<I> -n</I> by itself will remove the
- &quot;system-release-machine&quot; string from the filename entirely.</P>
+ &quot;system-release-machine&quot; string from the filename entirely. The
+ &quot;system-release-machine&quot; information can also be customized by using
+ the<I> -m</I> option with an arbitrary string.</P>
 <P>Debian, IRIX, portable, and Red Hat distributions use the extensions
  &quot;.deb&quot;, &quot;.tardist&quot;, &quot;tar.gz&quot;, and &quot;.rpm&quot; respectively.</P>
-<H3>List Variables</H3>
-<P><I>EPM</I> maintains a list of variables and their values which can
- be used to substitute values in the list file. These variables are
- imported from the current environment and taken from the command-line
- and list file as provided. Substitutions occur when the variable name
- is referenced with the dollar sign ($):</P>
-<UL>
-<PRE>
-%install echo What is your name:
-%install read $$name
-%install echo Your name is $$name
-</PRE>
-</UL>
-<UL>
-<PRE>
-f 0555 root sys ${bindir}/foo foo
-f 0555 root sys $datadir/foo/foo.dat foo.dat
-</PRE>
-</UL>
-<P>Variable names can be surrounded by curley brackets (${name}) or
- alone ($name); without brackets the name is terminated by the first
- slash (/), dash (-), or whitespace. The dollar sign can be inserted
- using $$.</P>
-<H3>Known Bugs</H3>
-<P><I>EPM</I> does not currently support generation of IRIX software
- patches.</P>
-<H3>See Also</H3>
-<P><A HREF="#epm">epm(1)</A> - create software packages.</P>
-<P><A HREF="#epminstall">epminstall(1)</A> - add a directory, file, or
- symlink to a list file.
-<BR> <A HREF="#mkepmlist">mkepmlist(1)</A> - make an epm list file from
- a directory.
-<BR> <A HREF="#REFERENCE">epm.list(5)</A> - epm list file format.</P>
- <A HREF="#setup">setup(1)</A> - graphical setup program for the esp
- package manager.
-<H3>Copyright</H3>
-<P>Copyright 1999-2005 by Easy Software Products, All Rights Reserved.</P>
+<H3><A name="LIST_FILES">List Files</A></H3>
+ The EPM list file format is now described in the <A href="man-epm.list.html?TOPIC=Man+Pages">
+epm.list(5)</A> man page.
+<H3><A name="KNOWN_BUGS">Known Bugs</A></H3>
+ EPM does not currently support generation of IRIX software patches.
+<H3><A name="SEE_ALSO">See Also</A></H3>
+ epminstall(1) - add a directory, file, or symlink to a list file
+<BR> mkepmlist(1) - make an epm list file from a directory
+<BR> epm.list(5) - epm list file format
+<BR> setup(1) - graphical setup program for the esp package manager
+<H3><A name="COPYRIGHT">Copyright</A></H3>
+ Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -1337,26 +1418,27 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
  General Public License for more details.</P>
 
 <!-- NEW PAGE -->
-<H2><A NAME="epminstall">epminstall</A></H2>
-<HR>
-<P>Add a directory, file, or symlink to a list file.</P>
-<H3>Synopsis</H3>
-<P><B>epminstall</B><I> options</I> file1 file2 ... fileN directory</P>
-<P><B>epminstall</B><I> options</I> file1 file2</P>
-<P><B>epminstall</B><I> options</I> -d directory1 directory2 ...
- directoryN</P>
-<H3>Description</H3>
-<P><B>epminstall</B> adds or replaces a directory, file, or symlink in a
- list file. The default list file is<VAR> epm.list</VAR> and can be
- overridden using the <CODE>EPMLIST</CODE> environment variable or the <CODE>
---list-file</CODE> option.</P>
+
+<!-- SECTION: Man Pages -->
+<H2><A NAME="7_2">epminstall(1)</A></H2>
+<H3><A name="NAME">Name</A></H3>
+ epminstall - add a directory, file, or symlink to a list file.
+<H3><A name="SYNOPSIS">Synopsis</A></H3>
+<B> epminstall</B><I> options</I> file1 file2 ... fileN directory
+<BR><B> epminstall</B><I> options</I> file1 file2
+<BR><B> epminstall</B><I> options</I> -d directory1 directory2 ...
+ directoryN
+<H3><A name="DESCRIPTION">Description</A></H3>
+<B> epminstall</B> adds or replaces a directory, file, or symlink in a
+ list file. The default list file is &quot;epm.list&quot; and can be overridden
+ using the<I> EPMLIST</I> environment variable or the<I> --list-file</I>
+ option.
 <P>Entries are either added to the end of the list file or replaced
  in-line. Comments, directives, and variable declarations in the list
  file are preserved.</P>
-<H3>Options</H3>
-<P><B>epminstall</B> recognizes the standard Berkeley<I> install</I>
- command options:</P>
-<UL>
+<H3><A name="OPTIONS">Options</A></H3>
+<B> epminstall</B> recognizes the standard Berkeley<I> install</I>
+ command options:
 <DL>
 <DT>-b</DT>
 <DD>Make a backup of existing files (ignored, default for EPM.)</DD>
@@ -1377,14 +1459,12 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
 <DT>--list-file<I> filename.list</I></DT>
 <DD>Specify the list file to update.</DD>
 </DL>
-</UL>
-<H3>See Also</H3>
-<P><A HREF="#epm">epm(1)</A> - create software packages.
-<BR> <A HREF="#mkepmlist">mkepmlist(1)</A> - make an epm list file from
- a directory.
-<BR> <A HREF="#REFERENCE">epm.list(5)</A> - epm list file format.</P>
-<H3>Copyright</H3>
-<P>Copyright 1999-2005 by Easy Software Products, All Rights Reserved.</P>
+<H3><A name="SEE_ALSO">See Also</A></H3>
+ epm(1) - create software packages
+<BR> mkepmlist(1) - make an epm list file from a directory
+<BR> epm.list(5) - epm list file format
+<H3><A name="COPYRIGHT">Copyright</A></H3>
+ Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -1395,36 +1475,35 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
  General Public License for more details.</P>
 
 <!-- NEW PAGE -->
-<H2><A NAME="mkepmlist">mkepmlist</A></H2>
-<HR>
-<P>Make an EPM list file from a directory.</P>
-<H3>Synopsis</H3>
-<P><B>mkepmlist</B> [ -g<I> group</I> ] [ -u<I> user</I> ] [ --prefix<I>
- directory</I> ]<I> directory</I> [ ...<I> directory</I> ]</P>
-<H3>Description</H3>
-<P><B>mkepmlist</B> recursively generates file list entries for files,
- links, and directories. The file list is send to the standard output.</P>
+
+<!-- SECTION: Man Pages -->
+<H2><A NAME="7_3">mkepmlist(1)</A></H2>
+<H3><A name="NAME">Name</A></H3>
+ mkepmlist - make an epm list file from a directory.
+<H3><A name="SYNOPSIS">Synopsis</A></H3>
+<B> mkepmlist</B> [ -g<I> group</I> ] [ -u<I> user</I> ] [ --prefix<I>
+ directory</I> ]<I> directory</I> [ ...<I> directory</I> ]
+<H3><A name="DESCRIPTION">Description</A></H3>
+<B> mkepmlist</B> recursively generates file list entries for files,
+ links, and directories. The file list is send to the standard output.
 <P>The<I> -g</I> option overrides the group ownership of the files in
  the specified directories with the specified group name.</P>
 <P>The<I> -u</I> option overrides the user ownership of the files in the
  specified directories with the specified user name.</P>
 <P>The<I> --prefix</I> option adds the specified directory to the
- destination path. For example, if you installed files to<VAR> /opt/foo</VAR>
- and wanted to build a distribution that installed the files in<VAR>
- /usr/local</VAR>, the following command would generate a file list that
- is installed in<VAR> /usr/local</VAR>:</P>
-<UL>
+ destination path. For example, if you installed files to &quot;/opt/foo&quot; and
+ wanted to build a distribution that installed the files in
+ &quot;/usr/local&quot;, the following command would generate a file list that is
+ installed in &quot;/usr/local&quot;:</P>
 <PRE>
-<KBD>mkepmlist --prefix=/usr/local /opt/foo &gt;foo.list ENTER</KBD>
+     mkepmlist --prefix=/usr/local /opt/foo &gt;foo.list
 </PRE>
-</UL>
-<H3>See Also</H3>
-<P><A HREF="#epm">epm(1)</A> - create software packages.
-<BR> <A HREF="#epminstall">epminstall(1)</A> - add a directory, file, or
- symlink to a list file.
-<BR> <A HREF="#REFERENCE">epm.list(5)</A> - epm list file format.</P>
-<H3>Copyright</H3>
-<P>Copyright 1999-2005 by Easy Software Products, All Rights Reserved.</P>
+<H3><A name="SEE_ALSO">See Also</A></H3>
+ epm(1) - create software packages
+<BR> epminstall(1) - add a directory, file, or symlink to a list file
+<BR> epm.list(5) - epm list file format
+<H3><A name="COPYRIGHT">Copyright</A></H3>
+ Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -1435,29 +1514,30 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
  General Public License for more details.</P>
 
 <!-- NEW PAGE -->
-<H2><A NAME="setup">setup</A></H2>
-<HR>
-<P>Graphical setup program for the ESP package manager.</P>
-<H3>Synopsis</H3>
-<P><B>setup</B> [<I> directory</I> ]</P>
-<H3>Description</H3>
-<P><B>setup</B> provides a graphical installation interface for
+
+<!-- SECTION: Man Pages -->
+<H2><A NAME="7_4">setup(1)</A></H2>
+<H3><A name="NAME">Name</A></H3>
+ setup - graphical setup program for the esp package manager
+<H3><A name="SYNOPSIS">Synopsis</A></H3>
+<B> setup</B> [<I> directory</I> ]
+<H3><A name="DESCRIPTION">Description</A></H3>
+<B> setup</B> provides a graphical installation interface for
  EPM-generated portable installation packages. It presents a
  step-by-step dialog for collecting a list of packages to install and
- accepting any license agreements for those packages.</P>
+ accepting any license agreements for those packages.
 <P><B>setup</B> searches for products in the current directory or the
  directory specified on the command-line.</P>
-<H3>Installation Types</H3>
-<P>The default type of installation is &quot;custom&quot;. That is, users will be
- able to select from the list of products and install them.</P>
+<H3><A name="INSTALLATION_TYPES">Installation Types</A></H3>
+ The default type of installation is &quot;custom&quot;. That is, users will be
+ able to select from the list of products and install them.
 <P><B>setup</B> also supports other types of installations. The<I>
  setup.types</I> file, if present, defines the other installation types.</P>
-<H3>See Also</H3>
-<P><A HREF="#epm">epm(1)</A> - create software packages.
-<BR> <A HREF="#SETUPTYPES">setup.types(5)</A> - epm gui setup types file
- format.</P>
-<H3>Copyright</H3>
-<P>Copyright 1999-2005 by Easy Software Products, All Rights Reserved.</P>
+<H3><A name="SEE_ALSO">See Also</A></H3>
+ epm(1) - create software packages.
+<BR> setup.types(5) - epm gui setup types file format.
+<H3><A name="COPYRIGHT">Copyright</A></H3>
+ Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -1561,7 +1641,7 @@ f 0555 root sys $datadir/foo/foo.dat foo.dat
 <DD>Specifies a script or program to be run before removing files. (This
  has been obsoleted by the %preremove directive)</DD>
 <DT>%release<I> number</I></DT>
-<DD>Specifies the release or build number of a product (defaults to 0).</DD>
+<DD>Specifies the release or build number of a product (defaults to 1).</DD>
 <DT>%replaces<I> product</I></DT>
 <DD>Indicates that this product replaces the named product.</DD>
 <DT>%requires<I> product</I></DT>
@@ -1705,483 +1785,25 @@ TYPE Custom Configuration
 <H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
 <P>This appendix lists the change log for each release of the EPM
  software.</P>
-<H2><A NAME="9_1">Changes in EPM v3.7.1</A></H2>
+<H2><A NAME="9_1">Changes in EPM v4.0</A></H2>
 <UL>
-<LI>The setup and uninst GUIs now support GIF setup images (setup.gif)
- as well as XPM images (setup.xpm)</LI>
-<LI>Debian packages now properly install init scripts.</LI>
-<LI>MacOS X packages can now be created when using the new Xcode
- developer tools.</LI>
-<LI>Packages created on MacOS X now use the system name &quot;macosx&quot; and the
- MacOS X version number. The old &quot;darwin&quot; name is still accepted as a
- synonym.</LI>
-<LI>EPM now supports version numbers that do not start with a number
- (HP-UX workaround for OS dependencies...)</LI>
-<LI>EPM now issues an error message if you have identical destination
- files that don't match up.</LI>
-<LI>HP-UX packages now use the %readme file for the readme info in a
- package, and the %license file for the copyright info in a package.</LI>
-<LI>Added %preremove support for AIX packages and fixed some AIX
- packaging issues with patch from David Maltz.</LI>
-</UL>
-<H2><A NAME="9_2">Changes in EPM v3.7</A></H2>
-<UL>
-<LI>Fixed init script support for Tru64 packages.</LI>
-<LI>AIX output now correctly generates the inventory file for files in
- /usr and /opt.</LI>
-<LI>The Slackware packaging code swapped the output directory and
- product name when generating the post-install script.</LI>
-<LI>RPM dependencies of the form &quot;%requires package &gt;= version&quot; are now
- correctly written in the spec file.</LI>
-<LI>AIX output now correctly lists file sizes by directory and handles
- /opt properly.</LI>
-<LI>RPM output now correctly handles installing, upgrading, and removing
- init scripts.</LI>
-<LI>RPM output did not work with filenames that contained a dollar sign
- ($).</LI>
-<LI>Added Slackware packager support based upon a patch contributed by
- Alec Thomas.</LI>
-<LI>The file copy code reported write errors for the source filename and
- not the (correct) destination filename.</LI>
-<LI>Fixed the handling of absolute output directories when generating
- RPM packages.</LI>
-<LI>The configure script did not support the OPTIM environment variable
- for custom optimization settings.</LI>
-<LI>Portable packages updated the permissions of configuration files
- before they were copied.</LI>
-<LI>Portable installations did not remove empty installation directories
- when the remove script was run.</LI>
-<LI>Portable patch installation did not correctly determine when root or
- /usr files were present in the patch.</LI>
-<LI>OSX packages incorrectly looked in /System/Library for the init
- scripts instead of /Library.</LI>
-<LI>RPM building did not work properly when --output-dir was specified
- using an absolute path.</LI>
-<LI>Made cosmetic changes to the setup/uninstall GUIs.</LI>
-<LI>The setup GUI did not support software patches.</LI>
-<LI>The documentation incorrectly specified runlevels() instead of
- runlevel().</LI>
-<LI>The portable distributions incorrectly used /usr/local/src/rc.d as a
- fallback location for init scripts.</LI>
-</UL>
-<H2><A NAME="9_3">Changes in EPM v3.6</A></H2>
-<UL>
-<LI>Added a GUI uninstall program to be distributed with portable
- distributions with a setup image.</LI>
-<LI>MacOS X portable packages now support graphical setup and uninstall
- using the Apple authorization API.</LI>
-<LI>Debian packages did not include the (required) trailing period when
- running the update-rc.d script.</LI>
-<LI>BSD packages now create directories using postinstall commands
- instead of listing them directly. This should eliminate errors from the
- FreeBSD pkg_delete command.</LI>
-<LI>File dependencies were incorrectly specified in RPM spec files.</LI>
-<LI>IRIX portable distributions didn't write the chkconfig commands
- properly.</LI>
-<LI>The mkepmlist utility didn't support files as well as directories.</LI>
-<LI>EPM didn't do variable expansion of imported files (&quot;&lt;foo.txt&quot;) or
- in-line data (&quot;&lt;&lt;FOO&quot;)</LI>
-<LI>Now build gzip'd depot files as well as the tar.gz files when
- creating HP-UX software packages.</LI>
-<LI>Now correctly use --libdir setting to locate the setup GUI.</LI>
-<LI>Now use rpmbuild command, if available, to build RPM files since
- newer versions of RPM may not map the &quot;-bb&quot; option to build a package.</LI>
-<LI>Now set the RPMDIR environment variable when building with older
- versions of RPM that don't understand the &quot;topdir_&quot; variable.</LI>
-<LI>Now handle dependencies of the form &quot;package &gt;= version&quot; in Debian
- packages.</LI>
-<LI>Portable distributions that didn't have any files in /usr or in /
- would look for a non-existent .sw or .ss file.</LI>
-<LI>EPM's sample list file didn't include the man pages for setup or
- setup.types, and installed the epm list file format man page in the
- wrong directories.</LI>
-<LI>EPM would quote the &quot;:&quot; character in filenames but didn't need to.</LI>
-<LI>EPM tried to move the wrong RPM file on non-intel systems.</LI>
-</UL>
-<H2><A NAME="9_4">Changes in EPM v3.5.1</A></H2>
-<UL>
-<LI>OSX packages did not set the &quot;install as root&quot; package type, so
- package installation usually failed.</LI>
-<LI>OSX packages installed init scripts in /System/Library/StartupItems,
- but non-Apple packages should be installed in /Library/StartupItems.</LI>
-<LI>Added support for &quot;requires(foo)&quot;, &quot;uses(foo)&quot;, &quot;provides(foo)&quot;, and
- &quot;order(foo)&quot; as options for init scripts. These options are currently
- only used when creating OSX packages.</LI>
-</UL>
-<H2><A NAME="9_5">Changes in EPM v3.5</A></H2>
-<UL>
-<LI>Added support for MacOS X package generation.</LI>
-<LI>No longer need/use RPMDIR when building RPMs, just set the &quot;topdir_&quot;
- variable in the spec file.</LI>
-<LI>The portable removal scripts didn't correctly write the list of init
- scripts to remove.</LI>
-<LI>Added a new --output-dir option contributed by Geoffrey Wossum.</LI>
-<LI>Not all implementations of the &quot;id&quot; command support the &quot;-u&quot; option,
- so EPM now looks at the default output.</LI>
-<LI>RPM dependencies with a single version number didn't get written to
- the spec file properly.</LI>
-<LI>Added support for file options - nostrip(), runlevel(12345),
- start(nn), and stop(nn).</LI>
-<LI>Filenames can now contain spaces, either by putting the full name in
- quotes (&quot;file&nbsp;with&nbsp;spaces&quot;) or using the backslash character
- (file\&nbsp;with\&nbsp;spaces).</LI>
-<LI>The mkepmlist utility didn't handle symlinks properly.</LI>
-<LI>BSD packages needed to list the directories to remove separately and
- in reverse order.</LI>
-</UL>
-<H2><A NAME="9_6">Changes in EPM v3.4</A></H2>
-<UL>
-<LI>No longer install init scripts in run levels 2 and 5 under Solaris,
- which runs all init scripts in each run level.</LI>
-<LI>The tar files produced by EPM didn't conform to the POSIX 1003.1
- spec. EPM now puts the POSIX version number (00) and supports &quot;long&quot;
- filenames up to 255 characters in length.</LI>
-<LI>AIX packages did not use the correct path for files placed in the
- root partition.</LI>
-<LI>Now install init scripts for *BSD in /usr/local/etc/rc.d.</LI>
-<LI>Portable installation scripts now issue chown and chgrp commands for
- all installed files that are not owned by user root.</LI>
-<LI>No longer use or pad empty tar files, which saves 5k of disk space
- per distribution.</LI>
-</UL>
-<H2><A NAME="9_7">Changes in EPM v3.3</A></H2>
-<UL>
-<LI>UnixWare 7 needs the absolute path when transferring an AT&amp;T package
- directory to a .pkg file.</LI>
-<LI>Now use the &quot;id&quot; command (POSIX) instead of &quot;whoami&quot; (BSD) to check
- that the installing user is root.</LI>
-<LI>Various fixes for OpenServer.</LI>
-<LI>Now use the &quot;-ln&quot; option when checking for the size of the
- distribution files in portable distributions.</LI>
-<LI>New C implementation of mkepmlist, based on a contribution from
- Andreas Voegele.</LI>
-<LI>The portable install and patch scripts now change the permissions of
- the installed &quot;remove&quot; script to 544.</LI>
-<LI>The wildcard character * did not match 0 characters if the pattern
- and the filename string differed only by the trailing * (e.g. &quot;Courier&quot;
- and &quot;Courier*&quot;).</LI>
-<LI>IRIX pre/postremove scripts are now copied after installation so
- that they can be executed when removing the inst/tardist package.</LI>
-<LI>HP-UX postinstall/preremove scripts would execute init scripts from
- /sbin/init.d/sbin/init.d.</LI>
-<LI>The copyright string wasn't being quoted in portable installation
- scripts.</LI>
-<LI>EPM now checks to see if an executable file is a shell script before
- running the &quot;strip&quot; command.</LI>
-</UL>
-<H2><A NAME="9_8">Changes in EPM v3.2.1</A></H2>
-<UL>
-<LI>The check for Darwin (MacOS X) in the portable installation scripts
- was using &quot;==&quot; instead of just &quot;=&quot;.</LI>
-</UL>
-<H2><A NAME="9_9">Changes in EPM v3.2</A></H2>
-<UL>
-<LI>Added &quot;SHELL=/bin/sh&quot; line to portable installation, patch, and
- remove scripts in case the root shell is not /bin/sh or a compatible
- shell.</LI>
-<LI>The epminstall utility didn't support the EPMLIST environment
- variable as documented.</LI>
-<LI>The &quot;native&quot; distribution format is now &quot;deb&quot; if the &quot;dpkg&quot; command
- is installed in /usr/bin.</LI>
-<LI>Debian packages did not use the release number in the Version:
- keyword.</LI>
-<LI>Changed the portable installation script support for init scripts to
- look for scripts in both rc2.d and rc3.d, and to check for the
- existence of all rc directories before installing into them.</LI>
-<LI>Changed the portable installation script to prepend /bin, /usr/bin,
- and /usr/ucb to the beginning of the PATH variable so the &quot;tar&quot;, &quot;rm&quot;,
- and &quot;mv&quot; commands can be found in whatever directory the local system
- uses.</LI>
-<LI>AIX packaging now works.</LI>
-<LI>Added support for the Darwin (MacOS X) tar command in portable
- packages (sudo ./foo.install :)</LI>
-<LI>IRIX inst packages incorrectly had the postinstall commands in the
- preinstall and removal scripts.</LI>
-<LI>The setup GUI now requires FLTK 1.1.x.</LI>
-</UL>
-<H2><A NAME="9_10">Changes in EPM v3.1</A></H2>
-<UL>
-<LI>Added support for &quot;&lt;&lt;end ... end&quot; and &quot;&lt;filename&quot; to insert
- descriptions and commands in-line and from a file.</LI>
-<LI>Added new --software-dir option which specifies the location of the
- EPM software directory (default /etc/software).</LI>
-<LI>Added new %if, %ifdef, %elseif, %elseifdef, %else, and %endif
- directives for list files (addition contributed by J. Nordell.)</LI>
-<LI>The GUI setup program left the &quot;Next&quot; button enabled after the
- license check.</LI>
-<LI>Fixed the dependency strings created for HP-UX swinstall (fix
- contributed by R. Begg.)</LI>
-<LI>Wasn't installing the man pages in section 5.</LI>
-<LI>When generating Debian packages, the DEBIAN directory might not have
- the correct permissions due to a restrictive umask. EPM now forces the
- correct permissions for the package archive.</LI>
-<LI>HP-UX swinstall packages now use the prerequisites rule instead of
- corequisites to ensure that the %requires dependency is enforced.</LI>
-<LI>Dependencies for Debian packages are now listed on a single line per
- type rather than one line per dependency.</LI>
-<LI>EPM now detects RPM 4.0.3, which (mysteriously) now uses &quot;--target
- arch&quot; instead of &quot;--target=arch&quot;.</LI>
-</UL>
-<H2><A NAME="9_11">Changes in EPM v3.0</A></H2>
-<UL>
-<LI>Added new documentation.</LI>
-<LI>Added new &quot;-a arch&quot; option to support specific architectures (e.g.
- i586, i686, ultrasparc, etc.)</LI>
-<LI>Added support for the *BSD package format using pkg_create.</LI>
-<LI>Added support for the AIX package format using the backup program.</LI>
-<LI>Added new epminstall utility to build list files from &quot;make install&quot;
- targets.</LI>
-<LI>Added snprintf/vsnprintf functions for systems that don't provide
- them, and use snprintf and vsnprintf for all formatted strings that
- aren't just numbers.</LI>
-<LI>Added new run_command() function to replace use of system()
- function.</LI>
-<LI>Added new %provides directive.</LI>
-<LI>Revamped the setup GUI, including support for installation types in
- the setup GUI, so that you can select groups of products or choose a
- custom installation.</LI>
-<LI>The mkepmlist utility had a bad regular expression that thought that
- any argument (directory names, etc.) with a dash (&quot;-&quot;) in it was an
- unsupported option.</LI>
-<LI>Fixed a bug in the removal script: config files were removed by the
- remove script...</LI>
-<LI>Changed the config file install logic to copy the new config file
- (instead of moving it), so that an unchanged config file can be
- detected and removed. This provides the best of both worlds: unchanged
- config files are update automatically by an upgrade/install, while
- changed ones are preserved.</LI>
-</UL>
-<H2><A NAME="9_12">Changes in EPM v2.8</A></H2>
-<UL>
-<LI>The line breaking code did not include an extra space, so filenames
- in the portable install/patch/ remove scripts would be joined instead
- of separated.</LI>
-<LI>The setup GUI did not allow the user to toggle a software product
- for distribution if the product was selected (nav box around it).</LI>
-<LI>The mkepmlist program didn't get the permissions of each file (just
- the parent directory.)</LI>
-<LI>The portable installation scripts used the -L or -h option to test
- for symlinks with the test command. The choice of option was based on
- the build platform, making the script non-portable. Now use -h
- exclusively since it is supported on all UNIX's we have access to, even
- with GNU test even though it isn't documented...</LI>
-</UL>
-<H2><A NAME="9_13">Changes in EPM v2.7</A></H2>
-<UL>
-<LI>Fixed a bug in the configuration script with the
- --with-fltk-includes option.</LI>
-<LI>Tru64 UNIX distributions now use the name &quot;tru64&quot; instead of
- &quot;dunix&quot;. &quot;dunix&quot; is still supported in list files for compatibility
- with old list files.</LI>
-<LI>Added support for portable scripts under AIX.</LI>
-<LI>Fixed the space checking code in portable installation scripts.</LI>
-<LI>Now break up long lines in the portable install/patch/ remove
- scripts.</LI>
-</UL>
-<H2><A NAME="9_14">Changes in EPM v2.6</A></H2>
-<UL>
-<LI>Changed the automatic version number generation code to properly
- handle patch, beta, and pre releases.</LI>
-<LI>Added support for release numbers in RPM files.</LI>
-<LI>Added support for version number ranges in dependencies, either as
- &quot;low-version high-version&quot;, &quot;&lt; version&quot;, or &quot;&gt; version&quot;.</LI>
-<LI>Eliminated some GCC warnings about using a char to index into an
- array.</LI>
-<LI>Added a disk space check to the portable installation scripts.</LI>
-<LI>Added a new mkepmlist utility, based on a Perl script by Christian
- Lademann.</LI>
-<LI>Added a &quot;keep files&quot; option (-k) to epm to keep the intermediate
- (spec, etc.) files around after building the binary distribution.</LI>
-<LI>Added support for Tru64 UNIX software packages (setld).</LI>
-<LI>Patch distributions were incorrectly backing up the original files,
- causing the original backup to be lost.</LI>
-<LI>Pre/post install/remove scripts were not using the right filename
- for Solaris PKG distributions.</LI>
-</UL>
-<H2><A NAME="9_15">Changes in EPM v2.5</A></H2>
-<UL>
-<LI>Added support for pre-install, post-install, pre-patch, post-patch,
- pre-remove, and post-remove commands.</LI>
-<LI>There was no way to use a literal $ in scripts or in filenames. Use
- $$ to include a single $.</LI>
-<LI>The config and license file support for AT&amp;T software packages did
- not check to see if the source file had an absolute path. This would
- produce an invalid prototype file.</LI>
-<LI>The RPM --target option was not being called with an equal sign,
- which caused problems with RPM 4.0.</LI>
-<LI>Updated the Debian packager to use the prerm and postrm script names
- to match reality.</LI>
-<LI>Updated the Debian packager to support the Replaces dependency.</LI>
-<LI>Updated the portable and RPM distributions to check for the new SuSE
- 7.1 init.d directories.</LI>
-<LI>RPM distributions now use %config(noreplace) for config files, to
- duplicate the behavior that is expected.</LI>
-<LI>The portable scripts now use the autoconf echo test to determine the
- proper options for echo (-n or \c), rather then hardcoding this based
- on the build system.</LI>
-</UL>
-<H2><A NAME="9_16">Changes in EPM v2.4</A></H2>
-<UL>
-<LI>The [] wildcard matching did not skip over the character that was
- matched. This prevented matches in most cases...</LI>
-</UL>
-<H2><A NAME="9_17">Changes in EPM v2.3</A></H2>
-<UL>
-<LI>Fix for an incredibly stupid bug in the portable distribution code -
- was using ! instead of ~ to mask off the write permission bits in the
- distribution archive.</LI>
-<LI>Now use getpwuid() instead of getlogin() to get the username of the
- packager.</LI>
-<LI>The RPM distributions now use the same init.d script logic as
- portable distributions. This should make them portable to all known
- Linux distributions as well as avoid a *very* nasty installer bug in
- RedHat 7.0.</LI>
-<LI>The HP-UX swinstall code did not properly handle directories or
- config files.</LI>
-<LI>The [] wildcard matching rule did not accept ranges (e.g. &quot;[a-z]&quot;,
- &quot;[0-9]&quot;, etc.)</LI>
-<LI>Added VPATH support and distribution targets to Makefile.</LI>
-<LI>Added support for defining variables in list files; the format is
- &quot;$name=value&quot;.</LI>
-<LI>The variable expansion code didn't check for ${name}.</LI>
-</UL>
-<H2><A NAME="9_18">Changes in EPM v2.2</A></H2>
-<UL>
-<LI>New HTML documentation files.</LI>
-<LI>Updated the BuildRoot directive in RPM spec files to be an absolute
- path; RedHat 6.2's version of RPM adds a leading slash otherwise.</LI>
-<LI>IRIX defaults to run level 2...</LI>
-<LI>The setup GUI now displays an error message if run by a non-root
- user.</LI>
-<LI>The setup GUI now provides &quot;Install All&quot; and &quot;Install None&quot; buttons
- in the software selection pane.</LI>
-<LI>Added a &quot;native&quot; distribution format to select the native format for
- a particular OS (Linux defaults to RPM format...)</LI>
-<LI>The tar file generation code now always appends at least 2 zeroed
- blocks to the end of the archive. This eliminates error messages from
- Solaris tar and seems to be compatible with all other tar programs.</LI>
-<LI>Added the SuSE RPM directory to the standard search path.</LI>
-<LI>Added support for a new %packager directive.</LI>
-<LI>The strip command used was redirecting stderr before redirecting
- stdout.</LI>
-<LI>The portable distributions now set the umask to avoid problems with
- buggy tar programs and Linux distributions.</LI>
-<LI>Added command-line option to specify the location of the setup
- program.</LI>
-<LI>Added support for wildcards in source filenames.</LI>
-<LI>The OS version number is now truncated to only contain the major and
- minor release numbers.</LI>
-</UL>
-<H2><A NAME="9_19">Changes in EPM v2.1</A></H2>
-<UL>
-<LI>Moved setup program to /usr/lib/epm ($prefix/lib/epm) to avoid name
- clash with RedHat setup program.</LI>
-<LI>Added Debian distribution files from Jeff Licquia.</LI>
-<LI>Configure script changes for GCC 2.95.x and Solaris.</LI>
-<LI>Portability fixes.</LI>
-<LI>Now look for RPMS in different &quot;standard&quot; locations after building
- them; the RPMDIR environment variable can be used to override the
- default locations.</LI>
-<LI>The sample project list file (epm.list) was missing from the 2.0
- distribution.</LI>
-<LI>Now check for write permission in /usr by writing a test file
- (/usr/.writetest); this should make diskless client installations more
- reliable.</LI>
-<LI>Added support for variables on the command line (name=value); insert
- into project filenames using $name.</LI>
-<LI>Variable expansion is now done on all lines and fields. This allows
- variables to be used in scripts and in the permissions field, for
- example.</LI>
-<LI>Now only specify run levels 0 and 3 for init scripts (0, 3, and 5
- for Linux.)</LI>
-<LI>Now support init scripts in /sbin/init.d and /sbin/init.d/rcN.d
- (SuSE.)</LI>
-<LI>RPM distributions should now work OK for non-Red Hat based systems,
- in particular for init scripts.</LI>
-<LI>PKG distributions are now also generated in the &quot;package stream&quot;
- format as well as the directory and tar.gz file formats.</LI>
-</UL>
-<H2><A NAME="9_20">Changes in EPM v2.0</A></H2>
-<UL>
-<LI>New &quot;-f&quot; option to generate vendor-specific software distributions.
- Now support AT&amp;T, Debian, HP-UX, IRIX, and Red Hat software
- distributions.</LI>
-<LI>New &quot;-s&quot; option to include the ESP Software Wizard (GUI) with
- portable distributions.</LI>
-<LI>The &quot;-t&quot; option (test) is no longer supported.</LI>
-<LI>New &quot;-v&quot; option to control the amount of information that is
- reported.</LI>
-<LI>New graphical setup program for portable distributions.</LI>
-<LI>New &quot;description&quot; directive.</LI>
-<LI>New &quot;format&quot; directive.</LI>
-<LI>New &quot;include&quot; directive.</LI>
-<LI>New &quot;replaces&quot; directive.</LI>
-<LI>Portable distributions should now be more portable.</LI>
-</UL>
-<H2><A NAME="9_21">Changes in EPM v1.7</A></H2>
-<UL>
-<LI>The %requires and %incompat directives now support specification of
- files as well as products.</LI>
-<LI>The init script installation code now creates a link in the init.d
- subdirectory to avoid frustrating well-trained fingers.</LI>
-<LI>The progress messages for shared and non-shared software were the
- same.</LI>
-</UL>
-<H2><A NAME="9_22">Changes in EPM v1.6</A></H2>
-<UL>
-<LI>Installation archives were missing the &quot;.ss&quot; and &quot;.pss&quot; files that
- were added to support diskless installations.</LI>
-<LI>The scripts didn't handle removing distributions that had no
- non-shared components.</LI>
-<LI>The scripts didn't return a non-zero exit status if the user did not
- agree with the license or want to install.</LI>
-</UL>
-<H2><A NAME="9_23">Changes in EPM v1.5</A></H2>
-<UL>
-<LI>Now support diskless installations; all files destined for /usr are
- put in a separate archive and are installed (or removed) only if /usr
- is read+write.</LI>
-</UL>
-<H2><A NAME="9_24">Changes in EPM v1.4</A></H2>
-<UL>
-<LI>Now map group &quot;sys&quot; to &quot;system&quot; for Digital UNIX and &quot;root&quot; for
- Linux.</LI>
-<LI>The initialization script installation now checks for the presence
- of run levels 4 and 5.</LI>
-</UL>
-<H2><A NAME="9_25">Changes in EPM v1.3</A></H2>
-<UL>
-<LI>Now use the &quot;p&quot; option to tar to ensure that file permissions are
- created properly. This is normally the default for the super-user, but
- not under Digital UNIX!</LI>
-<LI>Initialization scripts are now linked to run levels 0, 2, 3, 4, and
- 5.</LI>
-</UL>
-<H2><A NAME="9_26">Changes in EPM v1.2</A></H2>
-<UL>
-<LI>Patch distributions were not correctly named.</LI>
-<LI>Added new &quot;initialization script&quot; file types &quot;i&quot; and &quot;I&quot;. The new
- file types place the scripts in /etc/software/init.d and make links to
- the appropriate system-specific rc.d directories and run the scripts to
- start and stop things accordingly.</LI>
-</UL>
-<H2><A NAME="9_27">Changes in EPM v1.1</A></H2>
-<UL>
-<LI>The &quot;whoami&quot; command isn't always in the user's path, so scripts now
- use a hard-coded path (setup by the configure script) to the program.</LI>
-<LI>Added a check for IRIX64 (64-bit kernel instead of n32.)</LI>
-<LI>The %system directive now supports release numbers, e.g. &quot;irix-6.5&quot;.</LI>
-<LI>The %system directive now supports &quot;!&quot; (not) operator so you can do
- things like &quot;%system irix !irix-6.5&quot; to select any IRIX release except
- IRIX 6.5.</LI>
-<LI>Files that already exist on the system are renamed to &quot;filename.O&quot;
- on installation and back to &quot;filename&quot; when removed (except for config
- files, which don't overwrite and aren't removed.)</LI>
-<LI>Prerequisites (%required directive) now look for required product in
- the current directory and install it automatically if it is available
- and not already installed.</LI>
-<LI>The copyright notice in the installation script was not displayed if
- the user used the &quot;now&quot; option.</LI>
+<LI>New subpackage support for creating multiple dependent packages or a
+ combined package with selectable subpackages, depending on the package
+ format.</LI>
+<LI>Added support for compressing the package files in portable packages
+ (reduces disk space requirements on platforms that provide gzip...)</LI>
+<LI>Added support for custom platform names via the new &quot;-m name&quot;
+ option.</LI>
+<LI>The setup GUI now sets the EPM_INSTALL_TYPE environment variable to
+ the value of the selected TYPE line in the setup.types file.</LI>
+<LI>Fixed NetBSD and OpenBSD packaging support - no longer use
+ FreeBSD-specific extensions to pkg_create on those variants.</LI>
+<LI>Fixed PowerPC platform support for RPM and Debian packages.</LI>
+<LI>Many fixes to AIX package support.</LI>
+<LI>Tru64 packages with init scripts now work when installing for the
+ first time.</LI>
+<LI>RPM file dependencies should now work properly.</LI>
+<LI>Portable product names containing spaces will now display properly.</LI>
 </UL>
 </BODY>
 </HTML>
