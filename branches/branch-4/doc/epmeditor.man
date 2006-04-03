@@ -1,0 +1,52 @@
+.\"
+.\" "$Id: epmeditor.man,v 1.2 2005/02/09 19:54:11 mike Exp $"
+.\"
+.\"   Manual page for the ESP Package Manager (EPM).
+.\"
+.\"   Copyright 1999-2003 by Easy Software Products, all rights reserved.
+.\"
+.\"   This program is free software; you can redistribute it and/or modify
+.\"   it under the terms of the GNU General Public License as published by
+.\"   the Free Software Foundation; either version 2, or (at your option)
+.\"   any later version.
+.\"
+.\"   This program is distributed in the hope that it will be useful,
+.\"   but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\"   GNU General Public License for more details.
+.\"
+.TH epm 1 "ESP Package Manager" "3 January 2003" "Easy Software Products"
+.SH NAME
+epmeditor \- edit software list files.
+.SH SYNOPSIS
+.B epmeditor
+[
+.I listfile
+]
+.SH DESCRIPTION
+\fBepmeditor\fR edits software list files for the ESP Package Manager.
+.SH SEE ALSO
+epm(1) - create software packages
+.br
+epminstall(1) - add a directory, file, or symlink to a list file
+.br
+mkepmlist(1) - make an epm list file from a directory
+.br
+epm.list(5) - epm list file format
+.br
+setup(1) - graphical setup program for the esp package manager
+.SH COPYRIGHT
+Copyright 1999-2003 by Easy Software Products, All Rights Reserved.
+.LP
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+.LP
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.\"
+.\" End of "$Id: epmeditor.man,v 1.2 2005/02/09 19:54:11 mike Exp $".
+.\"
