@@ -288,6 +288,7 @@ d 0755 root sys $SERVERROOT/ppd -
 c 0644 root sys $SERVERROOT conf/*.conf
 f 0644 root sys $SERVERROOT/mime.convs conf/mime.convs
 f 0644 root sys $SERVERROOT/mime.types conf/mime.types
+</PRE></UL>
 
 <H3>PAM Files</H3>
 
@@ -298,6 +299,7 @@ files; other operating systems use a single configuration file
 (<CODE>/etc/pam.conf</CODE>) and provide a default
 authentication configuration that works with CUPS.
 
+<UL><PRE>
 %system linux
 d 0555 root sys $PAMDIR -
 c 0644 root sys $PAMDIR/cups data/cups.pam
