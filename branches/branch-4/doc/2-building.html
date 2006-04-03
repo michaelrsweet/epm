@@ -30,12 +30,6 @@ program to install portable distributions. All but the last are
 standard items, and most vendors include <CODE>gzip</CODE> as
 well.</P>
 
-<BLOCKQUOTE><B>Note:</B><BR><BR> The <CODE>gzip</CODE> program
-is only required to uncompress the software distribution
-<VAR>.tar.gz</VAR> file.  If you supply the uncompressed
-<VAR>.tar</VAR> file or its contents, then <CODE>gzip</CODE> is
-not required on the end-user system.</BLOCKQUOTE>
-
 <P>EPM can also generate vendor-specific distributions.  These
 require the particular vendor tool, such as <CODE>rpm(8)</CODE>
 and <CODE>dpkg(8)</CODE>, to generate the software distribution
@@ -201,10 +195,6 @@ systems:</P>
 	<TD><CODE>tru64</CODE></TD>
 </TR>
 <TR>
-	<TD>Darwin</TD>
-	<TD><CODE>darwin</CODE></TD>
-</TR>
-<TR>
 	<TD>FreeBSD</TD>
 	<TD><CODE>freebsd</CODE></TD>
 </TR>
@@ -222,7 +212,7 @@ systems:</P>
 </TR>
 <TR>
 	<TD>MacOS X</TD>
-	<TD><CODE>darwin</CODE></TD>
+	<TD><CODE>macosx</CODE></TD>
 </TR>
 <TR>
 	<TD>NetBSD</TD>
@@ -245,8 +235,21 @@ version number. For example, HP-UX version B.11.11 will result
 in a version number string of <CODE>11.11</CODE>.</P>
 
 <P>The <CODE>architecture</CODE> string identifies the target
-processor. Table 2.2 lists the supported processors:</P>
+processor. Table 2.2 lists the supported processors.</P>
 
+<P>Once you have determined the subdirectory containing the
+distribution, type the following commands to install EPM from
+the portable distribution:</P>
+
+<UL><PRE>
+<KBD>cd <I>os-major.minor-architecture<I> ENTER
+./epm.install ENTER</KBD>
+</PRE></UL>
+
+<P>The software will be installed after answering a few yes/no
+questions.</P>
+
+<!-- NEED 3in -->
 <CENTER><TABLE BORDER>
 <CAPTION><A NAME="TABLE_2_2">Table 2.2: Processor Architecture Abbreviations</A></CAPTION>
 <TR>
@@ -266,6 +269,10 @@ processor. Table 2.2 lists the supported processors:</P>
 	<TD><CODE>intel</CODE></TD>
 </TR>
 <TR>
+	<TD>INTEL 80x86 w/64bit Extensions</TD>
+	<TD><CODE>x86_64</CODE></TD>
+</TR>
+<TR>
 	<TD>MIPS RISC</TD>
 	<TD><CODE>mips</CODE></TD>
 </TR>
@@ -280,20 +287,6 @@ processor. Table 2.2 lists the supported processors:</P>
 	<TD><CODE>sparc</CODE></TD>
 </TR>
 </TABLE></CENTER>
-
-<!-- NEED 3in -->
-
-<P>Once you have determined the subdirectory containing the
-distribution, type the following commands to install EPM from
-the portable distribution:</P>
-
-<UL><PRE>
-<KBD>cd <I>os-major.minor-architecture<I> ENTER
-./epm.install ENTER</KBD>
-</PRE></UL>
-
-<P>The software will be installed after answering a few yes/no
-questions.</P>
 
 <H3>Installing Using the Native Distribution</H3>
 
@@ -319,7 +312,7 @@ to run to install the software.</P>
 	Digital UNIX<BR>
 	OSF/1</TD>
 	<TD><CODE>setld</CODE></TD>
-	<TD NOWRAP><CODE>setld -a <I>directory</I>???</CODE></TD>
+	<TD NOWRAP><CODE>setld -a <I>directory</I></CODE></TD>
 </TR>
 <TR>
 	<TD>FreeBSD<BR>
@@ -342,13 +335,12 @@ to run to install the software.</P>
 <TR>
 	<TD>Linux</TD>
 	<TD><CODE>rpm</CODE></TD>
-	<TD NOWRAP><CODE>rpm -i <I>directory</I>/epm-3.0.rpm</CODE></TD>
+	<TD NOWRAP><CODE>rpm -i <I>directory</I>/epm-4.0.rpm</CODE></TD>
 </TR>
 <TR>
 	<TD>MacOS X</TD>
 	<TD><CODE>osx</CODE></TD>
-	<TD NOWRAP>Double-click on the <CODE>.pkg</CODE> folder
-	in the finder.</TD>
+	<TD NOWRAP><CODE>open <I>directory</I>/<CODE>epm-4.0.pkg</CODE></TD>
 </TR>
 <TR>
 	<TD>Solaris</TD>

@@ -1,9 +1,9 @@
 .\"
-.\" "$Id: mkepmlist.man,v 1.7 2005/01/11 21:37:42 mike Exp $"
+.\" "$Id$"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
-.\"   Copyright 1999-2005 by Easy Software Products, all rights reserved.
+.\"   Copyright 1999-2006 by Easy Software Products, all rights reserved.
 .\"
 .\"   This program is free software; you can redistribute it and/or modify
 .\"   it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH mkepmlist 1 "ESP Package Manager" "20 June 2001" "Easy Software Products"
+.TH mkepmlist 1 "ESP Package Manager" "3 April 2006" "Easy Software Products"
 .SH NAME
 mkepmlist \- make an epm list file from a directory.
 .SH SYNOPSIS
@@ -49,7 +49,6 @@ files in "/usr/local", the following command would generate a file
 list that is installed in "/usr/local":
 .nf
 .br
-
      mkepmlist --prefix=/usr/local /opt/foo >foo.list
 .fi
 .SH SEE ALSO
@@ -59,7 +58,7 @@ epminstall(1) - add a directory, file, or symlink to a list file
 .br
 epm.list(5) - epm list file format
 .SH COPYRIGHT
-Copyright 1999-2005 by Easy Software Products, All Rights Reserved.
+Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -71,5 +70,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: mkepmlist.man,v 1.7 2005/01/11 21:37:42 mike Exp $".
+.\" End of "$Id$".
 .\"
