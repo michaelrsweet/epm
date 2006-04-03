@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=4.0svn
-VERNUMBER=391
+VERSION=4.0
+VERNUMBER=400
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -136,7 +136,7 @@ if test "x$FLTKCONFIG" = x; then
 	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x.])
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
-	GUIS="epmeditor setup uninst"
+	GUIS="setup uninst"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
 
@@ -170,7 +170,7 @@ dnl Update compiler options...
 if test -n "$GCC"; then
 	# Add standard optimization options...
 	if test -z "$OPTIM"; then
-        	OPTIM="-Os -g"
+        	OPTIM="-Os"
 	fi
 
 	# Add useful warning options...
@@ -210,6 +210,14 @@ if test -n "$GCC"; then
 				AC_MSG_RESULT(no))
 			CFLAGS="$OLDCFLAGS"
 			;;
+
+		Darwin*)
+			if test "x`uname -m`" = xi386; then
+				# Build universal binaries for OSX on Intel...
+				OPTIM="-arch i386 -arch ppc $OPTIM"
+			fi
+			;;
+
 		*)
 			;;
 	esac
@@ -305,29 +313,6 @@ if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
         		;;
 	esac
 fi
-
-dnl More manpage stuff...
-case "$uname" in
-        *BSD* | Darwin*)
-        	# *BSD
-        	CAT1EXT="0"
-        	MAN1EXT="1"
-        	CAT5EXT="0"
-        	MAN5EXT="5"
-        	;;
-        *)
-        	# All others
-        	CAT1EXT="1"
-        	MAN1EXT="1"
-        	CAT5EXT="5"
-        	MAN5EXT="5"
-        	;;
-esac
-
-AC_SUBST(CAT1EXT)
-AC_SUBST(MAN1EXT)
-AC_SUBST(CAT5EXT)
-AC_SUBST(MAN5EXT)
 
 dnl EPM_SOFTWARE needs special attention for the default location...
 if test x$softwaredir = x; then
