@@ -36,18 +36,12 @@ $srcdir=@srcdir@
 
 # Product information
 %product ESP Package Manager
-%copyright 1999-2005 by Easy Software Products, All Rights Reserved.
+%copyright 1999-2006 by Easy Software Products, All Rights Reserved.
 %vendor Easy Software Products
 %license ${srcdir}/COPYING
 %readme ${srcdir}/README
 %description Universal software packaging tool for UNIX.
 %version @VERSION@ @VERNUMBER@
-
-# Manpage extensions...
-$CAT1EXT=@CAT1EXT@
-$MAN1EXT=@MAN1EXT@
-$CAT5EXT=@CAT5EXT@
-$MAN5EXT=@MAN5EXT@
 
 # Executables
 %system all
@@ -65,22 +59,16 @@ f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
 # Man pages
 %subpackage man
 %description Man pages for EPM
-f 0444 root sys ${mandir}/cat1/epm.$CAT1EXT $srcdir/doc/epm.1
-f 0444 root sys ${mandir}/cat1/epminstall.$CAT1EXT $srcdir/doc/epminstall.1
-f 0444 root sys ${mandir}/cat1/mkepmlist.$CAT1EXT $srcdir/doc/mkepmlist.1
-f 0444 root sys ${mandir}/cat5/epm.list.$CAT5EXT $srcdir/doc/epm.list.5
-
-f 0444 root sys ${mandir}/man1/epm.$MAN1EXT $srcdir/doc/epm.man
-f 0444 root sys ${mandir}/man1/epminstall.$MAN1EXT $srcdir/doc/epminstall.man
-f 0444 root sys ${mandir}/man1/mkepmlist.$MAN1EXT $srcdir/doc/mkepmlist.man
-f 0444 root sys ${mandir}/man5/epm.list.$MAN5EXT $srcdir/doc/epm.list.man
+f 0444 root sys ${mandir}/man1/epm.1 $srcdir/doc/epm.man
+f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.man
+f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.man
+f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.man
 
 # GUI files...
 $GUIS=@GUIS@
 
 %if GUIS
 %subpackage
-f 0555 root sys ${bindir}/epmeditor epmeditor
 f 0555 root sys ${libdir}/epm/setup setup
 f 0555 root sys ${libdir}/epm/uninst uninst
 
@@ -95,13 +83,8 @@ f 0444 root sys ${datadir}/epm/uninst.plist macosx/uninst.plist
 %system all
 
 %subpackage man
-f 0444 root sys ${mandir}/cat1/epmeditor.$CAT1EXT $srcdir/doc/epmeditor.1
-f 0444 root sys ${mandir}/cat1/setup.$CAT1EXT $srcdir/doc/setup.1
-f 0444 root sys ${mandir}/cat5/setup.types.$CAT5EXT $srcdir/doc/setup.types.5
-
-f 0444 root sys ${mandir}/man1/epmeditor.$MAN1EXT $srcdir/doc/epmeditor.man
-f 0444 root sys ${mandir}/man1/setup.$MAN1EXT $srcdir/doc/setup.man
-f 0444 root sys ${mandir}/man5/setup.types.$MAN5EXT $srcdir/doc/setup.types.man
+f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.man
+f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
 
 %endif
 

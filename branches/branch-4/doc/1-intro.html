@@ -55,8 +55,33 @@ investigated the existing open-source packaging systems. Under
 Linux, we looked at the Red Hat Package Manager ("RPM") and
 Debian packaging software ("dpkg" and "dselect"). For the
 commercial UNIX's we looked at the vendor-supplied packaging
-systems. Table 1.1 shows the results of our investigation.</P>
+systems. <A HREF="#TABLE_1_1">Table 1.1</A> shows the results of
+our investigation.</P>
 
+<P>As you can see, none of the formats supported every feature
+we were looking for. One common fault of all these formats is
+that they do not support a common software specification file
+format. That is, making a Debian software distribution requires
+significantly different support files than required for a
+Solaris pkg distribution. This makes it extremely difficult to
+manage distributions for multiple operating systems.</P>
+
+<P>All of the package formats support binary distributions. The
+RPM and Debian formats also support source distributions that
+specifically allow for recompilation and installation. Only the
+commercial UNIX formats support patch distributions - you have
+to completely upgrade a software package with RPM and Debian.
+All but the Solaris <CODE>pkg</CODE> format allow you to upgrade
+a package without removing the old version first.</P>
+
+<P>When building the software packages, RPM and Debian force you
+to create the actual directories, copy the files to those
+directories, and set the ownerships and permissions. You
+essentially are creating a directory for your software that can
+be archived in the corresponding package format. To ensure that
+all file permissions and ownerships are correct, you must build</P>
+
+<!-- NEED 5in -->
 <TABLE ALIGN="CENTER" BORDER="1">
 <CAPTION><A NAME="TABLE_1_1">Table 1.1: Software Packaging Formats</A></CAPTION>
 <TR>
@@ -244,29 +269,7 @@ systems. Table 1.1 shows the results of our investigation.</P>
 
 </OL>
 
-<P>As you can see, none of the formats supported every feature
-we were looking for. One common fault of all these formats is
-that they do not support a common software specification file
-format. That is, making a Debian software distribution requires
-significantly different support files than required for a
-Solaris pkg distribution. This makes it extremely difficult to
-manage distributions for multiple operating systems.</P>
-
-<P>All of the package formats support binary distributions. The
-RPM and Debian formats also support source distributions that
-specifically allow for recompilation and installation. Only the
-commercial UNIX formats support patch distributions - you have
-to completely upgrade a software package with RPM and Debian.
-All but the Solaris <CODE>pkg</CODE> format allow you to upgrade
-a package without removing the old version first.</P>
-
-<P>When building the software packages, RPM and Debian force you
-to create the actual directories, copy the files to those
-directories, and set the ownerships and permissions. You
-essentially are creating a directory for your software that can
-be archived in the corresponding package format. To ensure that
-all file permissions and ownerships are correct, you must build
-the distribution as the root user or use the
+<P>the distribution as the root user or use the
 <CODE>fakeroot</CODE> software, introducing potential security
 risks and violating many corporate security policies. It can
 also make building distributions difficult when dynamic data
@@ -296,8 +299,8 @@ containing the source files and a configure script.</P>
 
 <P>Over the years, additional features have made their way into
 EPM to support more advanced software packages. Whenever
-possible, EPM emulates a feature if the vendor packager does
-not support it natively.</P>
+possible, EPM emulates a feature if the vendor package format
+does not support it natively.</P>
 
 <!-- NEED 3in -->
 <H2>Resources</H2>
@@ -305,9 +308,9 @@ not support it natively.</P>
 <P>The EPM web site provides access to the current software and
 documentation for EPM:</P>
 
-<UL><PRE>
-<A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
-</PRE></UL>
+<PRE>
+    <A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
+</PRE>
 
 <P>The EPM source code can be downloaded in compressed tar files or
 via the popular Subversion software. Please see the EPM web site for
@@ -317,15 +320,20 @@ complete instructions.</P>
 for EPM. You can access it by pointing your news reader at
 "news.easysw.com".</P>
 
-<P>Commercial support for EPM is available from Easy Software
-Products and is one way to contribute to the continued
-development of EPM. You can also purchase a hardcopy of this
-book.</P>
+<P>Commercial support for EPM and a softcover version of this
+book are available from <A HREF="http://www.easysw.com/">Easy
+Software Products</A>; both help fund the continued development
+of EPM.</P>
 
-<P>The third way to contribute is by donating code, examples, and
+<P>Another way to contribute is by donating code, examples, and
 bug fixes. If you have adapted EPM for another operating system
 or have added a new feature that you feel will be generally
 useful, please contribute it!</P>
+
+<P>You can send code contributions to "<A
+HREF="mailto:epm@easysw.com">epm@easysw.com</A>" and book
+contributions to "<A
+HREF="mailto:epm-book@easysw.com">epm-book@easysw.com</A>".</P>
 
 </BODY>
 </HTML>
