@@ -1,13 +1,102 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN="RIGHT"><A NAME="SAMPLE">E - Sample List File</A></H1>
+<H1 ALIGN="RIGHT"><A NAME="EXAMPLES">5 - EPM Packaging Examples</A></H1>
 
-<P>This appendix provides a sample list file that shows the
-capabilities and format of EPM list files.</P>
+<P>This chapter shows how the EPM and CUPS software is packaged using
+EPM list files. The EPM list file example highlights the basic features
+of EPM, while the CUPS list file example shows the more advanced features
+of EPM.</P>
 
+<H2>Packaging the EPM Software</H2>
 
-<H2>The CUPS List File</H2>
+<P>The EPM software comes with its own autoconf-generated <VAR>epm.list</VAR>
+file that is used to package and test EPM. 
+
+<UL><PRE>
+# Directories...
+$prefix=/usr
+$exec_prefix=/usr
+$bindir=${exec_prefix}/bin
+$datadir=/usr/share
+$docdir=${datadir}/doc/epm
+$libdir=/usr/lib
+$mandir=/usr/share/man
+$srcdir=.
+
+# Product information
+%product ESP Package Manager
+%copyright 1999-2005 by Easy Software Products, All Rights Reserved.
+%vendor Easy Software Products
+%license ${srcdir}/COPYING
+%readme ${srcdir}/README
+%description Universal software packaging tool for UNIX.
+%version 4.0 400
+
+# Manpage extensions...
+$CAT1EXT=@CAT1EXT@
+$MAN1EXT=@MAN1EXT@
+$CAT5EXT=@CAT5EXT@
+$MAN5EXT=@MAN5EXT@
+
+# Executables
+%system all
+f 0555 root sys ${bindir}/epm epm
+f 0555 root sys ${bindir}/epminstall epminstall
+f 0555 root sys ${bindir}/mkepmlist mkepmlist
+
+# Documentation
+%subpackage documentation
+%description Documentation for EPM
+f 0444 root sys ${docdir}/README $srcdir/README
+f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
+f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
+
+# Man pages
+%subpackage man
+%description Man pages for EPM
+f 0444 root sys ${mandir}/cat1/epm.$CAT1EXT $srcdir/doc/epm.1
+f 0444 root sys ${mandir}/cat1/epminstall.$CAT1EXT $srcdir/doc/epminstall.1
+f 0444 root sys ${mandir}/cat1/mkepmlist.$CAT1EXT $srcdir/doc/mkepmlist.1
+f 0444 root sys ${mandir}/cat5/epm.list.$CAT5EXT $srcdir/doc/epm.list.5
+
+f 0444 root sys ${mandir}/man1/epm.$MAN1EXT $srcdir/doc/epm.man
+f 0444 root sys ${mandir}/man1/epminstall.$MAN1EXT $srcdir/doc/epminstall.man
+f 0444 root sys ${mandir}/man1/mkepmlist.$MAN1EXT $srcdir/doc/mkepmlist.man
+f 0444 root sys ${mandir}/man5/epm.list.$MAN5EXT $srcdir/doc/epm.list.man
+
+# GUI files...
+$GUIS=setup uninst
+
+%if GUIS
+%subpackage
+f 0555 root sys ${bindir}/epmeditor epmeditor
+f 0555 root sys ${libdir}/epm/setup setup
+f 0555 root sys ${libdir}/epm/uninst uninst
+
+%system darwin
+f 0444 root sys ${datadir}/epm/setup.icns macosx/setup.icns
+f 0444 root sys ${datadir}/epm/setup.info macosx/setup.info
+f 0444 root sys ${datadir}/epm/setup.plist macosx/setup.plist
+
+f 0444 root sys ${datadir}/epm/uninst.icns macosx/uninst.icns
+f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
+f 0444 root sys ${datadir}/epm/uninst.plist macosx/uninst.plist
+%system all
+
+%subpackage man
+f 0444 root sys ${mandir}/cat1/epmeditor.$CAT1EXT $srcdir/doc/epmeditor.1
+f 0444 root sys ${mandir}/cat1/setup.$CAT1EXT $srcdir/doc/setup.1
+f 0444 root sys ${mandir}/cat5/setup.types.$CAT5EXT $srcdir/doc/setup.types.5
+
+f 0444 root sys ${mandir}/man1/epmeditor.$MAN1EXT $srcdir/doc/epmeditor.man
+f 0444 root sys ${mandir}/man1/setup.$MAN1EXT $srcdir/doc/setup.man
+f 0444 root sys ${mandir}/man5/setup.types.$MAN5EXT $srcdir/doc/setup.types.man
+
+%endif
+</PRE></UL>
+
+<H2>Packaging the CUPS Software</H2>
 
 <P>The Common UNIX Printing System provides an EPM list file to
 generate software distributions for most UNIX operating systems.
@@ -125,7 +214,7 @@ distribution:
 <P>We then list different dependencies depending on the package
 format:</P>
 
-<UL></PRE>
+<UL><PRE>
 %format rpm
 %provides cups 1:1.2
 %provides lpd, lpr, LPRng

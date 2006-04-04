@@ -142,10 +142,18 @@ install it using the <CODE>make</CODE> command or one of the
 distributions that was created. You should be logged in as the
 super-user unless you specified installation directories for
 which you have write permission. The <CODE>su(8)</CODE> command
-is usually sufficient to install software:</CODE>
+is usually sufficient to install software:</P>
 
 <UL><PRE>
 <KBD>su ENTER</KBD>
+</PRE></UL>
+
+<P>Operating systems such as MacOS X do not enable the root
+account by default. The <CODE>sudo(8)</CODE> command is used
+instead:</P>
+
+<UL><PRE>
+<KBD>sudo <I>installation command</I> ENTER</KBD>
 </PRE></UL>
 
 <H3>Installing Using the <CODE>make</CODE> Command</H3>
@@ -157,11 +165,21 @@ is usually sufficient to install software:</CODE>
 <KBD>make install ENTER</KBD>
 Installing EPM setup in /usr/lib/epm
 Installing EPM programs in /usr/bin
-Installing EPM manpages in /usr/man/cat1 and /usr/man/man1
+Installing EPM manpages in /usr/man/man1
 Installing EPM documentation in /usr/share/doc/epm
 </PRE></UL>
 
-<!-- NEW PAGE -->
+<!-- NEED 3in -->
+<P>Use the <CODE>sudo</CODE> command to install on MacOS X:</P>
+
+<UL><PRE>
+<KBD>sudo make install ENTER</KBD>
+Installing EPM setup in /usr/lib/epm
+Installing EPM programs in /usr/bin
+Installing EPM manpages in /usr/man/man1
+Installing EPM documentation in /usr/share/doc/epm
+</PRE></UL>
+
 <H3>Installing Using the Portable Distribution</H3>
 
 <P>The portable distribution can be found in a subdirectory

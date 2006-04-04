@@ -93,6 +93,58 @@ files on a single line:
 f 0444 root sys /usr/share/doc/foo *.html
 </PRE></UL>
 
+<H3>Subpackages</H3>
+
+<P>Subpackages are optional parts of your software package. For
+example, if your package includes developer files, you might
+provide them as a subpackage so that users that will not be
+developing add-ons to your software can omit them from the
+installation.</P>
+
+<BLOCKQUOTE><B>Note:</B> Subpackages are implemented as native
+subsets of the main package for the AIX, HPUX, IRIX, Solaris, and
+Tru64 formats and as separate packages that depend on the main
+(parent) package for all other formats.</BLOCKQUOTE>
+
+<P>To define a subpackage, use the <CODE>%subpackage</CODE>
+directive followed by a <CODE>%description</CODE> directive:</P>
+
+<UL><PRE>
+%subpackage foo
+%description One-Line Description of Foo
+</PRE></UL>
+
+<P>Files, scripts, and dependencies that follow the
+<CODE>%subpackage</CODE> directive are treated as part of that
+subpackage. Specifying the <CODE>%subpackage</CODE> directive
+with no name returns processing to the main (parent) package.</P>
+
+<!-- NEED 2in -->
+<P>You can alternate between subpackages as many times as you
+like:</P>
+
+<UL><PRE>
+%description Main package description
+f 0755 /usr/bin/bar bar
+
+%subpackage foo
+%description Foo programs
+f 0755 /usr/bin/foo foo
+%require bla
+
+%subpackage
+f 0644 /usr/share/man/man1/bar.1
+
+%subpackage foo
+f 0644 /usr/share/man/man1/foo.1
+</PRE></UL>
+
+<P>The above example creates a package containing the "bar"
+program and man page with a subpackage containing the "foo"
+program and man page. The "foo" subpackage depends both on the
+main package (implicit requires) and another package called
+"bla".</P>
+
 <H2>Building a Software Distribution</H2>
 
 <P>The <CODE>epm(1)</CODE> program is used to build software
@@ -101,21 +153,21 @@ distribution for an application called "foo", type the following
 command:</P>
 
 <UL><PRE>
-<KBD>epm foo <I>ENTER</I></KBD>
+<KBD>epm foo ENTER</KBD>
 </PRE></UL>
 
 <P>If your application uses a different base name than the list file,
 you can specify the list filename on the command-line as well:</P>
 
 <UL><PRE>
-<KBD>epm foo bar.list <I>ENTER</I></KBD>
+<KBD>epm foo bar.list ENTER</KBD>
 </PRE></UL>
 
 <P>EPM can also produce vendor-specific distributions using the
 <CODE>-f</CODE> option:
 
 <UL><PRE>
-<KBD>epm -f format foo bar.list <I>ENTER</I></KBD>
+<KBD>epm -f format foo bar.list ENTER</KBD>
 </PRE></UL>
 
 <P>The <I>format</I> option can be one of the following keywords:
@@ -174,8 +226,8 @@ called <VAR>product.install</VAR>, where "product" is the name
 of the package:
 
 <UL><PRE>
-<KBD>cd os-release-arch <I>ENTER</I>
-./product.install <I>ENTER</I></KBD>
+<KBD>cd os-release-arch ENTER
+./product.install ENTER</KBD>
 </PRE></UL>
 
 <P>After answering a few yes/no questions, the software will be
@@ -183,8 +235,8 @@ installed. To bypass the questions, run the script with the
 <CODE>now</CODE> argument:</P>
 
 <UL><PRE>
-<KBD>cd os-release-arch <I>ENTER</I>
-./product.install now <I>ENTER</I></KBD>
+<KBD>cd os-release-arch ENTER
+./product.install now ENTER</KBD>
 </PRE></UL>
 
 <H2>Including the Setup GUI</H2>
@@ -196,7 +248,7 @@ product logo image in GIF or XPM format and use the
 distribution:</P>
 
 <UL><PRE>
-<KBD>epm --setup-image foo.xpm foo <I>ENTER</I></KBD>
+<KBD>epm --setup-image foo.xpm foo ENTER</KBD>
 </PRE></UL>
 
 </BODY>

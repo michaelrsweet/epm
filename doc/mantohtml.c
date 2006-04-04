@@ -539,51 +539,17 @@ process_text:
 		 paren < endptr)
         {
 	 /*
-	  * Link to man page?
-	  */
-
-          char	manfile[1024],		/* Man page filename */
-		manurl[1024];		/* Man page URL */
-
-
-         /*
-	  * See if the man file is available locally...
+	  * Man page...
 	  */
 
           lineptr += 3;
-	  endchar = *paren;
-	  *paren  = '\0';
-
-	  snprintf(manfile, sizeof(manfile), "%s.man", lineptr);
-	  snprintf(manurl, sizeof(manurl), "man-%s.html?TOPIC=Man+Pages",
-	           lineptr);
-
-	  *paren  = endchar;
 	  endchar = *endptr;
 	  *endptr = '\0';
 
-	  if (access(manfile, 0))
-	  {
-	   /*
-	    * Not a local man page, just do it italic...
-	    */
-
-	    fputs("<i>", outfile);
-	    while (*lineptr)
-	      putc_entity(*lineptr++, outfile);
-	    fputs("</i>", outfile);
-	  }
-	  else
-	  {
-	   /*
-	    * Local man page, do a link...
-	    */
-
-	    fprintf(outfile, "<a href='%s'>", manurl);
-	    while (*lineptr)
-	      putc_entity(*lineptr++, outfile);
-	    fputs("</a>", outfile);
-	  }
+	  fputs("<i>", outfile);
+	  while (*lineptr)
+	    putc_entity(*lineptr++, outfile);
+	  fputs("</i>", outfile);
 
           *endptr = endchar;
 	  lineptr = endptr + 2;

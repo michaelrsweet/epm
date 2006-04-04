@@ -4,7 +4,7 @@
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
 <META NAME="copyright" CONTENT="Copyright 1999-2006 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20060403">
+<META NAME="docnumber" CONTENT="ESP-004-20060404">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: sans-serif }
@@ -44,6 +44,7 @@ A { text-decoration: none }
 <LI><A HREF="#1_1">Notation Conventions</A></LI>
 <LI><A HREF="#1_2">Abbreviations</A></LI>
 <LI><A HREF="#1_3">Other References</A></LI>
+<LI><A HREF="#1_4">Help Us Improve This Book!</A></LI>
 </UL>
 <B><A HREF="#INTRO">1 - Introduction to EPM</A></B>
 <UL>
@@ -66,6 +67,7 @@ A { text-decoration: none }
 <LI><A HREF="#4_2">Building a Software Distribution</A></LI>
 <LI><A HREF="#4_3">Installing the Software Package</A></LI>
 <LI><A HREF="#4_4">Including the Setup GUI</A></LI>
+<LI><A HREF="#4_5">Subpackages</A></LI>
 </UL>
 <B><A HREF="#ADVANCED">4 - Advanced Packaging with EPM</A></B>
 <UL>
@@ -77,7 +79,6 @@ A { text-decoration: none }
 <LI><A HREF="#5_6">Software Patches</A></LI>
 <LI><A HREF="#5_7">Variables</A></LI>
 <LI><A HREF="#5_8">Init Scripts</A></LI>
-<LI><A HREF="#5_9">Subpackages</A></LI>
 </UL>
 <B><A HREF="#LICENSE">A - GNU General Public License</A></B>
 <BR>
@@ -104,7 +105,7 @@ A { text-decoration: none }
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="1">Preface</A></H1>
 <P>This book provides a tutorial and reference for the ESP Package
- Manager (&quot;EPM&quot;) software, version 4.0 and is organized into the
+ Manager (&quot;EPM&quot;) software, version 4.0, and is organized into the
  following chapters and appendices:</P>
 <UL>
 <LI><A HREF="#INTRO">1 - Introduction to EPM</A></LI>
@@ -115,7 +116,7 @@ A { text-decoration: none }
 <LI><A HREF="#MANPAGES">B - Command Reference</A></LI>
 <LI><A HREF="#REFERENCE">C - List File Reference</A></LI>
 <LI><A HREF="#RELNOTES">D - Release Notes</A></LI>
-<LI><A HREF="#SAMPLE">E - Sample List File</A></LI>
+<LI><A HREF="#SAMPLE">E - The CUPS 1.2 List File</A></LI>
 </UL>
 
 <!-- NEED 6in -->
@@ -155,42 +156,43 @@ A { text-decoration: none }
 <!-- NEED 3in -->
 <H2><A NAME="1_2">Abbreviations</A></H2>
 <P>The following abbreviations are used throughout this book:</P>
-<UL>
 <DL>
-<DT>kb</DT>
+<DD>kb</DD>
 <DD>Kilobytes, or 1024 bytes
-<BR>&nbsp;</DD>
-<DT>Mb</DT>
+<BR> &nbsp;</DD>
+<DD>Mb</DD>
 <DD>Megabytes, or 1048576 bytes
-<BR>&nbsp;</DD>
-<DT>Gb</DT>
+<BR> &nbsp;</DD>
+<DD>Gb</DD>
 <DD>Gigabytes, or 1073741824 bytes
-<BR>&nbsp;</DD>
+<BR> &nbsp;</DD>
 </DL>
-</UL>
 
 <!-- NEED 4in -->
 <H2><A NAME="1_3">Other References</A></H2>
-<UL>
 <DL>
-<DT><A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A></DT>
+<DD><A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A></DD>
 <DD>The official home page of the ESP Package Manager software.
 <BR> &nbsp;</DD>
-<DT><A HREF="http://www.debian.org/devel/">http://www.debian.org/devel/</A>
-</DT>
+<DD><A HREF="http://www.debian.org/devel/">http://www.debian.org/devel/</A>
+</DD>
 <DD>Debian Developers' Corner
-<BR>&nbsp;</DD>
-<DT><A HREF="http://techpubs.sgi.com/">http://techpubs.sgi.com/</A></DT>
+<BR> &nbsp;</DD>
+<DD><A HREF="http://techpubs.sgi.com/">http://techpubs.sgi.com/</A></DD>
 <DD>IRIX Documentation On-Line
-<BR>&nbsp;</DD>
-<DT><A HREF="http://www.rpm.org/">http://www.rpm.org/</A></DT>
+<BR> &nbsp;</DD>
+<DD><A HREF="http://www.rpm.org/">http://www.rpm.org/</A></DD>
 <DD>The RedHat Package Manager home page.
-<BR>&nbsp;</DD>
-<DT><A HREF="http://docs.sun.com/">http://docs.sun.com/</A></DT>
+<BR> &nbsp;</DD>
+<DD><A HREF="http://docs.sun.com/">http://docs.sun.com/</A></DD>
 <DD>Solaris Documentation On-Line
-<BR>&nbsp;</DD>
+<BR> &nbsp;</DD>
 </DL>
-</UL>
+<H2><A NAME="1_4">Help Us Improve This Book!</A></H2>
+<P>We've done our best to ensure that this book is both accurate and
+ clear. If you find errors or have a suggestion for improving the book,
+ please send us an email to <A HREF="mailto:epm-book@easysw.com">
+epm-book@easysw.com</A>.</P>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="INTRO">1 - Introduction to EPM</A></H1>
 <P>This chapter provides an introduction to the ESP Package Manager
@@ -204,8 +206,8 @@ A { text-decoration: none }
 <P>The ESP Package Manager (&quot;EPM&quot;) is one solution to this problem.
  Besides its own &quot;portable&quot; distribution format, EPM also supports the
  generation of several vendor-specific formats. This allows you to build
- software distribution files for almost any UNIX/Linux operating system
- from the same sources.</P>
+ software distribution files for almost any operating system from the
+ same sources.</P>
 <H2><A NAME="2_2">History and Evolution</A></H2>
 <P>When Easy Software Products was founded in 1993, we originally
  shipped software only for the SGI IRIX operating system. In 1997 we
@@ -231,11 +233,10 @@ http://www.cups.org/</A>) in 1998, our initial goal was to add support
 <H2><A NAME="2_3">Existing Software Packaging Systems</A></H2>
 <P>As we looked for a solution to our problem, we naturally investigated
  the existing open-source packaging systems. Under Linux, we looked at
- the RedHat Package Manager (&quot;RPM&quot;) and Debian packaging software
+ the Red Hat Package Manager (&quot;RPM&quot;) and Debian packaging software
  (&quot;dpkg&quot; and &quot;dselect&quot;). For the commercial UNIX's we looked at the
  vendor-supplied packaging systems. Table 1.1 shows the results of our
  investigation.</P>
-<P></P>
 <TABLE ALIGN="CENTER" BORDER="1"><CAPTION> <A NAME="TABLE_1_1">Table
  1.1: Software Packaging Formats</A></CAPTION>
 <TR><TH><FONT SIZE="-4">Format</FONT></TH><TH><FONT SIZE="-4">Operating
@@ -274,7 +275,7 @@ No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>No</SMALL></TD></TR>
-<TR><TD ALIGN="CENTER"><SMALL>swinstall</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+<TR><TD ALIGN="CENTER"><SMALL>depot</SMALL></TD><TD ALIGN="CENTER"><SMALL>
 HP-UX</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
@@ -286,6 +287,12 @@ IRIX</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>Install.app</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>MacOS X</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD></TR>
 <TR><TD ALIGN="CENTER"><SMALL>pkgadd</SMALL></TD><TD ALIGN="CENTER"><SMALL>
 Solaris</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
@@ -308,6 +315,13 @@ Tru64 UNIX</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENT
 <SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD></TR>
+<TR><TD ALIGN="CENTER"><SMALL>slackware</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+Slackware Linux</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD
+ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL>
+</TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>
+Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>No</SMALL></TD></TR>
 </TABLE>
 <OL>
 <LI>Standard packaging system for named operating systems.</LI>
@@ -710,21 +724,21 @@ f 0444 root sys /usr/share/doc/foo *.html
  command:</P>
 <UL>
 <PRE>
-<KBD>epm foo <I>ENTER</I></KBD>
+<KBD>epm foo ENTER</KBD>
 </PRE>
 </UL>
 <P>If your application uses a different base name than the list file,
  you can specify the list filename on the command-line as well:</P>
 <UL>
 <PRE>
-<KBD>epm foo bar.list <I>ENTER</I></KBD>
+<KBD>epm foo bar.list ENTER</KBD>
 </PRE>
 </UL>
 <P>EPM can also produce vendor-specific distributions using the <CODE>-f</CODE>
  option:</P>
 <UL>
 <PRE>
-<KBD>epm -f format foo bar.list <I>ENTER</I></KBD>
+<KBD>epm -f format foo bar.list ENTER</KBD>
 </PRE>
 </UL>
 <P>The<I> format</I> option can be one of the following keywords:</P>
@@ -762,8 +776,8 @@ epm -f rpm epm
  product.install</VAR>, where &quot;product&quot; is the name of the package:</P>
 <UL>
 <PRE>
-<KBD>cd os-release-arch <I>ENTER</I>
-./product.install <I>ENTER</I></KBD>
+<KBD>cd os-release-arch ENTER
+./product.install ENTER</KBD>
 </PRE>
 </UL>
 <P>After answering a few yes/no questions, the software will be
@@ -771,8 +785,8 @@ epm -f rpm epm
  argument:</P>
 <UL>
 <PRE>
-<KBD>cd os-release-arch <I>ENTER</I>
-./product.install now <I>ENTER</I></KBD>
+<KBD>cd os-release-arch ENTER
+./product.install now ENTER</KBD>
 </PRE>
 </UL>
 <H2><A NAME="4_4">Including the Setup GUI</A></H2>
@@ -782,9 +796,54 @@ epm -f rpm epm
  creating your distribution:</P>
 <UL>
 <PRE>
-<KBD>epm --setup-image foo.xpm foo <I>ENTER</I></KBD>
+<KBD>epm --setup-image foo.xpm foo ENTER</KBD>
 </PRE>
 </UL>
+<H2><A NAME="4_5">Subpackages</A></H2>
+<P>Subpackages are optional parts of your software package. For example,
+ if your package includes developer files, you might provide them as a
+ subpackage so that users that will not be developing add-ons to your
+ software can omit them from the installation.</P>
+<BLOCKQUOTE><B>Note:</B> Subpackages are implemented as native subsets
+ of the main package for the AIX, HPUX, IRIX, Solaris, and Tru64 formats
+ and as separate packages that depend on the main (parent) package for
+ all other formats.</BLOCKQUOTE>
+<P>To define a subpackage, use the <CODE>%subpackage</CODE> directive
+ followed by a <CODE>%description</CODE> directive:</P>
+<UL>
+<PRE>
+%subpackage foo
+%description One-Line Description of Foo
+</PRE>
+</UL>
+<P>Files, scripts, and dependencies that follow the <CODE>%subpackage</CODE>
+ directive are treated as part of that subpackage. Specifying the <CODE>
+%subpackage</CODE> directive with no name returns processing to the main
+ (parent) package.</P>
+
+<!-- NEED 2in -->
+<P>You can alternate between subpackages as many times as you like:</P>
+<UL>
+<PRE>
+%description Main package description
+f 0755 /usr/bin/bar bar
+
+%subpackage foo
+%description Foo programs
+f 0755 /usr/bin/foo foo
+%require bla
+
+%subpackage
+f 0644 /usr/share/man/man1/bar.1
+
+%subpackage foo
+f 0644 /usr/share/man/man1/foo.1
+</PRE>
+</UL>
+<P>The above example creates a package containing the &quot;bar&quot; program and
+ man page with a subpackage containing the &quot;foo&quot; program and man page.
+ The &quot;foo&quot; subpackage depends both on the main package (implicit
+ requires) and another package called &quot;bla&quot;.</P>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="ADVANCED">4 - Advanced Packaging with EPM</A></H1>
 <P>This chapter describes the advanced packaging features of EPM.</P>
@@ -1008,51 +1067,6 @@ i 755 root sys foo foo.sh
 i 755 root sys foo foo.sh &quot;runlevel(02) start(50) stop(30)&quot;
 </PRE>
 </UL>
-<H2><A NAME="5_9">Subpackages</A></H2>
-<P>Subpackages are optional parts of your software package. For example,
- if your package includes developer files, you might provide them as a
- subpackage so that users that will not be developing add-ons to your
- software can omit them from the installation.</P>
-<BLOCKQUOTE><B>Note:</B> Subpackages are implemented as native subsets
- of the main package for the AIX, HPUX, IRIX, Solaris, and Tru64 formats
- and as separate packages that depend on the main (parent) package for
- all other formats.</BLOCKQUOTE>
-<P>To define a subpackage, use the <CODE>%subpackage</CODE> directive
- followed by a <CODE>%description</CODE> directive:</P>
-<UL>
-<PRE>
-%subpackage foo
-%description One-Line Description of Foo
-</PRE>
-</UL>
-<P>Files, scripts, and dependencies that follow the <CODE>%subpackage</CODE>
- directive are treated as part of that subpackage. Specifying the <CODE>
-%subpackage</CODE> directive with no name returns processing to the main
- (parent) package.</P>
-
-<!-- NEED 2in -->
-<P>You can alternate between subpackages as many times as you like:</P>
-<UL>
-<PRE>
-%description Main package description
-f 0755 /usr/bin/bar bar
-
-%subpackage foo
-%description Foo programs
-f 0755 /usr/bin/foo foo
-%require bla
-
-%subpackage
-f 0644 /usr/share/man/man1/bar.1
-
-%subpackage foo
-f 0644 /usr/share/man/man1/foo.1
-</PRE>
-</UL>
-<P>The above example creates a package containing the &quot;bar&quot; program and
- man page with a subpackage containing the &quot;foo&quot; program and man page.
- The &quot;foo&quot; subpackage depends both on the main package (implicit
- requires) and another package called &quot;bla&quot;.</P>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="LICENSE">A - GNU General Public License</A></H1>
 <P ALIGN="CENTER">GNU GENERAL PUBLIC LICENSE
@@ -1406,8 +1420,8 @@ product</I>.list&quot;.
 <P>Debian, IRIX, portable, and Red Hat distributions use the extensions
  &quot;.deb&quot;, &quot;.tardist&quot;, &quot;tar.gz&quot;, and &quot;.rpm&quot; respectively.</P>
 <H3><A name="LIST_FILES">List Files</A></H3>
- The EPM list file format is now described in the <A href="man-epm.list.html?TOPIC=Man+Pages">
-epm.list(5)</A> man page.
+ The EPM list file format is now described in the<I> epm.list(5)</I> man
+ page.
 <H3><A name="KNOWN_BUGS">Known Bugs</A></H3>
  EPM does not currently support generation of IRIX software patches.
 <H3><A name="SEE_ALSO">See Also</A></H3>
@@ -1567,134 +1581,133 @@ epm.list(5)</A> man page.
 <H3>List File Directives</H3>
 <P>The following list describes all of the list file directives
  supported by<I> EPM</I>:</P>
-<UL>
 <DL>
-<DT>$name=value</DT>
+<DD>$name=value</DD>
 <DD>Sets the named variable to<I> value</I>.<B> Note:</B> Variables set
  in the list file are overridden by variables specified on the
  command-line or in the current environment.</DD>
-<DT>%copyright<I> copyright notice</I></DT>
+<DD>%copyright<I> copyright notice</I></DD>
 <DD>Sets the copyright notice for the file.</DD>
-<DT>%description<I> description text</I></DT>
+<DD>%description<I> description text</I></DD>
 <DD>Adds a line of descriptive text to the distribution. Multiple lines
  are supported.</DD>
-<DT>%format<I> format [... format]</I></DT>
+<DD>%format<I> format [... format]</I></DD>
 <DD>Uses following files and directives only if the distribution format
  is the same as<I> format</I>.</DD>
-<DT>%format !<I>format [... format]</I></DT>
+<DD>%format !<I>format [... format]</I></DD>
 <DD>Uses following files and directives only if the distribution format
  is not the same as<I> format</I>.</DD>
-<DT>%if<I> variable</I> [... variable]
-<BR> %if !<I>variable</I> [... variable]
-<BR> %ifdef<I> variable</I> [... variable]
-<BR> %ifdef !<I>variable</I> [... variable]
-<BR> %elseif<I> variable</I> [... variable]
-<BR> %elseif !<I>variable</I> [... variable]
-<BR> %elseifdef<I> variable</I> [... variable]
-<BR> %elseifdef !<I>variable</I> [... variable]
+<DD>%if<I> variable [... variable]</I>
+<BR> %if !<I>variable [... variable]</I>
+<BR> %ifdef<I> variable [... variable]</I>
+<BR> %ifdef !<I>variable [... variable]</I>
+<BR> %elseif<I> variable [... variable]</I>
+<BR> %elseif !<I>variable [... variable]</I>
+<BR> %elseifdef<I> variable [... variable]</I>
+<BR> %elseifdef !<I>variable [... variable]</I>
 <BR> %else
-<BR> %endif</DT>
+<BR> %endif</DD>
 <DD>Conditionally includes lines in the list file. The<I> %if</I> lines
  include the lines that follow if the named variables are (not) defined
  with a value. The<I> %ifdef</I> lines include the lines that follow if
  the named variables are (not) defined with any value. These conditional
  lines cannot be nested.</DD>
-<DT>%include<I> filename</I></DT>
+<DD>%include<I> filename</I></DD>
 <DD>Includes files listed in<I> filename</I>.</DD>
-<DT>%incompat<I> product</I></DT>
-<DT>%incompat<I> filename</I></DT>
+<DD>%incompat<I> product</I></DD>
+<DD>%incompat<I> filename</I></DD>
 <DD>Indicates that this product is incompatible with the named product
  or file.</DD>
-<DT>%install<I> script or program</I></DT>
+<DD>%install<I> script or program</I></DD>
 <DD>Specifies a script or program to be run after all files are
  installed. (This has been obsoleted by the %postinstall directive)</DD>
-<DT>%license<I> license file</I></DT>
+<DD>%license<I> license file</I></DD>
 <DD>Specifies the file to display as the software license.</DD>
-<DT>%packager<I> name of packager</I></DT>
+<DD>%packager<I> name of packager</I></DD>
 <DD>Specifies the name of the packager.</DD>
-<DT>%patch<I> script or program</I></DT>
+<DD>%patch<I> script or program</I></DD>
 <DD>Specifies a script or program to be run after all files are patched.
  (This has been obsoleted by the %postpatch directive)</DD>
-<DT>%postinstall<I> script or program</I>
+<DD>%postinstall<I> script or program</I>
 <BR> %postinstall &lt;<I>scriptfile</I>
-<BR> %postinstall &lt;&lt;<I>string</I></DT>
+<BR> %postinstall &lt;&lt;<I>string</I></DD>
 <DD>Specifies a script or program to be run after all files are
  installed.</DD>
-<DT>%postpatch<I> script or program</I>
+<DD>%postpatch<I> script or program</I>
 <BR> %postpatch &lt;<I>scriptfile</I>
-<BR> %postpatch &lt;&lt;<I>string</I></DT>
+<BR> %postpatch &lt;&lt;<I>string</I></DD>
 <DD>Specifies a script or program to be run after all files are patched.</DD>
-<DT>%postremove<I> script or program</I>
+<DD>%postremove<I> script or program</I>
 <BR> %postremove &lt;<I>scriptfile</I>
-<BR> %postremove &lt;&lt;<I>string</I></DT>
+<BR> %postremove &lt;&lt;<I>string</I></DD>
 <DD>Specifies a script or program to be run after removing files.</DD>
-<DT>%preinstall<I> script or program</I>
+<DD>%preinstall<I> script or program</I>
 <BR> %preinstall &lt;<I>scriptfile</I>
-<BR> %preinstall &lt;&lt;<I>string</I></DT>
+<BR> %preinstall &lt;&lt;<I>string</I></DD>
 <DD>Specifies a script or program to be run before all files are
  installed.</DD>
-<DT>%prepatch<I> script or program</I>
+<DD>%prepatch<I> script or program</I>
 <BR> %prepatch &lt;<I>scriptfile</I>
-<BR> %prepatch &lt;&lt;<I>string</I></DT>
+<BR> %prepatch &lt;&lt;<I>string</I></DD>
 <DD>Specifies a script or program to be run before all files are
  patched.</DD>
-<DT>%preremove<I> script or program</I>
+<DD>%preremove<I> script or program</I>
 <BR> %preremove &lt;<I>scriptfile</I>
-<BR> %preremove &lt;&lt;<I>string</I></DT>
+<BR> %preremove &lt;&lt;<I>string</I></DD>
 <DD>Specifies a script or program to be run before removing files.</DD>
-<DT>%product<I> product name</I></DT>
+<DD>%product<I> product name</I></DD>
 <DD>Specifies the product name.</DD>
-<DT>%readme<I> readme file</I></DT>
+<DD>%readme<I> readme file</I></DD>
 <DD>Specifies a README file to be included in the distribution.</DD>
-<DT>%remove<I> script or program</I></DT>
+<DD>%remove<I> script or program</I></DD>
 <DD>Specifies a script or program to be run before removing files. (This
  has been obsoleted by the %preremove directive)</DD>
-<DT>%release<I> number</I></DT>
+<DD>%release<I> number</I></DD>
 <DD>Specifies the release or build number of a product (defaults to 1).</DD>
-<DT>%replaces<I> product</I></DT>
+<DD>%replaces<I> product</I></DD>
 <DD>Indicates that this product replaces the named product.</DD>
-<DT>%requires<I> product</I></DT>
-<DT>%requires<I> filename</I></DT>
+<DD>%requires<I> product</I></DD>
+<DD>%requires<I> filename</I></DD>
 <DD>Indicates that this product requires the named product or file.</DD>
-<DT>%vendor<I> vendor or author name</I></DT>
+<DD>%vendor<I> vendor or author name</I></DD>
 <DD>Specifies the vendor or author of the product.</DD>
-<DT>%version<I> version number</I></DT>
+<DD>%version<I> version number</I></DD>
 <DD>Specifies the version number of the product.</DD>
-<DT>%system<I> system[-release] [... system[-release]]</I></DT>
+<DD>%system<I> system[-release] [... system[-release]]</I></DD>
 <DD>Specifies that the following files should only be used for the
  specified operating systems and releases.</DD>
-<DT>%system !<I>system[-release] [... system[-release]]</I></DT>
+<DD>%system !<I>system[-release] [... system[-release]]</I></DD>
 <DD>Specifies that the following files should not be used for the
  specified operating systems and releases.</DD>
-<DT>%system all</DT>
+<DD>%system all</DD>
 <DD>Specifies that the following files are applicable to all operating
  systems.</DD>
-<DT>c<I> mode user group destination source</I></DT>
-<DT>C<I> mode user group destination source</I></DT>
+<DD>c<I> mode user group destination source</I></DD>
+<DD>C<I> mode user group destination source</I></DD>
 <DD>Specifies a configuration file for installation. The second form
  specifies that the file has changed or is new and should be included as
  part of a patch. Configuration files are installed as &quot;destination.N&quot;
  if the destination already exists.</DD>
-<DT>d<I> mode user group destination -</I></DT>
-<DT>D<I> mode user group destination -</I></DT>
+<DD>d<I> mode user group destination -</I></DD>
+<DD>D<I> mode user group destination -</I></DD>
 <DD>Specifies a directory should be created when installing the
  software. The second form specifies that the directory is new and
  should be included as part of a patch.</DD>
-<DT>f<I> mode user group destination source [nostrip()]</I></DT>
-<DT>F<I> mode user group destination source [nostrip()]</I></DT>
+<DD>f<I> mode user group destination source [nostrip()]</I></DD>
+<DD>F<I> mode user group destination source [nostrip()]</I></DD>
 <DD>Specifies a file for installation. The second form specifies that
  the file has changed or is new and should be included as part of a
  patch. If the &quot;nostrip()&quot; option is included, the file will not be
  stripped before the installation is created.</DD>
-<DT>f<I> mode user group destination source/pattern [nostrip()]</I></DT>
-<DT>F<I> mode user group destination source/pattern [nostrip()]</I></DT>
+<DD>f<I> mode user group destination source/pattern [nostrip()]</I></DD>
+<DD>F<I> mode user group destination source/pattern [nostrip()]</I></DD>
 <DD>Specifies one or more files for installation using shell wildcard
  patterns. The second form specifies that the files have changed or are
  new and should be included as part of a patch. If the &quot;nostrip()&quot;
  option is included, the file will not be stripped before the
  installation is created.</DD>
-<DT>i<I> mode user group service-name source [&quot;options&quot;]</I></DT>
-<DT>I<I> mode user group service-name source [&quot;options&quot;]</I></DT>
+<DD>i<I> mode user group service-name source [&quot;options&quot;]</I></DD>
+<DD>I<I> mode user group service-name source [&quot;options&quot;]</I></DD>
 <DD>Specifies an initialization script for installation. The second form
  specifies that the file has changed or is new and should be included as
  part of a patch. Initialization scripts are stored in<VAR>
@@ -1704,39 +1717,38 @@ epm.list(5)</A> man page.
  stop</I> commands. The optional<I> options</I> following the source
  filename can be any of the following:
 <DL>
-<DT>order(<I>string</I>)</DT>
+<DD>order(<I>string</I>)</DD>
 <DD>Specifies the relative startup order compared to the required and
  used system functions. Supported values include First, Early, None,
  Late, and Last (OSX only).</DD>
-<DT>provides(<I>name(s)</I>)</DT>
+<DD>provides(<I>name(s)</I>)</DD>
 <DD>Specifies names of system functions that are provided by this
  startup item (OSX only).</DD>
-<DT>requires(<I>name(s)</I>)</DT>
+<DD>requires(<I>name(s)</I>)</DD>
 <DD>Specifies names of system functions that are required by this
  startup item (OSX only).</DD>
-<DT>runlevels(<I>levels</I>)</DT>
+<DD>runlevels(<I>levels</I>)</DD>
 <DD>Specifies the run levels to use.</DD>
-<DT>start(<I>number</I>)</DT>
+<DD>start(<I>number</I>)</DD>
 <DD>Specifies the starting sequence number from 00 to 99.</DD>
-<DT>stop(<I>number</I>)</DT>
+<DD>stop(<I>number</I>)</DD>
 <DD>Specifies the ending sequence number from 00 to 99.</DD>
-<DT>uses(<I>name(s)</I>)</DT>
+<DD>uses(<I>name(s)</I>)</DD>
 <DD>Specifies names of system functions that are used by this startup
  item (OSX only).</DD>
 </DL>
 </DD>
-<DT>l<I> mode user group destination source</I></DT>
-<DT>L<I> mode user group destination source</I></DT>
+<DD>l<I> mode user group destination source</I></DD>
+<DD>L<I> mode user group destination source</I></DD>
 <DD>Specifies a symbolic link in the installation. The second form
  specifies that the link has changed or is new and should be included as
  part of a patch.</DD>
-<DT>R<I> mode user group destination</I></DT>
+<DD>R<I> mode user group destination</I></DD>
 <DD>Specifies that the file is to be removed upon patching. The<I> user</I>
  and<I> group</I> fields are ignored. The<I> mode</I> field is only used
  to determine if a check should be made for a previous version of the
  file.</DD>
 </DL>
-</UL>
 <H3>List Variables</H3>
 <P><I>EPM</I> maintains a list of variables and their values which can
  be used to substitute values in the list file. These variables are
@@ -1821,13 +1833,19 @@ TYPE Custom Configuration
 <H2><A NAME="10_1">The CUPS List File</A></H2>
 <P>The Common UNIX Printing System provides an EPM list file to generate
  software distributions for most UNIX operating systems. This is an
- annotated version of the CUPS 1.1.5 list file.</P>
+ annotated version of the CUPS 1.2 list file.</P>
 <H3>Variables Used for the Distribution</H3>
 <P>The CUPS makefile defines the following variables for the
  distribution:</P>
 <DL>
+<DT><CODE>AMANDIR</CODE></DT>
+<DD>The directory for administrative manual pages.
+<BR> &nbsp;</DD>
 <DT><CODE>BINDIR</CODE></DT>
 <DD>The directory for user programs.
+<BR> &nbsp;</DD>
+<DT><CODE>CACHEDIR</CODE></DT>
+<DD>The directory for cache files.
 <BR> &nbsp;</DD>
 <DT><CODE>DATADIR</CODE></DT>
 <DD>The directory for data files.
@@ -1838,8 +1856,20 @@ TYPE Custom Configuration
 <DT><CODE>INCLUDEDIR</CODE></DT>
 <DD>The directory for header files.
 <BR> &nbsp;</DD>
+<DT><CODE>INITDIR</CODE></DT>
+<DD>The directory for startup scripts.
+<BR> &nbsp;</DD>
+<DT><CODE>INITDDIR</CODE></DT>
+<DD>The directory to reference from run-level scripts.
+<BR> &nbsp;</DD>
 <DT><CODE>LIBDIR</CODE></DT>
 <DD>The directory for library files.
+<BR> &nbsp;</DD>
+<DT><CODE>LIB32DIR</CODE></DT>
+<DD>The directory for 32-bit library files.
+<BR> &nbsp;</DD>
+<DT><CODE>LIB64DIR</CODE></DT>
+<DD>The directory for 64-bit library files.
 <BR> &nbsp;</DD>
 <DT><CODE>LOCALEDIR</CODE></DT>
 <DD>The directory for message (localization) files.
@@ -1865,57 +1895,154 @@ TYPE Custom Configuration
 <DT><CODE>SERVERROOT</CODE></DT>
 <DD>The directory for server configuration files.
 <BR> &nbsp;</DD>
+<DT><CODE>STATEDIR</CODE></DT>
+<DD>The directory for server state files.
+<BR> &nbsp;</DD>
 </DL>
 <H3>Product Information</H3>
 <P>The list file starts with the product information:</P>
 <UL>
 <PRE>
 %product Common UNIX Printing System
-%copyright 1993-2005 by Easy Software Products, All Rights Reserved.
+%copyright 1993-2006 by Easy Software Products, All Rights Reserved.
 %vendor Easy Software Products
 %license LICENSE.txt
-%readme README.txt
-%version 1.1.5
-%incompat printpro
+%readme packaging/cups.license
+%version 1.2
+%description The Common UNIX Printing System provides a portable printing
+%description layer for UNIX(r) operating systems.  It has been developed by
+%description Easy Software Products to promote a standard printing solution
+%description for all UNIX vendors and users.  CUPS provides the System V and
+%description Berkeley command-line interfaces. 
 </PRE>
 </UL>
-<P>One incompatibility is flagged against the &quot;printpro&quot; package, since
- ESP Print Pro provides its own CUPS distribution.</P>
+<P>We then list different dependencies depending on the package format:</P>
+<UL>
+<PRE>
+%format rpm
+%provides cups 1:1.2
+%provides lpd, lpr, LPRng
+%replaces lpd, lpr, LPRng
+
+%format deb
+%provides cupsys
+%provides cupsys-client
+%provides cupsys-bsd
+
+%format pkg
+%replaces SUNWlpmsg LP Alerts
+%replaces SUNWlpr LP Print Service, (Root)
+%replaces SUNWlps LP Print Service - Server, (Usr)
+%replaces SUNWlpu LP Print Service - Client, (Usr)
+%replaces SUNWpsu LP Print Server, (Usr)
+%replaces SUNWpsr LP Print Server, (Root)
+%replaces SUNWpcu LP Print Client, (Usr)
+%replaces SUNWpcr LP Print Client, (Root)
+%replaces SUNWppm
+%replaces SUNWmp
+%replaces SUNWscplp SunOS Print Compatibility
+
+%format inst
+%replaces patch*.print_*.* 0 0 1289999999 1289999999
+%replaces maint*.print_*.* 0 0 1289999999 1289999999
+%replaces print 0 0 1289999999 1289999999
+%replaces fw_cups 0 0 1289999999 1289999999
+%incompat patch*.print_*.* 0 0 1289999999 1289999999
+%incompat maint*.print_*.* 0 0 1289999999 1289999999
+%incompat print 0 0 1289999999 1289999999
+%incompat fw_cups 0 0 1289999999 1289999999
+
+%format all
+</PRE>
+</UL>
+<H3>Subpackages</H3>
+<UL>
+<PRE>
+%subpackage libs
+%description Common UNIX Printing System - shared libraries
+%format rpm
+%provides cups-libs 1:1.2svn
+%format deb
+%provides libcups1
+%provides libcupsys2
+%provides libcupsys2-gnutls10
+%provides libcupsimage2
+%format all
+
+%subpackage devel
+%description Common UNIX Printing System - development environment
+%format rpm
+%provides cups-devel 1:1.2svn
+%format deb
+%provides libcupsys2-dev
+%provides libcupsimage2-dev
+%format all
+
+%subpackage lpd
+%description Common UNIX Printing System - LPD support
+%format rpm
+%provides cups-lpd 1:1.2svn
+%format all
+
+%subpackage es
+%description Common UNIX Printing System - Spanish support
+
+%subpackage ja
+%description Common UNIX Printing System - Japanese support
+
+%subpackage
+</PRE>
+</UL>
 <H3>Server Programs</H3>
 <P>Next comes the server programs; these are identical for all systems:</P>
 <UL>
 <PRE>
-%system all
-# Server files
-f 0555 root sys $SBINDIR/cupsd scheduler/cupsd
+f 0755 root sys $SBINDIR/cupsd scheduler/cupsd
 
-d 0555 root sys $SERVERBIN -
-d 0555 root sys $SERVERBIN/backend -
-f 0555 root sys $SERVERBIN/backend/ipp backend/ipp
-l 0555 root sys $SERVERBIN/backend/http ipp
-f 0555 root sys $SERVERBIN/backend/lpd backend/lpd
-f 0555 root sys $SERVERBIN/backend/parallel backend/parallel
-f 0555 root sys $SERVERBIN/backend/serial backend/serial
-f 0555 root sys $SERVERBIN/backend/socket backend/socket
-f 0555 root sys $SERVERBIN/backend/usb backend/usb
-d 0555 root sys $SERVERBIN/cgi-bin -
-f 0555 root sys $SERVERBIN/cgi-bin/admin.cgi cgi-bin/admin.cgi
-f 0555 root sys $SERVERBIN/cgi-bin/classes.cgi cgi-bin/classes.cgi
-f 0555 root sys $SERVERBIN/cgi-bin/jobs.cgi cgi-bin/jobs.cgi
-f 0555 root sys $SERVERBIN/cgi-bin/printers.php cgi-bin/printers.php
-d 0555 root sys $SERVERBIN/daemon -
-f 0555 root sys $SERVERBIN/daemon/cups-lpd scheduler/cups-lpd
-f 0555 root sys $SERVERBIN/daemon/cups-polld scheduler/cups-polld
-d 0555 root sys $SERVERBIN/filter -
-f 0555 root sys $SERVERBIN/filter/pstoraster pstoraster/pstoraster
-f 0555 root sys $SERVERBIN/filter/pdftops pdftops/pdftops
-f 0555 root sys $SERVERBIN/filter/imagetops filter/imagetops
-f 0555 root sys $SERVERBIN/filter/pstops filter/pstops
-f 0555 root sys $SERVERBIN/filter/texttops filter/texttops
-f 0555 root sys $SERVERBIN/filter/rastertoepson filter/rastertoepson
-f 0555 root sys $SERVERBIN/filter/rastertohp filter/rastertohp
-f 0555 root sys $SERVERBIN/filter/hpgltops filter/hpgltops
-f 0555 root sys $SERVERBIN/filter/imagetoraster filter/imagetoraster
+d 0755 root sys $SERVERBIN -
+d 0755 root sys $SERVERBIN/backend -
+f 0755 root sys $SERVERBIN/backend/ipp backend/ipp
+l 0755 root sys $SERVERBIN/backend/http ipp
+f 0755 root sys $SERVERBIN/backend/lpd backend/lpd
+f 0755 root sys $SERVERBIN/backend/parallel backend/parallel
+f 0755 root sys $SERVERBIN/backend/scsi backend/scsi
+f 0755 root sys $SERVERBIN/backend/serial backend/serial
+f 0755 root sys $SERVERBIN/backend/socket backend/socket
+f 0755 root sys $SERVERBIN/backend/usb backend/usb
+d 0755 root sys $SERVERBIN/cgi-bin -
+f 0755 root sys $SERVERBIN/cgi-bin/admin.cgi cgi-bin/admin.cgi
+f 0755 root sys $SERVERBIN/cgi-bin/classes.cgi cgi-bin/classes.cgi
+f 0755 root sys $SERVERBIN/cgi-bin/help.cgi cgi-bin/help.cgi
+f 0755 root sys $SERVERBIN/cgi-bin/jobs.cgi cgi-bin/jobs.cgi
+f 0755 root sys $SERVERBIN/cgi-bin/printers.cgi cgi-bin/printers.cgi
+d 0755 root sys $SERVERBIN/daemon -
+f 0755 root sys $SERVERBIN/daemon/cups-deviced scheduler/cups-deviced
+f 0755 root sys $SERVERBIN/daemon/cups-driverd scheduler/cups-driverd
+f 0755 root sys $SERVERBIN/daemon/cups-polld scheduler/cups-polld
+d 0755 root sys $SERVERBIN/driver -
+d 0755 root sys $SERVERBIN/filter -
+f 0755 root sys $SERVERBIN/filter/gziptoany filter/gziptoany
+f 0755 root sys $SERVERBIN/filter/hpgltops filter/hpgltops
+%if $IMGFILTERS
+f 0755 root sys $SERVERBIN/filter/imagetops filter/imagetops
+f 0755 root sys $SERVERBIN/filter/imagetoraster filter/imagetoraster
+%endif
+%if $PDFTOPS
+f 0755 root sys $SERVERBIN/filter/pdftops pdftops/pdftops
+%endif
+f 0755 root sys $SERVERBIN/filter/pstops filter/pstops
+f 0755 root sys $SERVERBIN/filter/rastertolabel filter/rastertolabel
+l 0755 root sys $SERVERBIN/filter/rastertodymo rastertolabel
+f 0755 root sys $SERVERBIN/filter/rastertoepson filter/rastertoepson
+f 0755 root sys $SERVERBIN/filter/rastertohp filter/rastertohp
+f 0755 root sys $SERVERBIN/filter/texttops filter/texttops
+d 0755 root sys $SERVERBIN/notifier -
+f 0755 root sys $SERVERBIN/notifier/mailto notifier/mailto
+
+%subpackage lpd
+d 0755 root sys $SERVERBIN/daemon -
+f 0755 root sys $SERVERBIN/daemon/cups-lpd scheduler/cups-lpd
+%subpackage
 </PRE>
 </UL>
 <H3>Administration Commands</H3>
@@ -1924,20 +2051,26 @@ f 0555 root sys $SERVERBIN/filter/imagetoraster filter/imagetoraster
  program in the <CODE>/usr/etc</CODE> directory.</P>
 <UL>
 <PRE>
-l 0555 root sys $BINDIR/disable $SBINDIR/accept
-l 0555 root sys $BINDIR/enable $SBINDIR/accept
-l 0555 root sys $LIBDIR/accept $SBINDIR/accept
-l 0555 root sys $LIBDIR/lpadmin $SBINDIR/lpadmin
-l 0555 root sys $LIBDIR/reject accept
-f 0555 root sys $SBINDIR/accept systemv/accept
-f 0555 root sys $SBINDIR/lpadmin systemv/lpadmin
-f 0555 root sys $SBINDIR/lpc berkeley/lpc
-f 0555 root sys $SBINDIR/lpinfo systemv/lpinfo
-f 0555 root sys $SBINDIR/lpmove systemv/lpmove
-l 0555 root sys $SBINDIR/reject accept
+d 0755 root sys $BINDIR -
+l 0755 root sys $BINDIR/enable $SBINDIR/accept
+l 0755 root sys $LIBDIR/accept $SBINDIR/accept
+d 0755 root sys $SBINDIR -
+l 0755 root sys $SBINDIR/cupsdisable accept
+l 0755 root sys $SBINDIR/cupsenable accept
+l 0755 root sys $BINDIR/disable $SBINDIR/accept
+d 0755 root sys $LIBDIR -
+l 0755 root sys $LIBDIR/lpadmin $SBINDIR/lpadmin
+l 0755 root sys $LIBDIR/reject accept
+f 0755 root sys $SBINDIR/accept systemv/accept
+f 0755 root sys $SBINDIR/cupsaddsmb systemv/cupsaddsmb
+f 0755 root sys $SBINDIR/lpadmin systemv/lpadmin
+f 0755 root sys $SBINDIR/lpc berkeley/lpc
+f 0755 root sys $SBINDIR/lpinfo systemv/lpinfo
+f 0755 root sys $SBINDIR/lpmove systemv/lpmove
+l 0755 root sys $SBINDIR/reject accept
 
 %system irix
-l 0555 root sys /usr/etc/lpc $SBINDIR/lpc
+l 0755 root sys /usr/etc/lpc $SBINDIR/lpc
 %system all
 </PRE>
 </UL>
@@ -1947,19 +2080,22 @@ l 0555 root sys /usr/etc/lpc $SBINDIR/lpc
  different directory, <CODE>/usr/bsd</CODE>.</P>
 <UL>
 <PRE>
-f 0555 root sys $BINDIR/cancel systemv/cancel
-f 0555 root sys $BINDIR/lp systemv/lp
-f 0555 root sys $BINDIR/lpoptions systemv/lpoptions
-f 4555 root sys $BINDIR/lppasswd systemv/lppasswd
-f 0555 root sys $BINDIR/lpq berkeley/lpq
-f 0555 root sys $BINDIR/lpr berkeley/lpr
-f 0555 root sys $BINDIR/lprm berkeley/lprm
-f 0555 root sys $BINDIR/lpstat systemv/lpstat
+d 0755 root sys $BINDIR -
+f 0755 root sys $BINDIR/cancel systemv/cancel
+f 0755 root sys $BINDIR/cupstestdsc systemv/cupstestdsc
+f 0755 root sys $BINDIR/cupstestppd systemv/cupstestppd
+f 0755 root sys $BINDIR/lp systemv/lp
+f 0755 root sys $BINDIR/lpoptions systemv/lpoptions
+f 4755 $CUPS_USER sys $BINDIR/lppasswd systemv/lppasswd
+f 0755 root sys $BINDIR/lpq berkeley/lpq
+f 0755 root sys $BINDIR/lpr berkeley/lpr
+f 0755 root sys $BINDIR/lprm berkeley/lprm
+f 0755 root sys $BINDIR/lpstat systemv/lpstat
 
 %system irix
-l 0555 root sys /usr/bsd/lpq $BINDIR/lpq
-l 0555 root sys /usr/bsd/lpr $BINDIR/lpr
-l 0555 root sys /usr/bsd/lprm $BINDIR/lprm
+l 0755 root sys /usr/bsd/lpq $BINDIR/lpq
+l 0755 root sys /usr/bsd/lpr $BINDIR/lpr
+l 0755 root sys /usr/bsd/lprm $BINDIR/lprm
 %system all
 </PRE>
 </UL>
@@ -1968,17 +2104,49 @@ l 0555 root sys /usr/bsd/lprm $BINDIR/lprm
  extension for shared libraries than other operating systems.</P>
 <UL>
 <PRE>
+%if DSOLIBS
+%subpackage libs
 %system hpux
-f 0555 root sys $LIBDIR/libcups.sl.2 cups/libcups.sl.2
-l 0555 root sys $LIBDIR/libcups.sl libcups.sl.2
-f 0555 root sys $LIBDIR/libcupsimage.sl.2 filter/libcupsimage.sl.2
-l 0555 root sys $LIBDIR/libcupsimage.sl libcupsimage.sl.2
-%system !hpux
-f 0555 root sys $LIBDIR/libcups.so.2 cups/libcups.so.2
-l 0555 root sys $LIBDIR/libcups.so libcups.so.2
-f 0555 root sys $LIBDIR/libcupsimage.so.2 filter/libcupsimage.so.2
-l 0555 root sys $LIBDIR/libcupsimage.so libcupsimage.so.2
+f 0755 root sys $LIBDIR/libcups.sl.2 cups/libcups.sl.2
+l 0755 root sys $LIBDIR/libcups.sl libcups.sl.2
+f 0755 root sys $LIBDIR/libcupsimage.sl.2 filter/libcupsimage.sl.2
+l 0755 root sys $LIBDIR/libcupsimage.sl libcupsimage.sl.2
+%system aix
+f 0755 root sys $LIBDIR/libcups_s.a cups/libcups_s.a
+f 0755 root sys $LIBDIR/libcupsimage_s.a filter/libcupsimage_s.a
+%system darwin
+f 0755 root sys $LIBDIR/libcups.2.dylib cups/libcups.2.dylib
+l 0755 root sys $LIBDIR/libcups.dylib libcups.2.dylib
+f 0755 root sys $LIBDIR/libcupsimage.2.dylib filter/libcupsimage.2.dylib
+l 0755 root sys $LIBDIR/libcupsimage.dylib libcupsimage.2.dylib
+%system !hpux !aix !darwin
+f 0755 root sys $LIBDIR/libcups.so.2 cups/libcups.so.2
+l 0755 root sys $LIBDIR/libcups.so libcups.so.2
+f 0755 root sys $LIBDIR/libcupsimage.so.2 filter/libcupsimage.so.2
+l 0755 root sys $LIBDIR/libcupsimage.so libcupsimage.so.2
 %system all
+%subpackage
+%endif
+
+%if LIB32DIR
+%subpackage libs
+f 0755 root sys $LIB32DIR/libcups.so.2 cups/libcups.32.so.2
+l 0755 root sys $LIB32DIR/libcups.so libcups.so.2
+f 0755 root sys $LIB32DIR/libcupsimage.so.2 filter/libcupsimage.32.so.2
+l 0755 root sys $LIB32DIR/libcupsimage.so libcupsimage.so.2
+%system all
+%subpackage
+%endif
+
+%if LIB64DIR
+%subpackage libs
+f 0755 root sys $LIB64DIR/libcups.so.2 cups/libcups.64.so.2
+l 0755 root sys $LIB64DIR/libcups.so libcups.so.2
+f 0755 root sys $LIB64DIR/libcupsimage.so.2 filter/libcupsimage.64.so.2
+l 0755 root sys $LIB64DIR/libcupsimage.so libcupsimage.so.2
+%system all
+%subpackage
+%endif
 </PRE>
 </UL>
 <H3>Directories</H3>
@@ -1987,72 +2155,77 @@ l 0555 root sys $LIBDIR/libcupsimage.so libcupsimage.so.2
 <UL>
 <PRE>
 d 0755 root sys $LOGDIR -
-d 0700 lp sys $REQUESTS -
-d 1700 lp sys $REQUESTS/tmp -
+d 0710 root $CUPS_GROUP $REQUESTS -
+d 1770 root $CUPS_GROUP $REQUESTS/tmp -
+d 0775 root $CUPS_GROUP $CACHEDIR -
+d 0755 root $CUPS_GROUP $STATEDIR -
+d 0511 root $CUPS_PRIMARY_SYSTEM_GROUP $STATEDIR/certs -
 </PRE>
 </UL>
 <H3>Data Files</H3>
 <P>CUPS has lots of data files. We use wildcards whenever possible.</P>
 <UL>
 <PRE>
-f 0444 root sys $LOCALEDIR/C/cups_C locale/C/cups_C
-f 0444 root sys $LOCALEDIR/de/cups_de locale/de/cups_de
-f 0444 root sys $LOCALEDIR/en/cups_en locale/en/cups_en
-f 0444 root sys $LOCALEDIR/es/cups_es locale/es/cups_es
-f 0444 root sys $LOCALEDIR/fr/cups_fr locale/fr/cups_fr
-f 0444 root sys $LOCALEDIR/it/cups_it locale/it/cups_it
+d 0755 root sys $DATADIR -
 
-d 0555 root sys $DATADIR -
+d 0755 root sys $DATADIR/banners -
+f 0644 root sys $DATADIR/banners/classified data/classified
+f 0644 root sys $DATADIR/banners/confidential data/confidential
+f 0644 root sys $DATADIR/banners/secret data/secret
+f 0644 root sys $DATADIR/banners/standard data/standard
+f 0644 root sys $DATADIR/banners/topsecret data/topsecret
+f 0644 root sys $DATADIR/banners/unclassified data/unclassified
 
-d 0555 root sys $DATADIR/banners -
-f 0444 root sys $DATADIR/banners/classified data/classified
-f 0444 root sys $DATADIR/banners/confidential data/confidential
-f 0444 root sys $DATADIR/banners/secret data/secret
-f 0444 root sys $DATADIR/banners/standard data/standard
-f 0444 root sys $DATADIR/banners/topsecret data/topsecret
-f 0444 root sys $DATADIR/banners/unclassified data/unclassified
+d 0755 root sys $DATADIR/charsets -
+f 0644 root sys $DATADIR/charsets data/*.txt
+f 0644 root sys $DATADIR/charsets/windows-874 data/windows-874
+f 0644 root sys $DATADIR/charsets/windows-1250 data/windows-1250
+f 0644 root sys $DATADIR/charsets/windows-1251 data/windows-1251
+f 0644 root sys $DATADIR/charsets/windows-1252 data/windows-1252
+f 0644 root sys $DATADIR/charsets/windows-1253 data/windows-1253
+f 0644 root sys $DATADIR/charsets/windows-1254 data/windows-1254
+f 0644 root sys $DATADIR/charsets/windows-1255 data/windows-1255
+f 0644 root sys $DATADIR/charsets/windows-1256 data/windows-1256
+f 0644 root sys $DATADIR/charsets/windows-1257 data/windows-1257
+f 0644 root sys $DATADIR/charsets/windows-1258 data/windows-1258
+f 0644 root sys $DATADIR/charsets/iso-8859-1 data/iso-8859-1
+f 0644 root sys $DATADIR/charsets/iso-8859-2 data/iso-8859-2
+f 0644 root sys $DATADIR/charsets/iso-8859-3 data/iso-8859-3
+f 0644 root sys $DATADIR/charsets/iso-8859-4 data/iso-8859-4
+f 0644 root sys $DATADIR/charsets/iso-8859-5 data/iso-8859-5
+f 0644 root sys $DATADIR/charsets/iso-8859-6 data/iso-8859-6
+f 0644 root sys $DATADIR/charsets/iso-8859-7 data/iso-8859-7
+f 0644 root sys $DATADIR/charsets/iso-8859-8 data/iso-8859-8
+f 0644 root sys $DATADIR/charsets/iso-8859-9 data/iso-8859-9
+f 0644 root sys $DATADIR/charsets/iso-8859-10 data/iso-8859-10
+f 0644 root sys $DATADIR/charsets/iso-8859-13 data/iso-8859-13
+f 0644 root sys $DATADIR/charsets/iso-8859-14 data/iso-8859-14
+f 0644 root sys $DATADIR/charsets/iso-8859-15 data/iso-8859-15
+f 0644 root sys $DATADIR/charsets/utf-8 data/utf-8
 
-d 0555 root sys $DATADIR/charsets -
-f 0444 root sys $DATADIR/charsets/windows-874 data/windows-874
-f 0444 root sys $DATADIR/charsets/windows-1250 data/windows-1250
-f 0444 root sys $DATADIR/charsets/windows-1251 data/windows-1251
-f 0444 root sys $DATADIR/charsets/windows-1252 data/windows-1252
-f 0444 root sys $DATADIR/charsets/windows-1253 data/windows-1253
-f 0444 root sys $DATADIR/charsets/windows-1254 data/windows-1254
-f 0444 root sys $DATADIR/charsets/windows-1255 data/windows-1255
-f 0444 root sys $DATADIR/charsets/windows-1256 data/windows-1256
-f 0444 root sys $DATADIR/charsets/windows-1257 data/windows-1257
-f 0444 root sys $DATADIR/charsets/windows-1258 data/windows-1258
-f 0444 root sys $DATADIR/charsets/iso-8859-1 data/iso-8859-1
-f 0444 root sys $DATADIR/charsets/iso-8859-14 data/iso-8859-14
-f 0444 root sys $DATADIR/charsets/iso-8859-15 data/iso-8859-15
-f 0444 root sys $DATADIR/charsets/iso-8859-2 data/iso-8859-2
-f 0444 root sys $DATADIR/charsets/iso-8859-3 data/iso-8859-3
-f 0444 root sys $DATADIR/charsets/iso-8859-4 data/iso-8859-4
-f 0444 root sys $DATADIR/charsets/iso-8859-5 data/iso-8859-5
-f 0444 root sys $DATADIR/charsets/iso-8859-6 data/iso-8859-6
-f 0444 root sys $DATADIR/charsets/iso-8859-7 data/iso-8859-7
-f 0444 root sys $DATADIR/charsets/iso-8859-8 data/iso-8859-8
-f 0444 root sys $DATADIR/charsets/iso-8859-9 data/iso-8859-9
-f 0444 root sys $DATADIR/charsets/utf-8 data/utf-8
+d 0755 root sys $DATADIR/data -
+f 0644 root sys $DATADIR/data/HPGLprolog data/HPGLprolog
+f 0644 root sys $DATADIR/data/psglyphs data/psglyphs
+f 0644 root sys $DATADIR/data/testprint.ps data/testprint.ps
 
-d 0555 root sys $DATADIR/data -
-f 0444 root sys $DATADIR/data/HPGLprolog data/HPGLprolog
-f 0444 root sys $DATADIR/data/psglyphs data/psglyphs
-f 0444 root sys $DATADIR/data/testprint.ps data/testprint.ps
+d 0755 root sys $DATADIR/fonts -
+f 0644 root sys $DATADIR/fonts fonts/Courier*
+f 0644 root sys $DATADIR/fonts/Symbol fonts/Symbol
 
-d 0555 root sys $DATADIR/fonts -
-f 0444 root sys $DATADIR/fonts fonts/*
+d 0755 root sys $DATADIR/model -
+f 0644 root sys $DATADIR/model ppd/*.ppd
 
-d 0555 root sys $DATADIR/pstoraster -
-f 0444 root sys $DATADIR/pstoraster/Fontmap pstoraster/Fontmap
-f 0444 root sys $DATADIR/pstoraster pstoraster/gs*.ps
+d 0755 root sys $DATADIR/templates -
+c 0644 root sys $DATADIR/templates templates/*.tmpl
 
-d 0555 root sys $DATADIR/model -
-f 0444 root sys $DATADIR/model ppd/*.ppd
-
-d 0555 root sys $DATADIR/templates -
-f 0444 root sys $DATADIR/templates templates/*.tmpl
+# Japanese template files
+%subpackage es
+d 0755 root sys $DATADIR/templates/es
+f 0644 root sys $DATADIR/templates/es templates/es/*.tmpl
+%subpackage ja
+d 0755 root sys $DATADIR/templates/ja
+f 0644 root sys $DATADIR/templates/ja templates/ja/*.tmpl
+%subpackage
 </PRE>
 </UL>
 <H3>Config Files</H3>
@@ -2064,32 +2237,18 @@ $SERVERROOT</CODE>. The MIME configuration files are not treated as
  and <CODE>local.convs</CODE> files.</P>
 <UL>
 <PRE>
-d 0555 root sys $SERVERROOT -
-d 0711 root sys $SERVERROOT/certs -
-d 0755 root sys $SERVERROOT/interfaces -
-d 0755 root sys $SERVERROOT/ppd -
-c 0644 root sys $SERVERROOT conf/*.conf
-f 0644 root sys $SERVERROOT/mime.convs conf/mime.convs
-f 0644 root sys $SERVERROOT/mime.types conf/mime.types
-</PRE>
-</UL>
-<H3>PAM Files</H3>
-<P>Programmable Authentication Modules (&quot;PAM&quot;) is supported by many
- operating systems. Currently Linux PAM is the only implementation that
- uses a directory with separate configuration files; other operating
- systems use a single configuration file (<CODE>/etc/pam.conf</CODE>)
- and provide a default authentication configuration that works with
- CUPS.</P>
-<UL>
-<PRE>
-%system linux
-d 0555 root sys $PAMDIR -
-c 0644 root sys $PAMDIR/cups data/cups.pam
-c 0644 root sys $PAMDIR/cups.suse data/cups.suse
-%install if test -f /lib/security/pam_unix.so; then
-%install     mv $PAMDIR/cups.suse $PAMDIR/cups
-%install fi
-%system all
+d 0755 root sys $SERVERROOT -
+d 0755 root $CUPS_GROUP $SERVERROOT/interfaces -
+d 0755 root $CUPS_GROUP $SERVERROOT/ppd -
+c $CUPS_PERM root $CUPS_GROUP $SERVERROOT conf/*.conf
+f $CUPS_PERM root $CUPS_GROUP $SERVERROOT/cupsd.conf.default conf/cupsd.conf
+f $CUPS_PERM root $CUPS_GROUP $SERVERROOT/mime.convs conf/mime.convs
+f $CUPS_PERM root $CUPS_GROUP $SERVERROOT/mime.types conf/mime.types
+
+%if PAMDIR
+d 0755 root sys $PAMDIR -
+c 0644 root sys $PAMDIR/cups conf/pam.std
+%endif
 </PRE>
 </UL>
 <H3>Developer Files</H3>
@@ -2097,17 +2256,27 @@ c 0644 root sys $PAMDIR/cups.suse data/cups.suse
  library.</P>
 <UL>
 <PRE>
-d 0555 root sys $INCLUDEDIR/cups -
-f 0444 root sys $INCLUDEDIR/cups/cups.h cups/cups.h
-f 0444 root sys $INCLUDEDIR/cups/http.h cups/http.h
-f 0444 root sys $INCLUDEDIR/cups/image.h filter/image.h
-f 0444 root sys $INCLUDEDIR/cups/ipp.h cups/ipp.h
-f 0444 root sys $INCLUDEDIR/cups/language.h cups/language.h
-f 0444 root sys $INCLUDEDIR/cups/md5.h cups/md5.h
-f 0444 root sys $INCLUDEDIR/cups/ppd.h cups/ppd.h
-f 0444 root sys $INCLUDEDIR/cups/raster.h filter/raster.h
+%subpackage devel
+f 0755 root sys $BINDIR/cups-config cups-config
+d 0755 root sys $INCLUDEDIR/cups -
+f 0644 root sys $INCLUDEDIR/cups/cups.h cups/cups.h
+f 0644 root sys $INCLUDEDIR/cups/http.h cups/http.h
+f 0644 root sys $INCLUDEDIR/cups/image.h filter/image.h
+f 0644 root sys $INCLUDEDIR/cups/ipp.h cups/ipp.h
+f 0644 root sys $INCLUDEDIR/cups/language.h cups/language.h
+f 0644 root sys $INCLUDEDIR/cups/md5.h cups/md5.h
+f 0644 root sys $INCLUDEDIR/cups/ppd.h cups/ppd.h
+f 0644 root sys $INCLUDEDIR/cups/raster.h filter/raster.h
 
-f 0444 root sys $LIBDIR/libcups.a cups/libcups.a
+%if $INSTALLSTATIC
+f 0644 root sys $LIBDIR/libcups.a cups/libcups.a
+f 0644 root sys $LIBDIR/libcupsimage.a filter/libcupsimage.a
+%endif
+
+d 0755 root sys $DOCDIR/help -
+f 0644 root sys $DOCDIR/help doc/help/api*.html
+f 0644 root sys $DOCDIR/help doc/help/spec*.html
+%subpackage
 </PRE>
 </UL>
 <H3>Documentation Files</H3>
@@ -2115,12 +2284,40 @@ f 0444 root sys $LIBDIR/libcups.a cups/libcups.a
  care of most of the work.</P>
 <UL>
 <PRE>
-d 0555 root sys $DOCDIR -
-f 0444 root sys $DOCDIR/cups.css doc/cups.css
-f 0444 root sys $DOCDIR doc/*.html
-f 0444 root sys $DOCDIR doc/*.pdf
-d 0555 root sys $DOCDIR/images -
-f 0444 root sys $DOCDIR/images doc/images/*.gif
+d 0755 root sys $DOCDIR -
+f 0644 root sys $DOCDIR doc/*.css
+f 0644 root sys $DOCDIR doc/*.html
+d 0755 root sys $DOCDIR/help -
+f 0644 root sys $DOCDIR/help/cgi.html doc/help/cgi.html
+f 0644 root sys $DOCDIR/help/glossary.html doc/help/glossary.html
+f 0644 root sys $DOCDIR/help/license.html doc/help/license.html
+f 0644 root sys $DOCDIR/help/network.html doc/help/network.html
+f 0644 root sys $DOCDIR/help/options.html doc/help/options.html
+f 0644 root sys $DOCDIR/help/overview.html doc/help/overview.html
+f 0644 root sys $DOCDIR/help/security.html doc/help/security.html
+f 0644 root sys $DOCDIR/help/standard.html doc/help/standard.html
+f 0644 root sys $DOCDIR/help/translation.html doc/help/translation.html
+f 0644 root sys $DOCDIR/help/whatsnew.html doc/help/whatsnew.html
+f 0644 root sys $DOCDIR/help doc/help/man-*.html
+f 0644 root sys $DOCDIR/help doc/help/ref-*.html
+d 0755 root sys $DOCDIR/images -
+f 0644 root sys $DOCDIR/images doc/images/*.gif
+f 0644 root sys $DOCDIR/images doc/images/*.jpg
+f 0644 root sys $DOCDIR/images doc/images/*.png
+f 0644 root sys $DOCDIR/robots.txt doc/robots.txt
+
+# Localized documentation files
+%subpackage es
+d 0755 root sys $DOCDIR/es
+f 0644 root sys $DOCDIR/es doc/es/*.html
+d 0755 root sys $DOCDIR/es/images -
+f 0644 root sys $DOCDIR/es/images doc/es/images/*.gif
+%subpackage ja
+d 0755 root sys $DOCDIR/ja
+f 0644 root sys $DOCDIR/ja doc/ja/*.html
+d 0755 root sys $DOCDIR/ja/images -
+f 0644 root sys $DOCDIR/ja/images doc/ja/images/*.gif
+%subpackage
 </PRE>
 </UL>
 <H3>Man Pages</H3>
@@ -2131,101 +2328,52 @@ f 0444 root sys $DOCDIR/images doc/images/*.gif
  UNIX's.</P>
 <UL>
 <PRE>
-# Man pages
-%system irix
-d 0555 root sys $MANDIR/a_man -
-d 0555 root sys $MANDIR/a_man/cat1 -
-d 0555 root sys $MANDIR/u_man -
-d 0555 root sys $MANDIR/u_man/cat1 -
-d 0555 root sys $MANDIR/u_man/cat5 -
+d 0755 root sys $AMANDIR -
+d 0755 root sys $AMANDIR/man$MAN8DIR -
+d 0755 root sys $MANDIR -
+d 0755 root sys $MANDIR/man1 -
+d 0755 root sys $MANDIR/man5 -
+d 0755 root sys $MANDIR/man7 -
 
-f 0444 root sys $MANDIR/a_man/cat1/accept.z man/accept.z
-l 0444 root sys $MANDIR/a_man/cat1/reject.z accept.z
-f 0444 root sys $MANDIR/u_man/cat1/backend.z man/backend.z
-f 0444 root sys $MANDIR/u_man/cat5/classes.conf.z man/classes.conf.z
-f 0444 root sys $MANDIR/a_man/cat1/cups-lpd.z man/cups-lpd.z
-f 0444 root sys $MANDIR/a_man/cat1/cups-polld.z man/cups-polld.z
-f 0444 root sys $MANDIR/u_man/cat5/cupsd.conf.z man/cupsd.conf.z
-f 0444 root sys $MANDIR/a_man/cat1/cupsd.z man/cupsd.z
-f 0444 root sys $MANDIR/a_man/cat1/enable.z man/enable.z
-l 0444 root sys $MANDIR/a_man/cat1/disable.z enable.z
-f 0444 root sys $MANDIR/u_man/cat1/filter.z man/filter.z
-f 0444 root sys $MANDIR/a_man/cat1/lpadmin.z man/lpadmin.z
-f 0444 root sys $MANDIR/a_man/cat1/lpc.z man/lpc.z
-f 0444 root sys $MANDIR/a_man/cat1/lpinfo.z man/lpinfo.z
-f 0444 root sys $MANDIR/a_man/cat1/lpmove.z man/lpmove.z
-f 0444 root sys $MANDIR/u_man/cat1/lpoptions.z man/lpoptions.z
-f 0444 root sys $MANDIR/u_man/cat1/lpq.z man/lpq.z
-f 0444 root sys $MANDIR/u_man/cat1/lprm.z man/lprm.z
-f 0444 root sys $MANDIR/u_man/cat1/lpr.z man/lpr.z
-f 0444 root sys $MANDIR/u_man/cat1/lpstat.z man/lpstat.z
-f 0444 root sys $MANDIR/u_man/cat1/lp.z man/lp.z
-l 0444 root sys $MANDIR/u_man/cat1/cancel.z lp.z
-f 0444 root sys $MANDIR/u_man/cat5/mime.convs.z man/mime.convs.z
-f 0444 root sys $MANDIR/u_man/cat5/mime.types.z man/mime.types.z
-f 0444 root sys $MANDIR/u_man/cat5/printers.conf.z man/printers.conf.z
+f 0644 root sys $MANDIR/man1/cancel.$MAN1EXT man/cancel.$MAN1EXT
+f 0644 root sys $MANDIR/man1/cupstestdsc.$MAN1EXT man/cupstestdsc.$MAN1EXT
+f 0644 root sys $MANDIR/man1/cupstestppd.$MAN1EXT man/cupstestppd.$MAN1EXT
+f 0644 root sys $MANDIR/man1/lpoptions.$MAN1EXT man/lpoptions.$MAN1EXT
+f 0644 root sys $MANDIR/man1/lppasswd.$MAN1EXT man/lppasswd.$MAN1EXT
+f 0644 root sys $MANDIR/man1/lpq.$MAN1EXT man/lpq.$MAN1EXT
+f 0644 root sys $MANDIR/man1/lprm.$MAN1EXT man/lprm.$MAN1EXT
+f 0644 root sys $MANDIR/man1/lpr.$MAN1EXT man/lpr.$MAN1EXT
+f 0644 root sys $MANDIR/man1/lpstat.$MAN1EXT man/lpstat.$MAN1EXT
+f 0644 root sys $MANDIR/man1/lp.$MAN1EXT man/lp.$MAN1EXT
 
-%system solaris hpux
-d 0555 root sys $MANDIR/man1 -
-d 0555 root sys $MANDIR/man5 -
-d 0555 root sys $MANDIR/man1m -
+f 0644 root sys $MANDIR/man5/classes.conf.$MAN5EXT man/classes.conf.$MAN5EXT
+f 0644 root sys $MANDIR/man5/cupsd.conf.$MAN5EXT man/cupsd.conf.$MAN5EXT
+f 0644 root sys $MANDIR/man5/mime.convs.$MAN5EXT man/mime.convs.$MAN5EXT
+f 0644 root sys $MANDIR/man5/mime.types.$MAN5EXT man/mime.types.$MAN5EXT
+f 0644 root sys $MANDIR/man5/printers.conf.$MAN5EXT man/printers.conf.$MAN5EXT
 
-f 0444 root sys $MANDIR/man1m/accept.1m man/accept.man
-l 0444 root sys $MANDIR/man1m/reject.1m accept.1m
-f 0444 root sys $MANDIR/man1/backend.1 man/backend.man
-f 0444 root sys $MANDIR/man1/classes.conf.5 man/classes.conf.man
-f 0444 root sys $MANDIR/man1m/cups-lpd.1m man/cups-lpd.man
-f 0444 root sys $MANDIR/man1m/cups-polld.1m man/cups-polld.man
-f 0444 root sys $MANDIR/man1m/cupsd.1m man/cupsd.man
-f 0444 root sys $MANDIR/man5/cupsd.conf.5 man/cupsd.conf.man
-f 0444 root sys $MANDIR/man1m/enable.1m man/enable.man
-l 0444 root sys $MANDIR/man1m/disable.1m enable.1m
-f 0444 root sys $MANDIR/man1/filter.1 man/filter.man
-f 0444 root sys $MANDIR/man1m/lpadmin.1m man/lpadmin.man
-f 0444 root sys $MANDIR/man1m/lpc.1m man/lpc.man
-f 0444 root sys $MANDIR/man1m/lpinfo.1m man/lpinfo.man
-f 0444 root sys $MANDIR/man1m/lpmove.1m man/lpmove.man
-f 0444 root sys $MANDIR/man1/lpoptions.1 man/lpoptions.man
-f 0444 root sys $MANDIR/man1/lpq.1 man/lpq.man
-f 0444 root sys $MANDIR/man1/lprm.1 man/lprm.man
-f 0444 root sys $MANDIR/man1/lpr.1 man/lpr.man
-f 0444 root sys $MANDIR/man1/lpstat.1 man/lpstat.man
-f 0444 root sys $MANDIR/man1/lp.1 man/lp.man
-l 0444 root sys $MANDIR/man1/cancel.1 lp.1
-f 0444 root sys $MANDIR/man5/mime.convs.5 man/mime.convs.man
-f 0444 root sys $MANDIR/man5/mime.types.5 man/mime.types.man
-f 0444 root sys $MANDIR/man5/printers.conf.5 man/printers.conf.man
+f 0644 root sys $MANDIR/man7/backend.$MAN7EXT man/backend.$MAN7EXT
+f 0644 root sys $MANDIR/man7/filter.$MAN7EXT man/filter.$MAN7EXT
 
-%system !irix !solaris !hpux
-d 0555 root sys $MANDIR/man1 -
-d 0555 root sys $MANDIR/man5 -
-d 0555 root sys $MANDIR/man8 -
+f 0644 root sys $AMANDIR/man$MAN8DIR/accept.$MAN8EXT man/accept.$MAN8EXT
+l 0644 root sys $AMANDIR/man$MAN8DIR/reject.$MAN8EXT accept.$MAN8EXT
+f 0644 root sys $AMANDIR/man$MAN8DIR/cupsaddsmb.$MAN8EXT man/cupsaddsmb.$MAN8EXT
+f 0644 root sys $AMANDIR/man$MAN8DIR/cups-polld.$MAN8EXT man/cups-polld.$MAN8EXT
+f 0644 root sys $AMANDIR/man$MAN8DIR/cupsd.$MAN8EXT man/cupsd.$MAN8EXT
+f 0644 root sys $AMANDIR/man$MAN8DIR/cupsenable.$MAN8EXT man/cupsenable.$MAN8EXT
+l 0644 root sys $AMANDIR/man$MAN8DIR/cupsdisable.$MAN8EXT cupsenable.$MAN8EXT
+f 0644 root sys $AMANDIR/man$MAN8DIR/lpadmin.$MAN8EXT man/lpadmin.$MAN8EXT
+f 0644 root sys $AMANDIR/man$MAN8DIR/lpc.$MAN8EXT man/lpc.$MAN8EXT
+f 0644 root sys $AMANDIR/man$MAN8DIR/lpinfo.$MAN8EXT man/lpinfo.$MAN8EXT
+f 0644 root sys $AMANDIR/man$MAN8DIR/lpmove.$MAN8EXT man/lpmove.$MAN8EXT
 
-f 0444 root sys $MANDIR/man8/accept.8 man/accept.man
-l 0444 root sys $MANDIR/man8/reject.8 accept.8
-f 0444 root sys $MANDIR/man1/backend.1 man/backend.man
-f 0444 root sys $MANDIR/man1/classes.conf.5 man/classes.conf.man
-f 0444 root sys $MANDIR/man8/cups-lpd.8 man/cups-lpd.man
-f 0444 root sys $MANDIR/man8/cups-polld.8 man/cups-polld.man
-f 0444 root sys $MANDIR/man8/cupsd.8 man/cupsd.man
-f 0444 root sys $MANDIR/man5/cupsd.conf.5 man/cupsd.conf.man
-f 0444 root sys $MANDIR/man8/enable.8 man/enable.man
-l 0444 root sys $MANDIR/man8/disable.8 enable.8
-f 0444 root sys $MANDIR/man1/filter.1 man/filter.man
-f 0444 root sys $MANDIR/man8/lpadmin.8 man/lpadmin.man
-f 0444 root sys $MANDIR/man8/lpc.8 man/lpc.man
-f 0444 root sys $MANDIR/man8/lpinfo.8 man/lpinfo.man
-f 0444 root sys $MANDIR/man8/lpmove.8 man/lpmove.man
-f 0444 root sys $MANDIR/man1/lpoptions.1 man/lpoptions.man
-f 0444 root sys $MANDIR/man1/lpq.1 man/lpq.man
-f 0444 root sys $MANDIR/man1/lprm.1 man/lprm.man
-f 0444 root sys $MANDIR/man1/lpr.1 man/lpr.man
-f 0444 root sys $MANDIR/man1/lpstat.1 man/lpstat.man
-f 0444 root sys $MANDIR/man1/lp.1 man/lp.man
-l 0444 root sys $MANDIR/man1/cancel.1 lp.1
-f 0444 root sys $MANDIR/man5/mime.convs.5 man/mime.convs.man
-f 0444 root sys $MANDIR/man5/mime.types.5 man/mime.types.man
-f 0444 root sys $MANDIR/man5/printers.conf.5 man/printers.conf.man
+%subpackage devel
+f 0644 root sys $MANDIR/man1/cups-config.$MAN1EXT man/cups-config.$MAN1EXT
+
+%subpackage lpd
+d 0755 root sys $AMANDIR/man$MAN8DIR -
+f 0644 root sys $AMANDIR/man$MAN8DIR/cups-lpd.$MAN8EXT man/cups-lpd.$MAN8EXT
+%subpackage
 </PRE>
 </UL>
 <H3>Startup Script</H3>
@@ -2235,7 +2383,7 @@ cups</CODE>. Startup and shutdown scripts will be created with the names
 <UL>
 <PRE>
 %system all
-i 0555 root sys cups cups.sh
+i 0555 root sys cups init/cups.sh
 </PRE>
 </UL>
 </BODY>
