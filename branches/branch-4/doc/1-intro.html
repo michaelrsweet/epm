@@ -17,7 +17,7 @@ for the software development environment.</P>
 problem. Besides its own "portable" distribution format, EPM
 also supports the generation of several vendor-specific formats.
 This allows you to build software distribution files for almost
-any UNIX/Linux operating system from the same sources.</P>
+any operating system from the same sources.</P>
 
 <H2>History and Evolution</H2>
 
@@ -52,25 +52,26 @@ program and one set of software distribution files.
 
 <P>As we looked for a solution to our problem, we naturally
 investigated the existing open-source packaging systems. Under
-Linux, we looked at the RedHat Package Manager ("RPM") and
+Linux, we looked at the Red Hat Package Manager ("RPM") and
 Debian packaging software ("dpkg" and "dselect"). For the
 commercial UNIX's we looked at the vendor-supplied packaging
 systems. Table 1.1 shows the results of our investigation.</P>
 
-<P><TABLE ALIGN="CENTER" BORDER="1">
+<TABLE ALIGN="CENTER" BORDER="1">
 <CAPTION><A NAME="TABLE_1_1">Table 1.1: Software Packaging Formats</A></CAPTION>
 <TR>
 	<TH><FONT SIZE="-4">Format</FONT></TH>
 	<TH><FONT SIZE="-4">Operating Systems<SUP>1</SUP></FONT></TH>
-	<TH><FONT SIZE="-4">Binaries?</FONT></TH>
-	<TH><FONT SIZE="-4">Cross- Platform?</FONT></TH>
-	<TH><FONT SIZE="-4">Patches?</FONT></TH>
-	<TH><FONT SIZE="-4">Upgrades?</FONT></TH>
-	<TH><FONT SIZE="-4">Conflicts?</FONT></TH>
-	<TH><FONT SIZE="-4">Requires?</FONT></TH>
-	<TH><FONT SIZE="-4">Replaces?</FONT></TH>
-	<TH><FONT SIZE="-4">Config Files?</FONT></TH>
-	<TH><FONT SIZE="-4">Map Files?</FONT></TH>
+	<TH><FONT SIZE="-4">Binaries</FONT></TH>
+	<TH><FONT SIZE="-4">Cross- Platform</FONT></TH>
+	<TH><FONT SIZE="-4">Patches</FONT></TH>
+	<TH><FONT SIZE="-4">Up- grades</FONT></TH>
+	<TH><FONT SIZE="-4">Con- flicts</FONT></TH>
+	<TH><FONT SIZE="-4">Re- quires</FONT></TH>
+	<TH><FONT SIZE="-4">Re- places</FONT></TH>
+	<TH><FONT SIZE="-4">Config Files</FONT></TH>
+	<TH><FONT SIZE="-4">Map Files</FONT></TH>
+	<TH><FONT SIZE="-4">Un- install</FONT></TH>
 </TR>
 <TR>
 	<TD ALIGN="CENTER"><SMALL>installp</SMALL></TD>
@@ -84,6 +85,7 @@ systems. Table 1.1 shows the results of our investigation.</P>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
 	<TD ALIGN="CENTER"><SMALL>pkg_add</SMALL></TD>
@@ -97,6 +99,7 @@ systems. Table 1.1 shows the results of our investigation.</P>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
 	<TD ALIGN="CENTER"><SMALL>pkg_add</SMALL></TD>
@@ -111,6 +114,7 @@ systems. Table 1.1 shows the results of our investigation.</P>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
 	<TD ALIGN="CENTER"><SMALL>dpkg</SMALL></TD>
@@ -125,9 +129,10 @@ systems. Table 1.1 shows the results of our investigation.</P>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER"><SMALL>swinstall</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>depot</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>HP-UX</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
@@ -136,6 +141,7 @@ systems. Table 1.1 shows the results of our investigation.</P>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
@@ -151,6 +157,21 @@ systems. Table 1.1 shows the results of our investigation.</P>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+</TR>
+<TR>
+	<TD ALIGN="CENTER"><SMALL>Install.app</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>MacOS X</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 </TR>
 <TR>
 	<TD ALIGN="CENTER"><SMALL>pkgadd</SMALL></TD>
@@ -162,6 +183,7 @@ systems. Table 1.1 shows the results of our investigation.</P>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
@@ -180,6 +202,7 @@ systems. Table 1.1 shows the results of our investigation.</P>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
 	<TD ALIGN="CENTER"><SMALL>setld</SMALL></TD>
@@ -193,8 +216,23 @@ systems. Table 1.1 shows the results of our investigation.</P>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
-</TABLE></P>
+<TR>
+	<TD ALIGN="CENTER"><SMALL>slackware</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Slackware Linux</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+</TR>
+</TABLE>
 
 <OL>
 
@@ -276,11 +314,8 @@ via the popular Subversion software. Please see the EPM web site for
 complete instructions.</P>
 
 <P>The Easy Software Products news server provides several newsgroups
-for EPM. You can access it at:</P>
-
-<UL><PRE>
-<A HREF="news://news.easysw.com">news.easysw.com</A>
-</PRE></UL>
+for EPM. You can access it by pointing your news reader at
+"news.easysw.com".</P>
 
 <P>Commercial support for EPM is available from Easy Software
 Products and is one way to contribute to the continued

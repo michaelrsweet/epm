@@ -264,57 +264,5 @@ script.</P>
 i 755 root sys foo foo.sh "runlevel(02) start(50) stop(30)"
 </PRE></UL>
 
-<H2>Subpackages</H2>
-
-<P>Subpackages are optional parts of your software package. For
-example, if your package includes developer files, you might
-provide them as a subpackage so that users that will not be
-developing add-ons to your software can omit them from the
-installation.</P>
-
-<BLOCKQUOTE><B>Note:</B> Subpackages are implemented as native
-subsets of the main package for the AIX, HPUX, IRIX, Solaris, and
-Tru64 formats and as separate packages that depend on the main
-(parent) package for all other formats.</BLOCKQUOTE>
-
-<P>To define a subpackage, use the <CODE>%subpackage</CODE>
-directive followed by a <CODE>%description</CODE> directive:</P>
-
-<UL><PRE>
-%subpackage foo
-%description One-Line Description of Foo
-</PRE></UL>
-
-<P>Files, scripts, and dependencies that follow the
-<CODE>%subpackage</CODE> directive are treated as part of that
-subpackage. Specifying the <CODE>%subpackage</CODE> directive
-with no name returns processing to the main (parent) package.</P>
-
-<!-- NEED 2in -->
-<P>You can alternate between subpackages as many times as you
-like:</P>
-
-<UL><PRE>
-%description Main package description
-f 0755 /usr/bin/bar bar
-
-%subpackage foo
-%description Foo programs
-f 0755 /usr/bin/foo foo
-%require bla
-
-%subpackage
-f 0644 /usr/share/man/man1/bar.1
-
-%subpackage foo
-f 0644 /usr/share/man/man1/foo.1
-</PRE></UL>
-
-<P>The above example creates a package containing the "bar"
-program and man page with a subpackage containing the "foo"
-program and man page. The "foo" subpackage depends both on the
-main package (implicit requires) and another package called
-"bla".</P>
-
 </BODY>
 </HTML>
