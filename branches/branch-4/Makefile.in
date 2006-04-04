@@ -182,8 +182,8 @@ install: epm @INSTALL_GUIS@ @INSTALL_OSX@
 	$(CP) $(srcdir)/COPYING $(docdir)
 	$(RM) $(docdir)/README
 	$(CP) $(srcdir)/README $(docdir)
-	$(RM) $(docdir)/epm-manual.html
-	$(CP) $(srcdir)/doc/epm-manual.html $(docdir)
+	$(RM) $(docdir)/epm-book.html
+	$(CP) $(srcdir)/doc/epm-book.html $(docdir)
 
 install-guis:	setup uninst
 	echo Installing EPM setup/uninst in $(libdir)/epm
