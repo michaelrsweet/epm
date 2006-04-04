@@ -1,11 +1,11 @@
 #
-# "$Id: epm.list.in,v 1.15 2005/01/11 21:36:57 mike Exp $"
+# "$Id$"
 #
 #   Sample software list file for the ESP Package Manager (EPM).
 #
 #   Please report problems and fixes to "epm@easysw.com".
 #
-#   Copyright 1999-2005 by Easy Software Products, all rights reserved.
+#   Copyright 1999-2006 by Easy Software Products, all rights reserved.
 #
 #   These coded instructions, statements, and computer programs are the
 #   property of Easy Software Products and are protected by Federal
@@ -60,8 +60,7 @@ f 0555 root sys ${bindir}/mkepmlist mkepmlist
 %description Documentation for EPM
 f 0444 root sys ${docdir}/README $srcdir/README
 f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
-f 0444 root sys ${docdir}/epm-manual.html $srcdir/doc/epm-manual.html
-f 0444 root sys ${docdir}/epm-manual.pdf $srcdir/doc/epm-manual.pdf
+f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
 
 # Man pages
 %subpackage man
@@ -107,5 +106,5 @@ f 0444 root sys ${mandir}/man5/setup.types.$MAN5EXT $srcdir/doc/setup.types.man
 %endif
 
 #
-# End of "$Id: epm.list.in,v 1.15 2005/01/11 21:36:57 mike Exp $".
+# End of "$Id$".
 #
