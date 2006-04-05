@@ -3,7 +3,7 @@
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2006 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -938,7 +938,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	{
           if (!dist->version[0])
 	  {
-            strcpy(dist->version, temp);
+            strlcpy(dist->version, temp, sizeof(dist->version));
 	    if ((temp = strchr(dist->version, ' ')) != NULL)
 	    {
 	      *temp++ = '\0';
@@ -950,14 +950,14 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
             if ((temp = strrchr(dist->version, '-')) != NULL)
 	    {
 	      *temp++ = '\0';
-	      dist->relnumber = atoi(temp);
+	      strlcpy(dist->release, temp, sizeof(dist->release));
 	    }
 	  }
 	}
-	else if (strcmp(line, "%release") == 0 && dist->relnumber == 0)
+	else if (strcmp(line, "%release") == 0)
 	{
-	  dist->relnumber = atoi(temp);
-	  dist->vernumber += dist->relnumber;
+	  strlcpy(dist->release, temp, sizeof(dist->release));
+	  dist->vernumber += atoi(temp);
 	}
 	else if (strcmp(line, "%incompat") == 0)
 	  add_depend(dist, DEPEND_INCOMPAT, temp, subpkg);
@@ -1308,8 +1308,8 @@ write_dist(const char *listname,	/* I - File to write to */
     fprintf(listfile, "%%product %s\n", dist->product);
   if (dist->version[0])
     fprintf(listfile, "%%version %s %d\n", dist->version, dist->vernumber);
-  if (dist->relnumber)
-    fprintf(listfile, "%%release %d\n", dist->relnumber);
+  if (dist->release[0])
+    fprintf(listfile, "%%release %s\n", dist->release);
   if (dist->copyright[0])
     fprintf(listfile, "%%copyright %s\n", dist->copyright);
   if (dist->vendor[0])
