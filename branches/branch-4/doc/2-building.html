@@ -124,8 +124,9 @@ command to compile it:</P>
 </PRE>
 
 <P>Compilation should take a few minutes at most. Then type the
-following command to determine if the software compiled
-successfully:</P>
+following command to determine if the software</P>
+
+<P>compiled successfully:</P>
 
 <PRE>
     <KBD>make test ENTER</KBD>
@@ -194,6 +195,18 @@ subdirectory name is built from the following template:</P>
 <PRE>
     <I>os-major.minor-architecture</I>
 </PRE>
+
+<P>The <CODE>os</CODE> name is the common name for the operating
+system. <A HREF="#TABLE_2_1">Table 2.1</A> lists the
+abbreviations for most operating systems.</P>
+
+<P>The <CODE>major.minor</CODE> string is the operating system
+version number. Any patch revision information is stripped from
+the version number, as are leading characters before the major
+version number. For example, HP-UX version B.11.11 will result
+in a version number string of <CODE>11.11</CODE>.</P>
+
+<P>&nbsp;</P>
 
 <CENTER><TABLE BORDER CELLPADDING="2">
 <CAPTION><A NAME="TABLE_2_1">Table 2.1: Operating System Name Abbreviations</A></CAPTION>
@@ -286,16 +299,6 @@ subdirectory name is built from the following template:</P>
 
 <P>&nbsp;</P>
 
-<P>The <CODE>os</CODE> name is the common name for the operating
-system. <A HREF="#TABLE_2_1">Table 2.1</A> lists the
-abbreviations for most operating systems.</P>
-
-<P>The <CODE>major.minor</CODE> string is the operating system
-version number. Any patch revision information is stripped from
-the version number, as are leading characters before the major
-version number. For example, HP-UX version B.11.11 will result
-in a version number string of <CODE>11.11</CODE>.</P>
-
 <P>The <CODE>architecture</CODE> string identifies the target
 processor. <A HREF="#TABLE_2_2">Table 2.2</A> lists the supported
 processors.</P>
@@ -318,9 +321,9 @@ questions.</P>
 native operating system format, if supported. <A
 HREF="#TABLE_2_3">Table 2.3</A> lists the native formats for each
 supported operating system and the command to run to install the
-software.
-<BR>&nbsp;</P>
+software.</P>
 
+<!-- NEED 5in -->
 <CENTER><TABLE BORDER CELLPADDING="2">
 <CAPTION><A NAME="TABLE_2_3">Table 2.3: Native Operating System Formats</A></CAPTION>
 <TR>
