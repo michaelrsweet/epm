@@ -32,8 +32,35 @@ A { text-decoration: none }
 <P>&nbsp;</P>
 <P>&nbsp;</P>
 <H1 ALIGN="CENTER">Software Distribution Using the ESP Package Manager</H1>
-<P ALIGN="CENTER">Written by Michael Sweet
-<BR> Copyright 1999-2006 by Easy Software Products</P>
+<P ALIGN="CENTER">MICHAEL R. SWEET</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;</P>
+<P>&nbsp;<IMG HEIGHT="10" SRC="gradient.gif" WIDTH="100">
+<BR><VAR> ESP Press</VAR>
+<BR> <SMALL>Easy Software Products, 44141 Airport View Drive, Hollywood,
+ MD 20636 USA</SMALL></P>
+
+<!-- NEW PAGE -->
+<H2>Software Distribution Using the ESP Package Manager</H2>
+<H3>Copyright &copy; 2006 by Easy Software Products</H3>
+<P><SMALL>This book may be redistributed and/or modified under the terms
+ of version 2 of the GNU General Public License as published by the Free
+ Software Foundation.</SMALL></P>
+<P><SMALL>This book is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ General Public License for more details.</SMALL></P>
+<P><SMALL>You should have received a copy of the GNU General Public
+ License along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+ USA.</SMALL></P>
+<P><SMALL>International Standard Book Number: N-NNN-NNNNN-N</SMALL></P>
+<P><SMALL>First Printing: April 2006</SMALL></P>
 <HR NOSHADE>
 <H1 ALIGN="CENTER"><A NAME="CONTENTS">Table of Contents</A></H1>
 <BR>
@@ -236,11 +263,6 @@ http://www.cups.org/</A>) in 1998, our initial goal was to add support
  (&quot;dpkg&quot; and &quot;dselect&quot;). For the commercial UNIX's we looked at the
  vendor-supplied packaging systems. <A HREF="#TABLE_1_1">Table 1.1</A>
  shows the results of our investigation.</P>
-<P>As you can see, none of the formats supported every feature we were
- looking for. One common fault of all these formats is that they do not
- support a common software specification file format. That is, making a
- Debian software distribution requires significantly different support
- files than required for a Solaris pkg distribution. This makes</P>
 
 <!-- NEED 5in -->
 <TABLE ALIGN="CENTER" BORDER="1"><CAPTION> <A NAME="TABLE_1_1">Table
@@ -343,7 +365,12 @@ Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
  the package.</LI>
 </OL>
 <P>&nbsp;</P>
-<P>it extremely difficult to manage distributions for multiple operating
+<P>As you can see, none of the formats supported every feature we were
+ looking for. One common fault of all these formats is that they do not
+ support a common software specification file format. That is, making a
+ Debian software distribution requires significantly different support
+ files than required for a Solaris pkg distribution. This makes it
+ extremely difficult to manage distributions for multiple operating
  systems.</P>
 <P>All of the package formats support binary distributions. The RPM and
  Debian formats also support source distributions that specifically
@@ -490,7 +517,8 @@ dpkg(8)</CODE>, to generate the software distribution on the development
     <KBD>make ENTER</KBD>
 </PRE>
 <P>Compilation should take a few minutes at most. Then type the
- following command to determine if the software compiled successfully:</P>
+ following command to determine if the software</P>
+<P>compiled successfully:</P>
 <PRE>
     <KBD>make test ENTER</KBD>
     Portable distribution build test PASSED.
@@ -544,6 +572,15 @@ make</CODE> command:</P>
 <PRE>
     <I>os-major.minor-architecture</I>
 </PRE>
+<P>The <CODE>os</CODE> name is the common name for the operating system.
+ <A HREF="#TABLE_2_1">Table 2.1</A> lists the abbreviations for most
+ operating systems.</P>
+<P>The <CODE>major.minor</CODE> string is the operating system version
+ number. Any patch revision information is stripped from the version
+ number, as are leading characters before the major version number. For
+ example, HP-UX version B.11.11 will result in a version number string
+ of <CODE>11.11</CODE>.</P>
+<P>&nbsp;</P>
 <CENTER>
 <TABLE BORDER CELLPADDING="2"><CAPTION> <A NAME="TABLE_2_1">Table 2.1:
  Operating System Name Abbreviations</A></CAPTION>
@@ -580,14 +617,6 @@ make</CODE> command:</P>
 </TABLE>
 </CENTER>
 <P>&nbsp;</P>
-<P>The <CODE>os</CODE> name is the common name for the operating system.
- <A HREF="#TABLE_2_1">Table 2.1</A> lists the abbreviations for most
- operating systems.</P>
-<P>The <CODE>major.minor</CODE> string is the operating system version
- number. Any patch revision information is stripped from the version
- number, as are leading characters before the major version number. For
- example, HP-UX version B.11.11 will result in a version number string
- of <CODE>11.11</CODE>.</P>
 <P>The <CODE>architecture</CODE> string identifies the target processor.
  <A HREF="#TABLE_2_2">Table 2.2</A> lists the supported processors.</P>
 <P>Once you have determined the subdirectory containing the
@@ -603,8 +632,9 @@ make</CODE> command:</P>
 <P>The <CODE>test</CODE> target also builds a distribution in the native
  operating system format, if supported. <A HREF="#TABLE_2_3">Table 2.3</A>
  lists the native formats for each supported operating system and the
- command to run to install the software.
-<BR> &nbsp;</P>
+ command to run to install the software.</P>
+
+<!-- NEED 5in -->
 <CENTER>
 <TABLE BORDER CELLPADDING="2"><CAPTION> <A NAME="TABLE_2_3">Table 2.3:
  Native Operating System Formats</A></CAPTION>
@@ -683,6 +713,8 @@ directory</I> epm</CODE></TD></TR>
 <PRE>
     c 644 root sys /etc/foo.conf foo.conf
 </PRE>
+
+<!-- NEED 2in -->
 <P>Directories use the letter <CODE>d</CODE> for the type field and use
  a source path of &quot;-&quot;:</P>
 <PRE>
@@ -750,7 +782,7 @@ directory</I> epm</CODE></TD></TR>
  The &quot;foo&quot; subpackage depends both on the main package (implicit <CODE>
 %requires</CODE>) and another package called &quot;bla&quot;.</P>
 
-<!-- NEED 3in -->
+<!-- NEED 2in -->
 <H2><A NAME="4_2">Building a Software Package</A></H2>
 <P>The <CODE>epm(1)</CODE> program is used to build software package
  from list files. To build a portable software package for an
@@ -763,6 +795,13 @@ directory</I> epm</CODE></TD></TR>
 <PRE>
     <KBD>epm foo bar.list ENTER</KBD>
 </PRE>
+<CENTER>
+<TABLE><CAPTION ALIGN="BOTTOM"> <A NAME="FIGURE_3_1">Figure 3.1: The EPM
+ Setup GUI</A></CAPTION>
+<TR><TD><IMG HEIGHT="371" SRC="setup.png" WIDTH="592"></TD></TR>
+</TABLE>
+</CENTER>
+<P>&nbsp;</P>
 <H3>Installing the Software Package</H3>
 <P>Once you have created the software package, you can install it.
  Portable packages include an installation script called<VAR>
@@ -789,14 +828,6 @@ Figure 3.1</A>). To include the setup program in your distributions,
 </PRE>
 <P>This option is only supported when creating for portable and MacOS X
  software packages.</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<CENTER>
-<TABLE><CAPTION ALIGN="BOTTOM"> <A NAME="FIGURE_3_1">Figure 3.1: The EPM
- Setup GUI</A></CAPTION>
-<TR><TD><IMG HEIGHT="371" SRC="setup.png" WIDTH="592"></TD></TR>
-</TABLE>
-</CENTER>
 
 <!-- NEED 5in -->
 <H3>Creating Vendor Package Files</H3>
@@ -905,8 +936,6 @@ pkgadd(1m)</CODE> command, while the<VAR> name.pkg.tgz</VAR> file is a
 %incompat</CODE>, <CODE>%provides</CODE>, <CODE>%replaces</CODE>, and <CODE>
 %requires</CODE>. <A HREF="#TABLE_4_1">Table 4.1</A> shows the level of
  support for each package format.</P>
-<P>Software conflicts and requirements are specified using the <CODE>
-%incompat</CODE> and <CODE>%requires</CODE> directives.</P>
 
 <!-- NEED 5in -->
 <CENTER>
@@ -944,6 +973,8 @@ No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD></TR>
  for <CODE>%provides</CODE> dependencies.</LI>
 </OL>
 <P>&nbsp;</P>
+<P>Software conflicts and requirements are specified using the <CODE>
+%incompat</CODE> and <CODE>%requires</CODE> directives.</P>
 <P>If your software replaces another package, you can specify that using
  the <CODE>%replaces</CODE> directive. <CODE>%replaces</CODE> is
  silently mapped to <CODE>%incompat</CODE> when the package format does
@@ -951,20 +982,17 @@ No</TD><TD ALIGN="CENTER">Yes</TD><TD ALIGN="CENTER">Yes</TD></TR>
 <P>If your package provides certain functionality associated with a
  standard name, the <CODE>%provides</CODE> directive can be used.</P>
 
-<!-- NEED 2in -->
+<!-- NEED 1in -->
 <P>Dependencies are specified using the package name and optionally the
  lower and upper version numbers:</P>
 <PRE>
     %requires foobar
     %requires foobar 1.0
-    %incompat foobar
     %incompat foobar 0.9
     %replaces foobar
     %replaces foobar 1.2 3.4
     %provides foobar
 </PRE>
-
-<!-- NEED 2in -->
 <P>or the filename:</P>
 <PRE>
     %requires /usr/lib/libfoobar.so
@@ -998,11 +1026,6 @@ Table 4.2</A> shows the support for scripts in each package format.</P>
 <PRE>
     %preremove echo Command before removing
     %postremove echo Command after removing
-</PRE>
-<P>To include an external script file, use the <CODE>&lt;filename</CODE>
- notation:</P>
-<PRE>
-    %postinstall &lt;filename
 </PRE>
 
 <!-- NEED 3in -->
@@ -1049,6 +1072,11 @@ Yes</TD><TD ALIGN="CENTER">Yes</TD></TR>
 </TABLE>
 </CENTER>
 <P>&nbsp;</P>
+<P>To include an external script file, use the <CODE>&lt;filename</CODE>
+ notation:</P>
+<PRE>
+    %postinstall &lt;filename
+</PRE>
 <P>To include multiple lines directly, use the <CODE>&lt;&lt;string</CODE>
  notation (a.k.a. a &quot;here&quot; document):</P>
 <PRE>
@@ -2370,6 +2398,8 @@ product</I>.list&quot;.
  the files to include with the product. Comment lines begin with the &quot;#&quot;
  character and are ignored. All other non-blank lines must begin with a
  letter, dollar sign (&quot;$&quot;), or the percent sign (&quot;%&quot;).</P>
+
+<!-- NEED 3in -->
 <H3>List File Directives</H3>
 <P>The following list describes all of the list file directives
  supported by<I> EPM</I>:</P>
@@ -2403,6 +2433,16 @@ product</I>.list&quot;.
 <DD>Uses following files and directives only if the distribution format
  is not the same as<I> format</I>.
 <BR> &nbsp;</DD>
+<DT>%include<I> filename</I>
+<BR> &nbsp;</DT>
+<DD>Includes files listed in<I> filename</I>.
+<BR> &nbsp;</DD>
+<DT>%incompat<I> product</I></DT>
+<DT>%incompat<I> filename</I>
+<BR> &nbsp;</DT>
+<DD>Indicates that this product is incompatible with the named product
+ or file.
+<BR> &nbsp;</DD>
 <DT>%if<I> variable [... variable]</I>
 <BR> %if !<I>variable [... variable]</I>
 <BR> %ifdef<I> variable [... variable]</I>
@@ -2419,16 +2459,6 @@ product</I>.list&quot;.
  with a value. The<I> %ifdef</I> lines include the lines that follow if
  the named variables are (not) defined with any value. These conditional
  lines cannot be nested.
-<BR> &nbsp;</DD>
-<DT>%include<I> filename</I>
-<BR> &nbsp;</DT>
-<DD>Includes files listed in<I> filename</I>.
-<BR> &nbsp;</DD>
-<DT>%incompat<I> product</I></DT>
-<DT>%incompat<I> filename</I>
-<BR> &nbsp;</DT>
-<DD>Indicates that this product is incompatible with the named product
- or file.
 <BR> &nbsp;</DD>
 <DT>%install<I> script or program</I>
 <BR> &nbsp;</DT>
@@ -2448,6 +2478,8 @@ product</I>.list&quot;.
 <DD>Specifies a script or program to be run after all files are patched.
  (This has been obsoleted by the %postpatch directive)
 <BR> &nbsp;</DD>
+
+<!-- NEED 2in -->
 <DT>%postinstall<I> script or program</I>
 <BR> %postinstall &lt;<I>scriptfile</I>
 <BR> %postinstall &lt;&lt;<I>string</I>
@@ -2491,6 +2523,8 @@ product</I>.list&quot;.
 <BR> &nbsp;</DT>
 <DD>Specifies the product name.
 <BR> &nbsp;</DD>
+
+<!-- NEED 2in -->
 <DT>%provides<I> product name</I>
 <BR> &nbsp;</DT>
 <DD>Indicates that this product provides the named dependency.
@@ -2515,16 +2549,7 @@ product</I>.list&quot;.
 <DT>%requires<I> product</I></DT>
 <DT>%requires<I> filename</I>
 <BR> &nbsp;</DT>
-<DD>Indicates that this product requires the named product or file.</DD>
-
-<!-- NEED 2in -->
-<DT>%vendor<I> vendor or author name</I>
-<BR> &nbsp;</DT>
-<DD>Specifies the vendor or author of the product.
-<BR> &nbsp;</DD>
-<DT>%version<I> version number</I>
-<BR> &nbsp;</DT>
-<DD>Specifies the version number of the product.
+<DD>Indicates that this product requires the named product or file.
 <BR> &nbsp;</DD>
 <DT>%system<I> system[-release] [... system[-release]]</I>
 <BR> &nbsp;</DT>
@@ -2541,6 +2566,16 @@ product</I>.list&quot;.
 <DD>Specifies that the following files are applicable to all operating
  systems.
 <BR> &nbsp;</DD>
+<DT>%vendor<I> vendor or author name</I>
+<BR> &nbsp;</DT>
+<DD>Specifies the vendor or author of the product.
+<BR> &nbsp;</DD>
+
+<!-- NEED 2in -->
+<DT>%version<I> version number</I>
+<BR> &nbsp;</DT>
+<DD>Specifies the version number of the product.
+<BR> &nbsp;</DD>
 <DT>c<I> mode user group destination source</I></DT>
 <DT>C<I> mode user group destination source</I>
 <BR> &nbsp;</DT>
@@ -2556,6 +2591,8 @@ product</I>.list&quot;.
  software. The second form specifies that the directory is new and
  should be included as part of a patch.
 <BR> &nbsp;</DD>
+
+<!-- NEED 2in -->
 <DT>f<I> mode user group destination source [nostrip()]</I></DT>
 <DT>F<I> mode user group destination source [nostrip()]</I>
 <BR> &nbsp;</DT>
@@ -2593,6 +2630,8 @@ product</I>.list&quot;.
 <DT>provides(<I>name(s)</I>)</DT>
 <DD>Specifies names of system functions that are provided by this
  startup item (OSX only).</DD>
+
+<!-- NEED 3 -->
 <DT>requires(<I>name(s)</I>)</DT>
 <DD>Specifies names of system functions that are required by this
  startup item (OSX only).</DD>
@@ -2626,6 +2665,8 @@ product</I>.list&quot;.
 </DL>
 </DD>
 </DL>
+
+<!-- NEED 3in -->
 <H3>List Variables</H3>
 <P><I>EPM</I> maintains a list of variables and their values which can
  be used to substitute values in the list file. These variables are
@@ -2706,5 +2747,14 @@ product</I>.list&quot;.
 <LI>RPM file dependencies should now work properly.</LI>
 <LI>Portable product names containing spaces will now display properly.</LI>
 </UL>
+
+<!-- NEW SHEET 
+     HEADER CENTER &quot;&quot;
+     FOOTER LEFT &quot;&quot;
+     FOOTER RIGHT &quot;&quot; -->
+<P>&nbsp;</P>
+
+<!-- NEW SHEET -->
+<P>&nbsp;</P>
 </BODY>
 </HTML>
