@@ -33,12 +33,13 @@
  * Local functions...
  */
 
-static int	write_spec(const char *prodname, dist_t *dist, FILE *fp,
-		           const char *subpackage);
 static int	move_rpms(const char *prodname, const char *directory,
 		          const char *platname, dist_t *dist,
 			  struct utsname *platform,
-			  const char *rpmdir, const char *subpackage);
+			  const char *rpmdir, const char *subpackage,
+			  const char *release);
+static int	write_spec(const char *prodname, dist_t *dist, FILE *fp,
+		           const char *subpackage);
 
 
 /*
@@ -63,6 +64,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   struct group	*grp;			/* Pointer to group record */
   char		absdir[1024];		/* Absolute directory */
   char		rpmdir[1024];		/* RPMDIR env var */
+  char		release[256];		/* Release: number */
 
 
   if (Verbosity)
@@ -96,9 +98,14 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
+  if (dist->release[0])
+    strlcpy(release, dist->release, sizeof(release));
+  else
+    strlcpy(release, "0", sizeof(release));
+
   fprintf(fp, "Name: %s\n", prodname);
   fprintf(fp, "Version: %s\n", dist->version);
-  fprintf(fp, "Release: %d\n", dist->relnumber);
+  fprintf(fp, "Release: %s\n", release);
   fprintf(fp, "License: %s\n", dist->copyright);
   fprintf(fp, "Packager: %s\n", dist->packager);
   fprintf(fp, "Vendor: %s\n", dist->vendor);
@@ -248,11 +255,12 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   * product name specified by the user...
   */
 
-  move_rpms(prodname, directory, platname, dist, platform, rpmdir, NULL);
+  move_rpms(prodname, directory, platname, dist, platform, rpmdir, NULL,
+            release);
 
   for (i = 0; i < dist->num_subpackages; i ++)
     move_rpms(prodname, directory, platname, dist, platform, rpmdir,
-              dist->subpackages[i]);
+              dist->subpackages[i], release);
 
  /*
   * Build a compressed tar file to hold all of the subpackages...
@@ -264,9 +272,9 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     * Figure out the full name of the distribution...
     */
 
-    if (dist->relnumber)
-      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version,
-               dist->relnumber);
+    if (dist->release[0])
+      snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version,
+               dist->release);
     else
       snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
@@ -332,14 +340,15 @@ make_rpm(const char     *prodname,	/* I - Product short name */
  * 'move_rpms()' - Move RPM packages to the build directory...
  */
 
-int					/* O - 0 = success, 1 = fail */
+static int				/* O - 0 = success, 1 = fail */
 move_rpms(const char     *prodname,	/* I - Product short name */
           const char     *directory,	/* I - Directory for distribution files */
           const char     *platname,	/* I - Platform name */
           dist_t         *dist,		/* I - Distribution information */
 	  struct utsname *platform,	/* I - Platform information */
 	  const char     *rpmdir,	/* I - RPM directory */
-          const char     *subpackage)	/* I - Subpackage name */
+          const char     *subpackage,	/* I - Subpackage name */
+	  const char     *release)	/* I - Release: value */
 {
   char		rpmname[1024];		/* RPM name */
   char		prodfull[1024];		/* Full product name */
@@ -356,9 +365,9 @@ move_rpms(const char     *prodname,	/* I - Product short name */
   else
     strlcpy(prodfull, prodname, sizeof(prodfull));
 
-  if (dist->relnumber)
-    snprintf(rpmname, sizeof(rpmname), "%s/%s-%s-%d", directory, prodfull,
-             dist->version, dist->relnumber);
+  if (dist->release[0])
+    snprintf(rpmname, sizeof(rpmname), "%s/%s-%s-%s", directory, prodfull,
+             dist->version, dist->release);
   else
     snprintf(rpmname, sizeof(rpmname), "%s/%s-%s", directory, prodfull,
              dist->version);
@@ -372,17 +381,17 @@ move_rpms(const char     *prodname,	/* I - Product short name */
   strlcat(rpmname, ".rpm", sizeof(rpmname));
 
   if (!strcmp(platform->machine, "intel"))
-    run_command(NULL, "/bin/mv %s/RPMS/i386/%s-%s-%d.i386.rpm %s",
-		rpmdir, prodfull, dist->version, dist->relnumber,
+    run_command(NULL, "/bin/mv %s/RPMS/i386/%s-%s-%s.i386.rpm %s",
+		rpmdir, prodfull, dist->version, release,
 		rpmname);
   else if (!strcmp(platform->machine, "ppc"))
-    run_command(NULL, "/bin/mv %s/RPMS/powerpc/%s-%s-%d.powerpc.rpm %s",
-		rpmdir, prodfull, dist->version, dist->relnumber,
+    run_command(NULL, "/bin/mv %s/RPMS/powerpc/%s-%s-%s.powerpc.rpm %s",
+		rpmdir, prodfull, dist->version, release,
 		rpmname);
   else
-    run_command(NULL, "/bin/mv %s/RPMS/%s/%s-%s-%d.%s.rpm %s",
+    run_command(NULL, "/bin/mv %s/RPMS/%s/%s-%s-%s.%s.rpm %s",
 		rpmdir, platform->machine, prodfull, dist->version,
-		dist->relnumber, platform->machine, rpmname);
+		release, platform->machine, rpmname);
 
   if (Verbosity)
   {

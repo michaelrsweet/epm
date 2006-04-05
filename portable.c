@@ -196,9 +196,9 @@ write_combined(const char *title,	/* I - Title */
   * Figure out the filename...
   */
 
-  if (dist->relnumber)
-    snprintf(tarfilename, sizeof(tarfilename), "%s/%s-%s-%d", directory, prodname,
-             dist->version, dist->relnumber);
+  if (dist->release[0])
+    snprintf(tarfilename, sizeof(tarfilename), "%s/%s-%s-%s", directory, prodname,
+             dist->version, dist->release);
   else
     snprintf(tarfilename, sizeof(tarfilename), "%s/%s-%s", directory, prodname,
              dist->version);
@@ -671,8 +671,8 @@ write_combined(const char *title,	/* I - Title */
   {
     puts("     ------- ----------------------------------------");
     printf("    %7.0fk %s-%s", tarfile->blocks * 0.5f, prodname, dist->version);
-    if (dist->relnumber)
-      printf("-%d", dist->relnumber);
+    if (dist->release[0])
+      printf("-%s", dist->release);
     if (!strcmp(title, "patch"))
       fputs("-patch", stdout);
     if (platname[0])

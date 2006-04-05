@@ -1,9 +1,9 @@
 .\"
-.\" "$Id: epm.list.man,v 1.10 2005/01/11 21:37:42 mike Exp $"
+.\" "$Id$"
 .\"
 .\"   Manual page for the ESP Package Manager (EPM) list file format.
 .\"
-.\"   Copyright 1999-2005 by Easy Software Products, all rights reserved.
+.\"   Copyright 1999-2006 by Easy Software Products, all rights reserved.
 .\"
 .\"   This program is free software; you can redistribute it and/or modify
 .\"   it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm.list 5 "ESP Package Manager" "17 June 2003" "Easy Software Products"
+.TH epm.list 5 "ESP Package Manager" "3 April 2006" "Easy Software Products"
 .SH NAME
 epm.list \- epm list file format.
 .SH DESCRIPTION
@@ -180,6 +180,13 @@ Indicates that this product replaces the named product.
 .br
 Indicates that this product requires the named product or file.
 .TP 5
+%subpackage
+.TP 5
+%subpackage \fIname\fR
+.br
+Selects the named subpackage; if no name is given, selects the
+main (parent) package.
+.TP 5
 %vendor \fIvendor or author name\fR
 .br
 Specifies the vendor or author of the product.
@@ -327,7 +334,7 @@ epminstall(1) - add a directory, file, or symlink to a list file
 .br
 mkepmlist(1) - make an epm list file from a directory
 .SH COPYRIGHT
-Copyright 1999-2005 by Easy Software Products, All Rights Reserved.
+Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -339,5 +346,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 .\"
-.\" End of "$Id: epm.list.man,v 1.10 2005/01/11 21:37:42 mike Exp $".
+.\" End of "$Id$".
 .\"

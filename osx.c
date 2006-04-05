@@ -307,9 +307,9 @@ make_osx(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating disk image...");
 
-  if (dist->relnumber)
-    snprintf(filename, sizeof(filename), "%s-%s-%d", prodname, dist->version,
-             dist->relnumber);
+  if (dist->release[0])
+    snprintf(filename, sizeof(filename), "%s-%s-%s", prodname, dist->version,
+             dist->release);
   else
     snprintf(filename, sizeof(filename), "%s-%s", prodname, dist->version);
 

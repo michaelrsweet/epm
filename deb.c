@@ -3,7 +3,7 @@
  *
  *   Debian package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2006 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -73,9 +73,9 @@ make_deb(const char     *prodname,	/* I - Product short name */
     * Figure out the full name of the distribution...
     */
 
-    if (dist->relnumber)
-      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version,
-               dist->relnumber);
+    if (dist->release[0])
+      snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version,
+               dist->release);
     else
       snprintf(name, sizeof(name), "%s-%s", prodname, dist->version);
 
@@ -173,9 +173,9 @@ make_subpackage(const char     *prodname,
   * Then the subdirectory name...
   */
 
-  if (dist->relnumber)
-    snprintf(name, sizeof(name), "%s-%s-%d", prodfull, dist->version,
-             dist->relnumber);
+  if (dist->release[0])
+    snprintf(name, sizeof(name), "%s-%s-%s", prodfull, dist->version,
+             dist->release);
   else
     snprintf(name, sizeof(name), "%s-%s", prodfull, dist->version);
 
@@ -211,8 +211,8 @@ make_subpackage(const char     *prodname,
   }
 
   fprintf(fp, "Package: %s\n", prodfull);
-  if (dist->relnumber)
-    fprintf(fp, "Version: %s-%d\n", dist->version, dist->relnumber);
+  if (dist->release[0])
+    fprintf(fp, "Version: %s-%s\n", dist->version, dist->release);
   else
     fprintf(fp, "Version: %s\n", dist->version);
   fprintf(fp, "Maintainer: %s\n", dist->vendor);
