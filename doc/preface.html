@@ -1,151 +1,142 @@
-<HTML>
-<HEAD>
-	<TITLE>Software Distribution Using the ESP Package Manager</TITLE>
-	<META NAME="Author" CONTENT="Michael Sweet">
-	<META NAME="Copyright" CONTENT="Copyright 1999-2006 by Easy Software Products">
-	<META NAME="DocNumber" CONTENT="ESP-004-20060404">
-</HEAD>
-<BODY>
+<html>
+<head>
+  <meta http-equiv="content-type" content="">
+  <title>Software Distribution Using the ESP Package Manager</title>
+  <meta name="Author" content="Michael Sweet">
+  <meta name="Copyright"
+  content="Copyright 1999-2006 by Easy Software Products">
+  <meta name="DocNumber" content="ESP-004-20060404">
+</head>
 
-<H1 ALIGN="RIGHT">Preface</H1>
+<body>
+<h1 align="right">Preface</h1>
 
-<P>This book provides a tutorial and reference for the ESP
-Package Manager ("EPM") software, version 4.0, and is organized
-into the following chapters and appendices:</P>
-
-<UL>
-
-	<LI><A HREF="#INTRO">1 - Introduction to EPM</A></LI>
-
-	<LI><A HREF="#BUILDING">2 - Building EPM</A></LI>
-
-	<LI><A HREF="#PACKAGING">3 - Packaging Your Software with EPM</A></LI>
-
-	<LI><A HREF="#ADVANCED">4 - Advanced Packaging with EPM</A></LI>
-
-	<LI><A HREF="#EXAMPLES">5 - EPM Packaging Examples</A></LI>
-
-	<LI><A HREF="#LICENSE">A - Software License Agreement</A></LI>
-
-	<LI><A HREF="#MANPAGES">B - Command Reference</A></LI>
-
-	<LI><A HREF="#REFERENCE">C - List File Reference</A></LI>
-
-	<LI><A HREF="#RELNOTES">D - Release Notes</A></LI>
-
-</UL>
-
+<p>This book provides a tutorial and reference for the ESP Package Manager
+("EPM") software, version 4.0, and is organized into the following chapters
+and appendices:</p>
+<ul>
+  <li><a href="#INTRO">1 - Introduction to EPM</a></li>
+  <li><a href="#BUILDING">2 - Building EPM</a></li>
+  <li><a href="#PACKAGING">3 - Packaging Your Software with EPM</a></li>
+  <li><a href="#ADVANCED">4 - Advanced Packaging with EPM</a></li>
+  <li><a href="#EXAMPLES">5 - EPM Packaging Examples</a></li>
+  <li><a href="#LICENSE">A - Software License Agreement</a></li>
+  <li><a href="#MANPAGES">B - Command Reference</a></li>
+  <li><a href="#REFERENCE">C - List File Reference</a></li>
+  <li><a href="#RELNOTES">D - Release Notes</a></li>
+</ul>
 <!-- NEED 6in -->
-<H2>Notation Conventions</H2>
 
-<DL>
-
-	<DT>The names of commands; the first mention of a command or
-	function in a chapter is followed by a manual page section
-	number:
-	<BR>&nbsp;</DT>
-
-	<DD><CODE>epm</CODE><BR>
-	<CODE>epm(1)</CODE>
-	<BR>&nbsp;</DD>
-
-	<DT>File and directory names:
-	<BR>&nbsp;</DT>
-
-	<DD><VAR>/var</VAR><BR>
-	<VAR>/usr/bin/epm</VAR>
-	<BR>&nbsp;</DD>
-
-	<DT>Screen output:
-	<BR>&nbsp;</DT>
-
-	<DD><TT>Request ID is Printer-123</TT>
-	<BR>&nbsp;</DD>
-
-	<DT>Literal user input; special keys like <KBD>ENTER</KBD> are
-	in ALL CAPS:
-	<BR>&nbsp;</DT>
-
-	<DD><KBD>lp -d printer filename ENTER</KBD>
-	<BR>&nbsp;</DD>
-
-	<DT>Long commands are broken up on multiple lines using the
-	backslash (\) character; enter the commands without the
-	backslash:
-	<BR>&nbsp;</DT>
-
-	<DD><KBD>foo start of long command \<BR>
-	&nbsp;&nbsp;&nbsp;end of long command ENTER</KBD>
-	<BR>&nbsp;</DD>
-
-	<DT>Numbers in the text are written using the period (.) to indicate
-	the decimal point:
-	<BR>&nbsp;</DT>
-
-	<DD>12.3
-	<BR>&nbsp;</DD>
-
-</DL>
-
+<h2>Notation Conventions</h2>
+<dl>
+  <dt>The names of commands; the first mention of a command or function in a
+  chapter is followed by a manual page section number: <br>
+   </dt>
+    <dd><code>epm</code><br>
+      <code>epm(1)</code> <br>
+       </dd>
+  <dt>File and directory names: <br>
+   </dt>
+    <dd><var>/var</var><br>
+      <var>/usr/bin/epm</var> <br>
+       </dd>
+  <dt>Screen output: <br>
+   </dt>
+    <dd><tt>Request ID is Printer-123</tt> <br>
+       </dd>
+  <dt>Literal user input; special keys like <kbd>ENTER</kbd> are in ALL CAPS:
+  <br>
+   </dt>
+    <dd><kbd>lp -d printer filename ENTER</kbd> <br>
+       </dd>
+  <dt>Long commands are broken up on multiple lines using the backslash (\)
+  character; enter the commands without the backslash: <br>
+   </dt>
+    <dd><kbd>foo start of long command \<br>
+         end of long command ENTER</kbd> <br>
+       </dd>
+  <dt>Numbers in the text are written using the period (.) to indicate the
+  decimal point: <br>
+   </dt>
+    <dd>12.3 <br>
+       </dd>
+</dl>
 <!-- NEED 3in -->
-<H2>Abbreviations</H2>
 
-<P>The following abbreviations are used throughout this book:</P>
+<h2>Abbreviations</h2>
 
-<DL>
-
-	<DD>kb</DD>
-	<DD>Kilobytes, or 1024 bytes
-	<BR>&nbsp;</DD>
-
-	<DD>Mb</DD>
-	<DD>Megabytes, or 1048576 bytes
-	<BR>&nbsp;</DD>
-
-	<DD>Gb</DD>
-	<DD>Gigabytes, or 1073741824 bytes
-	<BR>&nbsp;</DD>
-
-</DL>
-
+<p>The following abbreviations are used throughout this book:</p>
+<dl>
+    <dd>kb</dd>
+    <dd>Kilobytes, or 1024 bytes <br>
+       </dd>
+    <dd>Mb</dd>
+    <dd>Megabytes, or 1048576 bytes <br>
+       </dd>
+    <dd>Gb</dd>
+    <dd>Gigabytes, or 1073741824 bytes <br>
+       </dd>
+</dl>
 <!-- NEED 4in -->
-<H2>Other References</H2>
 
-<DL>
+<h2>Other References</h2>
+<dl>
+  <dt><a href="http://www.easysw.com/epm/">http://www.easysw.com/epm/</a></dt>
+    <dd>The official home page of the ESP Package Manager software. <br>
+       </dd>
+  <dt><a
+  href="http://www.debian.org/devel/">http://www.debian.org/devel/</a></dt>
+    <dd>Debian Developers' Corner <br>
+       </dd>
+  <dt><a href="http://techpubs.sgi.com/">http://techpubs.sgi.com/</a></dt>
+    <dd>IRIX Documentation On-Line <br>
+       </dd>
+  <dt><a href="http://www.rpm.org/">http://www.rpm.org/</a></dt>
+    <dd>The Red Hat Package Manager home page. <br>
+       </dd>
+  <dt><a href="http://docs.sun.com/">http://docs.sun.com/</a></dt>
+    <dd>Solaris Documentation On-Line <br>
+       </dd>
+</dl>
 
-	<DT><A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A></DT>
+<h2>Help Us Improve This Book!</h2>
 
-	<DD>The official home page of the ESP Package Manager software.
-	<BR>&nbsp;</DD>
-
-	<DT><A HREF="http://www.debian.org/devel/">http://www.debian.org/devel/</A></DT>
-
-	<DD>Debian Developers' Corner
-	<BR>&nbsp;</DD>
-
-	<DT><A HREF="http://techpubs.sgi.com/">http://techpubs.sgi.com/</A></DT>
-
-	<DD>IRIX Documentation On-Line
-	<BR>&nbsp;</DD>
-
-	<DT><A HREF="http://www.rpm.org/">http://www.rpm.org/</A></DT>
-
-	<DD>The RedHat Package Manager home page.
-	<BR>&nbsp;</DD>
-
-	<DT><A HREF="http://docs.sun.com/">http://docs.sun.com/</A></DT>
-
-	<DD>Solaris Documentation On-Line
-	<BR>&nbsp;</DD>
-
-</DL>
-
-<H2>Help Us Improve This Book!</H2>
-
-<P>We've done our best to ensure that this book is both accurate and clear.
+<p>We've done our best to ensure that this book is both accurate and clear.
 If you find errors or have a suggestion for improving the book, please send
-us an email to "<A
-HREF="mailto:epm-book@easysw.com">epm-book@easysw.com</A>".</P>
+us an email to "<a
+href="mailto:epm-book@easysw.com">epm-book@easysw.com</a>".</p>
 
-</BODY>
-</HTML>
+<h2>Acknowledgments</h2>
+
+<p>We'd like to thank the following people for their contributions to EPM:</p>
+<ul>
+  <li>Gareth Armstrong: HP-UX and %release enhancements</li>
+  <li>Nicolas Bazin: Openserver and Unixware support</li>
+  <li>Richard Begg: HP-UX fixes</li>
+  <li>Dirk Datzert: Bug fixes</li>
+  <li>Alan Eldridge: Makefile and RPM fixes</li>
+  <li>Vicentini Emanuele: IRIX enhancements</li>
+  <li>Jeff Harrell: IRIX enhancements</li>
+  <li>Lars Kellogg-Stedman: Debian fixes</li>
+  <li>Jochen Kmietsch: mkepmlist fixes</li>
+  <li>Aneesh Kumar K.V.: Tru64 setld package support</li>
+  <li>David Lee: Build system improvements</li>
+  <li>Scott Leerssen: mkepmlist fixes, BSD package support</li>
+  <li>Jeff Licquia: Debian support/enhancements</li>
+  <li>David Maltz: AIX fixes</li>
+  <li>Joel Nordell: SCO fixes</li>
+  <li>Rok Papez: Bug fixes and absolute output directory support</li>
+  <li>Holger Paschke: Documentation fixes</li>
+  <li>Phil Reynolds: OpenBSD fixes</li>
+  <li>Ganesan Rajagopal: Solaris fixes</li>
+  <li>Uwe Räsche: AIX support</li>
+  <li>Ralf Rohm: Solaris fixes</li>
+  <li>Jochen Schaeuble: epminstall fixes</li>
+  <li>Jason Shiffer: HP-UX fixes</li>
+  <li>Andrea Suatoni: IRIX fixes</li>
+  <li>Andy Walter: QNX support</li>
+  <li>Geoffrey Wossum: --output-directory option</li>
+  <li>Jean Yves: BSD package and mkepmlist fixes</li>
+</ul>
+</body>
+</html>
