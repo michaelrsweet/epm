@@ -1,50 +1,51 @@
-#!/bin/csh -f
+#!/bin/sh
 #
-# makedist - make a distribution of EPM.
+# "$Id$"
+#
+# makesrcdist - make a source distribution of EPM.
 #
 
-echo "Getting distribution..."
-
-cd /tmp
-cvs -dmike@tango.easysw.com:/development/cvs get epm >& /dev/null
-
-if ($#argv == 0) then
-	echo -n "Version number for distribution? "
-	set version = $<
+if test $# = 0; then
+	echo Updating for snapshot...
+	svn up
+	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
+	version="4.0svn"
+	revision="-r$rev"
+	fileversion="4.0svn-r$rev"
+	url="."
 else
-	set version = $1
-endif
+	echo Creating tag for release...
+	rev="1"
+	version=$1
+	revision=""
+	fileversion=$1
+	url="https://svn.easysw.com/public/epm/tags/release-$version"
 
-rm -rf epm-$version
-mv epm epm-$version
-cd epm-$version
+	svn copy https://svn.easysw.com/public/epm/branches/branch-4 "$url" \
+		-m "Tag $version" || exit 1
+fi
 
-if ("$version" != "snapshot") then
-	echo "Tagging release..."
+echo Exporting $fileversion...
+rm -rf /tmp/epm-$version
+svn export $url /tmp/epm-$version
 
-	set tag = `echo v$version | tr '.' '_'`
-
-	cvs tag -F $tag
-endif
-
-echo "Removing CVS directories..."
-
-rm -rf CVS */CVS
+echo Cleaning source directory...
+cd /tmp/epm-$version
 rm -f makesrcdist
-rm -f ANNOUCEMENT
-
-echo "Making .tar.gz distribution..."
-
 cd ..
-gtar czf epm-$version-source.tar.gz epm-$version
 
-echo "Making .tar.bz2 distribution..."
+echo -n Archiving...gz
+tar czf epm-$fileversion-source.tar.gz epm-$version
 
-rm -f epm-$version-source.tar.bz2
-gunzip -c epm-$version-source.tar.gz | bzip2 >epm-$version-source.tar.bz2
+echo -n ...bz2
+tar cjf epm-$fileversion-source.tar.bz2 epm-$version
+echo "..."
 
-echo "Removing distribution directory..."
-
+echo Removing temporary files...
 rm -rf epm-$version
 
-echo "Done\!"
+echo "Done!"
+
+#
+# End of "$Id$".
+#
