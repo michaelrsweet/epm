@@ -3,7 +3,7 @@
  *
  *   Free/Net/OpenBSD package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2006 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -107,14 +107,14 @@ make_subpackage(const char     *prodname,
   if (Verbosity)
     printf("Creating %s *BSD pkg distribution...\n", prodfull);
 
-  if (dist->relnumber)
+  if (dist->release[0])
   {
     if (platname[0])
-      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodfull, dist->version,
-               dist->relnumber, platname);
+      snprintf(name, sizeof(name), "%s-%s-%s-%s", prodfull, dist->version,
+               dist->release, platname);
     else
-      snprintf(name, sizeof(name), "%s-%s-%d", prodfull, dist->version,
-               dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%s", prodfull, dist->version,
+               dist->release);
   }
   else if (platname[0])
     snprintf(name, sizeof(name), "%s-%s-%s", prodfull, dist->version, platname);
@@ -161,7 +161,7 @@ make_subpackage(const char     *prodname,
   fprintf(fp, "Summary: %s\n", dist->product);
   fprintf(fp, "Name: %s\n", prodfull);
   fprintf(fp, "Version: %s\n", dist->version);
-  fprintf(fp, "Release: %d\n", dist->relnumber);
+  fprintf(fp, "Release: %s\n", dist->release);
   fprintf(fp, "Copyright: %s\n", dist->copyright);
   fprintf(fp, "Packager: %s\n", dist->packager);
   fprintf(fp, "Vendor: %s\n", dist->vendor);

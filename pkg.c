@@ -3,7 +3,7 @@
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2006 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -67,13 +67,13 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating PKG distribution...");
 
-  if (dist->relnumber)
+  if (dist->release[0])
   {
     if (platname[0])
-      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version, dist->relnumber,
+      snprintf(name, sizeof(name), "%s-%s-%s-%s", prodname, dist->version, dist->release,
               platname);
     else
-      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version, dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, dist->release);
   }
   else if (platname[0])
     snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);

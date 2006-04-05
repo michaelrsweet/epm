@@ -3,7 +3,7 @@
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
- *   Copyright 2001-2005 by Easy Software Products
+ *   Copyright 2001-2006 by Easy Software Products
  *   Copyright 2001 by Aneesh Kumar (aneesh.kumar@digital.com) at Digital India.
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -112,14 +112,14 @@ make_setld(const char     *prodname,	/* I - Product short name */
   * Prepare for packaging...
   */
 
-  if (dist->relnumber)
+  if (dist->release[0])
   {
     if (platname[0])
-      snprintf(name, sizeof(name), "%s-%s-%d-%s", prodname, dist->version,
-               dist->relnumber, platname);
+      snprintf(name, sizeof(name), "%s-%s-%s-%s", prodname, dist->version,
+               dist->release, platname);
     else
-      snprintf(name, sizeof(name), "%s-%s-%d", prodname, dist->version,
-               dist->relnumber);
+      snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version,
+               dist->release);
   }
   else if (platname[0])
     snprintf(name, sizeof(name), "%s-%s-%s", prodname, dist->version, platname);
