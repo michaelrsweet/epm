@@ -286,7 +286,7 @@ main(int  argc,				/* I - Number of command-line args */
 	else if (list)
 	  fputs("</dd>\n", outfile);
 
-	fputs("<dt>", outfile);
+	fputs("<!-- NEED 3 --><dt>", outfile);
 	list = 1;
 	font = 0;
       }

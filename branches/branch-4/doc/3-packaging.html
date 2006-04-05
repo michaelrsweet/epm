@@ -10,12 +10,15 @@ packages.</P>
 
 <P>EPM reads one or more software "list" files that describe a
 single software package. Each list file contains one or more
-lines of ASCII text containing product or file information.
-Comments start with the <CODE>#</CODE> character, directives
-start with the <CODE>%</CODE> character, variables start with the
-<CODE>$</CODE> character, and files, directories, and symlinks
-start with a letter.</P>
+lines of ASCII text containing product or file information.</P>
 
+<P>Comments lines start with the <CODE>#</CODE> character,
+directive lines start with the <CODE>%</CODE> character,
+variables lines start with the <CODE>$</CODE> character, and
+file, directory, init script, and symlink lines start with a
+letter.</P>
+
+<!-- NEED 3in -->
 <H3>Product Information</H3>
 
 <P>Every list file needs to define the product name, copyright, description,
@@ -191,12 +194,6 @@ installed. To bypass the questions, run the script with the
 
 </PRE>
 
-<CENTER><TABLE>
-<CAPTION ALIGN="BOTTOM"><A NAME="FIGURE_3_1">Figure 3.1: The EPM
-Setup GUI</A></CAPTION>
-<TR><TD><IMG SRC="setup.png"></TD></TR>
-</TABLE></CENTER>
-
 <H3>Including the Setup GUI</H3>
 
 <P>EPM also provides an optional graphical setup program (<A
@@ -211,6 +208,16 @@ creating your distribution:</P>
 
 <P>This option is only supported when creating for portable and
 MacOS X software packages.</P>
+
+<P>&nbsp;</P>
+
+<P>&nbsp;</P>
+
+<CENTER><TABLE>
+<CAPTION ALIGN="BOTTOM"><A NAME="FIGURE_3_1">Figure 3.1: The EPM
+Setup GUI</A></CAPTION>
+<TR><TD><IMG SRC="setup.png"></TD></TR>
+</TABLE></CENTER>
 
 <!-- NEED 5in -->
 <H3>Creating Vendor Package Files</H3>

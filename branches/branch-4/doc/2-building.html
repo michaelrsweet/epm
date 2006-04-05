@@ -77,7 +77,9 @@ commands.</P>
 will place the EPM programs in <VAR>/usr/bin</VAR>, the setup
 GUI in <VAR>/usr/lib/epm</VAR>, and the man pages in
 <VAR>/usr/man</VAR>. Use the <CODE>--prefix</CODE> option to
-relocate these files to another directory:</P>
+relocate these files</P>
+
+<P>to another directory:</P>
 
 <PRE>
     <KBD>./configure --prefix=/usr/local ENTER</KBD>
@@ -170,7 +172,6 @@ instead:</P>
     Installing EPM documentation in /usr/share/doc/epm
 </PRE>
 
-<!-- NEED 3in -->
 <P>Use the <CODE>sudo</CODE> command to install on MacOS X:</P>
 
 <PRE>
@@ -194,11 +195,7 @@ subdirectory name is built from the following template:</P>
     <I>os-major.minor-architecture</I>
 </PRE>
 
-<P>The <CODE>os</CODE> name is the common name for the operating
-system. <A HREF="#TABLE_2_1">Table 2.1</A> lists the
-abbreviations for most operating systems:</P>
-
-<CENTER><TABLE BORDER>
+<CENTER><TABLE BORDER CELLPADDING="2">
 <CAPTION><A NAME="TABLE_2_1">Table 2.1: Operating System Name Abbreviations</A></CAPTION>
 <TR>
 	<TH>Operating System</TH>
@@ -249,7 +246,7 @@ abbreviations for most operating systems:</P>
 </TABLE></CENTER>
 
 <!-- NEED 3in -->
-<CENTER><TABLE BORDER>
+<CENTER><TABLE BORDER CELLPADDING="2">
 <CAPTION><A NAME="TABLE_2_2">Table 2.2: Processor Architecture Abbreviations</A></CAPTION>
 <TR>
 	<TH>Processor(s)</TH>
@@ -287,6 +284,12 @@ abbreviations for most operating systems:</P>
 </TR>
 </TABLE></CENTER>
 
+<P>&nbsp;</P>
+
+<P>The <CODE>os</CODE> name is the common name for the operating
+system. <A HREF="#TABLE_2_1">Table 2.1</A> lists the
+abbreviations for most operating systems.</P>
+
 <P>The <CODE>major.minor</CODE> string is the operating system
 version number. Any patch revision information is stripped from
 the version number, as are leading characters before the major
@@ -309,7 +312,16 @@ the portable distribution:</P>
 <P>The software will be installed after answering a few yes/no
 questions.</P>
 
-<CENTER><TABLE BORDER>
+<H3>Installing Using the Native Distribution</H3>
+
+<P>The <CODE>test</CODE> target also builds a distribution in the
+native operating system format, if supported. <A
+HREF="#TABLE_2_3">Table 2.3</A> lists the native formats for each
+supported operating system and the command to run to install the
+software.
+<BR>&nbsp;</P>
+
+<CENTER><TABLE BORDER CELLPADDING="2">
 <CAPTION><A NAME="TABLE_2_3">Table 2.3: Native Operating System Formats</A></CAPTION>
 <TR>
 	<TH>Operating System</TH>
@@ -362,14 +374,6 @@ questions.</P>
 	<TD NOWRAP><CODE>pkgadd -d <I>directory</I> epm</CODE></TD>
 </TR>
 </TABLE></CENTER>
-
-<H3>Installing Using the Native Distribution</H3>
-
-<P>The <CODE>test</CODE> target also builds a distribution in the
-native operating system format, if supported. <A
-HREF="#TABLE_2_3">Table 2.3</A> lists the native formats for each
-supported operating system and the command to run to install the
-software.</P>
 
 </BODY>
 </HTML>

@@ -63,23 +63,7 @@ we were looking for. One common fault of all these formats is
 that they do not support a common software specification file
 format. That is, making a Debian software distribution requires
 significantly different support files than required for a
-Solaris pkg distribution. This makes it extremely difficult to
-manage distributions for multiple operating systems.</P>
-
-<P>All of the package formats support binary distributions. The
-RPM and Debian formats also support source distributions that
-specifically allow for recompilation and installation. Only the
-commercial UNIX formats support patch distributions - you have
-to completely upgrade a software package with RPM and Debian.
-All but the Solaris <CODE>pkg</CODE> format allow you to upgrade
-a package without removing the old version first.</P>
-
-<P>When building the software packages, RPM and Debian force you
-to create the actual directories, copy the files to those
-directories, and set the ownerships and permissions. You
-essentially are creating a directory for your software that can
-be archived in the corresponding package format. To ensure that
-all file permissions and ownerships are correct, you must build</P>
+Solaris pkg distribution. This makes</P>
 
 <!-- NEED 5in -->
 <TABLE ALIGN="CENTER" BORDER="1">
@@ -269,11 +253,30 @@ all file permissions and ownerships are correct, you must build</P>
 
 </OL>
 
-<P>the distribution as the root user or use the
+<P>&nbsp;</P>
+
+<P>it extremely difficult to manage distributions for multiple
+operating systems.</P>
+
+<P>All of the package formats support binary distributions. The
+RPM and Debian formats also support source distributions that
+specifically allow for recompilation and installation. Only the
+commercial UNIX formats support patch distributions - you have
+to completely upgrade a software package with RPM and Debian.
+All but the Solaris <CODE>pkg</CODE> format allow you to upgrade
+a package without removing the old version first.</P>
+
+<P>When building the software packages, RPM and Debian force you
+to create the actual directories, copy the files to those
+directories, and set the ownerships and permissions. You
+essentially are creating a directory for your software that can
+be archived in the corresponding package format. To ensure that
+all file permissions and ownerships are correct, you must build
+the distribution as the root user or use the
 <CODE>fakeroot</CODE> software, introducing potential security
-risks and violating many corporate security policies. It can
-also make building distributions difficult when dynamic data
-such as changing data files or databases is involved.</P>
+risks and violating many corporate security policies. It can also
+make building distributions difficult when dynamic data such as
+changing data files or databases is involved.</P>
 
 <P>The commercial UNIX formats use software list files that map
 source files to the correct directories and permissions.
@@ -302,7 +305,6 @@ EPM to support more advanced software packages. Whenever
 possible, EPM emulates a feature if the vendor package format
 does not support it natively.</P>
 
-<!-- NEED 3in -->
 <H2>Resources</H2>
 
 <P>The EPM web site provides access to the current software and
