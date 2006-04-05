@@ -17,9 +17,10 @@
  *
  * Contents:
  *
- *   main()  - Read a product list and produce a distribution.
- *   info()  - Show the EPM copyright and license.
- *   usage() - Show command-line usage instructions.
+ *   main()   - Read a product list and produce a distribution.
+ *   depend() - Show dependencies.
+ *   info()   - Show the EPM copyright and license.
+ *   usage()  - Show command-line usage instructions.
  */
 
 /*
@@ -46,6 +47,7 @@ int		Verbosity = 0;
  * Local functions...
  */
 
+static void	depend(dist_t *dist);
 static void	info(void);
 static void	usage(void);
 
@@ -72,6 +74,7 @@ main(int  argc,				/* I - Number of command-line args */
 		*types;			/* Setup GUI install types */
   dist_t	*dist;			/* Software distribution */
   int		format;			/* Distribution format */
+  int		show_depend;		/* Show dependencies */
   static char	*formats[] =		/* Distribution format strings */
 		{
 		  "portable",
@@ -113,6 +116,7 @@ main(int  argc,				/* I - Number of command-line args */
   prodname[0]  = '\0';
   listname[0]  = '\0';
   directory[0] = '\0';
+  show_depend  = 0;
 
   for (i = 1; i < argc; i ++)
     if (argv[i][0] == '-')
@@ -289,6 +293,8 @@ main(int  argc,				/* I - Number of command-line args */
 		usage();
 	      }
 	    }
+	    else if (!strcmp(argv[i], "--depend"))
+	      show_depend = 1;
 	    else if (!strcmp(argv[i], "--keep-files"))
 	      KeepFiles = 1;
 	    else if (!strcmp(argv[i], "--output-dir"))
@@ -492,6 +498,19 @@ main(int  argc,				/* I - Number of command-line args */
   }
 
  /*
+  * Show dependencies?
+  */
+
+  if (show_depend)
+  {
+    depend(dist);
+
+    free_dist(dist);
+
+    return (0);
+  }
+
+ /*
   * Strip executables as needed...
   */
 
@@ -581,6 +600,32 @@ main(int  argc,				/* I - Number of command-line args */
 
 
 /*
+ * 'depend()' - Show dependencies.
+ */
+
+static void
+depend(dist_t *dist)			/* I - Distribution */
+{
+  int		i;			/* Looping var */
+  file_t	*file;			/* Current file */
+
+
+  for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
+    switch (file->type)
+    {
+      case 'c' :
+      case 'f' :
+      case 'i' :
+      case 'C' :
+      case 'F' :
+      case 'I' :
+          puts(file->src);
+	  break;
+    }
+}
+
+
+/*
  * 'info()' - Show the EPM copyright and license.
  */
 
@@ -588,7 +633,7 @@ static void
 info(void)
 {
   puts(EPM_VERSION);
-  puts("Copyright 1999-2005 by Easy Software Products.");
+  puts("Copyright 1999-2006 by Easy Software Products.");
   puts("");
   puts("EPM is free software and comes with ABSOLUTELY NO WARRANTY; for details");
   puts("see the GNU General Public License in the file COPYING or at");

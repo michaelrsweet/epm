@@ -2153,10 +2153,10 @@ Ty Coon, President of Vice
  epm - create software packages.
 <H3><A name="SYNOPSIS">Synopsis</A></H3>
 <B> epm</B> [ -a<I> architecture</I> ] [ -f<I> format</I> ] [ -g ] [ -k
- ] [ -m<I> name</I> ] [ -n[mrs] ] [ -s<I> setup.xpm</I> ] [ --help ] [
- --keep-files ] [ --output-dir<I> directory</I> ] [ --setup-image<I>
- setup.xpm</I> ] [ --setup-program<I> /foo/bar/setup</I> ] [
- --setup-types<I> setup.types</I> ] [ -v ] [<I> name=value</I> ...<I>
+ ] [ -m<I> name</I> ] [ -n[mrs] ] [ -s<I> setup.xpm</I> ] [ --depend ] [
+ --help ] [ --keep-files ] [ --output-dir<I> directory</I> ] [
+ --setup-image<I> setup.xpm</I> ] [ --setup-program<I> /foo/bar/setup</I>
+ ] [ --setup-types<I> setup.types</I> ] [ -v ] [<I> name=value</I> ...<I>
  name=value</I> ] product [<I> listfile</I> ]
 <H3><A name="DESCRIPTION">Description</A></H3>
 <B> epm</B> generates software packages complete with installation,
@@ -2248,6 +2248,8 @@ product</I>.list&quot;.
  system, version, and architecture.</P>
 <P>The<I> -v</I> option (&quot;verbose&quot;) increases the amount of information
  that is reported. Use multiple v's for more verbose output.</P>
+<P>The<I> --depend</I> option lists the dependent (source) files for all
+ files in the package.</P>
 <P>Distributions normally are named
  &quot;product-version-system-release-machine.ext&quot; and
  &quot;product-version-system-release-machine-patch.ext&quot; (for patch
@@ -2770,6 +2772,8 @@ product</I>.list&quot;.
 <LI>Added support for custom platform names via the new &quot;-m name&quot;
  option.</LI>
 <LI>Added support for non-numeric %release values.</LI>
+<LI>Added new --depend option to list all of the source files that a
+ package depends on.</LI>
 <LI>The setup GUI now sets the EPM_INSTALL_TYPE environment variable to
  the value of the selected TYPE line in the setup.types file.</LI>
 <LI>Fixed NetBSD and OpenBSD packaging support - no longer use
