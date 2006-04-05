@@ -29,7 +29,7 @@ each package format.</P>
 <CODE>%incompat</CODE> and <CODE>%requires</CODE> directives.</P>
 
 <!-- NEED 5in -->
-<CENTER><TABLE ALIGN="CENTER" BORDER="1">
+<CENTER><TABLE BORDER CELLPADDING="2">
 <CAPTION><A NAME="TABLE_4_1">Table 4.1: Dependency Support</A></CAPTION>
 <TR>
 	<TH>Format</TH>
@@ -151,7 +151,8 @@ lower and upper version numbers:
     %provides foobar
 </PRE>
 
-<P>or the filename:
+<!-- NEED 2in -->
+<P>or the filename:</P>
 
 <PRE>
     %requires /usr/lib/libfoobar.so
@@ -201,11 +202,14 @@ of the software:</P>
     %postremove echo Command after removing
 </PRE>
 
+<P>To include an external script file, use the
+<CODE>&lt;filename</CODE> notation:</P>
+
+<PRE>
+    %postinstall &lt;filename
+</PRE>
+
 <!-- NEED 3in -->
-<P>&nbsp;</P>
-
-<P>&nbsp;</P>
-
 <CENTER><TABLE ALIGN="CENTER" BORDER="1">
 <CAPTION><A NAME="TABLE_4_2">Table 4.2: Scripts Support</A></CAPTION>
 <TR>
@@ -318,14 +322,8 @@ of the software:</P>
 </TR>
 </TABLE></CENTER>
 
-<P>To include an external script file, use the
-<CODE>&lt;filename</CODE> notation:</P>
+<P>&nbsp;</P>
 
-<PRE>
-    %postinstall &lt;filename
-</PRE>
-
-<!-- NEED 2in -->
 <P>To include multiple lines directly, use the
 <CODE>&lt;&lt;string</CODE> notation (a.k.a. a "here" document):</P>
 
@@ -342,6 +340,7 @@ dollar sign (<CODE>$</CODE>) characters in your commands. For
 example, "$foo" is replaced by the value of "foo", but "$$foo"
 becomes "$foo".</P>
 
+<!-- NEED 4in -->
 <H2>Conditional Directives</H2>
 
 <P>The <CODE>%system</CODE> directive can match or not match
@@ -382,7 +381,6 @@ operating systems:</P>
     %system all
 </PRE>
 
-<!-- NEED 3in -->
 <P>For format-specific files, the <CODE>%format</CODE> directive
 can be used:</P>
 
@@ -412,11 +410,10 @@ can be used:</P>
 <P>Finally, EPM can conditionally include lines using the
 <CODE>%if</CODE>, <CODE>%elseif</CODE>, <CODE>%ifdef</CODE>,
 <CODE>%elseifdef</CODE>, <CODE>%else</CODE>, and
-<CODE>%endif</CODE> directives. <CODE>%if</CODE> directives
-include the text that follows if the named variable(s) are
-defined to a non-empty string, while <CODE>%ifdef</CODE>
-directives only include the text if the named variable(s) are
-defined to any value.</P>
+<CODE>%endif</CODE> directives.</P>
+
+<P><CODE>%if</CODE> directives include the text that follows if
+the named variable(s) are defined to a non-empty string:</P>
 
 <PRE>
     %if FOO
@@ -424,7 +421,12 @@ defined to any value.</P>
     %elseif BAR
     f 755 root sys /usr/bin/bar bar
     %endif
+</PRE>
 
+<P><CODE>%ifdef</CODE> directives only include the text if the
+named variable(s) are defined to any value:</P>
+
+<PRE>
     %ifdef OSTYPE
     f 755 root sys /usr/bin/program program-$OSTYPE
     %else
@@ -442,15 +444,17 @@ debugging information from a file:</P>
     f 755 root sys /usr/lib/libfoo.so libfoo.so nostrip()
 </PRE>
 
-<!-- NEED 3in -->
 <H2>Software Patches</H2>
 
 <P>EPM supports portable software patch distributions which
 contain only the differences between the original and patch
 release.  Patch files are specified using uppercase letters for
 the affected files. In the following example, the files
-<VAR>/usr/bin/bar</VAR> and <VAR>/etc/foo.conf</VAR> are marked
-as changed since the original release:</P>
+<VAR>/usr/bin/bar</VAR> and <VAR>/etc/foo.conf</VAR> are
+marked</P>
+
+<!-- NEED 2in -->
+<P>as changed since the original release:</P>
 
 <PRE>
     f 755 root sys /usr/bin/foo foo
@@ -491,7 +495,7 @@ sign (<CODE>$</CODE>). As with most shells, variable names can
 be surrounded by curly braces (<CODE>${variable}</CODE>) to
 explicitly delimit the name.</P>
 
-<!-- NEED 2in -->
+<!-- NEED 1in -->
 <P>If you need to insert a <CODE>$</CODE> in a filename or a
 script, use <CODE>$$</CODE>:</P>
 
