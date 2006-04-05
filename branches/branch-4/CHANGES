@@ -12,6 +12,8 @@ EPM 4.0
 	- Added support for custom platform names via the new
 	  "-m name" option.
 	- Added support for non-numeric %release values.
+	- Added new --depend option to list all of the source
+	  files that a package depends on.
 	- The setup GUI now sets the EPM_INSTALL_TYPE environment
 	  variable to the value of the selected TYPE line in the
 	  setup.types file.
