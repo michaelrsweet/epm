@@ -120,6 +120,7 @@ LEDIT_OBJS	=	epmeditor.o \
 OBJS		=	epm.o \
 			$(EPM_OBJS) \
 			epminstall.o \
+			mkepmlist.o \
 			$(SETUP_OBJS) \
 			$(UNINST_OBJS) \
 			$(LEDIT_OBJS)
@@ -149,6 +150,8 @@ distclean:
 	$(RM) $(OBJS)
 	$(RM) $(TARGETS)
 	$(RM) config.cache config.h config.log config.status
+	$(RM) Makefile doc/Makefile macosx/Makefile
+	$(RM) epm.list macosx/setup.plist macosx/uninst.plist
 
 
 #

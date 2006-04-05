@@ -3,7 +3,7 @@
  *
  *   Definitions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2006 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -207,6 +207,7 @@ typedef struct				/**** Distribution Structure ****/
 {
   char		product[256],		/* Product name */
 		version[256],		/* Product version string */
+		release[256],		/* Product release string */
 		copyright[256],		/* Product copyright */
 		vendor[256],		/* Vendor name */
 		packager[256],		/* Packager name */
@@ -217,7 +218,6 @@ typedef struct				/**** Distribution Structure ****/
   int		num_descriptions;	/* Number of description strings */
   description_t	*descriptions;		/* Description strings */
   int		vernumber;		/* Version number */
-  int		relnumber;		/* Release number */
   int		num_commands;		/* Number of commands */
   command_t	*commands;		/* Commands */
   int		num_depends;		/* Number of dependencies */

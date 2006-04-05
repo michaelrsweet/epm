@@ -14,226 +14,298 @@ begin with the "#" character and are ignored. All other
 non-blank lines must begin with a letter, dollar sign ("$"), or
 the percent sign ("%").</P>
 
+<!-- NEED 3in -->
 <H3>List File Directives</H3>
 
 <P>The following list describes all of the list file directives
 supported by <I>EPM</I>:</P>
 
-<UL><DL>
+<DL><DD><DL>
 
-	<DT>$name=value</DT>
+	<DT>$name=value
+	<BR>&nbsp;</DT>
 
 	<DD>Sets the named variable to <I>value</I>.
 	<B>Note:</B> Variables set in the list file are
 	overridden by variables specified on the command-line or
-	in the current environment.</DD>
+	in the current environment.
+	<BR>&nbsp;</DD>
 
-	<DT>%copyright <I>copyright notice</I></DT>
+	<!-- NEED 2in -->
+	<DT>%copyright <I>copyright notice</I>
+	<BR>&nbsp;</DT>
 
-	<DD>Sets the copyright notice for the file.</DD>
+	<DD>Sets the copyright notice for the file.
+	<BR>&nbsp;</DD>
 
-	<DT>%description <I>description text</I></DT>
+	<DT>%description <I>description text</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Adds a line of descriptive text to the distribution.
-	Multiple lines are supported.</DD>
+	Multiple lines are supported.
+	<BR>&nbsp;</DD>
 
-	<DT>%format <I>format [... format]</I></DT>
+	<DT>%format <I>format [... format]</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Uses following files and directives only if the
-	distribution format is the same as <I>format</I>.</DD>
+	distribution format is the same as <I>format</I>.
+	<BR>&nbsp;</DD>
 
-	<DT>%format !<I>format [... format]</I></DT>
+	<DT>%format !<I>format [... format]</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Uses following files and directives only if the
 	distribution format is not the same as
-	<I>format</I>.</DD>
+	<I>format</I>.
+	<BR>&nbsp;</DD>
 
-	<DT>%if <I>variable</I> [... variable]</I><BR>
-	%if !<I>variable</I> [... variable]</I><BR>
-	%ifdef <I>variable</I> [... variable]</I><BR>
-	%ifdef !<I>variable</I> [... variable]</I><BR>
-	%elseif <I>variable</I> [... variable]</I><BR>
-	%elseif !<I>variable</I> [... variable]</I><BR>
-	%elseifdef <I>variable</I> [... variable]</I><BR>
-	%elseifdef !<I>variable</I> [... variable]</I><BR>
+	<DT>%include <I>filename</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Includes files listed in <I>filename</I>.
+	<BR>&nbsp;</DD>
+
+	<DT>%incompat <I>product</I>
+	<DT>%incompat <I>filename</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Indicates that this product is incompatible with the
+	named product or file.
+	<BR>&nbsp;</DD>
+
+	<DT>%if <I>variable [... variable]</I><BR>
+	%if !<I>variable [... variable]</I><BR>
+	%ifdef <I>variable [... variable]</I><BR>
+	%ifdef !<I>variable [... variable]</I><BR>
+	%elseif <I>variable [... variable]</I><BR>
+	%elseif !<I>variable [... variable]</I><BR>
+	%elseifdef <I>variable [... variable]</I><BR>
+	%elseifdef !<I>variable [... variable]</I><BR>
 	%else<BR>
-	%endif</DT>
+	%endif
+	<BR>&nbsp;</DT>
 
 	<DD>Conditionally includes lines in the list file. The
 	<I>%if</I> lines include the lines that follow if the
 	named variables are (not) defined with a value. The
 	<I>%ifdef</I> lines include the lines that follow if the
 	named variables are (not) defined with any value. These
-	conditional lines cannot be nested.</DT>
+	conditional lines cannot be nested.
+	<BR>&nbsp;</DD>
 
-	<DT>%include <I>filename</I></DT>
-
-	<DD>Includes files listed in <I>filename</I>.</DD>
-
-	<DT>%incompat <I>product</I></DT>
-
-	<DT>%incompat <I>filename</I></DT>
-
-	<DD>Indicates that this product is incompatible with the
-	named product or file.</DD>
-
-	<DT>%install <I>script or program</I></DT>
+	<DT>%install <I>script or program</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a script or program to be run after all
 	files are installed. (This has been obsoleted by the
-	%postinstall directive)</DD>
+	%postinstall directive)
+	<BR>&nbsp;</DD>
 
-	<DT>%license <I>license file</I></DT>
+	<DT>%license <I>license file</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies the file to display as the software
-	license.</DD>
+	license.
+	<BR>&nbsp;</DD>
 
-	<DT>%packager <I>name of packager</I></DT>
+	<DT>%packager <I>name of packager</I>
+	<BR>&nbsp;</DT>
 
-	<DD>Specifies the name of the packager.</DD>
+	<DD>Specifies the name of the packager.
+	<BR>&nbsp;</DD>
 
-	<DT>%patch <I>script or program</I></DT>
+	<DT>%patch <I>script or program</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a script or program to be run after all
 	files are patched. (This has been obsoleted by the
-	%postpatch directive)</DD>
+	%postpatch directive)
+	<BR>&nbsp;</DD>
 
+	<!-- NEED 2in -->
 	<DT>%postinstall <I>script or program</I><BR>
 	%postinstall &lt;<I>scriptfile</I><BR>
-	%postinstall &lt;&lt;<I>string</I></DT>
+	%postinstall &lt;&lt;<I>string</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a script or program to be run after all
-	files are installed.</DD>
+	files are installed.
+	<BR>&nbsp;</DD>
 
 	<DT>%postpatch <I>script or program</I><BR>
 	%postpatch &lt;<I>scriptfile</I><BR>
-	%postpatch &lt;&lt;<I>string</I></DT>
+	%postpatch &lt;&lt;<I>string</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a script or program to be run after all
-	files are patched.</DD>
+	files are patched.
+	<BR>&nbsp;</DD>
 
 	<DT>%postremove <I>script or program</I><BR>
 	%postremove &lt;<I>scriptfile</I><BR>
-	%postremove &lt;&lt;<I>string</I></DT>
+	%postremove &lt;&lt;<I>string</I>
+	<BR>&nbsp;</DT>
 
-	<DD>Specifies a script or program to be run after removing files.</DD>
+	<DD>Specifies a script or program to be run after removing files.
+	<BR>&nbsp;</DD>
 
 	<DT>%preinstall <I>script or program</I><BR>
 	%preinstall &lt;<I>scriptfile</I><BR>
-	%preinstall &lt;&lt;<I>string</I></DT>
+	%preinstall &lt;&lt;<I>string</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a script or program to be run before all
-	files are installed.</DD>
+	files are installed.
+	<BR>&nbsp;</DD>
 
 	<DT>%prepatch <I>script or program</I><BR>
 	%prepatch &lt;<I>scriptfile</I><BR>
-	%prepatch &lt;&lt;<I>string</I></DT>
+	%prepatch &lt;&lt;<I>string</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a script or program to be run before all
-	files are patched.</DD>
+	files are patched.
+	<BR>&nbsp;</DD>
 
 	<DT>%preremove <I>script or program</I><BR>
 	%preremove &lt;<I>scriptfile</I><BR>
-	%preremove &lt;&lt;<I>string</I></DT>
-
-	<DD>Specifies a script or program to be run before removing files.</DD>
-
-	<DT>%product <I>product name</I></DT>
-
-	<DD>Specifies the product name.</DD>
-
-	<DT>%readme <I>readme file</I></DT>
-
-	<DD>Specifies a README file to be included in the distribution.</DD>
-
-	<DT>%remove <I>script or program</I></DT>
+	%preremove &lt;&lt;<I>string</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a script or program to be run before removing files.
-	(This has been obsoleted by the %preremove directive)</DD>
+	<BR>&nbsp;</DD>
 
-	<DT>%release <I>number</I></DT>
+	<DT>%product <I>product name</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Specifies the product name.
+	<BR>&nbsp;</DD>
+
+	<!-- NEED 2in -->
+	<DT>%provides <I>product name</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Indicates that this product provides the named dependency.
+	<BR>&nbsp;</DD>
+
+	<DT>%readme <I>readme file</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Specifies a README file to be included in the distribution.
+	<BR>&nbsp;</DD>
+
+	<DT>%remove <I>script or program</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Specifies a script or program to be run before removing files.
+	(This has been obsoleted by the %preremove directive)
+	<BR>&nbsp;</DD>
+
+	<DT>%release <I>number</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies the release or build number of a product
-	(defaults to 0).</DD>
+	(defaults to 0).
+	<BR>&nbsp;</DD>
 
-	<DT>%replaces <I>product</I></DT>
+	<DT>%replaces <I>product</I>
+	<BR>&nbsp;</DT>
 
-	<DD>Indicates that this product replaces the named product.</DD>
+	<DD>Indicates that this product replaces the named product.
+	<BR>&nbsp;</DD>
 
-	<DT>%requires <I>product</I></DT>
+	<DT>%requires <I>product</I>
+	<DT>%requires <I>filename</I>
+	<BR>&nbsp;</DT>
 
-	<DT>%requires <I>filename</I></DT>
+	<DD>Indicates that this product requires the named product or file.
+	<BR>&nbsp;</DD>
 
-	<DD>Indicates that this product requires the named product or file.</DD>
-
-	<DT>%vendor <I>vendor or author name</I></DT>
-
-	<DD>Specifies the vendor or author of the product.</DD>
-
-	<DT>%version <I>version number</I></DT>
-
-	<DD>Specifies the version number of the product.</DD>
-
-	<DT>%system <I>system[-release] [... system[-release]]</I></DT>
+	<DT>%system <I>system[-release] [... system[-release]]</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies that the following files should only be
 	used for the specified operating systems and
-	releases.</DD>
+	releases.
+	<BR>&nbsp;</DD>
 
-	<DT>%system !<I>system[-release] [... system[-release]]</I></DT>
+	<DT>%system !<I>system[-release] [... system[-release]]</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies that the following files should not be
 	used for the specified operating systems and
-	releases.</DD>
+	releases.
+	<BR>&nbsp;</DD>
 
-	<DT>%system all</DT>
+	<DT>%system all
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies that the following files are applicable to
-	all operating systems.</DD>
+	all operating systems.
+	<BR>&nbsp;</DD>
 
-	<DT>c <I>mode user group destination source</I></DT>
+	<DT>%vendor <I>vendor or author name</I>
+	<BR>&nbsp;</DT>
 
-	<DT>C <I>mode user group destination source</I></DT>
+	<DD>Specifies the vendor or author of the product.
+	<BR>&nbsp;</DD>
+
+	<!-- NEED 2in -->
+	<DT>%version <I>version number</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Specifies the version number of the product.
+	<BR>&nbsp;</DD>
+
+	<DT>c <I>mode user group destination source</I>
+	<DT>C <I>mode user group destination source</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a configuration file for installation. The
 	second form specifies that the file has changed or is
 	new and should be included as part of a patch.
 	Configuration files are installed as "destination.N" if
-	the destination already exists.</DD>
+	the destination already exists.
+	<BR>&nbsp;</DD>
 
-	<DT>d <I>mode user group destination -</I></DT>
-
-	<DT>D <I>mode user group destination -</I></DT>
+	<DT>d <I>mode user group destination -</I>
+	<DT>D <I>mode user group destination -</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a directory should be created when
 	installing the software. The second form specifies that
 	the directory is new and should be included as part of a
-	patch.</DD>
+	patch.
+	<BR>&nbsp;</DD>
 
-	<DT>f <I>mode user group destination source [nostrip()]</I></DT>
-
-	<DT>F <I>mode user group destination source [nostrip()]</I></DT>
+	<!-- NEED 2in -->
+	<DT>f <I>mode user group destination source [nostrip()]</I>
+	<DT>F <I>mode user group destination source [nostrip()]</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a file for installation. The second form
 	specifies that the file has changed or is new and should
 	be included as part of a patch. If the "nostrip()"
 	option is included, the file will not be stripped before
-	the installation is created.</DD>
+	the installation is created.
+	<BR>&nbsp;</DD>
 
-	<DT>f <I>mode user group destination source/pattern [nostrip()]</I></DT>
-
-	<DT>F <I>mode user group destination source/pattern [nostrip()]</I></DT>
+	<DT>f <I>mode user group destination source/pattern [nostrip()]</I>
+	<DT>F <I>mode user group destination source/pattern [nostrip()]</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies one or more files for installation using
 	shell wildcard patterns. The second form specifies that
 	the files have changed or are new and should be included
 	as part of a patch. If the "nostrip()" option is
 	included, the file will not be stripped before the
-	installation is created.</DD>
+	installation is created.
+	<BR>&nbsp;</DD>
 
-	<DT>i <I>mode user group service-name source ["options"]</I></DT>
-
-	<DT>I <I>mode user group service-name source ["options"]</I></DT>
+	<DT>i <I>mode user group service-name source ["options"]</I>
+	<DT>I <I>mode user group service-name source ["options"]</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies an initialization script for installation.
 	The second form specifies that the file has changed or
@@ -245,6 +317,7 @@ supported by <I>EPM</I>:</P>
 	accept at least the <I>start</I> and <I>stop</I>
 	commands. The optional <I>options</I> following the
 	source filename can be any of the following:
+	<BR>&nbsp;
 	
 	<DL>
 
@@ -260,7 +333,7 @@ supported by <I>EPM</I>:</P>
 		<DD>Specifies names of system functions that are
 		provided by this startup item (OSX only).</DD>
 
-		<DT>requires(<I>name(s)</I>)</DT>
+		<!-- NEED 3 --><DT>requires(<I>name(s)</I>)</DT>
 
 		<DD>Specifies names of system functions that are
 		required by this startup item (OSX only).</DD>
@@ -284,26 +357,32 @@ supported by <I>EPM</I>:</P>
 		<DD>Specifies names of system functions that are
 		used by this startup item (OSX only).</DD>
 
-	</DL></DD>
+	</DL>
+	<BR>&nbsp;</DD>
 
-	<DT>l <I>mode user group destination source</I></DT>
-
-	<DT>L <I>mode user group destination source</I></DT>
+	<!-- NEED 2in -->
+	<DT>l <I>mode user group destination source</I>
+	<DT>L <I>mode user group destination source</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies a symbolic link in the installation. The
 	second form specifies that the link has changed or is
-	new and should be included as part of a patch.</DD>
+	new and should be included as part of a patch.
+	<BR>&nbsp;</DD>
 
-	<DT>R <I>mode user group destination</I></DT>
+	<DT>R <I>mode user group destination</I>
+	<BR>&nbsp;</DT>
 
 	<DD>Specifies that the file is to be removed upon
 	patching.  The <I>user</I> and <I>group</I> fields are
 	ignored.  The <I>mode</I> field is only used to
 	determine if a check should be made for a previous
-	version of the file.</DD>
+	version of the file.
+	<BR>&nbsp;</DD>
 
-</DL></UL>
+</DL></DD></DL>
 
+<!-- NEED 3in -->
 <H3>List Variables</H3>
 
 <P><I>EPM</I> maintains a list of variables and their values
@@ -313,22 +392,23 @@ from the command-line and list file as provided. Substitutions
 occur when the variable name is referenced with the dollar sign
 ($):</P>
 
-<UL><PRE>
-%postinstall &lt;&lt;EOF
-echo What is your name:
-read $$name
-echo Your name is $$name
-EOF
+<PRE>
+    %postinstall &lt;&lt;EOF
+    echo What is your name:
+    read $$name
+    echo Your name is $$name
+    EOF
 
-f 0555 root sys ${bindir}/foo foo
-f 0555 root sys $datadir/foo/foo.dat foo.dat
-</PRE></UL>
+    f 0555 root sys ${bindir}/foo foo
+    f 0555 root sys $datadir/foo/foo.dat foo.dat
+</PRE>
 
 <P>Variable names can be surrounded by curley brackets (${name})
 or alone ($name); without brackets the name is terminated by the
 first slash (/), dash (-), or whitespace. The dollar sign can be
 inserted using $$.</P>
 
+<!-- NEED 5in -->
 <H2><A NAME="SETUPTYPES">The setup.types File</A></H2>
 
 <P>The EPM <B>setup</B> program normally presents the user with
@@ -350,17 +430,22 @@ defined by a line starting with the word <CODE>TYPE</CODE>.
 Products are defined by a line starting with the word
 <CODE>INSTALL</CODE>:</P>
 
-<UL><PRE>
-TYPE Typical End-User Configuration
-INSTALL foo
-INSTALL foo-help
-TYPE Typical Developer Configuration
-INSTALL foo
-INSTALL foo-help
-INSTALL foo-devel
-INSTALL foo-examples
-TYPE Custom Configuration
-</PRE></UL>
+<PRE>
+    # Pre-select the user packages
+    TYPE Typical End-User Configuration
+    INSTALL foo
+    INSTALL foo-help
+
+    # Pre-select the developer packages
+    TYPE Typical Developer Configuration
+    INSTALL foo
+    INSTALL foo-help
+    INSTALL foo-devel
+    INSTALL foo-examples
+
+    # Allow the user to select packages
+    TYPE Custom Configuration
+</PRE>
 
 <P>In the example above, three installation types are defined.
 Since the last type includes no products, the user will be

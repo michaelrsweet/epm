@@ -1,9 +1,9 @@
 /*
- * "$Id: tar.c,v 1.23 2005/02/09 19:54:11 mike Exp $"
+ * "$Id$"
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2006 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -514,9 +514,9 @@ tar_package(tarf_t     *tar,		/* I - Tar file */
   * Then the subdirectory name...
   */
 
-  if (dist->relnumber)
-    snprintf(name, sizeof(name), "%s-%s-%d", prodfull, dist->version,
-             dist->relnumber);
+  if (dist->release[0])
+    snprintf(name, sizeof(name), "%s-%s-%s", prodfull, dist->version,
+             dist->release);
   else
     snprintf(name, sizeof(name), "%s-%s", prodfull, dist->version);
 
@@ -554,5 +554,5 @@ tar_package(tarf_t     *tar,		/* I - Tar file */
 
 
 /*
- * End of "$Id: tar.c,v 1.23 2005/02/09 19:54:11 mike Exp $".
+ * End of "$Id$".
  */

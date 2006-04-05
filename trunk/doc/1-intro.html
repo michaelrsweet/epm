@@ -17,7 +17,7 @@ for the software development environment.</P>
 problem. Besides its own "portable" distribution format, EPM
 also supports the generation of several vendor-specific formats.
 This allows you to build software distribution files for almost
-any UNIX/Linux operating system from the same sources.</P>
+any operating system from the same sources.</P>
 
 <H2>History and Evolution</H2>
 
@@ -52,149 +52,189 @@ program and one set of software distribution files.
 
 <P>As we looked for a solution to our problem, we naturally
 investigated the existing open-source packaging systems. Under
-Linux, we looked at the RedHat Package Manager ("RPM") and
+Linux, we looked at the Red Hat Package Manager ("RPM") and
 Debian packaging software ("dpkg" and "dselect"). For the
 commercial UNIX's we looked at the vendor-supplied packaging
-systems. Table 1.1 shows the results of our investigation.</P>
+systems. <A HREF="#TABLE_1_1">Table 1.1</A> shows the results of
+our investigation.</P>
 
-<P><TABLE ALIGN="CENTER" BORDER="1">
+<!-- NEED 5in -->
+<TABLE ALIGN="CENTER" BORDER="1">
 <CAPTION><A NAME="TABLE_1_1">Table 1.1: Software Packaging Formats</A></CAPTION>
 <TR>
-	<TH><SMALL>Format</SMALL></TH>
-	<TH><SMALL>Operating Systems<SUP>1</SUP></SMALL></TH>
-	<TH><SMALL>Binaries?</SMALL></TH>
-	<TH><SMALL>Cross- Platform?</SMALL></TH>
-	<TH><SMALL>Patches?</SMALL></TH>
-	<TH><SMALL>Upgrades?</SMALL></TH>
-	<TH><SMALL>Conflicts?</SMALL></TH>
-	<TH><SMALL>Requires?</SMALL></TH>
-	<TH><SMALL>Replaces?</SMALL></TH>
-	<TH><SMALL>Config Files?</SMALL></TH>
-	<TH><SMALL>Map Files?</SMALL></TH>
+	<TH><FONT SIZE="-4">Format</FONT></TH>
+	<TH><FONT SIZE="-4">Operating Systems<SUP>1</SUP></FONT></TH>
+	<TH><FONT SIZE="-4">Binaries</FONT></TH>
+	<TH><FONT SIZE="-4">Cross- Platform</FONT></TH>
+	<TH><FONT SIZE="-4">Patches</FONT></TH>
+	<TH><FONT SIZE="-4">Up- grades</FONT></TH>
+	<TH><FONT SIZE="-4">Con- flicts</FONT></TH>
+	<TH><FONT SIZE="-4">Re- quires</FONT></TH>
+	<TH><FONT SIZE="-4">Re- places</FONT></TH>
+	<TH><FONT SIZE="-4">Config Files</FONT></TH>
+	<TH><FONT SIZE="-4">Map Files</FONT></TH>
+	<TH><FONT SIZE="-4">Un- install</FONT></TH>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">installp</TD>
-	<TD ALIGN="CENTER">AIX</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
+	<TD ALIGN="CENTER"><SMALL>installp</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>AIX</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">pkg_add</TD>
-	<TD ALIGN="CENTER">FreeBSD</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes<SUP>2</SUP></TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
+	<TD ALIGN="CENTER"><SMALL>pkg_add</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>FreeBSD</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes<SUP>2</SUP></SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">pkg_add</TD>
-	<TD ALIGN="CENTER">NetBSD<BR>
-	OpenBSD</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes<SUP>2</SUP></TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
+	<TD ALIGN="CENTER"><SMALL>pkg_add</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>NetBSD<BR>
+	OpenBSD</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes<SUP>2</SUP></SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">dpkg</TD>
-	<TD ALIGN="CENTER">Corel Linux<BR>
-	Debian GNU/Linux</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes<SUP>2</SUP></TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
+	<TD ALIGN="CENTER"><SMALL>dpkg</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Corel Linux<BR>
+	Debian GNU/Linux</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes<SUP>2</SUP></SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">swinstall</TD>
-	<TD ALIGN="CENTER">HP-UX</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
+	<TD ALIGN="CENTER"><SMALL>depot</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>HP-UX</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">inst</TD>
-	<TD ALIGN="CENTER">IRIX</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
+	<TD ALIGN="CENTER"><SMALL>inst</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>IRIX</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">pkgadd</TD>
-	<TD ALIGN="CENTER">Solaris</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
+	<TD ALIGN="CENTER"><SMALL>Install.app</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>MacOS X</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">rpm</TD>
-	<TD ALIGN="CENTER">Mandrake<BR>
+	<TD ALIGN="CENTER"><SMALL>pkgadd</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Solaris</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+</TR>
+<TR>
+	<TD ALIGN="CENTER"><SMALL>rpm</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Mandrake<BR>
 	RedHat<BR>
 	SuSE<BR>
-	TurboLinux</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes<SUP>2</SUP></TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
+	TurboLinux</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes<SUP>2</SUP></SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">setld</TD>
-	<TD ALIGN="CENTER">Tru64 UNIX</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
+	<TD ALIGN="CENTER"><SMALL>setld</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Tru64 UNIX</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
 </TR>
-</TABLE></P>
+<TR>
+	<TD ALIGN="CENTER"><SMALL>slackware</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Slackware Linux</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>No</SMALL></TD>
+	<TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD>
+</TR>
+</TABLE>
 
 <OL>
 
@@ -206,13 +246,15 @@ systems. Table 1.1 shows the results of our investigation.</P>
 
 </OL>
 
-<P>As you can see, none of the formats supported every feature
-we were looking for. One common fault of all these formats is
-that they do not support a common software specification file
-format. That is, making a Debian software distribution requires
-significantly different support files than required for a
-Solaris pkg distribution. This makes it extremely difficult to
-manage distributions for multiple operating systems.</P>
+<P>&nbsp;</P>
+
+<P>As you can see, none of the formats supported every feature we
+were looking for. One common fault of all these formats is that
+they do not support a common software specification file format.
+That is, making a Debian software distribution requires
+significantly different support files than required for a Solaris
+pkg distribution. This makes it extremely difficult to manage
+distributions for multiple operating systems.</P>
 
 <P>All of the package formats support binary distributions. The
 RPM and Debian formats also support source distributions that
@@ -230,9 +272,9 @@ be archived in the corresponding package format. To ensure that
 all file permissions and ownerships are correct, you must build
 the distribution as the root user or use the
 <CODE>fakeroot</CODE> software, introducing potential security
-risks and violating many corporate security policies. It can
-also make building distributions difficult when dynamic data
-such as changing data files or databases is involved.</P>
+risks and violating many corporate security policies. It can also
+make building distributions difficult when dynamic data such as
+changing data files or databases is involved.</P>
 
 <P>The commercial UNIX formats use software list files that map
 source files to the correct directories and permissions.
@@ -258,35 +300,40 @@ containing the source files and a configure script.</P>
 
 <P>Over the years, additional features have made their way into
 EPM to support more advanced software packages. Whenever
-possible, EPM emulates a feature if the vendor packager does
-not support it natively.</P>
+possible, EPM emulates a feature if the vendor package format
+does not support it natively.</P>
 
 <H2>Resources</H2>
 
 <P>The EPM web site provides access to the current software and
 documentation for EPM:</P>
 
-<UL><PRE>
-<A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
-</PRE></UL>
+<PRE>
+    <A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
+</PRE>
 
 <P>The EPM source code can be downloaded in compressed tar files or
-via the popular CVS software. Please see the EPM web site for
+via the popular Subversion software. Please see the EPM web site for
 complete instructions.</P>
 
 <P>The Easy Software Products news server provides several newsgroups
-for EPM. You can access it at:</P>
+for EPM. You can access it by pointing your news reader at
+"news.easysw.com".</P>
 
-<UL><PRE>
-<A HREF="news://news.easysw.com">news.easysw.com</A>
-</PRE></UL>
+<P>Commercial support for EPM and a softcover version of this
+book are available from <A HREF="http://www.easysw.com/">Easy
+Software Products</A>; both help fund the continued development
+of EPM.</P>
 
-<P>Commercial support for EPM is available from Easy Software Products
-and is one way to contribute to the continued development of EPM.
-The other way to contribute is by donating code, examples, and
+<P>Another way to contribute is by donating code, examples, and
 bug fixes. If you have adapted EPM for another operating system
-or have added a new feature that you feel will be generally useful,
-please contribute it!</P>
+or have added a new feature that you feel will be generally
+useful, please contribute it!</P>
+
+<P>You can send code contributions to "<A
+HREF="mailto:epm@easysw.com">epm@easysw.com</A>" and book
+contributions to "<A
+HREF="mailto:epm-book@easysw.com">epm-book@easysw.com</A>".</P>
 
 </BODY>
 </HTML>
