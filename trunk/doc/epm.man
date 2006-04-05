@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "3 April 2006" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "5 April 2006" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -28,7 +28,7 @@ epm \- create software packages.
 .I name
 ] [ -n[mrs] ] [ -s
 .I setup.xpm
-] [ --help ] [ --keep-files ] [ --output-dir
+] [ --depend ] [ --help ] [ --keep-files ] [ --output-dir
 .I directory
 ] [ --setup-image
 .I setup.xpm
@@ -140,6 +140,9 @@ operating system, version, and architecture.
 .LP
 The \fI-v\fR option ("verbose") increases the amount of information that is
 reported. Use multiple v's for more verbose output.
+.LP
+The \fI--depend\fR option lists the dependent (source) files for
+all files in the package.
 .LP
 Distributions normally are named
 "product-version-system-release-machine.ext" and
