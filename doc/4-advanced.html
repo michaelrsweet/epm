@@ -25,9 +25,6 @@ the host operating system and libraries.</P>
 HREF="#TABLE_4_1">Table 4.1</A> shows the level of support for
 each package format.</P>
 
-<P>Software conflicts and requirements are specified using the
-<CODE>%incompat</CODE> and <CODE>%requires</CODE> directives.</P>
-
 <!-- NEED 5in -->
 <CENTER><TABLE BORDER CELLPADDING="2">
 <CAPTION><A NAME="TABLE_4_1">Table 4.1: Dependency Support</A></CAPTION>
@@ -127,6 +124,9 @@ each package format.</P>
 
 <P>&nbsp;</P>
 
+<P>Software conflicts and requirements are specified using the
+<CODE>%incompat</CODE> and <CODE>%requires</CODE> directives.</P>
+
 <P>If your software replaces another package, you can specify
 that using the <CODE>%replaces</CODE> directive.
 <CODE>%replaces</CODE> is silently mapped to
@@ -137,21 +137,19 @@ package replacement.</P>
 a standard name, the <CODE>%provides</CODE> directive can be
 used.</P>
 
-<!-- NEED 2in -->
+<!-- NEED 1in -->
 <P>Dependencies are specified using the package name and optionally the
 lower and upper version numbers:
 
 <PRE>
     %requires foobar
     %requires foobar 1.0
-    %incompat foobar
     %incompat foobar 0.9
     %replaces foobar
     %replaces foobar 1.2 3.4
     %provides foobar
 </PRE>
 
-<!-- NEED 2in -->
 <P>or the filename:</P>
 
 <PRE>
@@ -200,13 +198,6 @@ of the software:</P>
 <PRE>
     %preremove echo Command before removing
     %postremove echo Command after removing
-</PRE>
-
-<P>To include an external script file, use the
-<CODE>&lt;filename</CODE> notation:</P>
-
-<PRE>
-    %postinstall &lt;filename
 </PRE>
 
 <!-- NEED 3in -->
@@ -323,6 +314,13 @@ of the software:</P>
 </TABLE></CENTER>
 
 <P>&nbsp;</P>
+
+<P>To include an external script file, use the
+<CODE>&lt;filename</CODE> notation:</P>
+
+<PRE>
+    %postinstall &lt;filename
+</PRE>
 
 <P>To include multiple lines directly, use the
 <CODE>&lt;&lt;string</CODE> notation (a.k.a. a "here" document):</P>

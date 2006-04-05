@@ -14,6 +14,7 @@ begin with the "#" character and are ignored. All other
 non-blank lines must begin with a letter, dollar sign ("$"), or
 the percent sign ("%").</P>
 
+<!-- NEED 3in -->
 <H3>List File Directives</H3>
 
 <P>The following list describes all of the list file directives
@@ -59,6 +60,20 @@ supported by <I>EPM</I>:</P>
 	<I>format</I>.
 	<BR>&nbsp;</DD>
 
+	<DT>%include <I>filename</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Includes files listed in <I>filename</I>.
+	<BR>&nbsp;</DD>
+
+	<DT>%incompat <I>product</I>
+	<DT>%incompat <I>filename</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Indicates that this product is incompatible with the
+	named product or file.
+	<BR>&nbsp;</DD>
+
 	<DT>%if <I>variable [... variable]</I><BR>
 	%if !<I>variable [... variable]</I><BR>
 	%ifdef <I>variable [... variable]</I><BR>
@@ -77,21 +92,6 @@ supported by <I>EPM</I>:</P>
 	<I>%ifdef</I> lines include the lines that follow if the
 	named variables are (not) defined with any value. These
 	conditional lines cannot be nested.
-	<BR>&nbsp;</DD>
-
-	<!-- NEED 2in -->
-	<DT>%include <I>filename</I>
-	<BR>&nbsp;</DT>
-
-	<DD>Includes files listed in <I>filename</I>.
-	<BR>&nbsp;</DD>
-
-	<DT>%incompat <I>product</I>
-	<DT>%incompat <I>filename</I>
-	<BR>&nbsp;</DT>
-
-	<DD>Indicates that this product is incompatible with the
-	named product or file.
 	<BR>&nbsp;</DD>
 
 	<DT>%install <I>script or program</I>
@@ -123,6 +123,7 @@ supported by <I>EPM</I>:</P>
 	%postpatch directive)
 	<BR>&nbsp;</DD>
 
+	<!-- NEED 2in -->
 	<DT>%postinstall <I>script or program</I><BR>
 	%postinstall &lt;<I>scriptfile</I><BR>
 	%postinstall &lt;&lt;<I>string</I>
@@ -132,7 +133,6 @@ supported by <I>EPM</I>:</P>
 	files are installed.
 	<BR>&nbsp;</DD>
 
-	<!-- NEED 2in -->
 	<DT>%postpatch <I>script or program</I><BR>
 	%postpatch &lt;<I>scriptfile</I><BR>
 	%postpatch &lt;&lt;<I>string</I>
@@ -219,19 +219,7 @@ supported by <I>EPM</I>:</P>
 	<DT>%requires <I>filename</I>
 	<BR>&nbsp;</DT>
 
-	<DD>Indicates that this product requires the named product or file.</DD>
-
-	<!-- NEED 2in -->
-	<DT>%vendor <I>vendor or author name</I>
-	<BR>&nbsp;</DT>
-
-	<DD>Specifies the vendor or author of the product.
-	<BR>&nbsp;</DD>
-
-	<DT>%version <I>version number</I>
-	<BR>&nbsp;</DT>
-
-	<DD>Specifies the version number of the product.
+	<DD>Indicates that this product requires the named product or file.
 	<BR>&nbsp;</DD>
 
 	<DT>%system <I>system[-release] [... system[-release]]</I>
@@ -242,7 +230,6 @@ supported by <I>EPM</I>:</P>
 	releases.
 	<BR>&nbsp;</DD>
 
-	<!-- NEED 2in -->
 	<DT>%system !<I>system[-release] [... system[-release]]</I>
 	<BR>&nbsp;</DT>
 
@@ -256,6 +243,19 @@ supported by <I>EPM</I>:</P>
 
 	<DD>Specifies that the following files are applicable to
 	all operating systems.
+	<BR>&nbsp;</DD>
+
+	<DT>%vendor <I>vendor or author name</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Specifies the vendor or author of the product.
+	<BR>&nbsp;</DD>
+
+	<!-- NEED 2in -->
+	<DT>%version <I>version number</I>
+	<BR>&nbsp;</DT>
+
+	<DD>Specifies the version number of the product.
 	<BR>&nbsp;</DD>
 
 	<DT>c <I>mode user group destination source</I>
