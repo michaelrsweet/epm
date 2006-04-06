@@ -24,7 +24,7 @@ epm - create software packages.
 <i>name
 </i>] [ -n[mrs] ] [ -s
 <i>setup.xpm
-</i>] [ --help ] [ --keep-files ] [ --output-dir
+</i>] [ --depend ] [ --help ] [ --keep-files ] [ --output-dir
 <i>directory
 </i>] [ --setup-image
 <i>setup.xpm
@@ -129,6 +129,8 @@ place output file into. The default directory is based on the
 operating system, version, and architecture.
 <p>The <i>-v</i> option ("verbose") increases the amount of information that is
 reported. Use multiple v's for more verbose output.
+<p>The <i>--depend</i> option lists the dependent (source) files for
+all files in the package.
 <p>Distributions normally are named
 "product-version-system-release-machine.ext" and
 "product-version-system-release-machine-patch.ext" (for patch

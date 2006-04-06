@@ -1,17 +1,17 @@
 <HTML>
 <HEAD>
 	<TITLE>Software Distribution Using the ESP Package Manager</TITLE>
-	<META NAME="Author" CONTENT="Michael Sweet">
+	<META NAME="Author" content="Michael Sweet">
 	<META NAME="Copyright" CONTENT="Copyright 1999-2006 by Easy Software Products">
-	<META NAME="DocNumber" CONTENT="ESP-004-20060404">
+	<META NAME="DocNumber" CONTENT="ESP-004-20060405">
 </HEAD>
 <BODY>
 
 <H1 ALIGN="RIGHT">Preface</H1>
 
-<P>This book provides a tutorial and reference for the ESP
-Package Manager ("EPM") software, version 4.0, and is organized
-into the following chapters and appendices:</P>
+<P>This book provides a tutorial and reference for the ESP Package Manager
+("EPM") software, version 4.0, and is organized into the following chapters
+and appendices:</P>
 
 <UL>
 
@@ -40,9 +40,8 @@ into the following chapters and appendices:</P>
 
 <DL>
 
-	<DT>The names of commands; the first mention of a command or
-	function in a chapter is followed by a manual page section
-	number:
+	<DT>The names of commands; the first mention of a command or function in a
+	chapter is followed by a manual page section number:
 	<BR>&nbsp;</DT>
 
 	<DD><CODE>epm</CODE><BR>
@@ -62,24 +61,22 @@ into the following chapters and appendices:</P>
 	<DD><TT>Request ID is Printer-123</TT>
 	<BR>&nbsp;</DD>
 
-	<DT>Literal user input; special keys like <KBD>ENTER</KBD> are
-	in ALL CAPS:
+	<DT>Literal user input; special keys like <KBD>ENTER</KBD> are in ALL CAPS:
 	<BR>&nbsp;</DT>
 
 	<DD><KBD>lp -d printer filename ENTER</KBD>
 	<BR>&nbsp;</DD>
 
-	<DT>Long commands are broken up on multiple lines using the
-	backslash (\) character; enter the commands without the
-	backslash:
+	<DT>Long commands are broken up on multiple lines using the backslash (\)
+	character; enter the commands without the backslash:
 	<BR>&nbsp;</DT>
 
 	<DD><KBD>foo start of long command \<BR>
-	&nbsp;&nbsp;&nbsp;end of long command ENTER</KBD>
+	&nbsp;&nbsp;&nbsp;&nbsp;end of long command ENTER</KBD>
 	<BR>&nbsp;</DD>
 
-	<DT>Numbers in the text are written using the period (.) to indicate
-	the decimal point:
+	<DT>Numbers in the text are written using the period (.) to indicate the
+	decimal point:
 	<BR>&nbsp;</DT>
 
 	<DD>12.3
@@ -95,14 +92,17 @@ into the following chapters and appendices:</P>
 <DL>
 
 	<DD>kb</DD>
+
 	<DD>Kilobytes, or 1024 bytes
 	<BR>&nbsp;</DD>
 
 	<DD>Mb</DD>
+
 	<DD>Megabytes, or 1048576 bytes
 	<BR>&nbsp;</DD>
 
 	<DD>Gb</DD>
+
 	<DD>Gigabytes, or 1073741824 bytes
 	<BR>&nbsp;</DD>
 
@@ -113,12 +113,14 @@ into the following chapters and appendices:</P>
 
 <DL>
 
-	<DT><A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A></DT>
+	<DT><A
+	HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A></DT>
 
 	<DD>The official home page of the ESP Package Manager software.
 	<BR>&nbsp;</DD>
 
-	<DT><A HREF="http://www.debian.org/devel/">http://www.debian.org/devel/</A></DT>
+	<DT><A
+	HREF="http://www.debian.org/devel/">http://www.debian.org/devel/</A></DT>
 
 	<DD>Debian Developers' Corner
 	<BR>&nbsp;</DD>
@@ -130,7 +132,7 @@ into the following chapters and appendices:</P>
 
 	<DT><A HREF="http://www.rpm.org/">http://www.rpm.org/</A></DT>
 
-	<DD>The RedHat Package Manager home page.
+	<DD>The Red Hat Package Manager home page.
 	<BR>&nbsp;</DD>
 
 	<DT><A HREF="http://docs.sun.com/">http://docs.sun.com/</A></DT>
@@ -142,13 +144,73 @@ into the following chapters and appendices:</P>
 
 <H2>Help Us Improve This Book!</H2>
 
-<P>We've done our best to ensure that this book is both accurate and clear.
-If you find errors or have a suggestion for improving the book, please send
-us an email to "<A
+<P>We've done our best to ensure that this book is both accurate
+and clear. If you find errors or have a suggestion for improving
+the book, please send us an email to "<A
 HREF="mailto:epm-book@easysw.com">epm-book@easysw.com</A>".</P>
 
 <H2>Acknowledgments</H2>
 
+<P>We'd like to thank the following people for their
+contributions to EPM:</P>
+
+<UL>
+
+	<LI>Gareth Armstrong: HP-UX and %release enhancements</LI>
+
+	<LI>Nicolas Bazin: Openserver and Unixware support</LI>
+
+	<LI>Richard Begg: HP-UX fixes</LI>
+
+	<LI>Dirk Datzert: Bug fixes</LI>
+
+	<LI>Alan Eldridge: Makefile and RPM fixes</LI>
+
+	<LI>Vicentini Emanuele: IRIX enhancements</LI>
+
+	<LI>Jeff Harrell: IRIX enhancements</LI>
+
+	<LI>Lars Kellogg-Stedman: Debian fixes</LI>
+
+	<LI>Jochen Kmietsch: mkepmlist fixes</LI>
+
+	<LI>Aneesh Kumar K.V.: Tru64 setld package support</LI>
+
+	<LI>David Lee: Build system improvements</LI>
+
+	<LI>Scott Leerssen: mkepmlist fixes, BSD package support</LI>
+
+	<LI>Jeff Licquia: Debian support/enhancements</LI>
+
+	<LI>David Maltz: AIX fixes</LI>
+
+	<LI>Joel Nordell: SCO fixes</LI>
+
+	<LI>Rok Papez: Bug fixes and absolute output directory support</LI>
+
+	<LI>Holger Paschke: Documentation fixes</LI>
+
+	<LI>Phil Reynolds: OpenBSD fixes</LI>
+
+	<LI>Ganesan Rajagopal: Solaris fixes</LI>
+
+	<LI>Uwe Räsche: AIX support</LI>
+
+	<LI>Ralf Rohm: Solaris fixes</LI>
+
+	<LI>Jochen Schaeuble: epminstall fixes</LI>
+
+	<LI>Jason Shiffer: HP-UX fixes</LI>
+
+	<LI>Andrea Suatoni: IRIX fixes</LI>
+
+	<LI>Andy Walter: QNX support</LI>
+
+	<LI>Geoffrey Wossum: --output-directory option</LI>
+
+	<LI>Jean Yves: BSD package and mkepmlist fixes</LI>
+
+</UL>
 
 </BODY>
 </HTML>
