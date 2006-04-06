@@ -4,7 +4,7 @@
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
 <META NAME="copyright" CONTENT="Copyright 1999-2006 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20060404">
+<META NAME="docnumber" CONTENT="ESP-004-20060405">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: sans-serif }
@@ -59,6 +59,8 @@ A { text-decoration: none }
  License along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
  USA.</SMALL></P>
+<P><SMALL>This book was created solely using free software tools.</SMALL>
+</P>
 <P><SMALL>International Standard Book Number: N-NNN-NNNNN-N</SMALL></P>
 <P><SMALL>First Printing: April 2006</SMALL></P>
 <HR NOSHADE>
@@ -128,20 +130,20 @@ A { text-decoration: none }
 <LI><A HREF="#10_1">Changes in EPM v4.0</A></LI>
 </UL>
 <HR NOSHADE>
-<H1 align="right"><A NAME="1">Preface</A></H1>
+<H1 ALIGN="RIGHT"><A NAME="1">Preface</A></H1>
 <P>This book provides a tutorial and reference for the ESP Package
  Manager (&quot;EPM&quot;) software, version 4.0, and is organized into the
  following chapters and appendices:</P>
 <UL>
-<LI><A href="#INTRO">1 - Introduction to EPM</A></LI>
-<LI><A href="#BUILDING">2 - Building EPM</A></LI>
-<LI><A href="#PACKAGING">3 - Packaging Your Software with EPM</A></LI>
-<LI><A href="#ADVANCED">4 - Advanced Packaging with EPM</A></LI>
-<LI><A href="#EXAMPLES">5 - EPM Packaging Examples</A></LI>
-<LI><A href="#LICENSE">A - Software License Agreement</A></LI>
-<LI><A href="#MANPAGES">B - Command Reference</A></LI>
-<LI><A href="#REFERENCE">C - List File Reference</A></LI>
-<LI><A href="#RELNOTES">D - Release Notes</A></LI>
+<LI><A HREF="#INTRO">1 - Introduction to EPM</A></LI>
+<LI><A HREF="#BUILDING">2 - Building EPM</A></LI>
+<LI><A HREF="#PACKAGING">3 - Packaging Your Software with EPM</A></LI>
+<LI><A HREF="#ADVANCED">4 - Advanced Packaging with EPM</A></LI>
+<LI><A HREF="#EXAMPLES">5 - EPM Packaging Examples</A></LI>
+<LI><A HREF="#LICENSE">A - Software License Agreement</A></LI>
+<LI><A HREF="#MANPAGES">B - Command Reference</A></LI>
+<LI><A HREF="#REFERENCE">C - List File Reference</A></LI>
+<LI><A HREF="#RELNOTES">D - Release Notes</A></LI>
 </UL>
 
 <!-- NEED 6in -->
@@ -171,7 +173,7 @@ A { text-decoration: none }
  (\) character; enter the commands without the backslash:
 <BR> &nbsp;</DT>
 <DD><KBD>foo start of long command \
-<BR> &nbsp;&nbsp;&nbsp;end of long command ENTER</KBD>
+<BR> &nbsp;&nbsp;&nbsp;&nbsp;end of long command ENTER</KBD>
 <BR> &nbsp;</DD>
 <DT>Numbers in the text are written using the period (.) to indicate the
  decimal point:
@@ -198,27 +200,27 @@ A { text-decoration: none }
 <!-- NEED 4in -->
 <H2><A NAME="1_3">Other References</A></H2>
 <DL>
-<DT><A href="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A></DT>
+<DT><A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A></DT>
 <DD>The official home page of the ESP Package Manager software.
 <BR> &nbsp;</DD>
-<DT><A href="http://www.debian.org/devel/">http://www.debian.org/devel/</A>
+<DT><A HREF="http://www.debian.org/devel/">http://www.debian.org/devel/</A>
 </DT>
 <DD>Debian Developers' Corner
 <BR> &nbsp;</DD>
-<DT><A href="http://techpubs.sgi.com/">http://techpubs.sgi.com/</A></DT>
+<DT><A HREF="http://techpubs.sgi.com/">http://techpubs.sgi.com/</A></DT>
 <DD>IRIX Documentation On-Line
 <BR> &nbsp;</DD>
-<DT><A href="http://www.rpm.org/">http://www.rpm.org/</A></DT>
+<DT><A HREF="http://www.rpm.org/">http://www.rpm.org/</A></DT>
 <DD>The Red Hat Package Manager home page.
 <BR> &nbsp;</DD>
-<DT><A href="http://docs.sun.com/">http://docs.sun.com/</A></DT>
+<DT><A HREF="http://docs.sun.com/">http://docs.sun.com/</A></DT>
 <DD>Solaris Documentation On-Line
 <BR> &nbsp;</DD>
 </DL>
 <H2><A NAME="1_4">Help Us Improve This Book!</A></H2>
 <P>We've done our best to ensure that this book is both accurate and
  clear. If you find errors or have a suggestion for improving the book,
- please send us an email to &quot;<A href="mailto:epm-book@easysw.com">
+ please send us an email to &quot;<A HREF="mailto:epm-book@easysw.com">
 epm-book@easysw.com</A>&quot;.</P>
 <H2><A NAME="1_5">Acknowledgments</A></H2>
 <P>We'd like to thank the following people for their contributions to
@@ -368,7 +370,7 @@ Solaris</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"
 <SMALL>Yes</SMALL></TD></TR>
 <TR><TD ALIGN="CENTER"><SMALL>rpm</SMALL></TD><TD ALIGN="CENTER"><SMALL>
 Mandrake
-<BR> RedHat
+<BR> Red Hat
 <BR> SuSE
 <BR> TurboLinux</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD
 ALIGN="CENTER"><SMALL>Yes<SUP>2</SUP></SMALL></TD><TD ALIGN="CENTER"><SMALL>
@@ -456,7 +458,7 @@ fakeroot</CODE> software, introducing potential security risks and
 <P>The Easy Software Products news server provides several newsgroups
  for EPM. You can access it by pointing your news reader at
  &quot;news.easysw.com&quot;.</P>
-<P>Commercial support for EPM and a softcover version of this book are
+<P>Commercial support for EPM and a soft cover version of this book are
  available from <A HREF="http://www.easysw.com/">Easy Software Products</A>
 ; both help fund the continued development of EPM.</P>
 <P>Another way to contribute is by donating code, examples, and bug
@@ -508,7 +510,7 @@ dpkg(8)</CODE>, to generate the software distribution on the development
     <KBD>export CC=/foo/bar/gcc ENTER
     export CXX=/foo/bar/gcc ENTER</KBD>
 </PRE>
-<P>If you are using C shell or TCsh, use the following commands instead:</P>
+<P>If you are using C shell or tcsh, use the following commands instead:</P>
 <PRE>
     <KBD>setenv CC /foo/bar/gcc ENTER
     setenv CXX /foo/bar/gcc ENTER</KBD>
@@ -882,7 +884,7 @@ Figure 3.1</A>). To include the setup program in your distributions,
 <LI><CODE>osx</CODE> - MacOS X software packages.</LI>
 <LI><CODE>pkg</CODE> - Solaris software packages.</LI>
 <LI><CODE>portable</CODE> - Portable software packages (default).</LI>
-<LI><CODE>rpm</CODE> - RedHat software packages.</LI>
+<LI><CODE>rpm</CODE> - Red Hat software packages.</LI>
 <LI><CODE>setld</CODE> - Tru64 (setld) software packages.</LI>
 <LI><CODE>slackware</CODE> - Slackware software packages.</LI>
 </UL>
@@ -1751,9 +1753,9 @@ CUPS_PRIMARY_SYSTEM_GROUP</CODE> variables define the group names to use
     %endif
 </FONT></PRE>
 <H3>Developer Files</H3>
-<P>The developer files include the C header filesm, static libraries,
- and help files. The static libraries are only included if they have
- been built, which is specified using the <CODE>INSTALLSTATIC</CODE>
+<P>The developer files include the C header files, static libraries, and
+ help files. The static libraries are only included if they have been
+ built, which is specified using the <CODE>INSTALLSTATIC</CODE>
  variable:</P>
 <PRE><FONT SIZE="1">
     %subpackage devel
@@ -2718,10 +2720,9 @@ product</I>.list&quot;.
     f 0555 root sys ${bindir}/foo foo
     f 0555 root sys $datadir/foo/foo.dat foo.dat
 </PRE>
-<P>Variable names can be surrounded by curley brackets (${name}) or
- alone ($name); without brackets the name is terminated by the first
- slash (/), dash (-), or whitespace. The dollar sign can be inserted
- using $$.</P>
+<P>Variable names can be surrounded by curly brackets (${name}) or alone
+ ($name); without brackets the name is terminated by the first slash
+ (/), dash (-), or whitespace. The dollar sign can be inserted using $$.</P>
 
 <!-- NEED 5in -->
 <H2><A NAME="SETUPTYPES">The setup.types File</A></H2>
@@ -2729,11 +2730,12 @@ product</I>.list&quot;.
  of software products to install, which is called a &quot;custom&quot; software
  installation.</P>
 <P>If a file called<I> setup.types</I> is present in the package
- directory, the user will instead be presented with a list of instal-
- lation types. Each type has an associated product list which determines
- the products that are installed by default. If a type has no products
- associated with it, then it is treated as a custom installation and the
- user is presented with a list of packages to choose from.</P>
+ directory, the user will instead be presented with a list of
+ installation types. Each type has an associated product list which
+ determines the products that are installed by default. If a type has no
+ products associated with it, then it is treated as a custom
+ installation and the user is presented with a list of packages to
+ choose from.</P>
 <P>The<I> setup.types</I> file is an ASCII text file consisting of type
  and product lines. Comments can be inserted by starting a line with the
  pound sign (#). Each installation type is defined by a line starting
