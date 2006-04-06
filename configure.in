@@ -22,8 +22,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=5.0svn
-VERNUMBER=491
+VERSION=4.0
+VERNUMBER=400
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -136,7 +136,7 @@ if test "x$FLTKCONFIG" = x; then
 	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x.])
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
-	GUIS="epmeditor setup uninst"
+	GUIS="setup uninst"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
 

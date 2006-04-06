@@ -3,7 +3,6 @@ CHANGES - ESP Package Manager (EPM) 4.0
 
 EPM 4.0
 
-	- New GUI editor for list files.
 	- New subpackage support for creating multiple dependent
 	  packages or a combined package with selectable
 	  subpackages, depending on the package format.
