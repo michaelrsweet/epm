@@ -31,7 +31,7 @@ svn export $url /tmp/epm-$version
 
 echo Cleaning source directory...
 cd /tmp/epm-$version
-rm -f makesrcdist
+rm -f makesrcdist ANNOUNCEMENT
 cd ..
 
 echo -n Archiving...gz

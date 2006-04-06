@@ -1,71 +1,67 @@
 ----HTML-PRESS-RELEASE---------------------------------------------------
 
-<H1>ESP Package Manager 3.7 Released</H1>
+<H1>ESP Package Manager 4.0 Released</H1>
 
-<P><B>Hollywood, MD (December 22, 2003)</B> -- Easy Software
-Products today announced the 3.7 release of the ESP Package
-Manager ("EPM"), a cross-platform software distribution program
-for UNIX.
+<P>The 4.0 release of the ESP Package Manager ("EPM") is now
+available for download.  The new release adds support for
+subpackages, compressed portable packages, MacOS X disk images,
+and custom platform names and release numbers.  It is available
+on-line at:</P>
 
-<P>EPM v3.7 adds Slackware package support and fixes some bugs
-discovered in package generation for several operating systems.
-The new release is available on-line at:
-
-<UL><PRE>
-<A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
-</PRE></UL>
+<PRE>
+    <A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
+</PRE>
 
 <P>EPM is a software packaging tool for all versions of UNIX that
 generates software and patch distributions in various formats,
-including:
+including:</P>
 
 <UL>
 
-	<LI>AIX software packages ("installp")
+	<LI>AIX software packages ("installp")</LI>
 
-	<LI>AT&T software packages ("pkgadd"), used by Solaris and others
+	<LI>AT&amp;T software packages ("pkgadd"), used by
+	Solaris and others</LI>
 
-	<LI>BSD packages ("pkg_create")
+	<LI>BSD packages ("pkg_create")</LI>
 
-	<LI>Compaq Tru64 UNIX ("setld")
+	<LI>Compaq Tru64 UNIX ("setld")</LI>
 
-	<LI>Debian Package Manager ("dpkg")
+	<LI>Debian Package Manager ("dpkg")</LI>
 
-	<LI>HP-UX software packages ("swinstall")
+	<LI>HP-UX software packages ("swinstall")</LI>
 
-	<LI>IRIX software manager ("inst", "swmgr", or "tardist")
+	<LI>IRIX software manager ("inst", "swmgr", or "tardist")</LI>
 
-	<LI>MacOS X software packages ("name.pkg")
+	<LI>MacOS X software packages ("name.pkg" and "name.mpkg")</LI>
 
-	<LI>Portable (installation and removal scripts with tar files)
+	<LI>Portable (installation and removal scripts with tar files)</LI>
 
-	<LI>Red Hat Package Manager ("rpm")
+	<LI>Red Hat Package Manager ("rpm")</LI>
 
-	<LI>Slackware software packages ("name.pkg")
+	<LI>Slackware software packages ("name.pkg")</LI>
 
 </UL>
 
 <P>EPM also includes graphical "setup" and "uninstall" programs
-that can be provided with your distributions to make
-installation and removal of more than one package a snap.
+that can be provided with your distributions to make installation
+and removal of more than one package a snap.</P>
 
 <P>EPM is provided under the terms of the GNU General Public
-License.  Please contact Easy Software Products at
-<A HREF="mailto:info@easysw.com">info@easysw.com</A> for
-commercial support.
+License.  Please contact Easy Software Products at <A
+HREF="mailto:info@easysw.com">info@easysw.com</A> for commercial
+support.</P>
+
 
 ----TEXT-PRESS-RELEASE---------------------------------------------------
 
-ESP Package Manager 3.7 Released
+ESP Package Manager 4.0 Released
 
-Hollywood, MD (December 22, 2003) -- Easy Software Products
-today announced the 3.7 release of the ESP Package Manager
-("EPM"), a cross-platform software distribution program for
-UNIX.
-
-EPM v3.7 adds Slackware package support and fixes some bugs
-discovered in package generation for several operating systems. 
-The new release is available on-line at:
+The 4.0 release of the ESP Package Manager ("EPM") is now
+available for download.  The new release adds support for
+subpackages, compressed portable packages, MacOS X disk images,
+and custom platform names and release numbers.  It is available
+on-line at:
 
     http://www.easysw.com/epm/
 
@@ -81,7 +77,7 @@ including:
     - Debian Package Manager ("dpkg")
     - HP-UX software packages ("swinstall")
     - IRIX software manager ("inst", "swmgr", or "tardist")
-    - MacOS X software packages ("name.pkg")
+    - MacOS X software packages ("name.pkg" and "name.mpkg")
     - Portable (installation and removal scripts with tar files)
     - Red Hat Package Manager ("rpm")
     - Slackware software packages ("name.pkg")
@@ -93,4 +89,3 @@ installation and removal of more than one package a snap.
 EPM is provided under the terms of the GNU General Public
 License.  Please contact Easy Software Products at
 "info@easysw.com" for commercial support.
-
