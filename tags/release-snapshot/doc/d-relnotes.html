@@ -1,0 +1,51 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
+
+<P>This appendix lists the change log for each release of the
+EPM software.</P>
+
+<H2>Changes in EPM v4.0</H2>
+
+<UL>
+
+	<LI>New subpackage support for creating multiple dependent
+	packages or a combined package with selectable
+	subpackages, depending on the package format.
+	<LI>Added support for compressing the package files in
+	portable packages (reduces disk space requirements on
+	platforms that provide gzip...)
+	<LI>Added support for custom platform names via the new
+	"-m name" option.
+	<LI>Added support for non-numeric %release values.
+	<LI>Added new --depend option to list all of the source
+	files that a package depends on.
+	<LI>The setup GUI now sets the EPM_INSTALL_TYPE environment
+	variable to the value of the selected TYPE line in the
+	setup.types file.
+	<LI>Fixed NetBSD and OpenBSD packaging support - no longer
+	use FreeBSD-specific extensions to pkg_create on those
+	variants.
+	<LI>Fixed PowerPC platform support for RPM and Debian
+	packages.
+	<LI>Many fixes to AIX package support.
+	<LI>Tru64 packages with init scripts now work when
+	installing for the first time.
+	<LI>RPM file dependencies should now work properly.
+	<LI>Portable product names containing spaces will now
+	display properly.
+
+</UL>
+
+<!-- NEW SHEET 
+     HEADER CENTER ""
+     FOOTER LEFT ""
+     FOOTER RIGHT "" -->
+<P>&nbsp;</P>
+
+<!-- NEW SHEET -->
+<P>&nbsp;</P>
+
+</BODY>
+</HTML>
