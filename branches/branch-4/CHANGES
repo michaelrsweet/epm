@@ -1,5 +1,11 @@
-CHANGES - ESP Package Manager (EPM) 4.0
----------------------------------------
+CHANGES - ESP Package Manager (EPM) 4.0.1
+-----------------------------------------
+
+EPM 4.0.1
+
+	- EPM now only warns about package names containing
+	  characters other than letters and numbers.
+
 
 EPM 4.0
 
@@ -28,6 +34,7 @@ EPM 4.0
 	- RPM file dependencies should now work properly.
 	- Portable product names containing spaces will now
 	  display properly.
+
 
 EPM 3.7.1
 
