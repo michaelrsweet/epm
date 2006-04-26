@@ -406,8 +406,8 @@ main(int  argc,				/* I - Number of command-line args */
   for (i = 0; prodname[i]; i ++)
     if (!isalnum(prodname[i] & 255))
     {
-      puts("epm: Product names can only contain letters and numbers!");
-      usage();
+      puts("epm: Product names should only contain letters and numbers!");
+      break;
     }
 
   if (!listname[0])

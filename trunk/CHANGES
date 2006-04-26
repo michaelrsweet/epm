@@ -1,5 +1,14 @@
-CHANGES - ESP Package Manager (EPM) 4.0
+CHANGES - ESP Package Manager (EPM) 5.0
 ---------------------------------------
+
+EPM 5.0
+
+
+EPM 4.0.1
+
+	- EPM now only warns about package names containing
+	  characters other than letters and numbers.
+
 
 EPM 4.0
 
