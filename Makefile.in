@@ -152,7 +152,7 @@ distclean:
 # Install all targets...
 #
 
-install: epm @INSTALL_GUIS@ @INSTALL_OSX@
+install: all @INSTALL_GUIS@ @INSTALL_OSX@
 	echo Installing EPM programs in $(bindir)
 	-$(MKDIR) $(bindir)
 	$(RM) $(bindir)/epm
@@ -330,6 +330,7 @@ swinstall depot: $(TARGETS)
 
 libepm.a:	$(EPM_OBJS)
 	echo Archiving libepm.a...
+	$(RM) libepm.a
 	$(AR) $(ARFLAGS) libepm.a $(EPM_OBJS)
 	$(RANLIB) libepm.a
 
