@@ -691,6 +691,61 @@ write_combined(const char *title,	/* I - Title */
            tarfilename);
   }
 
+#ifdef __APPLE__
+  {
+    char	dmgfilename[1024];	/* Disk image filename */
+
+
+   /*
+    * Make a disk image containing the package files...
+    */
+
+    if (dist->release[0])
+      snprintf(filename, sizeof(filename), "%s/%s-%s-%s", directory, prodname,
+	       dist->version, dist->release);
+    else
+      snprintf(filename, sizeof(filename), "%s/%s-%s", directory, prodname,
+	       dist->version);
+
+    if (!strcmp(title, "patch"))
+      strlcat(filename, "-patch", sizeof(filename));
+
+    if (platname[0])
+    {
+      strlcat(filename, "-", sizeof(filename));
+      strlcat(filename, platname, sizeof(filename));
+    }
+
+    snprintf(dmgfilename, sizeof(dmgfilename), "%s.dmg", filename);
+
+    mkdir(filename, 0777);
+
+    if (run_command(filename, "tar xvzf ../%s", strrchr(tarfilename, '/') + 1))
+    {
+      fputs("epm: Unable to create disk image template folder!\n", stderr);
+      return (1);
+    }
+
+    if (run_command(NULL, "hdiutil create -ov -srcfolder %s %s",
+		    filename, dmgfilename))
+    {
+      fputs("epm: Unable to create disk image!\n", stderr);
+      return (1);
+    }
+
+    if (!KeepFiles)
+      run_command(NULL, "/bin/rm -rf %s", filename);
+
+    if (Verbosity)
+    {
+      stat(dmgfilename, &srcstat);
+
+      printf("    %7.0fk %s\n", (srcstat.st_size + 1023) / 1024.0,
+	     dmgfilename);
+    }
+  }
+#endif /* __APPLE__ */
+
   return (0);
 }
 
