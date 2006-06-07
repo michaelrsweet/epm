@@ -529,8 +529,16 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   char	line[1024],			/* Line from file */
 	*ptr;				/* Pointer into line */
   int	major, minor;			/* Major and minor release numbers */
+#endif /* __APPLE__ */
 
 
+ /*
+  * Get the system identification information...
+  */
+
+  uname(platform);
+
+#ifdef __APPLE__
  /*
   * Try to get the OS version number from the SystemVersion.plist file.
   * If not present, use the uname() results for Darwin...
@@ -569,13 +577,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
 
     strcpy(platform->sysname, "macosx");
   }
-  else
 #endif /* __APPLE__ */
- /*
-  * Get the system identification information...
-  */
-
-  uname(platform);
 
  /*
   * Adjust the CPU type accordingly...
