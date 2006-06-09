@@ -5,6 +5,8 @@ EPM 4.0.1
 
 	- EPM now only warns about package names containing
 	  characters other than letters and numbers.
+	- EPM now generates disk images as well as a .tar.gz
+	  file when creating portable packages on MacOS X.
 
 
 EPM 4.0
