@@ -117,6 +117,26 @@ make_deb(const char     *prodname,	/* I - Product short name */
     tar_close(tarfile);
   }
 
+ /*
+  * Remove temporary files...
+  */
+
+  if (!KeepFiles && dist->num_subpackages)
+  {
+    if (Verbosity)
+      puts("Removing temporary distribution files...");
+
+   /*
+    * Remove .deb files since they are now in a .tgz file...
+    */
+
+    unlink_package("deb", prodname, directory, platname, dist, NULL);
+
+    for (i = 0; i < dist->num_subpackages; i ++)
+      unlink_package("deb", prodname, directory, platname, dist,
+                     dist->subpackages[i]);
+  }
+
   return (0);
 }
 
