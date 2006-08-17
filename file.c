@@ -1,5 +1,5 @@
 /*
- * "$Id: file.c,v 1.19 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
  *   File functions for the ESP Package Manager (EPM).
  *
@@ -22,6 +22,7 @@
  *   make_link()      - Make a symbolic link.
  *   strip_execs()    - Strip symbols from executable files in the
  *                      distribution.
+ *   unlink_package() - Delete a package file.
  */
 
 /*
@@ -260,5 +261,60 @@ strip_execs(dist_t *dist)		/* I - Distribution to strip... */
 
 
 /*
- * End of "$Id: file.c,v 1.19 2005/01/11 21:36:57 mike Exp $".
+ * 'unlink_package()' - Delete a package file.
+ */
+
+int					/* O - 0 on success, -1 on failure */
+unlink_package(const char *ext,		/* I - Package filename extension */
+               const char *prodname,	/* I - Product short name */
+	       const char *directory,	/* I - Directory for distribution files */
+               const char *platname,	/* I - Platform name */
+               dist_t     *dist,	/* I - Distribution information */
+	       const char *subpackage)	/* I - Subpackage */
+{
+  char		prodfull[255],		/* Full name of product */
+		name[1024],		/* Full product name */
+		filename[1024];		/* File to archive */
+
+
+ /*
+  * Figure out the full name of the distribution...
+  */
+
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
+ /*
+  * Then the subdirectory name...
+  */
+
+  if (dist->release[0])
+    snprintf(name, sizeof(name), "%s-%s-%s", prodfull, dist->version,
+             dist->release);
+  else
+    snprintf(name, sizeof(name), "%s-%s", prodfull, dist->version);
+
+  if (platname[0])
+  {
+    strlcat(name, "-", sizeof(name));
+    strlcat(name, platname, sizeof(name));
+  }
+
+  strlcat(name, ".", sizeof(name));
+  strlcat(name, ext, sizeof(name));
+
+ /*
+  * Remove the package file...
+  */
+
+  snprintf(filename, sizeof(filename), "%s/%s", directory, name);
+
+  return (unlink(filename));
+}
+
+
+/*
+ * End of "$Id$".
  */

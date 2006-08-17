@@ -321,6 +321,9 @@ extern int	tar_package(tarf_t *tar, const char *ext,
 		            const char *prodname, const char *directory,
 		            const char *platname, dist_t *dist,
 			    const char *subpackage);
+extern int	unlink_package(const char *ext, const char *prodname,
+		               const char *directory, const char *platname,
+			       dist_t *dist, const char *subpackage);
 extern int	write_dist(const char *listname, dist_t *dist);
 
 

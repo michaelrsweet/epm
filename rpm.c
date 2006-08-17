@@ -330,6 +330,19 @@ make_rpm(const char     *prodname,	/* I - Product short name */
     run_command(NULL, "/bin/rm -rf %s/buildroot", directory);
 
     unlink(specname);
+
+    if (dist->num_subpackages)
+    {
+     /*
+      * Remove .rpm files since they are now in a .tgz file...
+      */
+
+      unlink_package("rpm", prodname, directory, platname, dist, NULL);
+
+      for (i = 0; i < dist->num_subpackages; i ++)
+	unlink_package("rpm", prodname, directory, platname, dist,
+                       dist->subpackages[i]);
+    }
   }
 
   return (0);
