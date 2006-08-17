@@ -3,6 +3,9 @@ CHANGES - ESP Package Manager (EPM) 4.0.1
 
 EPM 4.0.1
 
+	- EPM now removes the individual .rpm and .deb files when
+	  creating a package with subpackages unless the -k
+	  option (keep files) is used.
 	- EPM now only warns about package names containing
 	  characters other than letters and numbers.
 	- EPM now generates disk images as well as a .tar.gz
