@@ -221,6 +221,8 @@ make_osx(const char     *prodname,	/* I - Product short name */
       fputs("                </dict>\n", fp);
     }
     fputs("        </array>\n", fp);
+    fputs("        <key>CFBundleIdentifier</key>\n", fp);
+    fprintf(fp, "        <string>%s</string>\n", prodname);
     fputs("        <key>CFBundleName</key>\n", fp);
     fprintf(fp, "        <string>%s</string>\n", dist->product);
     fputs("        <key>CFBundleGetInfoString</key>\n", fp);
@@ -251,12 +253,14 @@ make_osx(const char     *prodname,	/* I - Product short name */
     if (pm_paths[i])
       run_command(NULL, "%s/Contents/MacOS/PackageMaker -build "
 			"-p %s/%s.mpkg "
+//		        "-mi %s/Packages "
 		        "-f %s/MetaPackage "
 			"-r %s/MetaResources "
 			"-d %s/%s-metadesc.plist "
 			"-i %s/%s-metainfo.plist",
 		  pm_paths[i],
 		  filename, prodname,
+//		  filename,
 		  filename,
 		  filename,
 		  filename, prodname,
