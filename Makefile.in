@@ -267,13 +267,15 @@ config.h:	config.h.in configure
 #
 
 test:	$(TARGETS)
-	if ./epm -v epm >test.log; then \
+	echo Starting portable distribution build test...
+	if ./epm -vv epm >test.log; then \
 		echo Portable distribution build test PASSED.; \
 	else \
 		echo Portable distribution build test FAILED.; \
 		cat test.log; \
 	fi
-	if ./epm -v -s doc/epmlogo.tif -f native epm >test.log; then \
+	echo Starting native distribution build test...
+	if ./epm -vv -s doc/epmlogo.tif -f native epm >test.log; then \
 		echo Native distribution build test PASSED.; \
 	else \
 		echo Native distribution build test FAILED.; \
