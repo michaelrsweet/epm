@@ -311,7 +311,14 @@ unlink_package(const char *ext,		/* I - Package filename extension */
 
   snprintf(filename, sizeof(filename), "%s/%s", directory, name);
 
-  return (unlink(filename));
+  if (unlink(filename))
+  {
+    fprintf(stderr, "epm: Unable to remove \"%s\" - %s\n", filename,
+            strerror(errno));
+    return (-1);
+  }
+  else
+    return (0);
 }
 
 
