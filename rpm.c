@@ -105,6 +105,8 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
   fprintf(fp, "Name: %s\n", prodname);
   fprintf(fp, "Version: %s\n", dist->version);
+  if (dist->epoch)
+    fprintf(fp, "Epoch: %d\n", dist->epoch);
   fprintf(fp, "Release: %s\n", release);
   fprintf(fp, "License: %s\n", dist->copyright);
   fprintf(fp, "Packager: %s\n", dist->packager);
