@@ -316,11 +316,7 @@ fi
 
 dnl EPM_SOFTWARE needs special attention for the default location...
 if test x$softwaredir = x; then
-	if test "$prefix" = "/usr"; then
-		EPM_SOFTWARE="/etc/software"
-	else
-		EPM_SOFTWARE="$prefix/etc/software"
-	fi
+	EPM_SOFTWARE="/etc/software"
 else
 	EPM_SOFTWARE="$softwaredir"
 fi

@@ -936,10 +936,22 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	{
 	  subpkg = find_subpackage(dist, temp);
 	}
-	else if (strcmp(line, "%version") == 0)
+	else if (!strcmp(line, "%version"))
 	{
           if (!dist->version[0])
 	  {
+	    if (strchr(temp, ':'))
+	    {
+	     /*
+	      * Grab the epoch...
+	      */
+
+	      dist->epoch = strtol(temp, &temp, 10);
+
+	      if (*temp == ':')
+	        temp ++;
+	    }
+
             strlcpy(dist->version, temp, sizeof(dist->version));
 	    if ((temp = strchr(dist->version, ' ')) != NULL)
 	    {
