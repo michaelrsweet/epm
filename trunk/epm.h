@@ -217,7 +217,8 @@ typedef struct				/**** Distribution Structure ****/
   char		**subpackages;		/* Subpackage names */
   int		num_descriptions;	/* Number of description strings */
   description_t	*descriptions;		/* Description strings */
-  int		vernumber;		/* Version number */
+  int		vernumber,		/* Version number */
+		epoch;			/* Epoch number */
   int		num_commands;		/* Number of commands */
   command_t	*commands;		/* Commands */
   int		num_depends;		/* Number of dependencies */
