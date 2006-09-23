@@ -3,7 +3,7 @@
 //
 //   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2005 by Easy Software Products.
+//   Copyright 1999-2006 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 //   install_dist() - Install a distribution...
 //   list_cb()      - Handle selections in the software list.
 //   load_image()   - Load the setup image file (setup.gif/xpm)...
+//   load_readme()  - Load the readme file...
 //   load_types()   - Load the installation types from the setup.types file.
 //   log_cb()       - Add one or more lines of text to the installation log.
 //   next_cb()      - Show software selections or install software.
@@ -76,6 +77,18 @@ AuthorizationRef SetupAuthorizationRef;
 
 
 //
+// Panes...
+//
+
+#define PANE_WELCOME	0
+#define PANE_TYPE	1
+#define PANE_SELECT	2
+#define PANE_CONFIRM	3
+#define PANE_LICENSE	4
+#define PANE_INSTALL	5
+
+
+//
 // Define a C API function type for comparisons...
 //
 
@@ -91,6 +104,7 @@ typedef int (*compare_func_t)(const void *, const void *);
 void	get_dists(const char *d);
 int	install_dist(const dist_t *dist);
 void	load_image(void);
+void	load_readme(void);
 void	load_types(void);
 void	log_cb(int fd, int *fdptr);
 void	update_sizes(void);
@@ -108,10 +122,8 @@ main(int  argc,			// I - Number of command-line arguments
   const char	*distdir;	// Distribution directory
 
 
-#if !defined(__hpux) && !defined(__sun) && !defined(__osf) && !defined(_AIX)
-  // Use modern "skin" for modern OS's...
-  Fl::scheme("plastic");
-#endif // !__hpux && !__sun && !__osf && !_AIX
+  // Use GTK+ scheme for all operating systems...
+  Fl::scheme("gtk+");
 
 #ifdef __APPLE__
   // OSX passes an extra command-line option when run from the Finder.
@@ -146,9 +158,6 @@ main(int  argc,			// I - Number of command-line arguments
   else
     distdir = ".";
 #else
-  // Use the default scheme on this system...
-  Fl::scheme(NULL);
-
   // Get the directory that has the software in it...
   if (argc > 1)
     distdir = argv[1];
@@ -158,11 +167,16 @@ main(int  argc,			// I - Number of command-line arguments
 
   w = make_window();
 
-  WelcomePane->show();
+  Pane[PANE_WELCOME]->show();
   PrevButton->deactivate();
   NextButton->deactivate();
 
+  get_installed();
+  get_dists(distdir);
+
   load_image();
+  load_readme();
+  load_types();
 
   w->show(1, argv);
 
@@ -202,11 +216,6 @@ main(int  argc,			// I - Number of command-line arguments
     return (1);
   }
 #endif // __APPLE__
-
-  get_installed();
-  get_dists(distdir);
-
-  load_types();
 
   NextButton->activate();
 
@@ -382,22 +391,25 @@ install_dist(const dist_t *dist)	// I - Distribution to install
     liclength = licinfo.st_size;
 
     // Set the title string...
-    snprintf(liclabel, sizeof(liclabel), "Software License for %s", dist->name);
-    LicensePane->label(liclabel);
+    snprintf(liclabel, sizeof(liclabel), "Software License for %s:", dist->name);
+    LicenseBrowser->label(liclabel);
 
     // Load the license into the browser...
     LicenseBrowser->clear();
     LicenseBrowser->load(licfile);
 
     // Show the license window and wait for the user...
-    LicensePane->show();
+    Pane[PANE_LICENSE]->show();
+    Title[PANE_LICENSE]->activate();
     LicenseAccept->clear();
     LicenseDecline->clear();
     NextButton->deactivate();
     CancelButton->activate();
 
-    while (LicensePane->visible())
+    while (Pane[PANE_LICENSE]->visible())
       Fl::wait();
+
+    Title[PANE_INSTALL]->deactivate();
 
     CancelButton->deactivate();
     NextButton->deactivate();
@@ -636,6 +648,78 @@ load_image(void)
 
 
 //
+// 'load_readme()' - Load the readme file...
+//
+
+void
+load_readme(void)
+{
+  FILE		*fp;			// File pointer
+  struct stat	info;			// Info about file
+  char		*buffer,		// File buffer
+		*ptr;			// Pointer into buffer
+
+
+  fp = fopen("setup.readme", "r");
+
+  if (!fp || stat("setup.readme", &info))
+  {
+    int		i;			// Looping var
+    dist_t	*dist;			// Current distribution
+
+
+    buffer = new char[1024 + NumDists * 300];
+
+    strcpy(buffer,
+           "<p>This program allows you to install the following software:</p>\n"
+	   "<ul>\n");
+    ptr = buffer + strlen(buffer);
+
+    for (i = NumDists, dist = Dists; i > 0; i --, dist ++)
+    {
+      sprintf(ptr, "<li>%s, %s</li>\n", dist->name, dist->version);
+      ptr += strlen(ptr);
+    }
+
+    strcpy(ptr, "</ul>");
+  }
+  else
+  {
+    int	ch;				// First character of file
+
+
+    ptr = buffer = new char[info.st_size + 12];
+
+    if ((ch = getc(fp)) != '<')
+    {
+      strcpy(ptr, "<pre>");
+      ptr += 5;
+    }
+
+    *ptr++ = ch;
+
+    fread(ptr, 1, info.st_size - 1, fp);
+    ptr += info.st_size - 1;
+
+    if (ch == '<')
+      *ptr = '\0';
+    else
+      strcpy(ptr, "</pre>");
+  }
+
+  if (fp)
+    fclose(fp);
+ 
+  ReadmeFile->textsize(14);
+  ReadmeFile->value(buffer);
+
+  delete[] buffer;
+}
+
+//  if (access("setup.types")
+
+
+//
 // 'load_types()' - Load the installation types from the setup.types file.
 //
 
@@ -731,6 +815,14 @@ load_types(void)
 
     fclose(fp);
   }
+  else
+  {
+    Title[PANE_TYPE]->hide();
+    Title[PANE_SELECT]->position(10, 35);
+    Title[PANE_CONFIRM]->position(10, 60);
+    Title[PANE_LICENSE]->position(10, 85);
+    Title[PANE_INSTALL]->position(10, 110);
+  }
 
   for (i = 0, dt = InstTypes; i < NumInstTypes; i ++, dt ++)
   {
@@ -823,12 +915,12 @@ next_cb(Fl_Button *, void *)
 
   PrevButton->deactivate();
 
-  if (Wizard->value() == TypePane)
+  if (Wizard->value() == Pane[PANE_TYPE])
   {
     if (NumInstTypes == 0)
       Wizard->next();
   }
-  else if (Wizard->value() == SoftwarePane)
+  else if (Wizard->value() == Pane[PANE_SELECT])
   {
     if (NumInstTypes)
       PrevButton->activate();
@@ -851,7 +943,7 @@ next_cb(Fl_Button *, void *)
     }
   }
 
-  if (Wizard->value() == ConfirmPane)
+  if (Wizard->value() == Pane[PANE_CONFIRM])
   {
     ConfirmList->clear();
     PrevButton->activate();
@@ -860,10 +952,10 @@ next_cb(Fl_Button *, void *)
       if (SoftwareList->checked(i + 1))
         ConfirmList->add(SoftwareList->text(i + 1));
   }
-  else if (Wizard->value() == LicensePane)
+  else if (Wizard->value() == Pane[PANE_LICENSE])
     Wizard->next();
 
-  if (Wizard->value() == InstallPane && !installing)
+  if (Wizard->value() == Pane[PANE_INSTALL] && !installing)
   {
     installing = 1;
 
@@ -879,7 +971,7 @@ next_cb(Fl_Button *, void *)
 
         InstallPercent->value(100.0 * progress / SoftwareList->nchecked());
 	InstallPercent->label(message);
-	InstallPane->redraw();
+	Pane[PANE_INSTALL]->redraw();
 
         if ((error = install_dist(Dists + i)) != 0)
 	  break;
@@ -894,7 +986,7 @@ next_cb(Fl_Button *, void *)
     else
       InstallPercent->label("Installation Complete");
 
-    InstallPane->redraw();
+    Pane[PANE_INSTALL]->redraw();
 
     CancelButton->activate();
 
@@ -902,9 +994,17 @@ next_cb(Fl_Button *, void *)
 
     installing = 0;
   }
-  else if (Wizard->value() == SoftwarePane &&
+  else if (Wizard->value() == Pane[PANE_SELECT] &&
            SoftwareList->nchecked() == 0)
     NextButton->deactivate();
+
+  for (i = 0; i <= PANE_INSTALL; i ++)
+  {
+    Title[i]->activate();
+
+    if (Pane[i]->visible())
+      break;
+  }
 }
 
 
