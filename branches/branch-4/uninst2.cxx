@@ -3,7 +3,7 @@
 //
 //   ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2005 by Easy Software Products.
+//   Copyright 1999-2006 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 //   main()           - Main entry for software wizard...
 //   list_cb()        - Handle selections in the software list.
 //   load_image()     - Load the setup image file (setup.gif/xpm)...
+//   load_readme()    - Load the readme file...
 //   log_cb()         - Add one or more lines of text to the removal log.
 //   next_cb()        - Show software selections or remove software.
 //   remove_dist()    - Remove a distribution...
@@ -74,10 +75,21 @@ AuthorizationRef SetupAuthorizationRef;
 
 
 //
+// Panes...
+//
+
+#define PANE_WELCOME	0
+#define PANE_SELECT	1
+#define PANE_CONFIRM	2
+#define PANE_REMOVE	3
+
+
+//
 // Local functions...
 //
 
 void	load_image(void);
+void	load_readme(void);
 void	log_cb(int fd, int *fdptr);
 int	remove_dist(const dist_t *dist);
 void	show_installed(void);
@@ -95,10 +107,8 @@ main(int  argc,			// I - Number of command-line arguments
   Fl_Window	*w;		// Main window...
 
 
-#if !defined(__hpux) && !defined(__sun) && !defined(__osf) && !defined(_AIX)
-  // Use modern "skin" for modern OS's...
-  Fl::scheme("plastic");
-#endif // !__hpux && !__sun && !__osf && !_AIX
+  // Use GTK+ scheme for all operating systems...
+  Fl::scheme("gtk+");
 
 #ifdef __APPLE__
   // OSX passes an extra command-line option when run from the Finder.
@@ -124,18 +134,19 @@ main(int  argc,			// I - Number of command-line arguments
       }
     }
   }
-#else
-  // Use the default scheme on this system...
-  Fl::scheme(NULL);
 #endif // __APPLE__
 
   w = make_window();
 
-  WelcomePane->show();
+  Pane[PANE_WELCOME]->show();
   PrevButton->deactivate();
   NextButton->deactivate();
 
+  get_installed();
+  show_installed();
+
   load_image();
+  load_readme();
 
   w->show(1, argv);
 
@@ -175,9 +186,6 @@ main(int  argc,			// I - Number of command-line arguments
     return (1);
   }
 #endif // __APPLE__
-
-  get_installed();
-  show_installed();
 
   NextButton->activate();
 
@@ -310,6 +318,75 @@ load_image(void)
 
 
 //
+// 'load_readme()' - Load the readme file...
+//
+
+void
+load_readme(void)
+{
+  FILE		*fp;			// File pointer
+  struct stat	info;			// Info about file
+  char		*buffer,		// File buffer
+		*ptr;			// Pointer into buffer
+
+
+  fp = fopen("uninst.readme", "r");
+
+  if (!fp || stat("uninst.readme", &info))
+  {
+    int		i;			// Looping var
+    dist_t	*dist;			// Current distribution
+
+
+    buffer = new char[1024 + NumDists * 300];
+
+    strcpy(buffer, "<p>This program allows you to remove the following "
+                   "software:</p>\n"
+		   "<ul>\n");
+    ptr = buffer + strlen(buffer);
+
+    for (i = NumInstalled, dist = Installed; i > 0; i --, dist ++)
+    {
+      sprintf(ptr, "<li>%s, %s</li>\n", dist->name, dist->version);
+      ptr += strlen(ptr);
+    }
+
+    strcpy(ptr, "</ul>");
+  }
+  else
+  {
+    int	ch;				// First character of file
+
+
+    ptr = buffer = new char[info.st_size + 12];
+
+    if ((ch = getc(fp)) != '<')
+    {
+      strcpy(ptr, "<pre>");
+      ptr += 5;
+    }
+
+    *ptr++ = ch;
+
+    fread(ptr, 1, info.st_size - 1, fp);
+    ptr += info.st_size - 1;
+
+    if (ch == '<')
+      *ptr = '\0';
+    else
+      strcpy(ptr, "</pre>");
+  }
+
+  if (fp)
+    fclose(fp);
+ 
+  ReadmeFile->value(buffer);
+
+  delete[] buffer;
+}
+
+
+//
 // 'log_cb()' - Add one or more lines of text to the removal log.
 //
 
@@ -378,7 +455,7 @@ next_cb(Fl_Button *, void *)
 
   PrevButton->deactivate();
 
-  if (Wizard->value() == ConfirmPane)
+  if (Wizard->value() == Pane[PANE_CONFIRM])
   {
     ConfirmList->clear();
     PrevButton->activate();
@@ -388,7 +465,7 @@ next_cb(Fl_Button *, void *)
         ConfirmList->add(SoftwareList->text(i + 1));
   }
 
-  if (Wizard->value() == RemovePane && !removing)
+  if (Wizard->value() == Pane[PANE_REMOVE] && !removing)
   {
     removing = 1;
 
@@ -404,7 +481,7 @@ next_cb(Fl_Button *, void *)
 
         RemovePercent->value(100.0 * progress / SoftwareList->nchecked());
 	RemovePercent->label(message);
-	RemovePane->redraw();
+	Pane[PANE_REMOVE]->redraw();
 
         if ((error = remove_dist(Installed + i)) != 0)
 	  break;
@@ -419,7 +496,7 @@ next_cb(Fl_Button *, void *)
     else
       RemovePercent->label("Removal Complete");
 
-    RemovePane->redraw();
+    Pane[PANE_REMOVE]->redraw();
 
     CancelButton->activate();
 
@@ -427,7 +504,7 @@ next_cb(Fl_Button *, void *)
 
     removing = 0;
   }
-  else if (Wizard->value() == SoftwarePane &&
+  else if (Wizard->value() == Pane[PANE_SELECT] &&
            SoftwareList->nchecked() == 0)
     NextButton->deactivate();
 }
