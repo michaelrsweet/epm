@@ -37,7 +37,7 @@ list_cb(0,0);
 
 Fl_Browser *ConfirmList=(Fl_Browser *)0;
 
-Fl_Browser *LicenseBrowser=(Fl_Browser *)0;
+Fl_Help_View *LicenseFile=(Fl_Help_View *)0;
 
 Fl_Round_Button *LicenseAccept=(Fl_Round_Button *)0;
 
@@ -349,7 +349,7 @@ static void cb_CancelButton(Fl_Button*, void*) {
 }
 
 Fl_Double_Window* make_window() {
-  { SetupWindow = new Fl_Double_Window(600, 330, "Install");
+  { SetupWindow = new Fl_Double_Window(640, 330, "Install");
     SetupWindow->callback((Fl_Callback*)cb_SetupWindow);
     { Title[0] = new Fl_Box(10, 10, 130, 25, "Welcome");
       Title[0]->labelfont(1);
@@ -380,65 +380,64 @@ Fl_Double_Window* make_window() {
       Title[5]->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
       Title[5]->deactivate();
     } // Fl_Box* Title[5]
-    { Wizard = new Fl_Wizard(150, 10, 440, 275);
+    { Wizard = new Fl_Wizard(150, 10, 480, 275);
       Wizard->box(FL_THIN_DOWN_BOX);
       Wizard->color((Fl_Color)48);
-      { Pane[0] = new Fl_Group(150, 10, 440, 275);
+      { Pane[0] = new Fl_Group(150, 10, 480, 275);
         Pane[0]->labelfont(1);
         Pane[0]->labelsize(18);
         Pane[0]->labelcolor((Fl_Color)4);
         Pane[0]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-        Pane[0]->hide();
-        { ReadmeFile = new Fl_Help_View(170, 30, 400, 235);
+        { ReadmeFile = new Fl_Help_View(170, 30, 440, 235);
         } // Fl_Help_View* ReadmeFile
         Pane[0]->end();
       } // Fl_Group* Pane[0]
-      { Pane[1] = new Fl_Group(150, 10, 440, 275);
+      { Pane[1] = new Fl_Group(150, 10, 480, 275);
         Pane[1]->labelfont(1);
         Pane[1]->labelsize(18);
         Pane[1]->labelcolor((Fl_Color)4);
         Pane[1]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
         Pane[1]->hide();
-        { Fl_Box* o = new Fl_Box(170, 30, 400, 25, "Select the installation type:");
+        { Fl_Box* o = new Fl_Box(170, 30, 440, 25, "Select the installation type:");
           o->align(132|FL_ALIGN_INSIDE);
         } // Fl_Box* o
-        { Fl_Group* o = new Fl_Group(170, 65, 400, 200);
-          { TypeButton[0] = new Fl_Round_Button(170, 65, 400, 25);
+        { Fl_Group* o = new Fl_Group(170, 65, 440, 200);
+          { TypeButton[0] = new Fl_Round_Button(170, 65, 440, 25);
             TypeButton[0]->type(102);
             TypeButton[0]->down_box(FL_ROUND_DOWN_BOX);
             TypeButton[0]->callback((Fl_Callback*)type_cb);
           } // Fl_Round_Button* TypeButton[0]
-          { TypeButton[1] = new Fl_Round_Button(170, 90, 400, 25);
+          { TypeButton[1] = new Fl_Round_Button(170, 90, 440, 25);
             TypeButton[1]->type(102);
             TypeButton[1]->down_box(FL_ROUND_DOWN_BOX);
             TypeButton[1]->callback((Fl_Callback*)type_cb);
           } // Fl_Round_Button* TypeButton[1]
-          { TypeButton[2] = new Fl_Round_Button(170, 115, 400, 25);
+          { TypeButton[2] = new Fl_Round_Button(170, 115, 440, 25);
             TypeButton[2]->type(102);
             TypeButton[2]->down_box(FL_ROUND_DOWN_BOX);
             TypeButton[2]->callback((Fl_Callback*)type_cb);
           } // Fl_Round_Button* TypeButton[2]
-          { TypeButton[3] = new Fl_Round_Button(170, 140, 400, 25);
+          { TypeButton[3] = new Fl_Round_Button(170, 140, 440, 25);
             TypeButton[3]->type(102);
             TypeButton[3]->down_box(FL_ROUND_DOWN_BOX);
             TypeButton[3]->callback((Fl_Callback*)type_cb);
           } // Fl_Round_Button* TypeButton[3]
-          { TypeButton[4] = new Fl_Round_Button(170, 165, 400, 25);
+          { TypeButton[4] = new Fl_Round_Button(170, 165, 440, 25);
             TypeButton[4]->type(102);
             TypeButton[4]->down_box(FL_ROUND_DOWN_BOX);
             TypeButton[4]->callback((Fl_Callback*)type_cb);
           } // Fl_Round_Button* TypeButton[4]
-          { TypeButton[5] = new Fl_Round_Button(170, 190, 400, 25);
+          { TypeButton[5] = new Fl_Round_Button(170, 190, 440, 25);
             TypeButton[5]->type(102);
             TypeButton[5]->down_box(FL_ROUND_DOWN_BOX);
             TypeButton[5]->callback((Fl_Callback*)type_cb);
           } // Fl_Round_Button* TypeButton[5]
-          { TypeButton[6] = new Fl_Round_Button(170, 215, 400, 25);
+          { TypeButton[6] = new Fl_Round_Button(170, 215, 440, 25);
             TypeButton[6]->type(102);
             TypeButton[6]->down_box(FL_ROUND_DOWN_BOX);
             TypeButton[6]->callback((Fl_Callback*)type_cb);
           } // Fl_Round_Button* TypeButton[6]
-          { TypeButton[7] = new Fl_Round_Button(170, 240, 400, 25);
+          { TypeButton[7] = new Fl_Round_Button(170, 240, 440, 25);
             TypeButton[7]->type(102);
             TypeButton[7]->down_box(FL_ROUND_DOWN_BOX);
             TypeButton[7]->callback((Fl_Callback*)type_cb);
@@ -447,15 +446,16 @@ Fl_Double_Window* make_window() {
         } // Fl_Group* o
         Pane[1]->end();
       } // Fl_Group* Pane[1]
-      { Pane[2] = new Fl_Group(150, 10, 440, 275);
+      { Pane[2] = new Fl_Group(150, 10, 480, 275);
         Pane[2]->labelfont(1);
         Pane[2]->labelsize(18);
         Pane[2]->labelcolor((Fl_Color)4);
         Pane[2]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-        { Fl_Box* o = new Fl_Box(170, 30, 400, 25, "Select the software you want to install:");
+        Pane[2]->hide();
+        { Fl_Box* o = new Fl_Box(170, 30, 440, 25, "Select the software you want to install:");
           o->align(132|FL_ALIGN_INSIDE);
         } // Fl_Box* o
-        { SoftwareList = new Fl_Check_Browser(170, 85, 400, 145, " Available Software:");
+        { SoftwareList = new Fl_Check_Browser(170, 85, 440, 145, " Available Software:");
           SoftwareList->type(3);
           SoftwareList->box(FL_DOWN_BOX);
           SoftwareList->selection_color(FL_BACKGROUND2_COLOR);
@@ -464,53 +464,51 @@ Fl_Double_Window* make_window() {
           SoftwareList->align(FL_ALIGN_TOP_LEFT);
           SoftwareList->when(3);
         } // Fl_Check_Browser* SoftwareList
-        { SoftwareSize = new Fl_Box(170, 235, 201, 35, "0k marked for installation.");
+        { SoftwareSize = new Fl_Box(170, 235, 241, 35, "0k marked for installation.");
           SoftwareSize->align(196|FL_ALIGN_INSIDE);
         } // Fl_Box* SoftwareSize
-        { InstallAllButton = new Fl_Button(381, 240, 80, 25, "Install All");
+        { InstallAllButton = new Fl_Button(421, 240, 80, 25, "Install All");
           InstallAllButton->callback((Fl_Callback*)cb_InstallAllButton);
         } // Fl_Button* InstallAllButton
-        { InstallNoneButton = new Fl_Button(471, 240, 99, 25, "Install None");
+        { InstallNoneButton = new Fl_Button(511, 240, 99, 25, "Install None");
           InstallNoneButton->callback((Fl_Callback*)cb_InstallNoneButton);
         } // Fl_Button* InstallNoneButton
         Pane[2]->end();
       } // Fl_Group* Pane[2]
-      { Pane[3] = new Fl_Group(150, 10, 440, 275);
+      { Pane[3] = new Fl_Group(150, 10, 480, 275);
         Pane[3]->labelfont(1);
         Pane[3]->labelsize(18);
         Pane[3]->labelcolor((Fl_Color)4);
         Pane[3]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
         Pane[3]->hide();
-        { Fl_Box* o = new Fl_Box(170, 30, 400, 25, "Confirm your software selections below:");
+        { Fl_Box* o = new Fl_Box(170, 30, 440, 25, "Confirm your software selections below:");
           o->align(132|FL_ALIGN_INSIDE);
         } // Fl_Box* o
-        { ConfirmList = new Fl_Browser(170, 85, 400, 180, "Selected Software:");
+        { ConfirmList = new Fl_Browser(170, 85, 440, 180, "Selected Software:");
           ConfirmList->labelfont(1);
           ConfirmList->align(FL_ALIGN_TOP_LEFT);
         } // Fl_Browser* ConfirmList
         Pane[3]->end();
       } // Fl_Group* Pane[3]
-      { Pane[4] = new Fl_Group(150, 10, 440, 275);
+      { Pane[4] = new Fl_Group(150, 10, 480, 275);
         Pane[4]->labelfont(1);
         Pane[4]->labelsize(18);
         Pane[4]->labelcolor((Fl_Color)4);
         Pane[4]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
         Pane[4]->hide();
-        { LicenseBrowser = new Fl_Browser(170, 48, 400, 182, "License Agreement:");
-          LicenseBrowser->labelfont(1);
-          LicenseBrowser->textfont(4);
-          LicenseBrowser->textsize(12);
-          LicenseBrowser->align(FL_ALIGN_TOP_LEFT);
-          Fl_Group::current()->resizable(LicenseBrowser);
-        } // Fl_Browser* LicenseBrowser
+        { LicenseFile = new Fl_Help_View(170, 48, 440, 182, "License Agreement:");
+          LicenseFile->labelfont(1);
+          LicenseFile->align(FL_ALIGN_TOP_LEFT);
+          Fl_Group::current()->resizable(LicenseFile);
+        } // Fl_Help_View* LicenseFile
         { Fl_Group* o = new Fl_Group(170, 240, 400, 25);
-          { LicenseAccept = new Fl_Round_Button(190, 240, 210, 25, "Accept agreement and install");
+          { LicenseAccept = new Fl_Round_Button(210, 240, 210, 25, "Accept agreement and install");
             LicenseAccept->type(102);
             LicenseAccept->down_box(FL_ROUND_DOWN_BOX);
             LicenseAccept->callback((Fl_Callback*)cb_LicenseAccept);
             LicenseAccept->align(132|FL_ALIGN_INSIDE);
           } // Fl_Round_Button* LicenseAccept
-          { LicenseDecline = new Fl_Round_Button(410, 240, 140, 25, "Cancel installation");
+          { LicenseDecline = new Fl_Round_Button(430, 240, 140, 25, "Cancel installation");
             LicenseDecline->type(102);
             LicenseDecline->down_box(FL_ROUND_DOWN_BOX);
             LicenseDecline->callback((Fl_Callback*)cb_LicenseDecline);
@@ -519,18 +517,18 @@ Fl_Double_Window* make_window() {
         } // Fl_Group* o
         Pane[4]->end();
       } // Fl_Group* Pane[4]
-      { Pane[5] = new Fl_Group(150, 10, 440, 275);
+      { Pane[5] = new Fl_Group(150, 10, 480, 275);
         Pane[5]->labelfont(1);
         Pane[5]->labelsize(18);
         Pane[5]->labelcolor((Fl_Color)4);
         Pane[5]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
         Pane[5]->hide();
-        { InstallPercent = new Fl_Progress(170, 47, 400, 15, "Progress Label...");
+        { InstallPercent = new Fl_Progress(170, 47, 440, 15, "Progress Label...");
           InstallPercent->color((Fl_Color)48);
           InstallPercent->selection_color((Fl_Color)221);
           InstallPercent->align(FL_ALIGN_TOP_LEFT);
         } // Fl_Progress* InstallPercent
-        { InstallLog = new Fl_Browser(170, 74, 400, 191);
+        { InstallLog = new Fl_Browser(170, 74, 440, 191);
         } // Fl_Browser* InstallLog
         Pane[5]->end();
       } // Fl_Group* Pane[5]
@@ -540,13 +538,13 @@ Fl_Double_Window* make_window() {
       WelcomeImage->image(image_default);
       WelcomeImage->align(FL_ALIGN_BOTTOM_LEFT|FL_ALIGN_INSIDE);
     } // Fl_Box* WelcomeImage
-    { PrevButton = new Fl_Button(356, 295, 72, 25, "@-2< Back");
+    { PrevButton = new Fl_Button(396, 295, 72, 25, "@-2< Back");
       PrevButton->callback((Fl_Callback*)cb_PrevButton);
     } // Fl_Button* PrevButton
-    { NextButton = new Fl_Button(438, 295, 74, 25, "Next @-2>");
+    { NextButton = new Fl_Button(478, 295, 74, 25, "Next @-2>");
       NextButton->callback((Fl_Callback*)next_cb);
     } // Fl_Button* NextButton
-    { CancelButton = new Fl_Button(522, 295, 68, 25, "Cancel");
+    { CancelButton = new Fl_Button(562, 295, 68, 25, "Cancel");
       CancelButton->callback((Fl_Callback*)cb_CancelButton);
     } // Fl_Button* CancelButton
     SetupWindow->end();

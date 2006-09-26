@@ -395,12 +395,6 @@ add_subpackage(dist_t     *dist,	/* I - Distribution */
           (int (*)(const void *, const void *))sort_subpackages);
 
  /*
-  * Add a dependency on the base package...
-  */
-
-  add_depend(dist, DEPEND_REQUIRES, "_self", s);
-
- /*
   * Return the new string...
   */
 
