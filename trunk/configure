@@ -5473,11 +5473,7 @@ if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
 fi
 
 if test x$softwaredir = x; then
-	if test "$prefix" = "/usr"; then
-		EPM_SOFTWARE="/etc/software"
-	else
-		EPM_SOFTWARE="$prefix/etc/software"
-	fi
+	EPM_SOFTWARE="/etc/software"
 else
 	EPM_SOFTWARE="$softwaredir"
 fi
@@ -5565,7 +5561,7 @@ _ACEOF
 	fi
 fi
 
-                                                  ac_config_files="$ac_config_files Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist"
+                              ac_config_files="$ac_config_files Makefile epm.list doc/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -6092,8 +6088,6 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "epm.list" ) CONFIG_FILES="$CONFIG_FILES epm.list" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
-  "macosx/setup.plist" ) CONFIG_FILES="$CONFIG_FILES macosx/setup.plist" ;;
-  "macosx/uninst.plist" ) CONFIG_FILES="$CONFIG_FILES macosx/uninst.plist" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
