@@ -671,13 +671,13 @@ load_readme(void)
     buffer = new char[1024 + NumDists * 300];
 
     strcpy(buffer,
-           "<p>This program allows you to install the following software:</p>\n"
+           "This program allows you to install the following software:\n"
 	   "<ul>\n");
     ptr = buffer + strlen(buffer);
 
     for (i = NumDists, dist = Dists; i > 0; i --, dist ++)
     {
-      sprintf(ptr, "<li>%s, %s</li>\n", dist->name, dist->version);
+      sprintf(ptr, "<li>%s, %s\n", dist->name, dist->version);
       ptr += strlen(ptr);
     }
 

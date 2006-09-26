@@ -367,7 +367,7 @@ else
 fi
 
 dnl Output the makefile, list file, and config header...
-AC_OUTPUT(Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist)
+AC_OUTPUT(Makefile epm.list doc/Makefile)
 
 dnl
 dnl End of "$Id$".

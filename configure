@@ -5561,7 +5561,7 @@ _ACEOF
 	fi
 fi
 
-                                                  ac_config_files="$ac_config_files Makefile epm.list doc/Makefile macosx/setup.plist macosx/uninst.plist"
+                              ac_config_files="$ac_config_files Makefile epm.list doc/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -6088,8 +6088,6 @@ do
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "epm.list" ) CONFIG_FILES="$CONFIG_FILES epm.list" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
-  "macosx/setup.plist" ) CONFIG_FILES="$CONFIG_FILES macosx/setup.plist" ;;
-  "macosx/uninst.plist" ) CONFIG_FILES="$CONFIG_FILES macosx/uninst.plist" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

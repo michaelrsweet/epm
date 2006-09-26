@@ -187,6 +187,9 @@ write_combined(const char *title,	/* I - Title */
   tarf_t	*tarfile;		/* Distribution tar file */
   char		tarfilename[1024],	/* Name of tar file */
 		filename[1024];		/* Name of temporary file */
+#ifdef __APPLE__
+  FILE		*fp;			/* Plist file... */
+#endif /* __APPLE__ */
   struct stat	srcstat;		/* Source file information */
   const char	*destdir;		/* Destination directory */
   const char	*setup_img;		/* Setup image name */
@@ -197,8 +200,8 @@ write_combined(const char *title,	/* I - Title */
   */
 
   if (dist->release[0])
-    snprintf(tarfilename, sizeof(tarfilename), "%s/%s-%s-%s", directory, prodname,
-             dist->version, dist->release);
+    snprintf(tarfilename, sizeof(tarfilename), "%s/%s-%s-%s", directory,
+             prodname, dist->version, dist->release);
   else
     snprintf(tarfilename, sizeof(tarfilename), "%s/%s-%s", directory, prodname,
              dist->version);
@@ -322,10 +325,59 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
+    unlink(filename);
+
     if (Verbosity)
       printf("    %7.0fk PkgInfo\n", (srcstat.st_size + 1023) / 1024.0);
 
-    snprintf(filename, sizeof(filename), "%s/setup.plist", DataDir);
+    snprintf(filename, sizeof(filename), "%s/%s.setup.plist", directory,
+             prodname);
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Error writing %s -\n    %s\n", filename,
+              strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    fprintf(fp, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		"<plist version=\"0.9\">\n"
+		"    <dict>\n"
+		"	<key>CFBundleInfoDictionaryVersion</key>\n"
+		"	<string>6.0</string>\n"
+		"	<key>CFBundleExecutable</key>\n"
+		"	<string>setup</string>\n"
+		"	<key>CFBundleIdentifier</key>\n"
+		"	<string>com.easysw.epm.setup</string>\n"
+		"	<key>CFBundleVersion</key>\n"
+		"	<string>%s</string>\n"
+		"	<key>CFBundleDevelopmentRegion</key>\n"
+		"	<string>English</string>\n"
+		"	<key>NSHumanReadableCopyright</key>\n"
+		"	<string>Copyright %s</string>\n"
+		"	<key>CFAppleHelpAnchor</key>\n"
+		"	<string>help</string>\n"
+		"	<key>CFBundleName</key>\n"
+		"	<string>Installer for %s</string>\n"
+		"	<key>CFBundlePackageType</key>\n"
+		"	<string>APPL</string>\n"
+		"	<key>CFBundleSignature</key>\n"
+		"	<string>FLTK</string>\n"
+		"	<key>CFBundleIconFile</key>\n"
+		"	<string>setup.icns</string>\n"
+		"	<key>CFBundleShortVersionString</key>\n"
+		"	<string>%s</string>\n"
+		"	<key>CFBundleGetInfoString</key>\n"
+		"	<string>%s, Copyright %s</string>\n"
+		"    </dict>\n"
+		"</plist>\n",
+            dist->version,
+	    dist->copyright,
+	    dist->name,
+	    dist->version,
+	    dist->version, dist->copyright);
+    fclose(fp);
+
     stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
@@ -345,6 +397,9 @@ write_combined(const char *title,	/* I - Title */
       tar_close(tarfile);
       return (-1);
     }
+
+    if (!KeepFiles)
+      unlink(filename);
 
     if (Verbosity)
       printf("    %7.0fk Info.plist\n", (srcstat.st_size + 1023) / 1024.0);
@@ -572,7 +627,54 @@ write_combined(const char *title,	/* I - Title */
     if (Verbosity)
       printf("    %7.0fk PkgInfo\n", (srcstat.st_size + 1023) / 1024.0);
 
-    snprintf(filename, sizeof(filename), "%s/uninst.plist", DataDir);
+    snprintf(filename, sizeof(filename), "%s/%s.uninst.plist", directory,
+             prodname);
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Error writing %s -\n    %s\n", filename,
+              strerror(errno));
+      tar_close(tarfile);
+      return (-1);
+    }
+
+    fprintf(fp, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		"<plist version=\"0.9\">\n"
+		"    <dict>\n"
+		"	<key>CFBundleInfoDictionaryVersion</key>\n"
+		"	<string>6.0</string>\n"
+		"	<key>CFBundleExecutable</key>\n"
+		"	<string>setup</string>\n"
+		"	<key>CFBundleIdentifier</key>\n"
+		"	<string>com.easysw.epm.setup</string>\n"
+		"	<key>CFBundleVersion</key>\n"
+		"	<string>%s</string>\n"
+		"	<key>CFBundleDevelopmentRegion</key>\n"
+		"	<string>English</string>\n"
+		"	<key>NSHumanReadableCopyright</key>\n"
+		"	<string>Copyright %s</string>\n"
+		"	<key>CFAppleHelpAnchor</key>\n"
+		"	<string>help</string>\n"
+		"	<key>CFBundleName</key>\n"
+		"	<string>Uninstaller for %s</string>\n"
+		"	<key>CFBundlePackageType</key>\n"
+		"	<string>APPL</string>\n"
+		"	<key>CFBundleSignature</key>\n"
+		"	<string>FLTK</string>\n"
+		"	<key>CFBundleIconFile</key>\n"
+		"	<string>setup.icns</string>\n"
+		"	<key>CFBundleShortVersionString</key>\n"
+		"	<string>%s</string>\n"
+		"	<key>CFBundleGetInfoString</key>\n"
+		"	<string>%s, Copyright %s</string>\n"
+		"    </dict>\n"
+		"</plist>\n",
+            dist->version,
+	    dist->copyright,
+	    dist->name,
+	    dist->version,
+	    dist->version, dist->copyright);
+    fclose(fp);
+
     stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
@@ -592,6 +694,9 @@ write_combined(const char *title,	/* I - Title */
 	      strerror(errno));
       return (-1);
     }
+
+    if (!KeepFiles)
+      unlink(filename);
 
     if (Verbosity)
       printf("    %7.0fk Info.plist\n", (srcstat.st_size + 1023) / 1024.0);
