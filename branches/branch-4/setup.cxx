@@ -452,7 +452,6 @@ Fl_Double_Window* make_window() {
         Pane[2]->labelsize(18);
         Pane[2]->labelcolor((Fl_Color)4);
         Pane[2]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-        Pane[2]->hide();
         { Fl_Box* o = new Fl_Box(170, 30, 400, 25, "Select the software you want to install:");
           o->align(132|FL_ALIGN_INSIDE);
         } // Fl_Box* o
@@ -465,8 +464,8 @@ Fl_Double_Window* make_window() {
           SoftwareList->align(FL_ALIGN_TOP_LEFT);
           SoftwareList->when(3);
         } // Fl_Check_Browser* SoftwareList
-        { SoftwareSize = new Fl_Box(170, 240, 201, 25, "0k marked for installation.");
-          SoftwareSize->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        { SoftwareSize = new Fl_Box(170, 235, 201, 35, "0k marked for installation.");
+          SoftwareSize->align(196|FL_ALIGN_INSIDE);
         } // Fl_Box* SoftwareSize
         { InstallAllButton = new Fl_Button(381, 240, 80, 25, "Install All");
           InstallAllButton->callback((Fl_Callback*)cb_InstallAllButton);
@@ -525,6 +524,7 @@ Fl_Double_Window* make_window() {
         Pane[5]->labelsize(18);
         Pane[5]->labelcolor((Fl_Color)4);
         Pane[5]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
+        Pane[5]->hide();
         { InstallPercent = new Fl_Progress(170, 47, 400, 15, "Progress Label...");
           InstallPercent->color((Fl_Color)48);
           InstallPercent->selection_color((Fl_Color)221);

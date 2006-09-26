@@ -75,11 +75,9 @@ f 0555 root sys ${libdir}/epm/uninst uninst
 %system darwin
 f 0444 root sys ${datadir}/epm/setup.icns macosx/setup.icns
 f 0444 root sys ${datadir}/epm/setup.info macosx/setup.info
-f 0444 root sys ${datadir}/epm/setup.plist macosx/setup.plist
 
 f 0444 root sys ${datadir}/epm/uninst.icns macosx/uninst.icns
 f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
-f 0444 root sys ${datadir}/epm/uninst.plist macosx/uninst.plist
 %system all
 
 %subpackage man
