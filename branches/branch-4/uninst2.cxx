@@ -324,18 +324,15 @@ load_image(void)
 void
 load_readme(void)
 {
-  FILE		*fp;			// File pointer
-  struct stat	info;			// Info about file
-  char		*buffer,		// File buffer
-		*ptr;			// Pointer into buffer
+  ReadmeFile->textfont(FL_HELVETICA);
+  ReadmeFile->textsize(14);
 
-
-  fp = fopen("uninst.readme", "r");
-
-  if (!fp || stat("uninst.readme", &info))
+  if (access("uninst.readme", 0))
   {
     int		i;			// Looping var
     dist_t	*dist;			// Current distribution
+    char	*buffer,		// Text buffer
+		*ptr;			// Pointer into buffer
 
 
     buffer = new char[1024 + NumDists * 300];
@@ -352,37 +349,14 @@ load_readme(void)
     }
 
     strcpy(ptr, "</ul>");
+
+    ReadmeFile->value(buffer);
+
+    delete[] buffer;
   }
   else
-  {
-    int	ch;				// First character of file
+    load_file(ReadmeFile, "uninst.readme");
 
-
-    ptr = buffer = new char[info.st_size + 12];
-
-    if ((ch = getc(fp)) != '<')
-    {
-      strcpy(ptr, "<pre>");
-      ptr += 5;
-    }
-
-    *ptr++ = ch;
-
-    fread(ptr, 1, info.st_size - 1, fp);
-    ptr += info.st_size - 1;
-
-    if (ch == '<')
-      *ptr = '\0';
-    else
-      strcpy(ptr, "</pre>");
-  }
-
-  if (fp)
-    fclose(fp);
- 
-  ReadmeFile->value(buffer);
-
-  delete[] buffer;
 }
 
 

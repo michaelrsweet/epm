@@ -331,7 +331,7 @@ static void cb_CancelButton(Fl_Button*, void*) {
 }
 
 Fl_Double_Window* make_window() {
-  { UninstallWindow = new Fl_Double_Window(600, 310, "Uninstall");
+  { UninstallWindow = new Fl_Double_Window(640, 310, "Uninstall");
     UninstallWindow->callback((Fl_Callback*)cb_UninstallWindow);
     { Title[0] = new Fl_Box(10, 10, 130, 25, "Welcome");
       Title[0]->labelfont(1);
@@ -352,28 +352,29 @@ Fl_Double_Window* make_window() {
       Title[3]->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
       Title[3]->deactivate();
     } // Fl_Box* Title[3]
-    { Wizard = new Fl_Wizard(150, 10, 440, 255);
+    { Wizard = new Fl_Wizard(150, 10, 480, 255);
       Wizard->box(FL_THIN_DOWN_BOX);
       Wizard->color((Fl_Color)48);
-      { Pane[0] = new Fl_Group(150, 10, 440, 255);
+      { Pane[0] = new Fl_Group(150, 10, 480, 255);
         Pane[0]->labelfont(1);
         Pane[0]->labelsize(18);
         Pane[0]->labelcolor((Fl_Color)4);
         Pane[0]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
         Pane[0]->hide();
-        { ReadmeFile = new Fl_Help_View(170, 30, 400, 205);
+        { ReadmeFile = new Fl_Help_View(170, 30, 440, 215);
         } // Fl_Help_View* ReadmeFile
         Pane[0]->end();
       } // Fl_Group* Pane[0]
-      { Pane[1] = new Fl_Group(150, 10, 440, 255);
+      { Pane[1] = new Fl_Group(150, 10, 480, 255);
         Pane[1]->labelfont(1);
         Pane[1]->labelsize(18);
         Pane[1]->labelcolor((Fl_Color)4);
         Pane[1]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-        { Fl_Box* o = new Fl_Box(170, 30, 400, 25, "Select the software to remove:");
+        Pane[1]->hide();
+        { Fl_Box* o = new Fl_Box(170, 30, 440, 25, "Select the software to remove:");
           o->align(132|FL_ALIGN_INSIDE);
         } // Fl_Box* o
-        { SoftwareList = new Fl_Check_Browser(170, 83, 400, 127, " Installed Software:");
+        { SoftwareList = new Fl_Check_Browser(170, 83, 440, 127, " Installed Software:");
           SoftwareList->type(3);
           SoftwareList->box(FL_DOWN_BOX);
           SoftwareList->selection_color(FL_BACKGROUND2_COLOR);
@@ -382,44 +383,43 @@ Fl_Double_Window* make_window() {
           SoftwareList->align(FL_ALIGN_TOP_LEFT);
           SoftwareList->when(3);
         } // Fl_Check_Browser* SoftwareList
-        { SoftwareSize = new Fl_Box(170, 215, 180, 35, "0k marked for removal.");
+        { SoftwareSize = new Fl_Box(170, 215, 220, 35, "0k marked for removal.");
           SoftwareSize->align(196|FL_ALIGN_INSIDE);
         } // Fl_Box* SoftwareSize
-        { RemoveAllButton = new Fl_Button(360, 220, 90, 25, "Remove All");
+        { RemoveAllButton = new Fl_Button(400, 220, 90, 25, "Remove All");
           RemoveAllButton->callback((Fl_Callback*)cb_RemoveAllButton);
         } // Fl_Button* RemoveAllButton
-        { RemoveNoneButton = new Fl_Button(460, 220, 110, 25, "Remove None");
+        { RemoveNoneButton = new Fl_Button(500, 220, 110, 25, "Remove None");
           RemoveNoneButton->callback((Fl_Callback*)cb_RemoveNoneButton);
         } // Fl_Button* RemoveNoneButton
         Pane[1]->end();
       } // Fl_Group* Pane[1]
-      { Pane[2] = new Fl_Group(150, 10, 440, 255);
+      { Pane[2] = new Fl_Group(150, 10, 480, 255);
         Pane[2]->labelfont(1);
         Pane[2]->labelsize(18);
         Pane[2]->labelcolor((Fl_Color)4);
         Pane[2]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
         Pane[2]->hide();
-        { Fl_Box* o = new Fl_Box(170, 30, 410, 25, "Confirm software selected for removal:");
+        { Fl_Box* o = new Fl_Box(170, 30, 440, 25, "Confirm software selected for removal:");
           o->align(132|FL_ALIGN_INSIDE);
         } // Fl_Box* o
-        { ConfirmList = new Fl_Browser(170, 83, 400, 157, "Software to Remove:");
+        { ConfirmList = new Fl_Browser(170, 83, 440, 162, "Software to Remove:");
           ConfirmList->labelfont(1);
           ConfirmList->align(FL_ALIGN_TOP_LEFT);
         } // Fl_Browser* ConfirmList
         Pane[2]->end();
       } // Fl_Group* Pane[2]
-      { Pane[3] = new Fl_Group(150, 10, 440, 255);
+      { Pane[3] = new Fl_Group(150, 10, 480, 255);
         Pane[3]->labelfont(1);
         Pane[3]->labelsize(18);
         Pane[3]->labelcolor((Fl_Color)4);
         Pane[3]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-        Pane[3]->hide();
-        { RemovePercent = new Fl_Progress(170, 45, 400, 15, "Progress Label...");
+        { RemovePercent = new Fl_Progress(170, 45, 440, 15, "Progress Label...");
           RemovePercent->color((Fl_Color)48);
           RemovePercent->selection_color((Fl_Color)221);
           RemovePercent->align(FL_ALIGN_TOP_LEFT);
         } // Fl_Progress* RemovePercent
-        { RemoveLog = new Fl_Browser(170, 70, 400, 175);
+        { RemoveLog = new Fl_Browser(170, 70, 440, 175);
         } // Fl_Browser* RemoveLog
         Pane[3]->end();
       } // Fl_Group* Pane[3]
@@ -429,13 +429,13 @@ Fl_Double_Window* make_window() {
       WelcomeImage->image(image_default);
       WelcomeImage->align(FL_ALIGN_BOTTOM_LEFT|FL_ALIGN_INSIDE);
     } // Fl_Box* WelcomeImage
-    { PrevButton = new Fl_Button(356, 275, 72, 25, "@-2< Back");
+    { PrevButton = new Fl_Button(396, 275, 72, 25, "@-2< Back");
       PrevButton->callback((Fl_Callback*)cb_PrevButton);
     } // Fl_Button* PrevButton
-    { NextButton = new Fl_Button(438, 275, 74, 25, "Next @-2>");
+    { NextButton = new Fl_Button(478, 275, 74, 25, "Next @-2>");
       NextButton->callback((Fl_Callback*)next_cb);
     } // Fl_Button* NextButton
-    { CancelButton = new Fl_Button(522, 275, 68, 25, "Cancel");
+    { CancelButton = new Fl_Button(562, 275, 68, 25, "Cancel");
       CancelButton->callback((Fl_Callback*)cb_CancelButton);
     } // Fl_Button* CancelButton
     UninstallWindow->end();
