@@ -373,7 +373,7 @@ write_combined(const char *title,	/* I - Title */
 		"</plist>\n",
             dist->version,
 	    dist->copyright,
-	    dist->name,
+	    dist->product,
 	    dist->version,
 	    dist->version, dist->copyright);
     fclose(fp);
@@ -670,7 +670,7 @@ write_combined(const char *title,	/* I - Title */
 		"</plist>\n",
             dist->version,
 	    dist->copyright,
-	    dist->name,
+	    dist->product,
 	    dist->version,
 	    dist->version, dist->copyright);
     fclose(fp);
