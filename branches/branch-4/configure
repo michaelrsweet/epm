@@ -1279,8 +1279,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-VERSION=4.0.1
-VERNUMBER=401
+VERSION=4.1
+VERNUMBER=410
 
 
 cat >>confdefs.h <<_ACEOF
