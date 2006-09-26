@@ -8,7 +8,7 @@ Function {make_window()} {open
     label Uninstall
     callback {if (CancelButton->active())
   exit(0);} open
-    xywh {438 75 600 310} type Double
+    xywh {264 44 600 310} type Double
     code0 {\#include "gui-common.h"} visible
   } {
     Fl_Box {Title[0]} {
@@ -27,7 +27,7 @@ Function {make_window()} {open
       label Removing
       xywh {10 85 130 25} labelfont 1 align 20 deactivate
     }
-    Fl_Wizard Wizard {
+    Fl_Wizard Wizard {open
       xywh {150 10 440 255} box THIN_DOWN_BOX color 48
     } {
       Fl_Group {Pane[0]} {open
@@ -38,7 +38,7 @@ Function {make_window()} {open
         }
       }
       Fl_Group {Pane[1]} {open
-        xywh {150 10 440 255} labelfont 1 labelsize 18 labelcolor 4 align 21 hide
+        xywh {150 10 440 255} labelfont 1 labelsize 18 labelcolor 4 align 21
       } {
         Fl_Box {} {
           label {Select the software to remove:}
@@ -50,8 +50,8 @@ Function {make_window()} {open
           xywh {170 83 400 127} type Multi box DOWN_BOX selection_color 7 labelfont 1 align 5 when 3
         }
         Fl_Box SoftwareSize {
-          label {0k marked for removal.}
-          xywh {170 220 180 25} align 20
+          label {0k marked for removal.} selected
+          xywh {170 215 180 35} align 212
         }
         Fl_Button RemoveAllButton {
           label {Remove All}
@@ -79,7 +79,7 @@ list_cb(0,0);}
         }
       }
       Fl_Group {Pane[3]} {open
-        xywh {150 10 440 255} labelfont 1 labelsize 18 labelcolor 4 align 21
+        xywh {150 10 440 255} labelfont 1 labelsize 18 labelcolor 4 align 21 hide
       } {
         Fl_Progress RemovePercent {
           label {Progress Label...}
@@ -106,7 +106,7 @@ for (i = 0; i < 4; i ++)
 }
 
 for (i ++; i < 4; i ++)
-  Title[i]->deactivate();} selected
+  Title[i]->deactivate();}
       xywh {356 275 72 25}
     }
     Fl_Button NextButton {
