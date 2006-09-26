@@ -1,8 +1,13 @@
-CHANGES - ESP Package Manager (EPM) 4.0.1
------------------------------------------
+CHANGES - ESP Package Manager (EPM) 4.1
+---------------------------------------
 
-EPM 4.0.1
+EPM 4.1
 
+	- Updated the setup and uninstall GUIs for a nicer
+	  look-n-feel.
+	- Mac OS X portable packages now show the proper name,
+	  version, and copyright for the packaged software
+	  instead of the EPM version and copyright...
 	- Fixed a problem with creation of Mac OS X metapackages
 	  with the latest Xcode.
 	- EPM now removes the individual .rpm and .deb files when
