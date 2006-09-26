@@ -3,6 +3,8 @@ CHANGES - ESP Package Manager (EPM) 4.1
 
 EPM 4.1
 
+	- Subpackages are no longer automatically dependent on
+	  the main package.
 	- Updated the setup and uninstall GUIs for a nicer
 	  look-n-feel.
 	- Mac OS X portable packages now show the proper name,

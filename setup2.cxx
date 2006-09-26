@@ -392,11 +392,13 @@ install_dist(const dist_t *dist)	// I - Distribution to install
 
     // Set the title string...
     snprintf(liclabel, sizeof(liclabel), "Software License for %s:", dist->name);
-    LicenseBrowser->label(liclabel);
+    LicenseFile->label(liclabel);
 
-    // Load the license into the browser...
-    LicenseBrowser->clear();
-    LicenseBrowser->load(licfile);
+    // Load the license into the viewer...
+    LicenseFile->textfont(FL_HELVETICA);
+    LicenseFile->textsize(14);
+
+    load_file(LicenseFile, licfile);
 
     // Show the license window and wait for the user...
     Pane[PANE_LICENSE]->show();
@@ -654,18 +656,15 @@ load_image(void)
 void
 load_readme(void)
 {
-  FILE		*fp;			// File pointer
-  struct stat	info;			// Info about file
-  char		*buffer,		// File buffer
-		*ptr;			// Pointer into buffer
+  ReadmeFile->textfont(FL_HELVETICA);
+  ReadmeFile->textsize(14);
 
-
-  fp = fopen("setup.readme", "r");
-
-  if (!fp || stat("setup.readme", &info))
+  if (access("setup.readme", 0))
   {
     int		i;			// Looping var
     dist_t	*dist;			// Current distribution
+    char	*buffer,		// Text buffer
+		*ptr;			// Pointer into buffer
 
 
     buffer = new char[1024 + NumDists * 300];
@@ -682,41 +681,15 @@ load_readme(void)
     }
 
     strcpy(ptr, "</ul>");
+
+    ReadmeFile->value(buffer);
+
+    delete[] buffer;
   }
   else
-  {
-    int	ch;				// First character of file
-
-
-    ptr = buffer = new char[info.st_size + 12];
-
-    if ((ch = getc(fp)) != '<')
-    {
-      strcpy(ptr, "<pre>");
-      ptr += 5;
-    }
-
-    *ptr++ = ch;
-
-    fread(ptr, 1, info.st_size - 1, fp);
-    ptr += info.st_size - 1;
-
-    if (ch == '<')
-      *ptr = '\0';
-    else
-      strcpy(ptr, "</pre>");
-  }
-
-  if (fp)
-    fclose(fp);
+    load_file(ReadmeFile, "setup.readme");
  
-  ReadmeFile->textsize(14);
-  ReadmeFile->value(buffer);
-
-  delete[] buffer;
 }
-
-//  if (access("setup.types")
 
 
 //

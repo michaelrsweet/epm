@@ -25,7 +25,7 @@ extern Fl_Button *InstallAllButton;
 extern Fl_Button *InstallNoneButton;
 #include <FL/Fl_Browser.H>
 extern Fl_Browser *ConfirmList;
-extern Fl_Browser *LicenseBrowser;
+extern Fl_Help_View *LicenseFile;
 extern Fl_Round_Button *LicenseAccept;
 extern Fl_Round_Button *LicenseDecline;
 extern Fl_Group *Pane[6];

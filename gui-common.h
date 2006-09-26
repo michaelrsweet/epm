@@ -23,6 +23,7 @@
 #include "epmstring.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <FL/Fl_Help_View.H>
 
 
 //
@@ -106,6 +107,7 @@ void	add_depend(dist_t *d, int type, const char *name, int lowver, int hiver);
 dist_t	*add_dist(int *num_d, dist_t **d);
 dist_t	*find_dist(const char *name, int num_d, dist_t *d);
 void	get_installed(void);
+void	load_file(Fl_Help_View *hv, const char *filename);
 int	sort_dists(const dist_t *d0, const dist_t *d1);
 
 
