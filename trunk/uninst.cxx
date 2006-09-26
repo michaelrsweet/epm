@@ -370,7 +370,6 @@ Fl_Double_Window* make_window() {
         Pane[1]->labelsize(18);
         Pane[1]->labelcolor((Fl_Color)4);
         Pane[1]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-        Pane[1]->hide();
         { Fl_Box* o = new Fl_Box(170, 30, 400, 25, "Select the software to remove:");
           o->align(132|FL_ALIGN_INSIDE);
         } // Fl_Box* o
@@ -383,8 +382,8 @@ Fl_Double_Window* make_window() {
           SoftwareList->align(FL_ALIGN_TOP_LEFT);
           SoftwareList->when(3);
         } // Fl_Check_Browser* SoftwareList
-        { SoftwareSize = new Fl_Box(170, 220, 180, 25, "0k marked for removal.");
-          SoftwareSize->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        { SoftwareSize = new Fl_Box(170, 215, 180, 35, "0k marked for removal.");
+          SoftwareSize->align(196|FL_ALIGN_INSIDE);
         } // Fl_Box* SoftwareSize
         { RemoveAllButton = new Fl_Button(360, 220, 90, 25, "Remove All");
           RemoveAllButton->callback((Fl_Callback*)cb_RemoveAllButton);
@@ -414,6 +413,7 @@ Fl_Double_Window* make_window() {
         Pane[3]->labelsize(18);
         Pane[3]->labelcolor((Fl_Color)4);
         Pane[3]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
+        Pane[3]->hide();
         { RemovePercent = new Fl_Progress(170, 45, 400, 15, "Progress Label...");
           RemovePercent->color((Fl_Color)48);
           RemovePercent->selection_color((Fl_Color)221);
