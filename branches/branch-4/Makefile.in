@@ -145,7 +145,7 @@ distclean:
 	$(RM) $(TARGETS)
 	$(RM) config.cache config.h config.log config.status
 	$(RM) Makefile doc/Makefile macosx/Makefile
-	$(RM) epm.list macosx/setup.plist macosx/uninst.plist
+	$(RM) epm.list
 
 
 #
@@ -203,10 +203,8 @@ install-osx:
 	-$(MKDIR) $(datadir)/epm
 	$(CP) macosx/setup.icns $(datadir)/epm
 	$(CP) macosx/setup.info $(datadir)/epm
-	$(CP) macosx/setup.plist $(datadir)/epm
 	$(CP) macosx/uninst.icns $(datadir)/epm
 	$(CP) macosx/uninst.info $(datadir)/epm
-	$(CP) macosx/uninst.plist $(datadir)/epm
 
 
 #
