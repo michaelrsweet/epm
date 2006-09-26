@@ -1,5 +1,5 @@
 //
-// "$Id: gui-common.cxx,v 1.4 2005/01/11 21:36:57 mike Exp $"
+// "$Id$"
 //
 //   ESP Software Wizard common functions for the ESP Package Manager (EPM).
 //
@@ -21,6 +21,7 @@
 //   add_dist()      - Add a distribution.
 //   find_dist()     - Find a distribution.
 //   get_installed() - Get a list of installed software products.
+//   load_file()     - Load a file into a help widget.
 //   sort_dists()    - Compare two distribution names...
 //
 
@@ -40,13 +41,13 @@
 //
 
 void
-add_depend(dist_t     *d,	// I - Distribution
-           int        type,	// I - Dependency type
-	   const char *name,	// I - Name of product
-	   int        lowver,	// I - Lower version number
-	   int        hiver)	// I - Highre version number
+add_depend(dist_t     *d,		// I - Distribution
+           int        type,		// I - Dependency type
+	   const char *name,		// I - Name of product
+	   int        lowver,		// I - Lower version number
+	   int        hiver)		// I - Highre version number
 {
-  depend_t	*temp;		// Pointer to dependency
+  depend_t	*temp;			// Pointer to dependency
 
 
   if (d->num_depends == 0)
@@ -77,11 +78,11 @@ add_depend(dist_t     *d,	// I - Distribution
 // 'add_dist()' - Add a distribution.
 //
 
-dist_t *			// O - New distribution
-add_dist(int    *num_d,		// IO - Number of distributions
-         dist_t **d)		// IO - Distributions
+dist_t *				// O - New distribution
+add_dist(int    *num_d,			// IO - Number of distributions
+         dist_t **d)			// IO - Distributions
 {
-  dist_t	*temp;		// Pointer to current distribution
+  dist_t	*temp;			// Pointer to current distribution
 
 
   // Add a new distribution entry...
@@ -110,10 +111,10 @@ add_dist(int    *num_d,		// IO - Number of distributions
 // 'find_dist()' - Find a distribution.
 //
 
-dist_t *			// O - Pointer to distribution or NULL
-find_dist(const char *name,	// I - Distribution name
-          int        num_d,	// I - Number of distributions
-	  dist_t     *d)	// I - Distributions
+dist_t *				// O - Pointer to distribution or NULL
+find_dist(const char *name,		// I - Distribution name
+          int        num_d,		// I - Number of distributions
+	  dist_t     *d)		// I - Distributions
 {
   while (num_d > 0)
   {
@@ -135,13 +136,13 @@ find_dist(const char *name,	// I - Distribution name
 void
 get_installed(void)
 {
-  int		i;		// Looping var
-  int		num_files;	// Number of files
-  dirent	**files;	// Files
-  const char	*ext;		// Extension
-  dist_t	*temp;		// Pointer to current distribution
-  FILE		*fp;		// File to read from
-  char		line[1024];	// Line from file...
+  int		i;			// Looping var
+  int		num_files;		// Number of files
+  dirent	**files;		// Files
+  const char	*ext;			// Extension
+  dist_t	*temp;			// Pointer to current distribution
+  FILE		*fp;			// File to read from
+  char		line[1024];		// Line from file...
 
 
   // See if there are any installed files...
@@ -203,17 +204,97 @@ get_installed(void)
 
 
 //
+// 'load_file()' - Load a file into a help widget.
+//
+
+void
+load_file(Fl_Help_View *hv,		// I - Help widget
+          const char   *filename)	// I - File to load
+{
+  FILE		*fp;			// File pointer
+  struct stat	info;			// Info about file
+  int		ch;			// Character from file
+  char		*buffer,		// File buffer
+		*ptr;			// Pointer into buffer
+
+
+  // Try opening the file and getting the file size...
+  if ((fp = fopen(filename, "r")) == NULL)
+  {
+    hv->value(strerror(errno));
+    return;
+  }
+
+  if (stat(filename, &info))
+  {
+    hv->value(strerror(errno));
+    return;
+  }
+
+  // Allocate a buffer that is more than big enough to the hold the file...
+  buffer = new char[info.st_size * 2];
+
+  // See if we have a HTML file...
+  if ((ch = getc(fp)) == '<')
+  {
+    // Yes, just read it in...
+    buffer[0] = ch;
+    fread(buffer + 1, 1, info.st_size - 1, fp);
+    buffer[info.st_size] = '\0';
+  }
+  else
+  {
+    // No, treat it as plain text...
+    ungetc(ch, fp);
+
+    strcpy(buffer, "<pre>");
+
+    ptr = buffer + 5;
+
+    while ((ch = getc(fp)) != EOF)
+    {
+      if (ch == '&')
+      {
+        strcpy(ptr, "&amp;");
+	ptr += 5;
+      }
+      else if (ch == '<')
+      {
+        strcpy(ptr, "&lt;");
+	ptr += 4;
+      }
+      else
+        *ptr++ = ch;
+    }
+
+    strcpy(ptr, "</pre>\n");
+
+    // Preformatted text will be too large without a reduction in the
+    // base size...
+    hv->textsize(10);
+  }
+
+  // Save the loaded buffer to the help widget...
+  hv->value(buffer);
+
+  // Free memory and close the file...
+  delete[] buffer;
+  fclose(fp);
+}
+
+
+//
 // 'sort_dists()' - Compare two distribution names...
 //
 
-int				// O - Result of comparison
-sort_dists(const dist_t *d0,	// I - First distribution
-           const dist_t *d1)	// I - Second distribution
+int					// O - Result of comparison
+sort_dists(const dist_t *d0,		// I - First distribution
+           const dist_t *d1)		// I - Second distribution
 {
   return (strcmp(d0->name, d1->name));
 }
 
 
 //
-// End of "$Id: gui-common.cxx,v 1.4 2005/01/11 21:36:57 mike Exp $".
+// End of "$Id$".
 //
