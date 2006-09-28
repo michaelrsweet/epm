@@ -325,8 +325,6 @@ write_combined(const char *title,	/* I - Title */
       return (-1);
     }
 
-    unlink(filename);
-
     if (Verbosity)
       printf("    %7.0fk PkgInfo\n", (srcstat.st_size + 1023) / 1024.0);
 
