@@ -911,6 +911,9 @@ write_common(dist_t     *dist,		/* I - Distribution */
 {
   int	i;				/* Looping var */
   FILE	*fp;				/* File pointer */
+  char	line[1024],			/* Line buffer */
+	*start,				/* Start of line */
+	*ptr;				/* Pointer into line */
 
 
  /*
@@ -949,7 +952,13 @@ write_common(dist_t     *dist,		/* I - Distribution */
 	break;
 
     if (i < dist->num_descriptions)
-      fprintf(fp, " - %s", dist->descriptions[i].description);
+    {
+      strlcpy(line, dist->descriptions[i].description, sizeof(line));
+      if ((ptr = strchr(line, '\n')) != NULL)
+        *ptr = '\0';
+
+      fprintf(fp, " - %s", line);
+    }
   }
   fputs("\n", fp);
   fprintf(fp, "#%%vendor %s\n", dist->vendor);
@@ -968,7 +977,17 @@ write_common(dist_t     *dist,		/* I - Distribution */
 
     for (; i < dist->num_descriptions; i ++)
       if (dist->descriptions[i].subpackage == subpackage)
-	fprintf(fp, "#%%description %s\n", dist->descriptions[i].description);
+      {
+        strlcpy(line, dist->descriptions[i].description, sizeof(line));
+
+        for (start = line; start; start = ptr)
+	{
+	  if ((ptr = strchr(start, '\n')) != NULL)
+            *ptr++ = '\0';
+
+	  fprintf(fp, "#%%description %s\n", start);
+	}
+      }
   }
   else
   {
@@ -978,7 +997,17 @@ write_common(dist_t     *dist,		/* I - Distribution */
 
     for (i = 0; i < dist->num_descriptions; i ++)
       if (dist->descriptions[i].subpackage == NULL)
-	fprintf(fp, "#%%description %s\n", dist->descriptions[i].description);
+      {
+        strlcpy(line, dist->descriptions[i].description, sizeof(line));
+
+        for (start = line; start; start = ptr)
+	{
+	  if ((ptr = strchr(start, '\n')) != NULL)
+            *ptr++ = '\0';
+
+	  fprintf(fp, "#%%description %s\n", start);
+	}
+      }
   }
 
   fprintf(fp, "#%%rootsize %d\n", rootsize);
