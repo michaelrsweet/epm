@@ -5,6 +5,8 @@ EPM 4.1
 
 	- Subpackages are no longer automatically dependent on
 	  the main package.
+	- Multi-line descriptions were not embedded properly into
+	  portable package install/patch/remove scripts.
 	- Updated the setup and uninstall GUIs for a nicer
 	  look-n-feel.
 	- Mac OS X portable packages now show the proper name,
