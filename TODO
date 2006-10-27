@@ -1,9 +1,16 @@
-TODO - ESP Package Manager (EPM) 4.0
+TODO - ESP Package Manager (EPM) 5.0
 ------------------------------------
 
+	- "%relocatable /prefix" to enable relocatable packages,
+	  and wrap(/lib/path) to flag executables that need to have a
+	  shell wrapper for shared libraries and the installation
+	  directory passed in...
+	- Add /opt relocation hack and allow for relocatable and
+	  non-root packages in general.
 	- %option to pass in format-specific command-line options
 	  to the packaging program.
-	- %category to set the application category.
+	- %category to set the application category (RPM, Debian,
+	  AT&T PKG, etc.)
 	- Add noauto() option to init script files to disable
 	  auto start/stop of software.
 	- Do portable config file stuff for formats that don't
@@ -14,8 +21,6 @@ TODO - ESP Package Manager (EPM) 4.0
 	- "%build foo" for build instructions
 	- Look for .list and .list.in; reload if building and
 	  filename == .list.in.
-	- Add /opt relocation hack and allow for relocatable and
-	  non-root packages in general.
 	- Add support for executables and libraries created with
 	  libtool.
 	- Add a small script that can be installed with every
@@ -32,7 +37,6 @@ TODO - ESP Package Manager (EPM) 4.0
 	  format.
 	- Add support for checksums (probably just "sum"
 	  command) to verify the tar files and installed files.
-	- Support package categories (RPM, Debian, AT&T PKG, etc.)
 	- Support for RPM features:
 		- Icon: filename.xpm/gif
 		- Serial: #
