@@ -388,6 +388,7 @@ Fl_Double_Window* make_window() {
         Pane[0]->labelsize(18);
         Pane[0]->labelcolor((Fl_Color)4);
         Pane[0]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
+        Pane[0]->hide();
         { ReadmeFile = new Fl_Help_View(170, 30, 440, 235);
         } // Fl_Help_View* ReadmeFile
         Pane[0]->end();
@@ -495,20 +496,19 @@ Fl_Double_Window* make_window() {
         Pane[4]->labelsize(18);
         Pane[4]->labelcolor((Fl_Color)4);
         Pane[4]->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
-        Pane[4]->hide();
-        { LicenseFile = new Fl_Help_View(170, 48, 440, 182, "License Agreement:");
+        { LicenseFile = new Fl_Help_View(170, 48, 440, 192, "License Agreement:");
           LicenseFile->labelfont(1);
           LicenseFile->align(FL_ALIGN_TOP_LEFT);
           Fl_Group::current()->resizable(LicenseFile);
         } // Fl_Help_View* LicenseFile
-        { Fl_Group* o = new Fl_Group(170, 240, 400, 25);
-          { LicenseAccept = new Fl_Round_Button(210, 240, 210, 25, "Accept agreement and install");
+        { Fl_Group* o = new Fl_Group(170, 240, 400, 35);
+          { LicenseAccept = new Fl_Round_Button(210, 250, 210, 25, "Accept agreement and install");
             LicenseAccept->type(102);
             LicenseAccept->down_box(FL_ROUND_DOWN_BOX);
             LicenseAccept->callback((Fl_Callback*)cb_LicenseAccept);
             LicenseAccept->align(132|FL_ALIGN_INSIDE);
           } // Fl_Round_Button* LicenseAccept
-          { LicenseDecline = new Fl_Round_Button(430, 240, 140, 25, "Cancel installation");
+          { LicenseDecline = new Fl_Round_Button(430, 250, 140, 25, "Cancel installation");
             LicenseDecline->type(102);
             LicenseDecline->down_box(FL_ROUND_DOWN_BOX);
             LicenseDecline->callback((Fl_Callback*)cb_LicenseDecline);
