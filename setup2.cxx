@@ -20,6 +20,7 @@
 //   main()         - Main entry for software wizard...
 //   get_dists()    - Get a list of available software products.
 //   install_dist() - Install a distribution...
+//   license_dist() - Show the license for a distribution...
 //   list_cb()      - Handle selections in the software list.
 //   load_image()   - Load the setup image file (setup.gif/xpm)...
 //   load_readme()  - Load the readme file...
@@ -103,6 +104,7 @@ typedef int (*compare_func_t)(const void *, const void *);
 
 void	get_dists(const char *d);
 int	install_dist(const dist_t *dist);
+int	license_dist(const dist_t *dist);
 void	load_image(void);
 void	load_readme(void);
 void	load_types(void);
@@ -374,58 +376,10 @@ install_dist(const dist_t *dist)	// I - Distribution to install
 #ifndef __APPLE__
   int		pid;			// Process ID
 #endif // !__APPLE__
-  char		licfile[1024];		// License filename
-  struct stat	licinfo;		// License file info
-  static int	liclength = 0;		// Size of license file
-  static char	liclabel[1024];		// Label for license pane
 
 
   sprintf(command, "**** %s ****", dist->name);
   InstallLog->add(command);
-
-  // See if we need to show the license file...
-  sprintf(licfile, "%s.license", dist->product);
-  if (!stat(licfile, &licinfo) && licinfo.st_size != liclength)
-  {
-    // Save this license's length...
-    liclength = licinfo.st_size;
-
-    // Set the title string...
-    snprintf(liclabel, sizeof(liclabel), "Software License for %s:", dist->name);
-    LicenseFile->label(liclabel);
-
-    // Load the license into the viewer...
-    LicenseFile->textfont(FL_HELVETICA);
-    LicenseFile->textsize(14);
-
-    load_file(LicenseFile, licfile);
-
-    // Show the license window and wait for the user...
-    Pane[PANE_LICENSE]->show();
-    Title[PANE_LICENSE]->activate();
-    LicenseAccept->clear();
-    LicenseDecline->clear();
-    NextButton->deactivate();
-    CancelButton->activate();
-
-    while (Pane[PANE_LICENSE]->visible())
-      Fl::wait();
-
-    Title[PANE_INSTALL]->deactivate();
-
-    CancelButton->deactivate();
-    NextButton->deactivate();
-
-    if (LicenseDecline->value())
-    {
-      // Can't install without acceptance...
-      liclength = 0;
-      snprintf(command, sizeof(command), "License not accepted for %s!",
-               dist->name);
-      InstallLog->add(command);
-      return (1);
-    }
-  }
 
   sprintf(command, "%s.install", dist->product);
   if (access(command, 0))
@@ -528,6 +482,70 @@ install_dist(const dist_t *dist)	// I - Distribution to install
 
   // Return...
   return (status);
+}
+
+
+//
+// 'license_dist()' - Show the license for a distribution...
+//
+
+int					// O - 0 if accepted, 1 if not
+license_dist(const dist_t *dist)	// I - Distribution to license
+{
+  char		licfile[1024];		// License filename
+  struct stat	licinfo;		// License file info
+  static int	liclength = 0;		// Size of license file
+  static char	liclabel[1024];		// Label for license pane
+
+
+  // See if we need to show the license file...
+  sprintf(licfile, "%s.license", dist->product);
+  if (!stat(licfile, &licinfo) && licinfo.st_size != liclength)
+  {
+    // Save this license's length...
+    liclength = licinfo.st_size;
+
+    // Set the title string...
+    snprintf(liclabel, sizeof(liclabel), "Software License for %s:", dist->name);
+    LicenseFile->label(liclabel);
+
+    // Load the license into the viewer...
+    LicenseFile->textfont(FL_HELVETICA);
+    LicenseFile->textsize(14);
+
+    load_file(LicenseFile, licfile);
+
+    // Show the license window and wait for the user...
+    Pane[PANE_LICENSE]->show();
+    Title[PANE_LICENSE]->activate();
+    LicenseAccept->clear();
+    LicenseDecline->clear();
+    NextButton->deactivate();
+    CancelButton->activate();
+
+    while (Pane[PANE_LICENSE]->visible())
+      Fl::wait();
+
+    Title[PANE_INSTALL]->deactivate();
+
+    CancelButton->deactivate();
+    NextButton->deactivate();
+
+    if (LicenseDecline->value())
+    {
+      // Can't install without acceptance...
+      char	message[1024];		// Message for log
+
+
+      liclength = 0;
+      snprintf(message, sizeof(message), "License not accepted for %s!",
+               dist->name);
+      InstallLog->add(message);
+      return (1);
+    }
+  }
+
+  return (0);
 }
 
 
@@ -930,6 +948,21 @@ next_cb(Fl_Button *, void *)
 
   if (Wizard->value() == Pane[PANE_INSTALL] && !installing)
   {
+    // Show the licenses for each of the selected software packages...
+    for (i = 0, progress = 0, error = 0; i < NumDists; i ++)
+      if (SoftwareList->checked(i + 1) && license_dist(Dists + i))
+      {
+        InstallPercent->label("Installation Canceled!");
+	Pane[PANE_INSTALL]->redraw();
+
+        CancelButton->label("Close");
+	CancelButton->activate();
+
+	fl_beep();
+	return;
+      }
+
+    // Then do the installs...
     installing = 1;
 
     NextButton->deactivate();
