@@ -39,9 +39,9 @@ Function {make_window()} {open
       xywh {150 10 480 275} box THIN_DOWN_BOX color 48
     } {
       Fl_Group {Pane[0]} {open
-        xywh {150 10 480 275} labelfont 1 labelsize 18 labelcolor 4 align 21
+        xywh {150 10 480 275} labelfont 1 labelsize 18 labelcolor 4 align 21 hide
       } {
-        Fl_Help_View ReadmeFile {selected
+        Fl_Help_View ReadmeFile {
           xywh {170 30 440 235}
         }
       }
@@ -131,24 +131,24 @@ list_cb(0,0);}
         }
       }
       Fl_Group {Pane[4]} {open
-        xywh {150 10 480 275} labelfont 1 labelsize 18 labelcolor 4 align 21 hide
+        xywh {150 10 480 275} labelfont 1 labelsize 18 labelcolor 4 align 21
       } {
         Fl_Help_View LicenseFile {
-          label {License Agreement:}
-          xywh {170 48 440 182} labelfont 1 align 5 resizable
+          label {License Agreement:} selected
+          xywh {170 48 440 192} labelfont 1 align 5 resizable
         }
         Fl_Group {} {open
-          xywh {170 240 400 25}
+          xywh {170 240 400 35}
         } {
           Fl_Round_Button LicenseAccept {
             label {Accept agreement and install}
             callback {NextButton->activate();}
-            xywh {210 240 210 25} type Radio down_box ROUND_DOWN_BOX align 148
+            xywh {210 250 210 25} type Radio down_box ROUND_DOWN_BOX align 148
           }
           Fl_Round_Button LicenseDecline {
             label {Cancel installation}
             callback {NextButton->activate();}
-            xywh {430 240 140 25} type Radio down_box ROUND_DOWN_BOX
+            xywh {430 250 140 25} type Radio down_box ROUND_DOWN_BOX
           }
         }
       }
