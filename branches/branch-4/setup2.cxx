@@ -949,6 +949,8 @@ next_cb(Fl_Button *, void *)
   if (Wizard->value() == Pane[PANE_INSTALL] && !installing)
   {
     // Show the licenses for each of the selected software packages...
+    installing = 1;
+
     for (i = 0, progress = 0, error = 0; i < NumDists; i ++)
       if (SoftwareList->checked(i + 1) && license_dist(Dists + i))
       {
@@ -963,8 +965,6 @@ next_cb(Fl_Button *, void *)
       }
 
     // Then do the installs...
-    installing = 1;
-
     NextButton->deactivate();
     CancelButton->deactivate();
     CancelButton->label("Close");
