@@ -39,7 +39,6 @@
  *   get_inline()       - Read inline lines into a string...
  *   get_line()         - Get a line from a file, filtering for uname lines...
  *   get_string()       - Get a delimited string from a line.
- *   get_vernumber()    - Convert a version string to a number...
  *   patmatch()         - Pattern matching...
  *   sort_subpackages() - Compare two subpackage names.
  */
@@ -74,7 +73,6 @@ static char	*get_line(char *buffer, int size, FILE *fp,
 		          struct utsname *platform, const char *format,
 			  int *skip);
 static char	*get_string(char **src, char *dst, size_t dstsize);
-static int	get_vernumber(const char *version);
 static int	patmatch(const char *, const char *);
 static int	sort_subpackages(char **a, char **b);
 
@@ -2135,84 +2133,6 @@ get_string(char   **src,		/* IO - Source string */
   *src = srcptr;
 
   return (dst);
-}
-
-
-/*
- * 'get_vernumber()' - Convert a version string to a number...
- */
-
-static int				/* O - Version number */
-get_vernumber(const char *version)	/* I - Version string */
-{
-  int		numbers[4],		/* Raw version numbers */
-		nnumbers,		/* Number of numbers in version */
-		temp,			/* Temporary version number */
-		offset;			/* Offset for last version number */
-  const char	*ptr;			/* Pointer into string */
-
-
- /*
-  * Loop through the version number string and construct a version number.
-  */
-
-  memset(numbers, 0, sizeof(numbers));
-
-  for (ptr = version; *ptr && !isdigit(*ptr & 255); ptr ++);
-    /* Skip leading letters, periods, etc. */
-
-  for (offset = 0, temp = 0, nnumbers = 0; *ptr && !isspace(*ptr & 255); ptr ++)
-    if (isdigit(*ptr & 255))
-      temp = temp * 10 + *ptr - '0';
-    else
-    {
-     /*
-      * Add each mini version number (m.n.p) and patch/pre stuff...
-      */
-
-      if (nnumbers < 4)
-      {
-        numbers[nnumbers] = temp;
-	nnumbers ++;
-      }
-
-      temp = 0;
-
-      if (*ptr == '.')
-	offset = 0;
-      else if (*ptr == 'p' || *ptr == '-')
-      {
-	if (strncmp(ptr, "pre", 3) == 0)
-	{
-	  ptr += 2;
-	  offset = -20;
-	}
-	else
-	  offset = 0;
-
-        nnumbers = 3;
-      }
-      else if (*ptr == 'b')
-      {
-	offset   = -50;
-        nnumbers = 3;
-      }
-      else /* if (*ptr == 'a') */
-      {
-	offset   = -100;
-        nnumbers = 3;
-      }
-    }
-
-  if (nnumbers < 4)
-    numbers[nnumbers] = temp;
-
- /*
-  * Compute the version number as MMmmPPpp + offset
-  */
-
-  return (((numbers[0] * 100 + numbers[1]) * 100 + numbers[2]) * 100 +
-          numbers[3] + offset);
 }
 
 

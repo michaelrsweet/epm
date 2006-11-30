@@ -91,7 +91,7 @@ AuthorizationRef SetupAuthorizationRef;
 void	load_image(void);
 void	load_readme(void);
 void	log_cb(int fd, int *fdptr);
-int	remove_dist(const dist_t *dist);
+int	remove_dist(const gui_dist_t *dist);
 void	show_installed(void);
 void	update_sizes(void);
 
@@ -142,7 +142,7 @@ main(int  argc,			// I - Number of command-line arguments
   PrevButton->deactivate();
   NextButton->deactivate();
 
-  get_installed();
+  gui_get_installed();
   show_installed();
 
   load_image();
@@ -207,9 +207,9 @@ void
 list_cb(Fl_Check_Browser *, void *)
 {
   int		i, j, k;
-  dist_t	*dist,
+  gui_dist_t	*dist,
 		*dist2;
-  depend_t	*depend;
+  gui_depend_t	*depend;
 
 
   if (SoftwareList->nchecked() == 0)
@@ -228,7 +228,8 @@ list_cb(Fl_Check_Browser *, void *)
         switch (depend->type)
 	{
 	  case DEPEND_REQUIRES :
-	      if ((dist2 = find_dist(depend->product, NumInstalled, Installed)) != NULL)
+	      if ((dist2 = gui_find_dist(depend->product, NumInstalled,
+	                                 Installed)) != NULL)
 	      {
   		// Software is in the list, is it selected?
 	        k = dist2 - Installed;
@@ -245,8 +246,8 @@ list_cb(Fl_Check_Browser *, void *)
 		  break;
 		}
 	      }
-	      else if ((dist2 = find_dist(depend->product, NumInstalled,
-	                                  Installed)) == NULL)
+	      else if ((dist2 = gui_find_dist(depend->product, NumInstalled,
+	                                      Installed)) == NULL)
 	      {
 		// Required but not installed or available!
 		fl_alert("%s requires %s to be installed, but it is not available "
@@ -257,8 +258,8 @@ list_cb(Fl_Check_Browser *, void *)
 	      break;
 
           case DEPEND_INCOMPAT :
-	      if ((dist2 = find_dist(depend->product, NumInstalled,
-	                             Installed)) != NULL)
+	      if ((dist2 = gui_find_dist(depend->product, NumInstalled,
+	                                 Installed)) != NULL)
 	      {
 		// Already installed!
 		fl_alert("%s is incompatible with %s. Please remove it before "
@@ -266,7 +267,8 @@ list_cb(Fl_Check_Browser *, void *)
 		SoftwareList->checked(i + 1, 0);
 		break;
 	      }
-	      else if ((dist2 = find_dist(depend->product, NumInstalled, Installed)) != NULL)
+	      else if ((dist2 = gui_find_dist(depend->product, NumInstalled,
+	                                      Installed)) != NULL)
 	      {
   		// Software is in the list, is it selected?
 	        k = dist2 - Installed;
@@ -330,12 +332,12 @@ load_readme(void)
   if (access("uninst.readme", 0))
   {
     int		i;			// Looping var
-    dist_t	*dist;			// Current distribution
+    gui_dist_t	*dist;			// Current distribution
     char	*buffer,		// Text buffer
 		*ptr;			// Pointer into buffer
 
 
-    buffer = new char[1024 + NumDists * 300];
+    buffer = new char[1024 + NumInstalled * 400];
 
     strcpy(buffer, "This program allows you to remove the following "
                    "software:</p>\n"
@@ -355,7 +357,7 @@ load_readme(void)
     delete[] buffer;
   }
   else
-    load_file(ReadmeFile, "uninst.readme");
+    gui_load_file(ReadmeFile, "uninst.readme");
 
 }
 
@@ -489,7 +491,7 @@ next_cb(Fl_Button *, void *)
 //
 
 int					// O - Remove status
-remove_dist(const dist_t *dist)		// I - Distribution to remove
+remove_dist(const gui_dist_t *dist)	// I - Distribution to remove
 {
   char		command[1024];		// Command string
   int		fds[2];			// Pipe FDs
@@ -501,7 +503,9 @@ remove_dist(const dist_t *dist)		// I - Distribution to remove
   snprintf(command, sizeof(command), "**** %s ****", dist->name);
   RemoveLog->add(command);
 
-  snprintf(command, sizeof(command), EPM_SOFTWARE "/%s.remove", dist->product);
+  if (dist->type == PACKAGE_PORTABLE)
+    snprintf(command, sizeof(command), EPM_SOFTWARE "/%s.remove",
+             dist->product);
 
 #ifdef __APPLE__
   // Run the remove script using Apple's authorization API...
@@ -537,7 +541,11 @@ remove_dist(const dist_t *dist)		// I - Distribution to remove
     close(fds[1]);
 
     // Execute the command; if an error occurs, return it...
-    execl(command, command, "now", NULL);
+    if (dist->type == PACKAGE_PORTABLE)
+      execl(command, command, "now", (char *)0);
+    else
+      execlp("rpm", "rpm", "-e", "--nodeps", dist->product, (char *)0);
+
     exit(errno);
   }
   else if (pid < 0)
@@ -610,7 +618,7 @@ void
 show_installed()
 {
   int		i;		// Looping var
-  dist_t	*temp;		// Pointer to current distribution
+  gui_dist_t	*temp;		// Pointer to current distribution
   char		line[1024];	// Product name and version...
 
 
@@ -639,7 +647,7 @@ void
 update_sizes(void)
 {
   int		i;		// Looping var
-  dist_t	*dist,		// Distribution
+  gui_dist_t	*dist,		// Distribution
 		*installed;	// Installed distribution
   int		rootsize,	// Total root size difference in kbytes
 		usrsize;	// Total /usr size difference in kbytes
@@ -659,8 +667,8 @@ update_sizes(void)
       rootsize += dist->rootsize;
       usrsize  += dist->usrsize;
 
-      if ((installed = find_dist(dist->product, NumInstalled,
-                                 Installed)) != NULL)
+      if ((installed = gui_find_dist(dist->product, NumInstalled,
+                                     Installed)) != NULL)
       {
         rootsize -= installed->rootsize;
 	usrsize  -= installed->usrsize;
