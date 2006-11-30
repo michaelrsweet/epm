@@ -262,6 +262,7 @@ extern void	get_platform(struct utsname *platform);
 extern const char *get_runlevels(file_t *file, const char *deflevels);
 extern int	get_start(file_t *file, int defstart);
 extern int	get_stop(file_t *file, int defstop);
+extern int	get_vernumber(const char *version);
 extern int	make_aix(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform);

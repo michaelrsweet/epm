@@ -103,8 +103,8 @@ typedef int (*compare_func_t)(const void *, const void *);
 //
 
 void	get_dists(const char *d);
-int	install_dist(const dist_t *dist);
-int	license_dist(const dist_t *dist);
+int	install_dist(const gui_dist_t *dist);
+int	license_dist(const gui_dist_t *dist);
 void	load_image(void);
 void	load_readme(void);
 void	load_types(void);
@@ -173,7 +173,7 @@ main(int  argc,			// I - Number of command-line arguments
   PrevButton->deactivate();
   NextButton->deactivate();
 
-  get_installed();
+  gui_get_installed();
   get_dists(distdir);
 
   load_image();
@@ -242,7 +242,7 @@ get_dists(const char *d)	// I - Directory to look in
   int		num_files;	// Number of files
   dirent	**files;	// Files
   const char	*ext;		// Extension
-  dist_t	*temp,		// Pointer to current distribution
+  gui_dist_t	*temp,		// Pointer to current distribution
 		*installed;	// Pointer to installed product
   FILE		*fp;		// File to read from
   char		line[1024],	// Line from file...
@@ -265,7 +265,7 @@ get_dists(const char *d)	// I - Directory to look in
 
   // Build a distribution list...
   NumDists = 0;
-  Dists    = (dist_t *)0;
+  Dists    = (gui_dist_t *)0;
 
   for (i = 0; i < num_files; i ++)
   {
@@ -280,7 +280,9 @@ get_dists(const char *d)	// I - Directory to look in
       }
 
       // Add a new distribution entry...
-      temp = add_dist(&NumDists, &Dists);
+      temp           = gui_add_dist(&NumDists, &Dists);
+      temp->type     = PACKAGE_PORTABLE;
+      temp->filename = strdup(files[i]->d_name);
 
       strncpy(temp->product, files[i]->d_name, sizeof(temp->product) - 1);
       *strrchr(temp->product, '.') = '\0';	// Drop .install
@@ -311,12 +313,67 @@ get_dists(const char *d)	// I - Directory to look in
 	  hiver  = 0;
 
 	  if (sscanf(line + 11, "%s%*s%d%*s%d", product, &lowver, &hiver) > 0)
-	    add_depend(temp, (line[2] == 'i') ? DEPEND_INCOMPAT : DEPEND_REQUIRES,
-	               product, lowver, hiver);
+	    gui_add_depend(temp, (line[2] == 'i') ? DEPEND_INCOMPAT :
+	                                            DEPEND_REQUIRES,
+	        	   product, lowver, hiver);
         }
       }
 
       fclose(fp);
+    }
+    else if (!strcmp(ext, ".rpm"))
+    {
+      // Found an RPM package...
+      char	*version,		// Version number
+		*size,			// Size of package
+		*description;		// Summary string
+
+
+      // Get the package information...
+      snprintf(line, sizeof(line),
+               "rpm -qp --qf '%%{NAME}|%%{VERSION}|%%{SIZE}|%%{SUMMARY}\\n' %s",
+	       files[i]->d_name);
+
+      if ((fp = popen(line, "r")) == NULL)
+      {
+        free(files[i]);
+	continue;
+      }
+
+      if (!fgets(line, sizeof(line), fp))
+      {
+        free(files[i]);
+	continue;
+      }
+
+      // Drop the trailing newline...
+      line[strlen(line) - 1] = '\0';
+
+      // Grab the different fields...
+      if ((version = strchr(line, '|')) == NULL)
+        continue;
+      *version++ = '\0';
+
+      if ((size = strchr(version, '|')) == NULL)
+        continue;
+      *size++ = '\0';
+
+      if ((description = strchr(size, '|')) == NULL)
+        continue;
+      *description++ = '\0';
+
+      // Add a new distribution entry...
+      temp           = gui_add_dist(&NumDists, &Dists);
+      temp->type     = PACKAGE_RPM;
+      temp->filename = strdup(files[i]->d_name);
+
+      strlcpy(temp->product, line, sizeof(temp->product));
+      strlcpy(temp->name, description, sizeof(temp->name));
+      strlcpy(temp->version, version, sizeof(temp->version));
+      temp->vernumber = get_vernumber(version);
+      temp->rootsize  = (int)(atof(size) / 1024.0 + 0.5);
+
+      pclose(fp);
     }
 
     free(files[i]);
@@ -331,13 +388,14 @@ get_dists(const char *d)	// I - Directory to look in
   }
 
   if (NumDists > 1)
-    qsort(Dists, NumDists, sizeof(dist_t), (compare_func_t)sort_dists);
+    qsort(Dists, NumDists, sizeof(gui_dist_t), (compare_func_t)gui_sort_dists);
 
   for (i = 0, temp = Dists; i < NumDists; i ++, temp ++)
   {
     sprintf(line, "%s v%s", temp->name, temp->version);
 
-    if ((installed = find_dist(temp->product, NumInstalled, Installed)) == NULL)
+    if ((installed = gui_find_dist(temp->product, NumInstalled,
+                                   Installed)) == NULL)
     {
       strcat(line, " (new)");
       SoftwareList->add(line, 0);
@@ -368,7 +426,7 @@ get_dists(const char *d)	// I - Directory to look in
 //
 
 int					// O - Install status
-install_dist(const dist_t *dist)	// I - Distribution to install
+install_dist(const gui_dist_t *dist)	// I - Distribution to install
 {
   char		command[1024];		// Command string
   int		fds[2];			// Pipe FDs
@@ -381,10 +439,6 @@ install_dist(const dist_t *dist)	// I - Distribution to install
   sprintf(command, "**** %s ****", dist->name);
   InstallLog->add(command);
 
-  sprintf(command, "%s.install", dist->product);
-  if (access(command, 0))
-    sprintf(command, "%s.patch", dist->product);
-
 #ifdef __APPLE__
   // Run the install script using Apple's authorization API...
   FILE		*fp = NULL;
@@ -392,7 +446,8 @@ install_dist(const dist_t *dist)	// I - Distribution to install
   OSStatus	astatus;
 
 
-  astatus = AuthorizationExecuteWithPrivileges(SetupAuthorizationRef, command,
+  astatus = AuthorizationExecuteWithPrivileges(SetupAuthorizationRef,
+                                               dist->filename,
                                                kAuthorizationFlagDefaults,
                                                args, &fp);
 
@@ -420,7 +475,11 @@ install_dist(const dist_t *dist)	// I - Distribution to install
     close(fds[1]);
 
     // Execute the command; if an error occurs, return it...
-    execl(command, command, "now", NULL);
+    if (dist->type == PACKAGE_PORTABLE)
+      execl(dist->filename, dist->filename, "now", (char *)0);
+    else
+      execlp("rpm", "rpm", "-U", "--nodeps", dist->filename, (char *)0);
+
     exit(errno);
   }
   else if (pid < 0)
@@ -490,7 +549,7 @@ install_dist(const dist_t *dist)	// I - Distribution to install
 //
 
 int					// O - 0 if accepted, 1 if not
-license_dist(const dist_t *dist)	// I - Distribution to license
+license_dist(const gui_dist_t *dist)	// I - Distribution to license
 {
   char		licfile[1024];		// License filename
   struct stat	licinfo;		// License file info
@@ -513,7 +572,7 @@ license_dist(const dist_t *dist)	// I - Distribution to license
     LicenseFile->textfont(FL_HELVETICA);
     LicenseFile->textsize(14);
 
-    load_file(LicenseFile, licfile);
+    gui_load_file(LicenseFile, licfile);
 
     // Show the license window and wait for the user...
     Pane[PANE_LICENSE]->show();
@@ -557,9 +616,9 @@ void
 list_cb(Fl_Check_Browser *, void *)
 {
   int		i, j, k;
-  dist_t	*dist,
+  gui_dist_t	*dist,
 		*dist2;
-  depend_t	*depend;
+  gui_depend_t	*depend;
 
 
   if (SoftwareList->nchecked() == 0)
@@ -578,7 +637,8 @@ list_cb(Fl_Check_Browser *, void *)
         switch (depend->type)
 	{
 	  case DEPEND_REQUIRES :
-	      if ((dist2 = find_dist(depend->product, NumDists, Dists)) != NULL)
+	      if ((dist2 = gui_find_dist(depend->product, NumDists,
+	                                 Dists)) != NULL)
 	      {
   		// Software is in the list, is it selected?
 	        k = dist2 - Dists;
@@ -595,8 +655,8 @@ list_cb(Fl_Check_Browser *, void *)
 		  break;
 		}
 	      }
-	      else if ((dist2 = find_dist(depend->product, NumInstalled,
-	                                  Installed)) == NULL)
+	      else if ((dist2 = gui_find_dist(depend->product, NumInstalled,
+	                                      Installed)) == NULL)
 	      {
 		// Required but not installed or available!
 		fl_alert("%s requires %s to be installed, but it is not available "
@@ -607,8 +667,8 @@ list_cb(Fl_Check_Browser *, void *)
 	      break;
 
           case DEPEND_INCOMPAT :
-	      if ((dist2 = find_dist(depend->product, NumInstalled,
-	                             Installed)) != NULL)
+	      if ((dist2 = gui_find_dist(depend->product, NumInstalled,
+	                                 Installed)) != NULL)
 	      {
 		// Already installed!
 		fl_alert("%s is incompatible with %s. Please remove it before "
@@ -616,7 +676,8 @@ list_cb(Fl_Check_Browser *, void *)
 		SoftwareList->checked(i + 1, 0);
 		break;
 	      }
-	      else if ((dist2 = find_dist(depend->product, NumDists, Dists)) != NULL)
+	      else if ((dist2 = gui_find_dist(depend->product, NumDists,
+	                                      Dists)) != NULL)
 	      {
   		// Software is in the list, is it selected?
 	        k = dist2 - Dists;
@@ -680,7 +741,7 @@ load_readme(void)
   if (access("setup.readme", 0))
   {
     int		i;			// Looping var
-    dist_t	*dist;			// Current distribution
+    gui_dist_t	*dist;			// Current distribution
     char	*buffer,		// Text buffer
 		*ptr;			// Pointer into buffer
 
@@ -705,7 +766,7 @@ load_readme(void)
     delete[] buffer;
   }
   else
-    load_file(ReadmeFile, "setup.readme");
+    gui_load_file(ReadmeFile, "setup.readme");
  
 }
 
@@ -722,8 +783,8 @@ load_types(void)
   char		line[1024],	// Line from file
 		*lineptr,	// Pointer into line
 		*sep;		// Separator
-  dtype_t	*dt;		// Current install type
-  dist_t	*dist;		// Distribution
+  gui_intype_t	*dt;		// Current install type
+  gui_dist_t	*dist;		// Distribution
 
 
   NumInstTypes = 0;
@@ -759,7 +820,7 @@ load_types(void)
         dt = InstTypes + NumInstTypes;
 	NumInstTypes ++;
 
-	memset(dt, 0, sizeof(dtype_t));
+	memset(dt, 0, sizeof(gui_intype_t));
 	if ((sep = strchr(lineptr, '/')) != NULL)
 	  *sep++ = '\0';
 	else
@@ -783,13 +844,13 @@ load_types(void)
         for (lineptr = line + 8; isspace(*lineptr); lineptr ++);
 
 	// Add product to list...
-        if ((dist = find_dist(lineptr, NumDists, Dists)) != NULL)
+        if ((dist = gui_find_dist(lineptr, NumDists, Dists)) != NULL)
 	{
           dt->products[dt->num_products] = dist - Dists;
 	  dt->num_products ++;
 	  dt->size += dist->rootsize + dist->usrsize;
 
-          if ((dist = find_dist(lineptr, NumInstalled, Installed)) != NULL)
+          if ((dist = gui_find_dist(lineptr, NumInstalled, Installed)) != NULL)
 	    dt->size -= dist->rootsize + dist->usrsize;
 	}
 	else
@@ -1022,8 +1083,8 @@ void
 type_cb(Fl_Round_Button *w, void *)	// I - Radio button widget
 {
   int		i;		// Looping var
-  dtype_t	*dt;		// Current install type
-  dist_t	*temp,		// Current software
+  gui_intype_t	*dt;		// Current install type
+  gui_dist_t	*temp,		// Current software
 		*installed;	// Installed software
 
 
@@ -1045,7 +1106,8 @@ type_cb(Fl_Round_Button *w, void *)	// I - Radio button widget
   // And then any upgrade products...
   for (i = 0, temp = Dists; i < NumDists; i ++, temp ++)
   {
-    if ((installed = find_dist(temp->product, NumInstalled, Installed)) != NULL &&
+    if ((installed = gui_find_dist(temp->product, NumInstalled,
+                                   Installed)) != NULL &&
         installed->vernumber < temp->vernumber)
       SoftwareList->checked(i + 1, 1);
   }
@@ -1064,7 +1126,7 @@ void
 update_sizes(void)
 {
   int		i;		// Looping var
-  dist_t	*dist,		// Distribution
+  gui_dist_t	*dist,		// Distribution
 		*installed;	// Installed distribution
   int		rootsize,	// Total root size difference in kbytes
 		usrsize;	// Total /usr size difference in kbytes
@@ -1084,8 +1146,8 @@ update_sizes(void)
       rootsize += dist->rootsize;
       usrsize  += dist->usrsize;
 
-      if ((installed = find_dist(dist->product, NumInstalled,
-                                 Installed)) != NULL)
+      if ((installed = gui_find_dist(dist->product, NumInstalled,
+                                     Installed)) != NULL)
       {
         rootsize -= installed->rootsize;
 	usrsize  -= installed->usrsize;

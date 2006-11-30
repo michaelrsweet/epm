@@ -3,6 +3,11 @@ CHANGES - ESP Package Manager (EPM) 4.1
 
 EPM 4.1
 
+ 	- The RPM summary string for subpackages did not contain
+ 	  the first line of the package description as for other
+ 	  package formats.
+ 	- The setup and uninst GUIs now support installing and
+ 	  removing RPM packages.
 	- The setup GUI now confirms acceptance of all licenses
 	  prior to installing the first package.
 	- Subpackages are no longer automatically dependent on

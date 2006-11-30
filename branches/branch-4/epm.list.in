@@ -51,14 +51,14 @@ f 0555 root sys ${bindir}/mkepmlist mkepmlist
 
 # Documentation
 %subpackage documentation
-%description Documentation for EPM
+%description Documentation
 f 0444 root sys ${docdir}/README $srcdir/README
 f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
 f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
 
 # Man pages
 %subpackage man
-%description Man pages for EPM
+%description Man pages
 f 0444 root sys ${mandir}/man1/epm.1 $srcdir/doc/epm.man
 f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.man
 f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.man
