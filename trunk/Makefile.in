@@ -104,6 +104,7 @@ EPM_OBJS	=	aix.o \
 			slackware.o \
 			snprintf.o \
 			string.o \
+			support.o \
 			swinstall.o \
 			tar.o
 SETUP_OBJS	=	setup.o \

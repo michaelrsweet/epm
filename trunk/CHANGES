@@ -6,6 +6,11 @@ EPM 5.0
 
 EPM 4.0.1
 
+	- The RPM summary string for subpackages did not contain
+	  the first line of the package description as for other
+	  package formats.
+	- The setup and uninst GUIs now support installing and
+	  removing RPM packages.
 	- EPM now removes the individual .rpm and .deb files when
 	  creating a package with subpackages unless the -k
 	  option (keep files) is used.
