@@ -564,7 +564,8 @@ main(int  argc,				/* I - Number of command-line args */
         i = make_pkg(prodname, directory, platname, dist, &platform);
 	break;
     case PACKAGE_RPM :
-        i = make_rpm(prodname, directory, platname, dist, &platform);
+        i = make_rpm(prodname, directory, platname, dist, &platform,
+	             setup, types);
 	break;
     case PACKAGE_SETLD :
         if (geteuid())

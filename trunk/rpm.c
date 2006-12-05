@@ -51,7 +51,9 @@ make_rpm(const char     *prodname,	/* I - Product short name */
          const char     *directory,	/* I - Directory for distribution files */
          const char     *platname,	/* I - Platform name */
          dist_t         *dist,		/* I - Distribution information */
-	 struct utsname *platform)	/* I - Platform information */
+	 struct utsname *platform,	/* I - Platform information */
+         const char     *setup,		/* I - Setup GUI image */
+         const char     *types)		/* I - Setup GUI install types */
 {
   int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
@@ -268,7 +270,7 @@ make_rpm(const char     *prodname,	/* I - Product short name */
   * Build a compressed tar file to hold all of the subpackages...
   */
 
-  if (dist->num_subpackages)
+  if (dist->num_subpackages || setup)
   {
    /*
     * Figure out the full name of the distribution...
@@ -294,6 +296,141 @@ make_rpm(const char     *prodname,	/* I - Product short name */
 
     if ((tarfile = tar_open(filename, 1)) == NULL)
       return (1);
+
+   /*
+    * Archive the setup and uninst GUIs and their data files...
+    */
+
+    if (setup)
+    {
+     /*
+      * Include the ESP Software Installation Wizard (setup)...
+      */
+
+      const char	*setup_img;	/* Setup image name */
+      struct stat	srcstat;	/* File information */
+
+
+      if (stat(SetupProgram, &srcstat))
+      {
+	fprintf(stderr, "epm: Unable to stat GUI setup program %s - %s\n",
+		SetupProgram, strerror(errno));
+	tar_close(tarfile);
+	return (-1);
+      }
+
+      if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	             srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
+      {
+	fprintf(stderr, "epm: Error writing file header - %s\n",
+		strerror(errno));
+	tar_close(tarfile);
+	return (-1);
+      }
+
+      if (tar_file(tarfile, SetupProgram) < 0)
+      {
+	fprintf(stderr, "epm: Error writing file data for setup -\n    %s\n",
+		strerror(errno));
+	tar_close(tarfile);
+	return (-1);
+      }
+
+      if (Verbosity)
+	printf("    %7.0fk setup\n", (srcstat.st_size + 1023) / 1024.0);
+
+     /*
+      * And the image file...
+      */
+
+      stat(setup, &srcstat);
+
+      if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
+	setup_img = "setup.gif";
+      else
+	setup_img = "setup.xpm";
+
+      if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+	             srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
+      {
+	fprintf(stderr, "epm: Error writing file header - %s\n",
+		strerror(errno));
+	tar_close(tarfile);
+	return (-1);
+      }
+
+      if (tar_file(tarfile, setup) < 0)
+      {
+	fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
+		setup_img, strerror(errno));
+	tar_close(tarfile);
+	return (-1);
+      }
+
+      if (Verbosity)
+	printf("    %7.0fk %s\n", (srcstat.st_size + 1023) / 1024.0, setup_img);
+
+     /*
+      * And the types file...
+      */
+
+      if (types)
+      {
+	stat(types, &srcstat);
+
+	if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
+		       srcstat.st_mtime, "root", "root", types, NULL) < 0)
+	{
+	  fprintf(stderr, "epm: Error writing file header - %s\n",
+		  strerror(errno));
+          tar_close(tarfile);
+	  return (-1);
+	}
+
+	if (tar_file(tarfile, types) < 0)
+	{
+	  fprintf(stderr, "epm: Error writing file data for setup.types -\n    %s\n",
+		  strerror(errno));
+          tar_close(tarfile);
+	  return (-1);
+	}
+
+	if (Verbosity)
+          printf("    %7.0fk setup.types\n", (srcstat.st_size + 1023) / 1024.0);
+      }
+
+     /*
+      * Include the ESP Software Removal Wizard (uninst)...
+      */
+
+      if (stat(UninstProgram, &srcstat))
+      {
+	fprintf(stderr, "epm: Unable to stat GUI uninstall program %s - %s\n",
+		UninstProgram, strerror(errno));
+	tar_close(tarfile);
+	return (-1);
+      }
+
+      if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
+	             srcstat.st_mtime, "root", "root", "uninst", NULL) < 0)
+      {
+	fprintf(stderr, "epm: Error writing file header - %s\n",
+		strerror(errno));
+	tar_close(tarfile);
+	return (-1);
+      }
+
+      if (tar_file(tarfile, UninstProgram) < 0)
+      {
+	fprintf(stderr, "epm: Error writing file data for uninst -\n    %s\n",
+		strerror(errno));
+	tar_close(tarfile);
+	return (-1);
+      }
+
+      if (Verbosity)
+	printf("    %7.0fk uninst\n", (srcstat.st_size + 1023) / 1024.0);
+    }
 
    /*
     * Archive the main package and subpackages...
