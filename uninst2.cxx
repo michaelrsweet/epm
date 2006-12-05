@@ -148,7 +148,7 @@ main(int  argc,			// I - Number of command-line arguments
   load_image();
   load_readme();
 
-  w->show(1, argv);
+  w->show();
 
   while (!w->visible())
     Fl::wait();
