@@ -204,8 +204,8 @@ gui_get_installed(void)
   }
 
   // Get a list of RPM packages that are installed...
-  if ((fp = popen("rpm -qa --qf '%{NAME}|%{VERSION}|%{SIZE}|%{SUMMARY}\\n'",
-                  "r")) != NULL)
+  if ((fp = popen("rpm -qa --qf '%{NAME}|%{VERSION}|%{SIZE}|%{SUMMARY}\\n' "
+                  "2>/dev/null", "r")) != NULL)
   {
     char	*version,		// Version number
 		*size,			// Size of package
