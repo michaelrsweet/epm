@@ -290,7 +290,8 @@ extern int	make_portable(const char *prodname, const char *directory,
 			      const char *types);
 extern int	make_rpm(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
-			 struct utsname *platform);
+			 struct utsname *platform, const char *setup,
+			 const char *types);
 extern int	make_setld(const char *prodname, const char *directory,
 		           const char *platname, dist_t *dist,
 			   struct utsname *platform);
