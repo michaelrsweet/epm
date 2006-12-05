@@ -180,7 +180,7 @@ main(int  argc,			// I - Number of command-line arguments
   load_readme();
   load_types();
 
-  w->show(1, argv);
+  w->show();
 
   while (!w->visible())
     Fl::wait();
