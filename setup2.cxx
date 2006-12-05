@@ -125,6 +125,7 @@ main(int  argc,			// I - Number of command-line arguments
 
 
   // Use GTK+ scheme for all operating systems...
+  Fl::background(230, 230, 230);
   Fl::scheme("gtk+");
 
 #ifdef __APPLE__
