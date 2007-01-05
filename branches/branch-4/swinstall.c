@@ -429,14 +429,20 @@ make_swinstall(const char     *prodname,/* I - Product short name */
   snprintf(filename, sizeof(filename), "%s/%s.desc", directory, prodname);
   if (!access(filename, 0))
     fprintf(fp, "  description < %s\n", filename);
-  if (strncmp(dist->license, "./", 2))
-    fprintf(fp, "  copyright < %s\n", dist->license);
-  else
-    fprintf(fp, "  copyright < %s\n", dist->license + 2);
-  if (strncmp(dist->readme, "./", 2))
-    fprintf(fp, "  readme < %s\n", dist->readme);
-  else
-    fprintf(fp, "  readme < %s\n", dist->readme + 2);
+  if (dist->license[0])
+  {
+    if (strncmp(dist->license, "./", 2))
+      fprintf(fp, "  copyright < %s\n", dist->license);
+    else
+      fprintf(fp, "  copyright < %s\n", dist->license + 2);
+  }
+  if (dist->readme[0])
+  {
+    if (strncmp(dist->readme, "./", 2))
+      fprintf(fp, "  readme < %s\n", dist->readme);
+    else
+      fprintf(fp, "  readme < %s\n", dist->readme + 2);
+  }
   fprintf(fp, "  vendor_tag %s\n", vtag);
   fputs("  is_locatable false\n", fp);
 
