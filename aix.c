@@ -864,7 +864,19 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
   */
 
   snprintf(filename, sizeof(filename), "%s/lpp.README", directory);
-  copy_file(filename, dist->license, 0644, 0, 0);
+
+  if (dist->license[0])
+    copy_file(filename, dist->license, 0644, 0, 0);
+  else if (dist->readme[0])
+    copy_file(filename, dist->readme, 0644, 0, 0);
+  else if ((fp = fopen(filename, "w")) != NULL)
+    fclose(fp);
+  else
+  {
+    fprintf(stderr, "epm: Unable to create .README file \"%s\" - %s\n",
+            filename, strerror(errno));
+    return (1);
+  }
 
  /*
   * Create the liblpp.a file...
