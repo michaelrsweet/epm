@@ -394,7 +394,8 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   fprintf(fp, "!search %s\n", current);
 #endif /* 0 */
 
-  fprintf(fp, "i copyright=%s\n", pkg_path(dist->license, current));
+  if (dist->license[0])
+    fprintf(fp, "i copyright=%s\n", pkg_path(dist->license, current));
   fprintf(fp, "i depend=%s/%s.depend\n", pkg_path(directory, current), prodname);
   fprintf(fp, "i pkginfo=%s/%s.pkginfo\n", pkg_path(directory, current),
           prodname);
