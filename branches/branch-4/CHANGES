@@ -3,6 +3,9 @@ CHANGES - ESP Package Manager (EPM) 4.1
 
 EPM 4.1
 
+	- The temporary package files for portable packages are
+	  now removed after creation of the .tar.gz file unless
+	  the -k (keep files) option is used.
  	- The RPM summary string for subpackages did not contain
  	  the first line of the package description as for other
  	  package formats.
