@@ -18,6 +18,7 @@
  * Contents:
  *
  *   make_portable()      - Make a portable software distribution package.
+ *   clean_distfiles()    - Remove temporary software distribution files...
  *   write_combined()     - Write all of the distribution files in tar files.
  *   write_commands()     - Write commands.
  *   write_common()       - Write the common shell script header.
@@ -42,6 +43,9 @@
  * Local functions...
  */
 
+static void	clean_distfiles(const char *directory, const char *prodname,
+		                const char *platname, dist_t *dist,
+				const char *subpackage);
 static int	write_combined(const char *title, const char *directory,
 		               const char *prodname, const char *platname,
 			       dist_t *dist, const char **files,
@@ -161,10 +165,83 @@ make_portable(const char     *prodname,	/* I - Product short name */
       return (1);
 
  /*
+  * Cleanup...
+  */
+
+  if (!KeepFiles)
+  {
+    clean_distfiles(directory, prodname, platname, dist, NULL);
+
+    for (i = 0; i < dist->num_subpackages; i ++)
+      clean_distfiles(directory, prodname, platname, dist,
+                      dist->subpackages[i]);
+  }
+
+ /*
   * Return!
   */
 
   return (0);
+}
+
+
+/*
+ * 'clean_distfiles()' - Remove temporary software distribution files...
+ */
+
+static void
+clean_distfiles(const char *directory,	/* I - Directory */
+	        const char *prodname,	/* I - Product name */
+                const char *platname,	/* I - Platform name */
+	        dist_t     *dist,	/* I - Distribution */
+	        const char *subpackage)	/* I - Subpackage */
+{
+  char		prodfull[255],		/* Full name of product */
+		filename[1024];		/* Name of temporary file */
+
+
+ /*
+  * Figure out the full name of the distribution...
+  */
+
+  if (subpackage)
+    snprintf(prodfull, sizeof(prodfull), "%s-%s", prodname, subpackage);
+  else
+    strlcpy(prodfull, prodname, sizeof(prodfull));
+
+ /*
+  * Remove the distribution files...
+  */
+
+  if (Verbosity)
+    printf("Removing %s temporary files...\n", prodfull);
+
+  snprintf(filename, sizeof(filename), "%s/%s.install", directory, prodfull);
+  unlink(filename);
+
+  snprintf(filename, sizeof(filename), "%s/%s.license", directory, prodfull);
+  unlink(filename);
+
+  snprintf(filename, sizeof(filename), "%s/%s.patch", directory, prodfull);
+  unlink(filename);
+
+  snprintf(filename, sizeof(filename), "%s/%s.psw", directory, prodfull);
+  unlink(filename);
+
+  snprintf(filename, sizeof(filename), "%s/%s.psw", directory, prodfull);
+  unlink(filename);
+
+  snprintf(filename, sizeof(filename), "%s/%s.readme", directory, prodfull);
+  unlink(filename);
+
+  snprintf(filename, sizeof(filename), "%s/%s.remove", directory, prodfull);
+  unlink(filename);
+
+  snprintf(filename, sizeof(filename), "%s/%s.ss", directory, prodfull);
+  unlink(filename);
+
+  snprintf(filename, sizeof(filename), "%s/%s.sw", directory, prodfull);
+  unlink(filename);
 }
 
 
