@@ -136,9 +136,13 @@ make_aix(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
+  fprintf(fp, "4 R I %s {\n", prodname);
+
   aix_fileset(fp, prodname, dist, NULL);
   for (i = 0; i < dist->num_subpackages; i ++)
     aix_fileset(fp, prodname, dist, dist->subpackages[i]);
+
+  fputs("}\n", fp);
 
   fclose(fp);
 
@@ -409,14 +413,27 @@ aix_fileset(FILE       *fp,		/* I - File to write to */
   * Start fileset definition...
   */
 
-  fprintf(fp, "4 R I %s {\n", prodname);
-
   if (subpackage)
     fprintf(fp, "%s.%s", prodname, subpackage);
   else
     fprintf(fp, "%s", prodname);
 
-  fprintf(fp, " %s 01 N B x %s\n", aix_version(dist->version), dist->product);
+  fprintf(fp, " %s 01 N B x ", aix_version(dist->version));
+
+  if (subpackage)
+  {
+    for (i = 0; i < dist->num_descriptions; i ++)
+    {
+      if (dist->descriptions[i].subpackage == subpackage)
+      {
+	fprintf(fp, "%s\n", dist->descriptions[i].description);
+	break;
+      }
+    }
+  }
+  else
+    fprintf(fp, "%s\n", dist->product);
+
 
  /*
   * Dependencies...
@@ -464,7 +481,6 @@ aix_fileset(FILE       *fp,		/* I - File to write to */
 
   fputs("%\n", fp);
   fputs("]\n", fp);
-  fputs("}\n", fp);
 }
 
 
@@ -904,8 +920,9 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
              prodname, prodname);
   }
 
-  if (run_command(directory, "ar rc %s lpp.README", filename))
-    return (1);
+  if (!subpackage)
+    if (run_command(directory, "ar rc %s lpp.README", filename))
+      return (1);
 
   for (i = 0; i < (sizeof(files) / sizeof(files[0])); i ++)
   {
@@ -916,7 +933,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
       continue;
 
     if (run_command(directory, "ar rc %s %s.%s",
-                    filename, prodname, files[i]))
+                    filename, prodfull, files[i]))
       return (1);
   }
 
