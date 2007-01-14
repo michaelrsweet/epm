@@ -1,6 +1,7 @@
 TODO - ESP Package Manager (EPM) 5.0
 ------------------------------------
 
+	- Display created package filenames.
 	- "%relocatable /prefix" to enable relocatable packages,
 	  and wrap(/lib/path) to flag executables that need to have a
 	  shell wrapper for shared libraries and the installation
