@@ -718,7 +718,7 @@ write_combined(const char *title,	/* I - Title */
 		"	<key>CFBundleInfoDictionaryVersion</key>\n"
 		"	<string>6.0</string>\n"
 		"	<key>CFBundleExecutable</key>\n"
-		"	<string>setup</string>\n"
+		"	<string>uninst</string>\n"
 		"	<key>CFBundleIdentifier</key>\n"
 		"	<string>com.easysw.epm.uninst</string>\n"
 		"	<key>CFBundleVersion</key>\n"
