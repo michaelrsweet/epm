@@ -1,66 +1,8 @@
-----HTML-PRESS-RELEASE---------------------------------------------------
+ESP Package Manager 4.1
 
-<H1>ESP Package Manager 4.0 Released</H1>
-
-<P>The 4.0 release of the ESP Package Manager ("EPM") is now
-available for download.  The new release adds support for
-subpackages, compressed portable packages, MacOS X disk images,
-and custom platform names and release numbers.  It is available
-on-line at:</P>
-
-<PRE>
-    <A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
-</PRE>
-
-<P>EPM is a software packaging tool for all versions of UNIX that
-generates software and patch distributions in various formats,
-including:</P>
-
-<UL>
-
-	<LI>AIX software packages ("installp")</LI>
-
-	<LI>AT&amp;T software packages ("pkgadd"), used by
-	Solaris and others</LI>
-
-	<LI>BSD packages ("pkg_create")</LI>
-
-	<LI>Compaq Tru64 UNIX ("setld")</LI>
-
-	<LI>Debian Package Manager ("dpkg")</LI>
-
-	<LI>HP-UX software packages ("swinstall")</LI>
-
-	<LI>IRIX software manager ("inst", "swmgr", or "tardist")</LI>
-
-	<LI>MacOS X software packages ("name.pkg" and "name.mpkg")</LI>
-
-	<LI>Portable (installation and removal scripts with tar files)</LI>
-
-	<LI>Red Hat Package Manager ("rpm")</LI>
-
-	<LI>Slackware software packages ("name.pkg")</LI>
-
-</UL>
-
-<P>EPM also includes graphical "setup" and "uninstall" programs
-that can be provided with your distributions to make installation
-and removal of more than one package a snap.</P>
-
-<P>EPM is provided under the terms of the GNU General Public
-License.  Please contact Easy Software Products at <A
-HREF="mailto:info@easysw.com">info@easysw.com</A> for commercial
-support.</P>
-
-
-----TEXT-PRESS-RELEASE---------------------------------------------------
-
-ESP Package Manager 4.0 Released
-
-The 4.0 release of the ESP Package Manager ("EPM") is now
-available for download.  The new release adds support for
-subpackages, compressed portable packages, MacOS X disk images,
-and custom platform names and release numbers.  It is available
+The 4.1 release of the ESP Package Manager ("EPM") is now
+available for download.  The new release adds disk image creation
+on Mac OS X and fixes several RPM and GUI bugs.  It is available
 on-line at:
 
     http://www.easysw.com/epm/
