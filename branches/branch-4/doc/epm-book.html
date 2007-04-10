@@ -3,8 +3,8 @@
 <HEAD>
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
-<META NAME="copyright" CONTENT="Copyright 1999-2006 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20060405">
+<META NAME="copyright" CONTENT="Copyright 1999-2007 by Easy Software Products">
+<META NAME="docnumber" CONTENT="ESP-004-20070410">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: sans-serif }
@@ -127,12 +127,13 @@ A { text-decoration: none }
 </UL>
 <B><A HREF="#RELNOTES">D - Release Notes</A></B>
 <UL>
-<LI><A HREF="#10_1">Changes in EPM v4.0</A></LI>
+<LI><A HREF="#10_1">Changes in EPM v4.1</A></LI>
+<LI><A HREF="#10_2">Changes in EPM v4.0</A></LI>
 </UL>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="1">Preface</A></H1>
 <P>This book provides a tutorial and reference for the ESP Package
- Manager (&quot;EPM&quot;) software, version 4.0, and is organized into the
+ Manager (&quot;EPM&quot;) software, version 4.1, and is organized into the
  following chapters and appendices:</P>
 <UL>
 <LI><A HREF="#INTRO">1 - Introduction to EPM</A></LI>
@@ -690,9 +691,9 @@ directory</I> epm</CODE></TD></TR>
 <TR><TD>IRIX</TD><TD><CODE>inst</CODE></TD><TD NOWRAP><CODE>swmgr -f<I>
  directory</I></CODE></TD></TR>
 <TR><TD>Linux</TD><TD><CODE>rpm</CODE></TD><TD NOWRAP><CODE>rpm -i<I>
- directory</I>/epm-4.0.rpm</CODE></TD></TR>
+ directory</I>/epm-4.1.rpm</CODE></TD></TR>
 <TR><TD>MacOS X</TD><TD><CODE>osx</CODE></TD><TD NOWRAP><CODE>open<I>
- directory</I>/<CODE>epm-4.0.pkg</CODE></CODE></TD></TR>
+ directory</I>/<CODE>epm-4.1.pkg</CODE></CODE></TD></TR>
 <TR><TD>Solaris</TD><TD><CODE>pkg</CODE></TD><TD NOWRAP><CODE>pkgadd -d<I>
  directory</I> epm</CODE></TD></TR>
 </TABLE>
@@ -2274,7 +2275,7 @@ product</I>.list&quot;.
 <BR> epm.list(5) - epm list file format
 <BR> setup(1) - graphical setup program for the esp package manager
 <H3><A name="COPYRIGHT">Copyright</A></H3>
- Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
+ Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2344,7 +2345,7 @@ product</I>.list&quot;.
 <BR> mkepmlist(1) - make an epm list file from a directory
 <BR> epm.list(5) - epm list file format
 <H3><A name="COPYRIGHT">Copyright</A></H3>
- Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
+ Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2383,7 +2384,7 @@ product</I>.list&quot;.
 <BR> epminstall(1) - add a directory, file, or symlink to a list file
 <BR> epm.list(5) - epm list file format
 <H3><A name="COPYRIGHT">Copyright</A></H3>
- Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
+ Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2417,7 +2418,7 @@ product</I>.list&quot;.
  epm(1) - create software packages.
 <BR> setup.types(5) - epm gui setup types file format.
 <H3><A name="COPYRIGHT">Copyright</A></H3>
- Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
+ Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2764,7 +2765,37 @@ product</I>.list&quot;.
 <H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
 <P>This appendix lists the change log for each release of the EPM
  software.</P>
-<H2><A NAME="10_1">Changes in EPM v4.0</A></H2>
+<H2><A NAME="10_1">Changes in EPM v4.1</A></H2>
+<UL>
+<LI>Mac OS X portable packages did not create a correct Uninstall
+ application.</LI>
+<LI>The temporary package files for portable packages are now removed
+ after creation of the .tar.gz file unless the -k (keep files) option is
+ used.</LI>
+<LI>The RPM summary string for subpackages did not contain the first
+ line of the package description as for other package formats.</LI>
+<LI>The setup and uninst GUIs now support installing and removing RPM
+ packages.</LI>
+<LI>The setup GUI now confirms acceptance of all licenses prior to
+ installing the first package.</LI>
+<LI>Subpackages are no longer automatically dependent on the main
+ package.</LI>
+<LI>Multi-line descriptions were not embedded properly into portable
+ package install/patch/remove scripts.</LI>
+<LI>Updated the setup and uninstall GUIs for a nicer look-n-feel.</LI>
+<LI>Mac OS X portable packages now show the proper name, version, and
+ copyright for the packaged software instead of the EPM version and
+ copyright...</LI>
+<LI>Fixed a problem with creation of Mac OS X metapackages with the
+ latest Xcode.</LI>
+<LI>EPM now removes the individual .rpm and .deb files when creating a
+ package with subpackages unless the -k option (keep files) is used.</LI>
+<LI>EPM now only warns about package names containing characters other
+ than letters and numbers.</LI>
+<LI>EPM now generates disk images as well as a .tar.gz file when
+ creating portable packages on Mac OS X.</LI>
+</UL>
+<H2><A NAME="10_2">Changes in EPM v4.0</A></H2>
 <UL>
 <LI>New subpackage support for creating multiple dependent packages or a
  combined package with selectable subpackages, depending on the package
