@@ -3,7 +3,7 @@
 .\"
 .\"   Manual page for the ESP Package Manager (EPM) setup GUI.
 .\"
-.\"   Copyright 1999-2006 by Easy Software Products, all rights reserved.
+.\"   Copyright 1999-2007 by Easy Software Products, all rights reserved.
 .\"
 .\"   This program is free software; you can redistribute it and/or modify
 .\"   it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ epm(1) - create software packages.
 .br
 setup.types(5) - epm gui setup types file format.
 .SH COPYRIGHT
-Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
+Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
