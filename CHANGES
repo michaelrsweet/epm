@@ -1,11 +1,10 @@
-CHANGES - ESP Package Manager (EPM) 5.0
+CHANGES - ESP Package Manager (EPM) 4.1
 ---------------------------------------
-
-EPM 5.0
-
 
 EPM 4.1
 
+	- Mac OS X portable packages did not create a correct
+	  Uninstall application.
 	- The temporary package files for portable packages are
 	  now removed after creation of the .tar.gz file unless
 	  the -k (keep files) option is used.
@@ -38,7 +37,6 @@ EPM 4.1
 
 EPM 4.0
 
-	- New GUI editor for list files.
 	- New subpackage support for creating multiple dependent
 	  packages or a combined package with selectable
 	  subpackages, depending on the package format.
@@ -64,6 +62,7 @@ EPM 4.0
 	- RPM file dependencies should now work properly.
 	- Portable product names containing spaces will now
 	  display properly.
+
 
 EPM 3.7.1
 

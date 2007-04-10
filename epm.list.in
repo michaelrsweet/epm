@@ -69,7 +69,6 @@ $GUIS=@GUIS@
 
 %if GUIS
 %subpackage
-f 0555 root sys ${bindir}/epmeditor epmeditor
 f 0555 root sys ${libdir}/epm/setup setup
 f 0555 root sys ${libdir}/epm/uninst uninst
 
@@ -82,7 +81,6 @@ f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
 %system all
 
 %subpackage man
-f 0444 root sys ${mandir}/man1/epmeditor.1 $srcdir/doc/epmeditor.man
 f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.man
 f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
 

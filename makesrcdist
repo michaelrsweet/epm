@@ -9,9 +9,9 @@ if test $# = 0; then
 	echo Updating for snapshot...
 	svn up
 	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
-	version="5.0svn"
+	version="4.0svn"
 	revision="-r$rev"
-	fileversion="5.0svn-r$rev"
+	fileversion="4.0svn-r$rev"
 	url="."
 else
 	echo Creating tag for release...
@@ -21,7 +21,7 @@ else
 	fileversion=$1
 	url="https://svn.easysw.com/public/epm/tags/release-$version"
 
-	svn copy https://svn.easysw.com/public/epm/trunk "$url" \
+	svn copy https://svn.easysw.com/public/epm/branches/branch-4 "$url" \
 		-m "Tag $version" || exit 1
 fi
 
@@ -31,7 +31,7 @@ svn export $url /tmp/epm-$version
 
 echo Cleaning source directory...
 cd /tmp/epm-$version
-rm -f makesrcdist
+rm -f makesrcdist ANNOUNCEMENT
 cd ..
 
 echo -n Archiving...gz

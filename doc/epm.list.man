@@ -3,7 +3,7 @@
 .\"
 .\"   Manual page for the ESP Package Manager (EPM) list file format.
 .\"
-.\"   Copyright 1999-2006 by Easy Software Products, all rights reserved.
+.\"   Copyright 1999-2007 by Easy Software Products, all rights reserved.
 .\"
 .\"   This program is free software; you can redistribute it and/or modify
 .\"   it under the terms of the GNU General Public License as published by
@@ -334,7 +334,7 @@ epminstall(1) - add a directory, file, or symlink to a list file
 .br
 mkepmlist(1) - make an epm list file from a directory
 .SH COPYRIGHT
-Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
+Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
