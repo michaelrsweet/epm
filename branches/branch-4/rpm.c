@@ -636,6 +636,8 @@ write_spec(const char *prodname,	/* I - Product name */
       fprintf(fp, "Requires: %s", product);
     else if (d->type == DEPEND_PROVIDES)
       fprintf(fp, "Provides: %s", product);
+    else if (d->type == DEPEND_REPLACES)
+      fprintf(fp, "Obsoletes: %s", product);
     else
       fprintf(fp, "Conflicts: %s", product);
 
