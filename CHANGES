@@ -1,6 +1,11 @@
 CHANGES - ESP Package Manager (EPM) 4.1
 ---------------------------------------
 
+EPM 4.1.1
+
+	- RPM packages did not map %replaces to Obsoletes:
+
+
 EPM 4.1
 
 	- Mac OS X portable packages did not create a correct
