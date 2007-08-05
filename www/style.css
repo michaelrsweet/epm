@@ -1,0 +1,161 @@
+BODY {
+  background: black;
+  color: white;
+  font-family: sans-serif;
+  margin: 0;
+}
+
+P, TD, TH {
+  color: white;
+  font-family: sans-serif;
+}
+
+H1, H2, H3, H4, H5, H6 {
+  color: white;
+  font-family: sans-serif;
+  font-variant: small-caps;
+}
+
+KBD {
+  color: #00ff00;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+CODE, TT {
+  font-family: monospace;
+}
+
+PRE {
+  color: #ff0000;
+  font-family: monospace;
+}
+
+SUB, SUP {
+  font-size: smaller;
+}
+
+TR.pagetitle, TR.pagetitle TD {
+  background-color: #333333;
+  padding: 10px 10px 0px 10px;
+}
+
+TR.pageheader, TR.pageheader TH {
+  background-color: #cccccc;
+  border-top: solid thin #eeeeee;
+  border-bottom: solid thin #eeeeee;
+  color: black;
+  font-variant: small-caps;
+  padding: 2px 10px;
+}
+
+TR.pageheader A:link {
+  color: #0000ff;
+}
+
+TR.pageheader A:visited {
+  color: #0000cc;
+}
+
+TR.pageheader A:hover {
+  color: #cc00ff;
+}
+
+TR.pageheader A:active {
+  color: #ff00ff;
+}
+
+TR.pagelinks, TR.pagelinks TD {
+  background-color: #444444;
+  font-variant: small-caps;
+  padding: 5px 10px;
+}
+
+TD.pagecontents {
+  height: 100%;
+  padding: 10px;
+  vertical-align: top;
+}
+
+TR.pagefooter, TR.pagefooter TD {
+  background-color: #333333;
+  border-top: solid thin #eeeeee;
+  color: #cccccc;
+  padding: 5px 10px;
+}
+
+TABLE.table {
+  border: thin solid #999999;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+TR.header, TR.header TH {
+  background-color: #666666;
+  border-top: solid thin #999999;
+  border-bottom: solid thin #999999;
+  color: white;
+  font-variant: small-caps;
+  padding: 2px;
+}
+
+TR.data0, TR.data0 TD {
+  background-color: #333333;
+  padding: 5px;
+}
+
+TR.data1, TR.data1 TD {
+  background-color: #444444;
+  padding: 5px;
+}
+
+TR.separator, TR.separator TD {
+  border-top: solid thin #999999;
+  height: 0px;
+}
+
+TR.footer, TR.footer TH {
+  background-color: #666666;
+  border-top: solid thin #999999;
+  color: white;
+  font-variant: small-caps;
+  padding: 5px;
+}
+
+INPUT[TYPE="TEXT"], TEXTAREA {
+  font-family: monospace;
+}
+
+A:link {
+  font-family: sans-serif;
+  text-decoration: none;
+  color: #9999ff;
+}
+
+A:visited {
+  font-family: sans-serif;
+  text-decoration: none;
+  color: #6666ff;
+}
+
+A:hover {
+  font-family: sans-serif;
+  text-decoration: none;
+  color: #ccccff;
+}
+
+A:active {
+  font-family: sans-serif;
+  text-decoration: underline;
+  color: #ffccff;
+}
+
+UL.noindent {
+  padding-left: 1em;
+}
+
+UL.noindent LI {
+  margin-bottom: 0.75em;
+}

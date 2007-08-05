@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<style type='text/css'><!--
+	h1, h2, h3, p { font-family: sans-serif; text-align: justify; }
+	tt, pre a:link, pre a:visited, tt a:link, tt a:visited { font-weight: bold; color: #7f0000; }
+	pre { font-weight: bold; color: #7f0000; margin-left: 2em; }
+	h1.title, h2.title, h3.title { border-bottom: solid 2px #000000; }
+	--></style>
+	<title>epm(1)</title>
+</head>
+<body>
+<h2>epm(1)</h2>
+<h3><a name='NAME'>Name</a></h3>
+epm - create software packages.
+<h3><a name='SYNOPSIS'>Synopsis</a></h3>
+<b>epm
+</b>[ -a
+<i>architecture
+</i>] [ -f
+<i>format
+</i>] [ -g ] [ -k ] [ -m
+<i>name
+</i>] [ -n[mrs] ] [ -s
+<i>setup.xpm
+</i>] [ --depend ] [ --help ] [ --keep-files ] [ --output-dir
+<i>directory
+</i>] [ --setup-image
+<i>setup.xpm
+</i>] [ --setup-program
+<i>/foo/bar/setup
+</i>] [ --setup-types
+<i>setup.types
+</i>] [ -v ] [
+<i>name=value
+</i>...
+<i>name=value
+</i>] product [
+<i>listfile
+</i>]
+<h3><a name='DESCRIPTION'>Description</a></h3>
+<b>epm</b> generates software packages complete with installation,
+removal, and (if necessary) patch scripts. Unless otherwise
+specified, the files required for <i>product</i> are read from a
+file named "<i>product</i>.list".
+<p>The <i>-a</i> option ("architecture") specifies the actual
+architecture for the software. Without this option the generic
+processor architecture is used ("intel", "sparc", "mips", etc.)
+<p>The <i>-f</i> option ("format") specifies the distribution format:
+<dl>
+<!-- NEED 3 --><dt>aix
+</dt>
+<dd>Generate an AIX distribution suitable for installation on an AIX system.
+</dd>
+<!-- NEED 3 --><dt>bsd
+</dt>
+<dd>Generate a BSD distribution suitable for installation on a FreeBSD, NetBSD,
+or OpenBSD system.
+</dd>
+<!-- NEED 3 --><dt>deb
+</dt>
+<dd>Generate a Debian distribution suitable for installation on a Debian Linux
+system.
+</dd>
+<!-- NEED 3 --><dt>inst, tardist
+</dt>
+<dd>Generate an IRIX distribution suitable for installation on an system running
+IRIX.
+</dd>
+<!-- NEED 3 --><dt>native
+</dt>
+<dd>Generate an native distribution. This uses <i>rpm</i> for Linux,
+<i>inst</i> for IRIX, <i>pkg</i> for Solaris, <i>swinstall</i> for
+HP-UX, <i>bsd</i> for FreeBSD, NetBSD, and OpenBSD, and <i>osx</i>
+for MacOS X. All other operating systems default to the
+<i>portable</i> format.
+</dd>
+<!-- NEED 3 --><dt>osx
+</dt>
+<dd>Generate a MacOS X software package.
+</dd>
+<!-- NEED 3 --><dt>pkg
+</dt>
+<dd>Generate an AT&amp;T software package. These are used primarily under Solaris.
+</dd>
+<!-- NEED 3 --><dt>portable
+</dt>
+<dd>Generate a portable distribution based on shell scripts and tar files.  The
+resulting distribution is installed and removed the same way on all
+operating systems. [default]
+</dd>
+<!-- NEED 3 --><dt>rpm
+</dt>
+<dd>Generate a Red Hat Package Manager ("RPM") distribution suitable
+for installation on a Red Hat Linux system.
+</dd>
+<!-- NEED 3 --><dt>setld
+</dt>
+<dd>Generate a Tru64 (setld) software distribution.
+</dd>
+<!-- NEED 3 --><dt>slackware
+</dt>
+<dd>Generate a Slackware Linux software distribution.
+</dd>
+<!-- NEED 3 --><dt>swinstall, depot
+</dt>
+<dd>Generate a HP-UX software distribution.
+</dd>
+</dl>
+<p>Executable files in the distribution are normally stripped of debugging
+information when packaged. To disable this functionality use the
+<i>-g</i> option.
+<p>Intermediate (spec, etc.) files used to create the distribution are normally
+removed after the distribution is created. The <i>-k</i> option keeps these
+files in the distribution directory.
+<p>The <i>-s</i> and <i>--setup-image</i> options ("setup") include
+the ESP Software Wizard with the specified XPM image file with
+the distribution. This option is currently only supported by
+portable distributions.
+<p>The <i>--setup-program</i> option specifies the setup executable
+to use with the distribution. This option is currently only
+supported by portable distributions.
+<p>The <i>--setup-types</i> option specifies the <i>setup.types</i>
+file to include with the distribution. This option is currently
+only supported by portable distributions.
+<p>The <i>--output-dir</i> option specifies the directory to
+place output file into. The default directory is based on the
+operating system, version, and architecture.
+<p>The <i>-v</i> option ("verbose") increases the amount of information that is
+reported. Use multiple v's for more verbose output.
+<p>The <i>--depend</i> option lists the dependent (source) files for
+all files in the package.
+<p>Distributions normally are named
+"product-version-system-release-machine.ext" and
+"product-version-system-release-machine-patch.ext" (for patch
+distributions.) The "system-release-machine" information can be
+customized or eliminated using the <i>-n</i> option with the
+appropriate trailing letters. Using <i>-n</i> by itself will
+remove the "system-release-machine" string from the filename
+entirely. The "system-release-machine" information can also be
+customized by using the <i>-m</i> option with an arbitrary string.
+<p>Debian, IRIX, portable, and Red Hat distributions use the extensions ".deb",
+".tardist", "tar.gz", and ".rpm" respectively.
+<h3><a name='LIST_FILES'>List Files</a></h3>
+The EPM list file format is now described in the <i>epm.list(5)</i>
+man page.
+<h3><a name='KNOWN_BUGS'>Known Bugs</a></h3>
+EPM does not currently support generation of IRIX software patches.
+<h3><a name='SEE_ALSO'>See Also</a></h3>
+epminstall(1) - add a directory, file, or symlink to a list file
+<br>
+mkepmlist(1) - make an epm list file from a directory
+<br>
+epm.list(5) - epm list file format
+<br>
+setup(1) - graphical setup program for the esp package manager
+<h3><a name='COPYRIGHT'>Copyright</a></h3>
+Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
+<p>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+</body>
+</html>

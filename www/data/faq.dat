@@ -1,0 +1,155 @@
+SECTION:General Questions
+
+FAQ:What is EPM?
+
+<p>EPM is the software packaging tool that we now use at Easy
+Software Products. It is a simple tool that generates software
+and patch distributions in various formats, including:</p>
+
+<ul>
+
+	<li>AIX Software Packages ("installp").</li>
+
+	<li>BSD Software Packages ("pkg_add"), used by FreeBSD,
+	NetBSD, and OpenBSD.</li>
+
+	<li>AT&T Software Packages ("pkgadd"), used by
+	Solaris.</li>
+
+	<li>Compaq Tru64 UNIX ("setld")</li>
+
+	<li>Debian Package Manager ("dpkg")</li>
+
+	<li>HP-UX Software Packages ("swinstall")</li>
+
+	<li>IRIX Software Manager ("inst")</li>
+
+	<li>MacOS X Software Packages ("name.pkg" and "name.mpkg")</li>
+
+	<li>Portable (installation and removal scripts with tar
+	files)</li>
+
+	<li>Red Hat Package Manager ("rpm")</li>
+
+	<li>Slackware Software Packages ("name.tgz")</li>
+
+</ul>
+
+<p>EPM also includes a graphical "setup" program that can be
+provided with your distributions to make installation of more
+than one package a snap.</p>
+
+
+FAQ:Why Another Software Packaging Tool?
+
+<p>We developed EPM because we were tired of developing and
+testing N different software distributions, each with their own
+input files and setup requirements.</p>
+
+<p>Also, when we started looking at selling software for Linux
+we saw that there are at least four different "standard"
+distribution formats, and none of them are compatible with the
+other. Clearly we needed something that could be used for all
+platforms, <i>without</i> requiring special software packages on
+the customer's system!</p>
+
+<p>The EPM manual, <a href='documentation.php'>"Software
+Distribution with the ESP Package Manager"</a>, goes into
+greater depth on our reasoning.</p>
+
+
+FAQ:Do I Have to Pay to Distribute Software Using EPM?
+
+<p>No! EPM is free software and any installations you create are
+unencumbered by licensing of any kind, not even the GPL.</p>
+
+
+FAQ:How Do I Report Problems and Submit Patches?
+
+<p>You can report bugs and submit all patches to the <a
+href='../espnews.php?gepm.bugs'>epm.bugs</a> newsgroup.</p>
+
+
+FAQ:What Features are Planned for EPM 5.x?
+
+<p>EPM 5.x will add numerous new features, including:
+
+<ul>
+
+	<li>GUI list file editor [partially implemented]</li>
+
+	<li>Relocatable packages</li>
+
+	<li>Build-from-source (%build instructions)</li>
+
+	<li>Support for libtool</li>
+
+	<li>Better manpage installation support -
+	specifically, add code to automatically locate the
+	correct man directory for each file depending on the
+	architecture</li>
+
+	<li>Support for dependency checking against vendor
+	packages; that is, a portable package could check its
+	dependencies against portable, RPM, Debian, etc.
+	packages, rather than just packages of the same format</li>
+
+	<li>Support for checksums, probably using the "sum"
+	command or something else suitably portable, to
+	verify the tar files and installed files</li>
+
+</ul>
+
+<p>You can access the current 5.x development code via <a
+href='svn.php#development'>Subversion</a>.</p>
+
+
+SECTION:Compiling Questions
+
+FAQ:What is Required for EPM?
+
+<p>On your development system you just need a C compiler, a make
+program, the Bourne (or Korn or Bash) shell, and gzip.</p>
+
+<p>The graphical setup program needs a C++ compiler and version
+1.1 of the FLTK library, available at "<a
+href='http://www.fltk.org/'>http://www.fltk.org/</a>".</p>
+
+<p>EPM can generate so-called "portable" distributions that are
+based on shell scripts and tar files. For these types of
+distributions your customers/users will need the Bourne (or Korn
+or Bash) shell, a tar program, and GNU zip. The first two are
+standard items, and GNU zip is being shipped by most vendors as
+well.</p>
+
+<p>EPM can also generate vendor-specific distributions.  These
+require the particular vendor tool (rpm, dpkg, etc.) to create
+and install the software package.</p>
+
+
+FAQ:How Do I Compile EPM?
+
+<p>EPM uses GNU autoconf to configure itself for your system. 
+To build it, use:</p>
+
+<pre class='command'>
+<kbd>./configure ENTER</kbd>
+<kbd>make ENTER</kbd>
+</pre>
+
+<p>Once EPM is compiled you can type:</p>
+
+<pre class='command'>
+<kbd>su ENTER</kbd>
+<kbd>make install ENTER</kbd>
+</pre>
+
+<p>to install the software in /usr/bin.</p>
+
+
+SECTION:List File Questions
+
+FAQ:How Do I Use EPM?
+
+<p>Please look at the EPM book. It is available for free in HTML
+format ("doc/epm-book.html") and for $19.98 in printed form.</p>
