@@ -741,7 +741,7 @@ switch ($op)
 	$create_user = db_escape($create_user);
 
         db_query("INSERT INTO article VALUES(NULL,"
-	        ."$is_published,'$title','$abstract','$contents',"
+	        ."$is_published,'News','$title','$abstract','$contents',"
 		."$create_date,'$create_user',$create_date,'$create_user')");
 
 	$id = db_insert_id();
