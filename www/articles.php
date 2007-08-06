@@ -464,7 +464,7 @@ switch ($op)
           $temp = htmlspecialchars($row['title']);
           if ($row['is_published'] == 0)
 	    $temp .= " <img src='images/private.gif' width='16' height='16' "
-	            ."border='0' align='middle' alt='Private'/>";
+	            ."border='0' align='absmiddle' alt='Private'/>";
 
           print("<td align='center' width='67%'>$link$temp</a></td>");
 
@@ -516,7 +516,7 @@ switch ($op)
         }
 
         print("<p><img src='images/private.gif' width='16' height='16' "
-	     ."align='middle' alt='private'/> = hidden from public view</p>\n");
+	     ."align='absmiddle' alt='private'/> = hidden from public view</p>\n");
       }
 
       html_footer();

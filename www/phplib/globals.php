@@ -11,31 +11,47 @@
 // Global vars...
 //
 
+$PROJECT_BUGS = "epm-bugs@easysw.com";	// Bug reporting address
+$PROJECT_EMAIL = "epm@easysw.com";	// Default notification address
+$PROJECT_MODULE = "epm";		// SVN module
 $PROJECT_NAME = "ESP Package Manager";	// Title of project
-$PROJECT_EMAIL = "epm-bugs@easysw.com";	// Default notification address
 $PROJECT_REGISTER = "epm-register@easysw.com";
 					// User registration email
-$PROJECT_MODULE = "epm";		// SVN module
-$PAGE_MAX = 10; 			// Max items per page
+$PROJECT_RFES = "epm@easysw.com";	// Feaure request address
+$PROJECT_SECURITY = "mike@easysw.com";	// Security reports address
+$PROJECT_URL = "http://www.epmhome.org/";
+					// URL to main site
 
 
 //
 // PHP transition stuff...
 //
 
-global $_COOKIE, $_FILES, $_POST, $_SERVER;
+global $_COOKIE, $_FILES, $_GET, $_POST, $_SERVER;
 
-$argc           = $_SERVER["argc"];
-$argv           = $_SERVER["argv"];
-$PHP_SELF       = $_SERVER["PHP_SELF"];
-$REQUEST_METHOD = $_SERVER["REQUEST_METHOD"];
-$SERVER_NAME    = $_SERVER["SERVER_NAME"];
-$REMOTE_ADDR    = $_SERVER["REMOTE_ADDR"];
+foreach (array("argc", "argv", "PHP_SELF", "REQUEST_METHOD", "SERVER_NAME", "SERVER_PORT", "REMOTE_ADDR") as $var)
+{
+  if (array_key_exists($var, $_SERVER))
+    $$var = $_SERVER[$var];
+  else
+    $$var = "";
+}
 
 if (array_key_exists("ISHTTPS", $_SERVER))
-  $PHP_URL = "https://$_SERVER[SERVER_NAME]:$_SERVER[SERVER_PORT]$_SERVER[PHP_SELF]";
+  $PHP_URL = "https://$SERVER_NAME:$SERVER_PORT$PHP_SELF";
 else
-  $PHP_URL = "http://$_SERVER[SERVER_NAME]:$_SERVER[SERVER_PORT]$_SERVER[PHP_SELF]";
+  $PHP_URL = "http://$SERVER_NAME:$SERVER_PORT$PHP_SELF";
+
+// Max items per page
+if (array_key_exists("${PROJECT_MODULE}PAGEMAX", $_COOKIE))
+{
+  $PAGE_MAX = (int)$_COOKIE["${PROJECT_MODULE}PAGEMAX"];
+
+  if ($PAGE_MAX < 10)
+    $PAGE_MAX = 10;
+}
+else
+  $PAGE_MAX = 10;
 
 //
 // End of "$Id$".

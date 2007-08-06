@@ -17,7 +17,7 @@
 //   db_free()      - Free a database query result...
 //   db_insert_id() - Return the ID of the last inserted record.
 //   db_next()      - Fetch the next row of a result set and return it as
-//                    an object.
+//                    an array.
 //   db_query()     - Run a SQL query and return the result or 0 on error.
 //   db_seek()      - Seek to a specific row within a result.
 //
@@ -104,7 +104,7 @@ db_insert_id()
 
 
 //
-// 'db_next()' - Fetch the next row of a result set and return it as an object.
+// 'db_next()' - Fetch the next row of a result set and return it as an array.
 //
 
 function				// O - Row object or NULL at end

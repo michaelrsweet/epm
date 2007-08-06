@@ -63,7 +63,8 @@ function				// O - User information
 html_header($title = "",		// I - Additional document title
             $links = FALSE,		// I - Array of links
             $path = "",			// I - Relative path to root
-	    $refresh = "")		// I - Refresh URL
+	    $refresh = "",		// I - Refresh URL
+	    $javascript = "")		// I - Javascript for page
 {
   global $html_firstlink, $html_keywords, $html_path;
   global $argc, $argv, $PHP_SELF, $LOGIN_USER;
@@ -114,6 +115,9 @@ html_header($title = "",		// I - Additional document title
     print(",$val");
 
   print("'>\n");
+
+  if ($javascript != "")
+    print("  <script type='text/javascript'>\n$javascript\n  </script>\n");
 
   print("</head>\n"
        ."<body>\n");
@@ -234,7 +238,15 @@ html_link($text,			// I - Text for hyperlink
 
   $safetext = str_replace(" ", "&nbsp;", $text);
 
-  print("<a href='$link'>$safetext</a>");
+  if (($pos = strpos($link, "@@@@")) !== FALSE)
+  {
+    $jscript = substr($link, $pos + 4);
+    $link    = substr($link, 0, $pos);
+
+    print("<a href='$link' onClick='$jscript'>$safetext</a>");
+  }
+  else
+    print("<a href='$link'>$safetext</a>");
 }
 
 

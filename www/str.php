@@ -6,200 +6,482 @@
 //
 // Contents:
 //
+//   add_file()     - Add a file to a STR...
+//   add_text()     - Add text to a STR...
 //   notify_users() - Notify users of STR changes...
+//   str_history()  - Show previous files and text posts.
 //
 
 //
 // Include necessary headers...
 //
 
-include_once "phplib/html.php";
-include_once "phplib/str.php";
+include_once "phplib/db-str.php";
 
 
 //
-// String definitions for various things...
+// 'add_file()' - Add a file to a STR...
 //
 
-$messages = array(
-  "Fixed in Repo" =>
-      "Fixed in Subversion repository.",
-  "Old STR" =>
-      "This STR has not been updated by the submitter for two or more weeks "
-     ."and has been closed as required by the EPM Configuration Management "
-     ."Plan. If the issue still requires resolution, please re-submit a new "
-     ."STR.",
-  "Unresolvable" =>
-      "We are unable to resolve this problem with the information provided. "
-     ."If you discover new information, please file a new STR referencing "
-     ."this one."
-);
-    
-$subsystems = array(
-  "AIX Support",
-  "BSD Support",
-  "Build Files",
-  "Config Files",
-  "Debian Support",
-  "Documentation",
-  "HP-UX Support",
-  "Mac OS X Support",
-  "Multiple",
-  "Portable Support",
-  "RPM Support",
-  "SGI Support",
-  "Sun Support",
-  "Tru64 Support",
-  "Web Site",
-  "epm",
-  "epmeditor",
-  "epminstall",
-  "mkepmlist",
-  "setup/uninst"
-);
+function				// O - FALSE on failure, filename on success
+add_file($str)				// I - STR
+{
+  global $_FILES, $_GET, $_POST, $LOGIN_EMAIL;
 
-$versions = array(
-  "-current",
-  "-feature",
-  "5.x-current",
-  "+5.0",
-  "+5.0-feature",
-  "4.x-current",
-  "+4.2",
-  "4.1",
-  "4.0",
-  "3.x and earlier",
-  "Web Site"
-);
+
+  // Grab form data...
+  if (array_key_exists("file", $_FILES))
+    $file = $_FILES["file"];
+  else
+    return ("");
+
+  $filename = $file['name'];
+  if (strlen($filename) < 1 || $filename[0] == '.' ||
+      $filename[0] == '/' || $filename == "")
+    return ("");
+
+  // Get the source and destination filenames...
+  $tmpname = $file['tmp_name'];
+  $strname = "strfiles/$str->id/$filename";
+
+  if (file_exists($strname))
+  {
+    // Rename file to avoid conflicts...
+    for ($i = 2; $i < 1000; $i ++)
+    {
+      if (ereg(".*\\..*", $filename))
+	$temp = ereg_replace("([^\\.]*)\\.(.*)",
+                             "\\1_v$i.\\2", $filename);
+      else
+        $temp = "${filename}_v$i";
+
+      if (!file_exists("strfiles/$str->id/$temp"))
+        break;
+    }
+
+    // Only support up to 1000 versions of the same file...
+    if ($i >= 1000)
+      return (FALSE);
+
+    $filename = $temp;
+    $strname  = "strfiles/$str->id/$filename";
+  }
+
+  // Open files...
+  $infile = fopen($tmpname, "rb");
+
+  if (!$infile)
+    return (FALSE);
+
+  // Make the attachment directory...
+  if (!file_exists("strfiles/$str->id"))
+    mkdir("strfiles/$str->id");
+
+  $outfile = fopen($strname, "wb");
+
+  if (!$outfile)
+  {
+    fclose($infile);
+    return (FALSE);
+  }
+
+  // Copy the attachment...
+  while ($data = fread($infile, 8192))
+    fwrite($outfile, $data);
+
+  // Close files...
+  fclose($infile);
+  fclose($outfile);
+
+  // Create the file record...
+  $file = new strfile();
+
+  $file->str_id       = $str->id;
+  $file->is_published = 1;
+  $file->filename     = $filename;
+  $file->create_date  = time();
+  $file->create_user  = $str->modify_user;
+
+  // Save it...
+  if (!$file->save())
+    return (FALSE);
+
+  return ($filename);
+}
 
 
 //
-// Get the list of valid developers from the users table...
+// 'add_text()' - Add text to a STR...
 //
 
-$managers = array();
+function				// O - FALSE on failure, text on success
+add_text($str)				// I - STR
+{
+  global $_GET, $_POST, $LOGIN_EMAIL, $STR_MESSAGES;
 
-$result = db_query("SELECT * FROM users WHERE is_published = 1 AND "
-                  ."level >= " . AUTH_DEVEL);
-while ($row = db_next($result))
-  $managers[$row["name"]] = $row["email"];
 
-db_free($result);
+  // Get form data...
+  $contents = "";
+
+  if (array_key_exists("message", $_GET))
+    $contents .= $STR_MESSAGES[$_GET["message"]];
+  else if (array_key_exists("message", $_POST))
+    $contents .= $STR_MESSAGES[$_POST["message"]];
+
+  if (((array_key_exists("message", $_GET) && $_GET["message"] != "") ||
+       (array_key_exists("message", $_POST) && $_POST["message"] != "")) &&
+      (array_key_exists("contents", $_GET) ||
+       array_key_exists("contents", $_POST)))
+    $contents .= "\n\n";
+
+  if (array_key_exists("contents", $_GET))
+    $contents .= $_GET["contents"];
+  else if (array_key_exists("contents", $_POST))
+    $contents .= $_POST["contents"];
+
+  $contents = trim(str_replace("\r\n", "\n", $contents));
+
+  if ($contents == "")
+    return ("");
+
+  // Create a new text record...
+  $text = new strtext();
+
+  $text->str_id       = $str->id;
+  $text->is_published = 1;
+  $text->contents     = $contents;
+  $text->create_date  = time();
+  $text->create_user  = $str->modify_user;
+
+  // Save it...
+  if (!$text->save())
+    return (FALSE);
+
+  return ($contents);
+}
 
 
 //
 // 'notify_users()' - Notify users of STR changes...
 //
 
+
 function
-notify_users($id,			// I - STR #
-             $what = "updated",		// I - Reason for notification
-	     $contents = "")		// I - Notification message
+notify_users($str,			// I - STR
+	     $contents = "",		// I - Notification message, if any
+	     $file = "",		// I - Attached file, if any
+	     $what = "Re: ")		// I - Reply or new message
 {
-  global $priority_long;
-  global $scope_long;
-  global $status_long;
-  global $PHP_URL, $PROJECT_EMAIL, $PROJECT_NAME;
+  global $STR_PRIORITY_SHORT, $STR_STATUS_LONG;
+  global $PROJECT_BUGS, $PROJECT_RFES, $PROJECT_SECURITY, $PROJECT_URL, $PROJECT_MODULE;
 
 
-  $result = db_query("SELECT * FROM str WHERE id = $id");
-  if ($result)
+  // Make sure contents is non-empty for file attachments...
+  if ($contents == "" && $file != "")
+    $contents = "Attached file \"$file\"...";
+
+  // Set the primary recipient of the message...
+  if ($str->manager_user != "")
   {
-    $contents = wordwrap($contents);
-    $row      = db_next($result);
-    $prtext   = $priority_long[$row['priority']];
-    $sttext   = $status_long[$row['status']];
-    $sctext   = $scope_long[$row['scope']];
-
-    if ($row['subsystem'] != "")
-      $subsystem = $row['subsystem'];
+    // Send the email to either the manager user or create user, depending
+    // on who modified the STR...
+    if ($str->modify_user != $str->manager_user)
+      $to = auth_user_email($str->manager_user);
     else
-      $subsystem = "Unassigned";
+      $to = auth_user_email($str->create_user);
+  }
+  else if (!$str->is_published)
+  {
+    // Send the email to the security list...
+    $to = $PROJECT_SECURITY;
+  }
+  else if ($str->priority == STR_PRIORITY_RFE)
+  {
+    // Send the email to the developer list...
+    $to = $PROJECT_RFES;
+  }
+  else
+  {
+    // Send the email to the bug list...
+    $to = $PROJECT_BUGS;
+  }
 
-    if ($row['fix_version'] != "")
-      $fix_version = $row['fix_version'];
-    else
-      $fix_version = "Unassigned";
+  $from = auth_user_email($str->modify_user);
 
-    if (eregi("[a-z0-9_.]+", $row['create_user']))
-      $email = auth_user_email($row['create_user']);
-    else
-      $email = $row['create_user'];
+  if ($str->status >= STR_STATUS_ACTIVE)
+    $replyto = "noreply@easysw.com";
+  else if (!$str->is_published)
+  {
+    // Reply to the security list...
+    $replyto = $PROJECT_SECURITY;
+  }
+  else if ($str->priority == STR_PRIORITY_RFE)
+  {
+    // Reply to the developer list...
+    $replyto = $PROJECT_RFES;
+  }
+  else
+  {
+    // Reply to the bug list...
+    $replyto = $PROJECT_BUGS;
+  }
 
-    if ($row['create_user'] != $row['modify_user'] &&
-        $row['create_user'] != $manager &&
-	$email != "")
-      mail($email, "$PROJECT_NAME STR #$id $what",
-	   "Your software trouble report #$id has been $what.  You can check\n"
-	  ."the status of the report and add additional comments and/or files\n"
-	  ."at the following URL:\n"
-	  ."\n"
-	  ."    $PHP_URL?L$id\n"
-	  ."\n"
-	  ."    Summary: $row[summary]\n"
-	  ."    Version: $row[str_version]\n"
-	  ."     Status: $sttext\n"
-	  ."   Priority: $prtext\n"
-	  ."      Scope: $sctext\n"
-	  ."  Subsystem: $subsystem\n"
-	  ."Fix Version: $fix_version\n"
-	  ."\n$contents"
-	  ."________________________________________________________________\n"
-	  ."Thank you for using the $PROJECT_NAME Software Trouble Report page!",
-	   "From: $PROJECT_EMAIL\r\n");
+  // Setup the message and headers...
+  $subject  = "${what}[" . $STR_PRIORITY_SHORT["$str->priority"]
+             ."] STR #$str->id: $str->summary";
+  $headers  = "From: $from\n"
+             ."Reply-To: $replyto\n";
+  if ($str->status >= STR_STATUS_ACTIVE)
+    $message  = "DO NOT REPLY TO THIS MESSAGE.  INSTEAD, POST ANY RESPONSES TO "
+               ."THE LINK BELOW.\n\n";
+  else
+    $message = "";
 
-    $ccresult = db_query("SELECT email FROM carboncopy WHERE url = 'str.php_L$id'");
-    if ($ccresult)
+  $message .= "[STR " . substr($STR_STATUS_LONG[$str->status], 4) . "]\n"
+             ."\n"
+             . wordwrap(trim($contents)) . "\n"
+	     ."\n"
+	     ."Link: ${PROJECT_URL}str.php?L$str->id\n"
+	     ."Version: $str->str_version\n";
+
+  if ($str->fix_version != "")
+  {
+    // Add fix version
+    $message .= "Fix Version: $str->fix_version";
+    if ($str->fix_revision != 0)
+      $message .= " (r$str->fix_revision)";
+    $message .= "\n";
+  }
+
+  // Carbon copy create user, devel/bug lists, and interested addressees...
+  if ($str->modify_user != $str->create_user)
+    $headers .= "Cc: " . auth_user_email($str->create_user) . "\n";
+
+  if ($str->manager_user != "" && $str->status <= STR_STATUS_UNRESOLVED)
+  {
+    if (!$str->is_published)
     {
-      while ($ccrow = db_next($ccresult))
-      {
-	mail($ccrow['email'], "$PROJECT_NAME STR #$id $what",
-	     "Software trouble report #$id has been $what.  You can check\n"
-	    ."the status of the report and add additional comments and/or files\n"
-	    ."at the following URL:\n"
-	    ."\n"
-	    ."    $PHP_URL?L$id\n"
-	    ."\n"
-	    ."    Summary: $row[summary]\n"
-	    ."    Version: $row[str_version]\n"
-	    ."     Status: $sttext\n"
-	    ."   Priority: $prtext\n"
-	    ."      Scope: $sctext\n"
-	    ."  Subsystem: $subsystem\n"
-	    ."Fix Version: $fix_version\n"
-	    ."\n$contents"
-	    ."________________________________________________________________\n"
-	    ."Thank you for using the $PROJECT_NAME Software Trouble Report page!",
-	     "From: $PROJECT_EMAIL\r\n");
-      }
+      // Carbon copy the email to the security list...
+      $headers .= "Cc: $PROJECT_SECURITY\n";
+    }
+    else if ($str->priority == STR_PRIORITY_RFE)
+    {
+      // Carbon copy the email to the developer list...
+      $headers .= "Cc: $PROJECT_RFES\n";
+    }
+    else
+    {
+      // Carbon copy the email to the bug list...
+      $headers .= "Cc: $PROJECT_BUGS\n";
+    }
+  }
 
-      db_free($ccresult);
+  $ccresult = db_query("SELECT email FROM carboncopy WHERE "
+                      ."url = 'str.php_L$str->id'");
+  if ($ccresult)
+  {
+    while ($ccrow = db_next($ccresult))
+      $headers .= "Cc: $ccrow[email]\n";
+
+    db_free($ccresult);
+  }
+
+  // Check for file attachments...
+  if ($file != "")
+    $bytes = filesize("strfiles/$str->id/$file");
+  else
+    $bytes = 0;
+
+  if ($bytes > 0 && $bytes <= 102400 && !eregi(".*\\.zip", $file))
+  {
+    // Attach the file to the message...
+    if (eregi(".*\\.(c|cc|cpp|cxx|diff|diffs|h|hpp|htm|html|txt|patch)", $file))
+      $content_type = "text/plain";
+    else if (eregi(".*\\.bmp", $file))
+      $content_type = "image/bmp";
+    else if (eregi(".*\\.gif", $file))
+      $content_type = "image/gif";
+    else if (eregi(".*\\.png", $file))
+      $content_type = "image/png";
+    else if (eregi(".*\\.jpg", $file))
+      $content_type = "image/jpeg";
+    else if (eregi(".*\\.pdf", $file))
+      $content_type = "application/pdf";
+    else
+      $content_type = "application/octet-stream";
+
+    $headers .= "Mime-Version: 1.0\n"
+               ."Content-Type: multipart/mixed; boundary=\"PART-BOUNDARY\"\n"
+               ."Content-Transfer-Encoding: 8bit\n"
+	       ."\n";
+    $body    = "--PART-BOUNDARY\n"
+              ."Content-Type: text/plain\n"
+	      ."\n"
+	      ."$message"
+	      ."--PART-BOUNDARY\n"
+	      ."Content-Type: $content_type\n"
+	      ."Content-Disposition: attachment; filename=\"$file\"\n";
+
+    if ($content_type == "text/plain")
+    {
+      $data = str_replace("\r\n", "\n",
+                          file_get_contents("strfiles/$str->id/$file"));
+
+      $body .= "\n"
+	      ."$data\n";
+    }
+    else
+    {
+      $data = chunk_split(base64_encode(
+                          file_get_contents("strfiles/$str->id/$file")),
+			  76, "\n");
+
+      $body .= "Content-Transfer-Encoding: BASE64\n"
+	      ."Content-Length: $bytes\n"
+	      ."\n"
+	      ."$data\n";
     }
 
-    if ($row['manager_email'] != "")
-      $manager = $row['manager_email'];
-    else
-      $manager = $PROJECT_EMAIL;
+    $body .= "--PART-BOUNDARY--\n";
+  }
+  else
+  {
+    // Message without attachment...
+    $headers .= "Mime-Version: 1.0\n"
+               ."Content-Type: text/plain\n";
+    $body    = $message;
 
-    if ($row['modify_user'] != $manager)
-      mail($manager, "$PROJECT_NAME STR #$id $what",
-	   "The software trouble report #$id assigned to you has been $what.\n"
-	  ."You can manage the report and add additional comments and/or files\n"
-	  ."at the following URL:\n"
-	  ."\n"
-	  ."    $PHP_URL?L$id\n"
-	  ."\n"
-	  ."    Summary: $row[summary]\n"
-	  ."    Version: $row[str_version]\n"
-	  ."     Status: $sttext\n"
-	  ."   Priority: $prtext\n"
-	  ."      Scope: $sctext\n"
-	  ."  Subsystem: $subsystem\n"
-	  ."Fix Version: $fix_version\n"
-	  ."\n$contents",
-	   "From: $PROJECT_EMAIL\r\n");
+    // Add URL to attachment file, since it is too big to email...
+    if ($file != "")
+      $body .= "Attachment: ${PROJECT_URL}strfiles/$str->id/$file\n";
+  }
 
-    db_free($result);
+  // Send the email notification...
+  mail($to, $subject, $body, $headers);
+}
+
+
+//
+// 'str_history()' - Show previous files and text posts.
+//
+
+function
+str_history($str,			// I - STR to show
+            $allowpost = FALSE,		// I - Show "post text/file" links
+            $options = "")		// I - Options to pass along
+{
+  global $PHP_SELF, $LOGIN_LEVEL;
+
+
+  print("<hr noshade><p><b>Trouble Report Files:</b></p>\n");
+  if ($str->status >= STR_STATUS_ACTIVE && $allowpost)
+  {
+    html_start_links();
+    html_link("Post File", "$PHP_SELF?F$str->id$options");
+    html_end_links();
+  }
+
+  $strfile = new strfile();
+  $matches = $strfile->search($str->id);
+
+  if (sizeof($matches) == 0)
+    print("<p><i>No files</i></p>\n");
+  else
+  {
+    html_start_table(array("Name/Time/Date", "Filename/Size"));
+
+    for ($i = 0; $i < sizeof($matches); $i ++)
+    {
+      $strfile->load($matches[$i]);
+
+      $date     = date("M d, Y", $strfile->create_date);
+      $time     = date("H:i", $strfile->create_date);
+      $email    = sanitize_email($strfile->create_user);
+      $filename = htmlspecialchars($strfile->filename, ENT_QUOTES);
+      $filesize = filesize("strfiles/$str->id/$strfile->filename");
+
+      if ($filesize < 262144)
+        $filesize = sprintf("%.0fk", $filesize / 1024.0);
+      else
+        $filesize = sprintf("%.1fM", $filesize / 1024.0 / 1024.0);
+
+      html_start_row();
+      print("<td align='center' valign='top'>$email<br >$time $date");
+
+      if ($LOGIN_LEVEL >= AUTH_DEVEL)
+      {
+        print("<form method='POST' action='$PHP_SELF?U$str->id$options'>"
+	     ."<input type='hidden' name='FILE_ID' value='$strfile->id'>");
+
+        if ($strfile->is_published)
+	  print("<input type='hidden' name='IS_PUBLISHED' value='0'>"
+	       ."<input type='submit' value='Hide'>");
+        else
+	  print("<input type='hidden' name='IS_PUBLISHED' value='1'>"
+	       ."<input type='submit' value='Show'>");
+
+	print("</form>");
+      }
+
+      print("</td>"
+           ."<td align='center' valign='top' width='100%'>"
+	   ."<a href='strfiles/$str->id/$filename'>$filename</a><br>"
+	   ."$filesize</td>");
+      html_end_row();
+    }
+
+    html_end_table();
+  }
+
+  print("<hr noshade><p><b>Trouble Report Dialog:</b></p>\n");
+  if ($str->status >= STR_STATUS_ACTIVE && $allowpost)
+  {
+    html_start_links();
+    html_link("Post Text", "$PHP_SELF?T$str->id$options");
+    html_end_links();
+  }
+
+  $strtext = new strtext();
+  $matches = $strtext->search($str->id);
+
+  if (sizeof($matches) == 0)
+    print("<p><i>No text</i></p>\n");
+  else
+  {
+    html_start_table(array("Name/Time/Date", "Text"));
+
+    for ($i = 0; $i < sizeof($matches); $i ++)
+    {
+      $strtext->load($matches[$i]);
+
+      $date     = date("M d, Y", $strtext->create_date);
+      $time     = date("H:i", $strtext->create_date);
+      $email    = sanitize_email($strtext->create_user);
+      $contents = quote_text($strtext->contents);
+
+      html_start_row();
+      print("<td align='center' valign='top'>$email<br >$time $date");
+
+      if ($LOGIN_LEVEL >= AUTH_DEVEL)
+      {
+        print("<form method='POST' action='$PHP_SELF?U$str->id$options'>"
+	     ."<input type='hidden' name='TEXT_ID' value='$strtext->id'>");
+
+        if ($strtext->is_published)
+	  print("<input type='hidden' name='IS_PUBLISHED' value='0'>"
+	       ."<input type='submit' value='Hide'>");
+        else
+	  print("<input type='hidden' name='IS_PUBLISHED' value='1'>"
+	       ."<input type='submit' value='Show'>");
+
+	print("</form>");
+      }
+
+      print("</td><td valign='top'><tt>$contents</tt></td>");
+      html_end_row();
+    }
+
+    html_end_table();
   }
 }
 
@@ -211,13 +493,13 @@ notify_users($id,			// I - STR #
 // Operations:
 //
 // B         = Batch update selected STRs
+// F#        = Post file for STR #
 // L         = List all STRs
 // L#        = List STR #
-// M#        = Modify STR #
+// N#        = Update notification for STR #
 // T#        = Post text for STR #
-// F#        = Post file for STR #
-// N         = Post new STR
-// U#        = Update notification for STR #
+// U         = Post new STR
+// U#        = Modify STR #
 //
 // Options:
 //
@@ -225,7 +507,8 @@ notify_users($id,			// I - STR #
 // P#        = Set priority filter
 // S#        = Set status filter
 // C#        = Set scope filter
-// E#        = Set email filter
+// E#        = Set user filter
+// M#        = Set maximum STRs per page
 // Qtext     = Set search text
 
 $priority = 0;
@@ -240,35 +523,27 @@ if ($argc)
   $op = $argv[0][0];
   $id = (int)substr($argv[0], 1);
 
-  if ($op != 'L' && $op != 'M' && $op != 'T' && $op != 'F' &&
+  if ($op != 'L' && $op != 'T' && $op != 'F' &&
       $op != 'N' && $op != 'U' && $op != 'B')
   {
-    html_header("Bugs &amp; Features Error");
+    html_header("Bugs & Features Error");
     print("<p>Bad command '$op'!</p>\n");
     html_footer();
     exit();
   }
 
-  if (($op == 'M' || $op == 'B') && $LOGIN_LEVEL < AUTH_DEVEL)
+  if ((($op == 'U' && $id > 0) || $op == 'B') && $LOGIN_LEVEL < AUTH_DEVEL)
   {
-    html_header("Bugs &amp; Features Error");
+    html_header("Bugs & Features Error");
     print("<p>The '$op' command is not available to you!</p>\n");
     html_footer();
     exit();
   }
 
-  if (($op == 'M' || $op == 'T' || $op == 'F') && !$id)
+  if (($op == 'N' || $op == 'T' || $op == 'F') && $id <= 0)
   {
-    html_header("Bugs &amp; Features Error");
+    html_header("Bugs & Features Error");
     print("<p>Command '$op' requires an STR number!</p>\n");
-    html_footer();
-    exit();
-  }
-
-  if ($op == 'N' && $id)
-  {
-    html_header("Bugs &amp; Features Error");
-    print("<p>Command '$op' cannot have an STR number!</p>\n");
     html_footer();
     exit();
   }
@@ -279,14 +554,22 @@ if ($argc)
 
     switch ($argv[$i][0])
     {
-      case 'P' : // Set priority filter
-          $priority = (int)$option;
-	  break;
-      case 'S' : // Set status filter
-          $status = (int)$option;
-	  break;
       case 'C' : // Set scope filter
           $scope = (int)$option;
+	  break;
+      case 'E' : // Show only problem reports matching the current user
+          $femail = (int)$option;
+	  break;
+      case 'I' : // Set first STR
+          $index = (int)$option;
+	  if ($index < 0)
+	    $index = 0;
+	  break;
+      case 'M' : // Set max STRs per page
+          $PAGE_MAX = (int)$option;
+	  break;
+      case 'P' : // Set priority filter
+          $priority = (int)$option;
 	  break;
       case 'Q' : // Set search text
           $search = urldecode($option);
@@ -297,16 +580,11 @@ if ($argc)
 	    $i ++;
 	  }
 	  break;
-      case 'I' : // Set first STR
-          $index = (int)$option;
-	  if ($index < 0)
-	    $index = 0;
-	  break;
-      case 'E' : // Show only problem reports matching the current email
-          $femail = (int)$option;
+      case 'S' : // Set status filter
+          $status = (int)$option;
 	  break;
       default :
-	  html_header("Bugs &amp; Features Error");
+	  html_header("Bugs & Features Error");
 	  print("<p>Bad option '$argv[$i]'!</p>\n");
 	  html_footer();
 	  exit();
@@ -330,20 +608,26 @@ if ($REQUEST_METHOD == "POST")
     $scope = (int)$_POST["FSCOPE"];
   if (array_key_exists("FEMAIL", $_POST))
     $femail = (int)$_POST["FEMAIL"];
+  if (array_key_exists("FPAGEMAX", $_POST))
+  {
+    $PAGE_MAX = (int)$_POST["FPAGEMAX"];
+    setcookie("${PROJECT_MODULE}PAGEMAX", $PAGE_MAX, time() + 365 * 86400);
+  }
   if (array_key_exists("SEARCH", $_POST))
     $search = $_POST["SEARCH"];
 }
 
-$options = "+P$priority+S$status+C$scope+I$index+E$femail+Q" . urlencode($search);
+$options = "+P$priority+S$status+C$scope+I$index+E$femail+M$PAGE_MAX+Q" .
+           urlencode($search);
 
 // B         = Batch update selected STRs
+// F#        = Post file for STR #
 // L         = List all STRs
 // L#        = List STR #
-// M#        = Modify STR #
+// N#        = Update notification for STR #
 // T#        = Post text for STR #
-// F#        = Post file for STR #
-// N         = Post new STR
-// U#        = Update notification for STR #
+// U         = Post new STR
+// U#        = Modify STR #
 
 switch ($op)
 {
@@ -354,57 +638,50 @@ switch ($op)
         break;
       }
 
-      if (array_key_exists("STATUS", $_POST) &&
-          ($_POST["STATUS"] != "" ||
-	   $_POST["PRIORITY"] != "" ||
-	   $_POST["MANAGER_EMAIL"] != "" ||
-	   $_POST["MESSAGE"] != ""))
+      if (array_key_exists("status", $_POST) &&
+          ($_POST["status"] != "" ||
+	   $_POST["subsystem"] != "" ||
+	   $_POST["fix_version"] != "" ||
+	   $_POST["priority"] != "" ||
+	   $_POST["manager_user"] != "" ||
+	   $_POST["message"] != ""))
       {
-        $time          = time();
-        $manager_email = db_escape($_POST["MANAGER_EMAIL"]);
-        $modify_user  = db_escape($_COOKIE["FROM"]);
-	$message       = $_POST["MESSAGE"];
-
-        if ($message != "")
-	{
-	  $contents = db_escape($messages[$message]);
-	  $mailmsg  = $messages[$message] . "\n\n";
-	}
-	else
-	{
-	  $contents = "";
-	  $mailmsg  = "";
-	}
-
-        $query = "modify_date = $time, modify_user = '$modify_user'";
-
-	if ($_POST["STATUS"] != "")
-	  $query .= ", status = $_POST[STATUS]";
-	if ($_POST["PRIORITY"] != "")
-	  $query .= ", priority = $_POST[PRIORITY]";
-	if ($manager_email != "")
-	  $query .= ", manager_email = '$manager_email'";
-
-        db_query("BEGIN TRANSACTION");
-
         reset($_POST);
         while (list($key, $val) = each($_POST))
-          if (substr($key, 0, 3) == "ID_")
+	{
+          if (ereg("ID_[0-9]+", $key))
 	  {
-	    $id = (int)substr($key, 3);
+	    $id  = (int)substr($key, 3);
+	    $str = new str($id);
 
-            db_query("UPDATE str SET $query WHERE id = $id");
+	    if ($str->id != $id)
+	      continue;
 
-            if ($contents != "")
+	    if ($_POST["status"] != "")
+	      $str->status = (int)$_POST["status"];
+	    if ($_POST["subsystem"] != "")
+	      $str->subsystem = $_POST["subsystem"];
+	    if ($_POST["fix_version"] != "")
+	      $str->fix_version = $_POST["fix_version"];
+	    if ($_POST["priority"] != "")
+	      $str->priority = (int)$_POST["priority"];
+	    if ($_POST["manager_user"] != "")
+	      $str->manager_user = $_POST["manager_user"];
+
+            if ($str->validate())
 	    {
-              db_query("INSERT INTO strtext VALUES(NULL,$id,1,'$contents',"
-	              ."$time,'$modify_user')");
+              $str->save();
 
-	      notify_users($id, "updated", $mailmsg);
+              if ($_POST["message"] != "")
+		$contents = add_text($str);
+	      else
+		$contents = "";
+
+              if ($contents !== FALSE)
+		notify_users($str, $contents);
 	    }
 	  }
-
-        db_query("COMMIT TRANSACTION");
+        }
       }
 
       header("Location: $PHP_SELF?L$options");
@@ -413,177 +690,69 @@ switch ($op)
   case 'L' : // List (all) STR(s)
       if ($id)
       {
-        $result = db_query("SELECT * FROM str WHERE id = $id");
-	if (db_count($result) != 1)
+	$links = array("Return to Bugs & Features" => "$PHP_SELF?L$options");
+
+        $str = new str($id);
+	if ($str->id != $id)
 	{
-          html_header("STR #$id");
+	  html_header("STR #$id", $links);
 	  print("<p><b>Error:</b> STR #$id was not found!</p>\n");
 	  html_footer();
 	  exit();
 	}
 
-        $row = db_next($result);
-
-        $links = array("Return to Bugs &amp; Features" => "$PHP_SELF?L$options");
-
-        if ($row['status'] >= $STR_STATUS_ACTIVE)
+        if ($str->status >= STR_STATUS_ACTIVE)
 	{
 	  $links["Post Text"] = "$PHP_SELF?T$id$options";
 	  $links["Post File"] = "$PHP_SELF?F$id$options";
 	}
 
 	if ($LOGIN_LEVEL >= AUTH_DEVEL)
-	  $links["Modify STR"] = "$PHP_SELF?M$id$options";
+	  $links["Modify STR"] = "$PHP_SELF?U$id$options";
 
         html_header("STR #$id", $links);
 
-	$create_user  = sanitize_email($row['create_user']);
-	$manager_email = sanitize_email($row['manager_email']);
-	$subsystem     = $row['subsystem'];
-	$summary       = htmlspecialchars($row['summary'], ENT_QUOTES);
-	$prtext        = $priority_long[$row['priority']];
-        $sttext        = $status_long[$row['status']];
-        $sctext        = $scope_long[$row['scope']];
-	$str_version   = $row['str_version'];
-	$fix_version   = $row['fix_version'];
+        $str->view($options);
 
-        if ($manager_email == "")
-	  $manager_email = "<i>Unassigned</i>";
-
-        if ($subsystem == "")
-	  $subsystem = "<i>Unassigned</i>";
-
-        if ($fix_version == "")
-	  $fix_version = "<i>Unassigned</i>";
-
-        print("<p><table width='100%' cellpadding='5' cellspacing='0' border='0'>\n");
-
-        if ($row['master_id'] > 0)
-          print("<tr><th align='right'>Duplicate Of:</th>"
-	       ."<td><a href='$PHP_SELF?L$row[master_id]$options'>STR "
-	       ."#$row[master_id]</a></td></tr>\n");
-
-        if (!$row['is_published'])
-	  print("<tr><TH ALIGN='CENTER' COLSPAN='2'>This STR is "
-	       ."currently hidden from public view.</td></tr>\n");
-
-        print("<tr><th align='right'>Status:</th><td>$sttext</td></tr>\n");
-
-	print("<tr><th align='right'>Priority:</th><td>$prtext</td></tr>\n");
-	print("<tr><th align='right'>Scope:</th><td>$sctext</td></tr>\n");
-	print("<tr><th align='right'>Subsystem:</th><td>$subsystem</td></tr>\n");
-	print("<tr><th align='right'>Summary:</th><td>$summary</td></tr>\n");
-	print("<tr><th align='right'>Version:</th><td>$str_version</td></tr>\n");
-	print("<tr><th align='right'>Created By:</th><td>$create_user</td></tr>\n");
-	print("<tr><th align='right'>Assigned To:</th><td>$manager_email</td></tr>\n");
-	print("<tr><th align='right'>Fix Version:</th><td>$fix_version</td></tr>\n");
-
-	if (array_key_exists("FROM", $_COOKIE))
-          $email = htmlspecialchars($_COOKIE["FROM"]);
-	else
-	  $email = "";
-
-        print("<tr><th align='right' valign='top'>Update Notification:</th><td>"
-	     ."<form method='POST' action='$PHP_SELF?U$id$options'>"
-	     ."<input type='text' size='40' maxsize='128' name='EMAIL' value='$email'>"
-	     ."<input type='submit' value='Change Notification Status'>"
-	     ."<br ><input type='radio' name='NOTIFICATION' checked value='ON'>Receive EMails "
-	     ."<input type='radio' name='NOTIFICATION' value='OFF'>Don't Receive EMails"
-	     ."</form>"
-	     ."</td></tr>\n");
-        print("</table></p>\n");
-
-        db_free($result);
-
-	print("<hr noshade><p><b>Trouble Report Files:</b></p>\n");
-        if ($row['status'] >= $STR_STATUS_ACTIVE)
-	{
-	  html_start_links();
-	  html_link("Post File", "$PHP_SELF?F$id$options");
-	  html_end_links();
-	}
-
-	$result = db_query("SELECT * FROM strfile WHERE "
-	                  ."str_id = $id AND is_published = 1");
-
-        if (db_count($result) == 0)
-	  print("<p><i>No files</i></p>\n");
-	else
-	{
-	  html_start_table(array("Name/Time/Date", "Filename"));
-
-	  while ($row = db_next($result))
-	  {
-            $date     = date("M d, Y", $row['create_date']);
-            $time     = date("H:i", $row['create_date']);
-	    $email    = sanitize_email($row['create_user']);
-	    $filename = htmlspecialchars($row['filename']);
-
-            html_start_row();
-	    print("<td align='center' valign='top'>$email<br >$time $date</td>"
-		 ."<td align='center' valign='top'>"
-		 ."<a href='strfiles/$id/$filename'>$filename</a></td>");
-            html_end_row();
-	  }
-
-          html_end_table();
-        }
-
-	db_free($result);
-
-	print("<hr noshade><p><b>Trouble Report Dialog:</b></p>\n");
-        if ($row['status'] >= $STR_STATUS_ACTIVE)
-	{
-	  html_start_links();
-	  html_link("Post Text", "$PHP_SELF?T$id$options");
-	  html_end_links();
-	}
-
-	$result = db_query("SELECT * FROM strtext WHERE "
-	                  ."str_id = $id AND is_published = 1");
-
-        if (db_count($result) == 0)
-	  print("<p><i>No text</i></p>\n");
-	else
-	{
-	  html_start_table(array("Name/Time/Date", "Text"));
-
-	  while ($row = db_next($result))
-	  {
-            $date     = date("M d, Y", $row['create_date']);
-            $time     = date("H:i", $row['create_date']);
-	    $email    = sanitize_email($row['create_user']);
-	    $contents = quote_text($row['contents']);
-
-	    html_start_row();
-	    print("<td align='center' valign='top'>$email<br >$time $date</td>"
-		 ."<td valign='top'><tt>$contents</tt></td>");
-	    html_end_row();
-	  }
-
-          html_end_table();
-	}
-
-	db_free($result);
+        str_history($str, TRUE, $options);
       }
       else
       {
-        html_header("Bugs &amp; Features",
-	            array("Submit Bug or Feature Request"
-		              => "$PHP_SELF?N$options'"));
+        $bookmark  = "$PHP_URL?L+P$priority+S$status+C$scope+E$femail+"
+	            ."M$PAGE_MAX+Q" . urlencode($search);
+        $bookstr   = str_replace(array("\\", "\""), array("\\\\", "\\\""),
+	                         $bookmark);
+        $searchstr = "$PROJECT_NAME STRs: " .
+	             str_replace(array("\\", "\""), array("\\\\", "\\\""),
+	                         $search);
+
+        html_header("Bugs & Features",
+	            array("Submit Bug or Feature Request" =>
+		              "$PHP_SELF?U$options",
+	                  "Bookmark Search" =>
+			      "${bookmark}@@@@add_bookmark();"), "", "",
+	    "function add_bookmark()\n"
+	   ."{\n"
+	   ."  if (navigator.appName == \"Microsoft Internet Explorer\")\n"
+	   ."    window.external.AddFavorite(\"$bookstr\", \"$searchstr\");\n"
+	   ."  else if (navigator.appName == \"Netscape\")\n"
+	   ."    window.sidebar.addPanel(\"$searchstr\", \"$bookstr\", \"\");\n"
+	   ."  else\n"
+	   ."    alert(\"Bookmark this page to return to your search.\");\n"
+	   ."}");
 
         print("<form method='POST' action='$PHP_SELF'><p align='center'>"
 	     ."Search&nbsp;Words: &nbsp;<input type='text' size='60' name='SEARCH' value='$search'>"
-	     ."<input type='submit' value='Search STRs'></p>\n");
+	     ."<input type='submit' value='Search Requests'><br>\n");
 
-	print("<p align='center'>Priority:&nbsp;<select name='FPRIORITY'>");
+	print("Priority:&nbsp;<select name='FPRIORITY'>");
 	print("<option value='0'>Don't Care</option>");
         for ($i = 1; $i <= 5; $i ++)
 	{
 	  print("<option value='$i'");
 	  if ($priority == $i)
 	    print(" selected");
-	  print(">$priority_text[$i]</option>");
+	  print(">$STR_PRIORITY_SHORT[$i]</option>");
 	}
         print("</select>\n");
 
@@ -602,7 +771,7 @@ switch ($op)
 	  print("<option value='$i'");
 	  if ($status == $i)
 	    print(" selected");
-	  print(">$status_text[$i]</option>");
+	  print(">$STR_STATUS_SHORT[$i]</option>");
 	}
         print("</select>\n");
 
@@ -613,17 +782,14 @@ switch ($op)
 	  print("<option value='$i'");
 	  if ($scope == $i)
 	    print(" selected");
-	  print(">$scope_text[$i]</option>");
+	  print(">$STR_SCOPE_SHORT[$i]</option>");
 	}
         print("</select>\n");
 
-        if (array_key_exists("FROM", $_COOKIE))
+        if ($LOGIN_USER != "")
 	{
 	  print("Show:&nbsp;<select name='FEMAIL'>");
-          print("<option value='0'");
-	  if (!$femail)
-            print(" selected");
-	  print(">All</option>");
+          print("<option value='0'>All</option>");
           print("<option value='1'");
 	  if ($femail)
             print(" selected");
@@ -634,134 +800,35 @@ switch ($op)
           print("</select>\n");
         }
 
-        print("</p></form>\n");
-	print("<hr noshade>\n");
-
-        $query = "";
-	$prefix = "WHERE ";
-
-	if ($priority > 0)
+        $values = array(10, 20, 50, 100, 1000);
+	print("STRs/Page:&nbsp;<select name='FPAGEMAX'>");
+	for ($i = 0; $i < sizeof($values); $i ++)
 	{
-	  $query .= "${prefix}priority = $priority";
-	  $prefix = " AND ";
-	}
-
-	if ($status > 0)
-	{
-	  $query .= "${prefix}status = $status";
-	  $prefix = " AND ";
-	}
-	else if ($status == -1) // Show closed
-	{
-	  $query .= "${prefix}status <= $STR_STATUS_UNRESOLVED";
-	  $prefix = " AND ";
-	}
-	else if ($status == -2) // Show open
-	{
-	  $query .= "${prefix}status >= $STR_STATUS_ACTIVE";
-	  $prefix = " AND ";
-	}
-
-	if ($scope > 0)
-	{
-	  $query .= "${prefix}scope = $scope";
-	  $prefix = " AND ";
-	}
-
-        if ($LOGIN_LEVEL < AUTH_DEVEL)
-	{
-	  $query .= "${prefix}(is_published = 1 OR create_user = '"
-	           . db_escape($LOGIN_USER) . "')";
-	  $prefix = " AND ";
-	}
-
-        if ($femail)
-	{
-          if (array_key_exists("FROM", $_COOKIE))
-            $email = db_escape($_COOKIE["FROM"]);
+	  if ($values[$i] == $PAGE_MAX)
+	    print("<option value='$values[$i]' selected>$values[$i]</option>");
 	  else
-	    $email = "";
+	    print("<option value='$values[$i]'>$values[$i]</option>");
+        }
+	print("</select>\n");
 
-	  if ($LOGIN_LEVEL >= AUTH_DEVEL)
-	  {
-	    $query .= "${prefix}(manager_email = '' OR manager_email = '$email')";
-	    $prefix = " AND ";
-	  }
-	  else if ($email != "")
-	  {
-	    $query .= "${prefix}create_user = '$email'";
-	    $prefix = " AND ";
-	  }
-	}
+        print("<br><i>Search supports 'and', 'or', 'not', and parenthesis. "
+             ."<a href='search-help.php'>More info...</a></i>"
+	     ."</p></form>\n");
 
-        if ($search)
-	{
-	  // Convert the search string to an array of words...
-	  $words = html_search_words($search);
+        print("<hr noshade>\n");
 
-	  // Loop through the array of words, adding them to the query...
-	  $query  .= "${prefix}(";
-	  $prefix = "";
-	  $next   = " OR";
-	  $logic  = "";
-
-	  reset($words);
-	  foreach ($words as $word)
-	  {
-            if ($word == "or")
-            {
-              $next = ' OR';
-              if ($prefix != '')
-        	$prefix = ' OR';
-            }
-            else if ($word == "and")
-            {
-              $next = ' AND';
-              if ($prefix != '')
-        	$prefix = ' AND';
-            }
-            else if ($word == "not")
-              $logic = ' NOT';
-            else
-            {
-              $query .= "$prefix$logic (";
-              $subpre = "";
-
-              if (ereg("[0-9]+", $word))
-              {
-        	$query .= "${subpre}id = $word";
-        	$subpre = " OR ";
-              }
-
-              $query .= "${subpre}summary LIKE \"%$word%\"";
-              $subpre = " OR ";
-              $query .= "${subpre}subsystem LIKE \"%$word%\"";
-              $query .= "${subpre}str_version LIKE \"%$word%\"";
-              $query .= "${subpre}fix_version LIKE \"%$word%\"";
-              $query .= "${subpre}manager_email LIKE \"%$word%\"";
-              $query .= "${subpre}create_user LIKE \"%$word%\"";
-
-              $query .= ")";
-              $prefix = $next;
-              $logic  = '';
-            }
-	  }
-
-	  $query  .= ")";
-	}
-
-        $result = db_query("SELECT * FROM str $query "
-	                  ."ORDER BY status DESC, priority DESC, scope DESC, "
-			  ."modify_date");
-        $count  = db_count($result);
+        $str     = new str();
+        $matches = $str->search($search, "-status -priority -scope",
+	                        $priority, $status, $scope, $femail);
+        $count   = sizeof($matches);
 
         if ($count == 0)
 	{
-	  print("<p>No STRs found.</p>\n");
+	  print("<p>No requests found.</p>\n");
 
 	  if (($priority || $status || $scope) && $search != "")
 	    print("<p>[ <a href='$PHP_SELF?L+S0+Q" . urlencode($search)
-	         ."'>Search for \"<i>$search</i>\" in all STRs</a> ]</p>\n");
+	         ."'>Search for \"<i>$search</i>\" in all requests</a> ]</p>\n");
 
 	  html_footer();
 	  exit();
@@ -789,8 +856,8 @@ switch ($op)
 
         if ($count > $PAGE_MAX)
 	{
-          print("<p><table border='0' cellspacing='0' cellpadding='0' "
-	       ."width='100%'>\n");
+          print("<table border='0' cellspacing='0' cellpadding='0' "
+	       ."width='100%' summary=''>\n");
 
           print("<tr><td>");
 	  if ($index > 0)
@@ -808,44 +875,50 @@ switch ($op)
 		 ."'>Next&nbsp;$next_count</a>&nbsp;]");
           }
           print("</td></tr>\n");
-	  print("</table></p>\n");
+	  print("</table>\n");
         }
 
         html_start_table(array("Id", "Priority", "Status", "Scope",
 	                       "Summary", "Version", "Last Updated",
 			       "Assigned To"));
 
-	db_seek($result, $index);
-	for ($i = 0; $i < $PAGE_MAX && $row = db_next($result); $i ++)
+        if ($LOGIN_LEVEL >= AUTH_DEVEL)
+	  $linkop = "U";
+	else
+	  $linkop = "L";
+
+	for ($i = $index; $i < $end; $i ++)
 	{
-	  $date     = date("M d, Y", $row['modify_date']);
-          $summary  = htmlspecialchars($row['summary'], ENT_QUOTES);
-	  $summabbr = htmlspecialchars(abbreviate($row['summary'], 80), ENT_QUOTES);
-	  $prtext   = $priority_text[$row['priority']];
-          $sttext   = $status_text[$row['status']];
-          $sctext   = $scope_text[$row['scope']];
-	  $link     = "<a href='$PHP_SELF?L$row[id]$options' "
-	             ."alt='STR #$row[id]: $summary'>";
+	  $str->load($matches[$i]);
+
+	  $date     = date("M d, Y", $str->modify_date);
+          $summary  = htmlspecialchars($str->summary, ENT_QUOTES);
+	  $summabbr = abbreviate($str->summary, 80);
+	  $prtext   = $STR_PRIORITY_SHORT[$str->priority];
+          $sttext   = $STR_STATUS_SHORT[$str->status];
+          $sctext   = $STR_SCOPE_SHORT[$str->scope];
+	  $link     = "<a href='$PHP_SELF?$linkop$str->id$options' "
+	             ."title='STR #$str->id: $summary'>";
 
           html_start_row();
 
-          if ($row['is_published'] == 0)
+          if ($str->is_published == 0)
 	    $summabbr .= " <img src='images/private.gif' width='16' height='16' "
-	                ."border='0' align='middle' alt='Private'>";
+	                ."border='0' align='absmiddle' alt='Private'>";
 
           print("<td nowrap>");
           if ($LOGIN_LEVEL >= AUTH_DEVEL)
-	    print("<input type='checkbox' name='ID_$row[id]'>");
-	  print("$link$row[id]</a></td>"
+	    print("<input type='checkbox' name='ID_$str->id'>");
+	  print("$link$str->id</a></td>"
 	       ."<td align='center'>$link$prtext</a></td>"
 	       ."<td align='center'>$link$sttext</a></td>"
 	       ."<td align='center'>$link$sctext</a></td>"
-	       ."<td align='center'>$link$summabbr</a></td>"
-	       ."<td align='center'>$link$row[str_version]</a></td>"
-	       ."<td align='center'>$link$date</a></td>");
+	       ."<td>$link$summabbr</a></td>"
+	       ."<td align='center'>$link$str->str_version</a></td>"
+	       ."<td align='center' nowrap>$link$date</a></td>");
 
-	  if ($row['manager_email'] != "")
-	    $email = sanitize_email($row['manager_email']);
+	  if ($str->manager_user != "")
+	    $email = sanitize_email($str->manager_user);
 	  else
 	    $email = "<i>Unassigned</i>";
 
@@ -853,10 +926,11 @@ switch ($op)
 
 	  html_end_row();
 
-          if ($row['status'] >= $STR_STATUS_PENDING)
+          if ($str->status >= STR_STATUS_PENDING)
 	  {
             $textresult = db_query("SELECT * FROM strtext "
-	                          ."WHERE str_id = $row[id] "
+	                          ."WHERE str_id = $str->id AND "
+				  ."is_published = 1 "
 	                          ."ORDER BY id DESC LIMIT 1");
             if ($textresult && db_count($textresult) > 0)
 	    {
@@ -867,8 +941,8 @@ switch ($op)
 	      $email    = sanitize_email($textrow['create_user']);
 	      $contents = abbreviate(quote_text($textrow['contents']), 128);
 
-	      print("<td align='center' valign='top' colspan='2'>$email</td>"
-		   ."<td valign='top' colspan='6' width='100%'>"
+	      print("<td align='center' valign='top' colspan='3'>$email</td>"
+		   ."<td valign='top' colspan='5' width='100%'>"
 		   ."<tt>$contents</tt></td>");
 
 	      html_end_row();
@@ -878,47 +952,75 @@ switch ($op)
           }
 	}
 
-        db_free($result);
-
         if ($LOGIN_LEVEL >= AUTH_DEVEL)
 	{
-	  html_start_row("header");
-	  print("<th colspan='8'>&nbsp;<br >");
+	  html_start_row("footer");
+	  print("<th colspan='8'>");
 
-          print("Status:&nbsp;<select name='STATUS'>"
+          print("Status:&nbsp;<select name='status'>"
 	       ."<option value=''>No Change</option>");
 	  for ($i = 1; $i <= 5; $i ++)
-	    print("<option value='$i'>$status_text[$i]</option>");
+	    print("<option value='$i'>$STR_STATUS_SHORT[$i]</option>");
           print("</select>\n");
 
-	  print("Priority:&nbsp;<select name='PRIORITY'>"
+	  print("Priority:&nbsp;<select name='priority'>"
 	       ."<option value=''>No Change</option>");
           for ($i = 1; $i <= 5; $i ++)
-	    print("<option value='$i'>$priority_text[$i]</option>");
+	    print("<option value='$i'>$STR_PRIORITY_SHORT[$i]</option>");
           print("</select>\n");
 
-	  print("Assigned To:&nbsp;<select name='MANAGER_EMAIL'>"
-	       ."<option value=''>No Change</option>");
-	  reset($managers);
-	  while (list($key, $val) = each($managers))
+	  print("Fix Version:&nbsp;<select name='fix_version'>"
+	       ."<option value=''>No Change</option>"
+	       ."<option>Not Applicable</option>");
+
+	  reset($STR_VERSIONS);
+	  while (list($key, $val) = each($STR_VERSIONS))
 	  {
-	    $temail = htmlspecialchars($val, ENT_QUOTES);
-	    $temp   = sanitize_email($val);
-	    print("<option value='$temail'>$temp</option>");
+	    $data = explode(":", $val);
+
+	    if ($data[0] != $link_id && $data[0] != PROJECT_LINK_ALL)
+	      continue;
+
+	    print("<option value='$data[2]'>$data[2]</option>");
 	  }
           print("</select>\n");
 
-	  print("<br >Text:&nbsp;<select name='MESSAGE'>"
+	  print("Subsystem:&nbsp;<select name='subsystem'>"
+	       ."<option value=''>No Change</option>");
+
+	  reset($STR_SUBSYSTEMS);
+	  while (list($key, $val) = each($STR_SUBSYSTEMS))
+	  {
+	    $data = explode(":", $val);
+
+	    if ($data[0] != $link_id && $data[0] != PROJECT_LINK_ALL)
+	      continue;
+
+	    print("<option value='$data[2]'>$data[2]</option>");
+	  }
+          print("</select>\n");
+
+	  print("<br>Assigned To:&nbsp;<select name='manager_user'>"
+	       ."<option value=''>No Change</option>");
+	  reset($STR_MANAGERS);
+	  while (list($key, $val) = each($STR_MANAGERS))
+	  {
+	    $temp = sanitize_email($val);
+	    print("<option value='$key'>$temp</option>");
+	  }
+          print("</select>\n");
+
+	  print("Text:&nbsp;<select name='message'>"
 	       ."<option value=''>No Message</option>");
-	  reset($messages);
-	  while (list($key, $val) = each($messages))
+	  reset($STR_MESSAGES);
+	  while (list($key, $val) = each($STR_MESSAGES))
 	  {
 	    $temp = abbreviate($val);
 	    print("<option value='$key'>$temp</option>");
 	  }
           print("</select>\n");
 
-	  print("<input type='submit' value='Modify Selected STRs'>");
+	  print("<input type='submit' value='Modify Selected Requests'>");
 	  print("</th>\n");
 	  html_end_row();
         }
@@ -927,8 +1029,8 @@ switch ($op)
 
         if ($count > $PAGE_MAX)
 	{
-          print("<p><table border='0' cellspacing='0' cellpadding='0' "
-	       ."width='100%'>\n");
+          print("<table border='0' cellspacing='0' cellpadding='0' "
+	       ."width='100%' summary=''>\n");
 
           print("<tr><td>");
 	  if ($index > 0)
@@ -946,7 +1048,7 @@ switch ($op)
 		 ."'>Next&nbsp;$next_count</a>&nbsp;]");
           }
           print("</td></tr>\n");
-	  print("</table></p>\n");
+	  print("</table>\n");
         }
 
 	if ($LOGIN_LEVEL >= AUTH_DEVEL)
@@ -955,862 +1057,361 @@ switch ($op)
 	print("<p>"
 	     ."MACH = Machine, "
 	     ."OS = Operating System, "
-	     ."STR = Software Trouble Report, "
-	     ."<img src='images/private.gif' width='16' height='16' "
-	     ."align='middle' alt='private'> = hidden from public view</p>\n");
+	     ."STR = Software Trouble Report");
+
+	if ($LOGIN_LEVEL >= AUTH_DEVEL)
+ 	  print(", <img src='images/private.gif' width='16' height='16' "
+	       ."align='absmiddle' alt='private'> = hidden from public view");
+
+        print("</p>\n");
       }
 
       html_footer();
       break;
 
-  case 'M' : // Modify STR
-      if ($REQUEST_METHOD == "POST")
+  case 'F' : // Post file for STR #
+      if ($LOGIN_USER == "")
       {
-        if (array_key_exists("STATUS", $_POST))
-	{
-          $time          = time();
-	  $master_id     = (int)$_POST["MASTER_ID"];
-	  $summary       = db_escape($_POST["SUMMARY"]);
-	  $subsystem     = db_escape($_POST["SUBSYSTEM"]);
-          $create_user   = db_escape($_POST["CREATE_EMAIL"]);
-          $manager_email = db_escape($_POST["MANAGER_EMAIL"]);
-          $modify_user   = db_escape($_COOKIE["FROM"]);
-          $contents      = db_escape(trim($_POST["CONTENTS"]));
-	  $message       = $_POST["MESSAGE"];
-
-          db_query("UPDATE str SET "
-	          ."master_id = $master_id, "
-	          ."is_published = $_POST[IS_PUBLISHED], "
-	          ."status = $_POST[STATUS], "
-	          ."priority = $_POST[PRIORITY], "
-	          ."scope = $_POST[SCOPE], "
-	          ."summary = '$summary', "
-	          ."subsystem = '$subsystem', "
-	          ."str_version = '$_POST[STR_VERSION]', "
-	          ."fix_version = '$_POST[FIX_VERSION]', "
-	          ."create_user = '$create_user', "
-	          ."manager_email = '$manager_email', "
-	          ."modify_date = $time, "
-	          ."modify_user = '$modify_user' "
-		  ."WHERE id = $id");
-          
-          if ($contents != "")
-	  {
-            db_query("INSERT INTO strtext VALUES(NULL,$id,1,'$contents',"
-	            ."$time,'$modify_user')");
-            $contents = trim($_POST["CONTENTS"]) . "\n\n";
-	  }
-
-          if ($message != "")
-	  {
-	    $contents = db_escape($messages[$message]);
-
-            db_query("INSERT INTO strtext VALUES(NULL,$id,1,'$contents',"
-	            ."$time,'$modify_user')");
-
-            $contents = $messages[$message] . "\n\n";
-	  }
-
-	  header("Location: $PHP_SELF?L$id$options");
-
-	  notify_users($id, "updated", $contents);
-	}
-	else if (array_key_exists("FILE_ID", $_POST))
-	{
-          db_query("UPDATE strfile SET "
-	          ."is_published = $_POST[IS_PUBLISHED] "
-		  ."WHERE id = $_POST[FILE_ID]");
-
-	  header("Location: $PHP_SELF?M$id$options");
-        }	  
-	else if (array_key_exists("TEXT_ID", $_POST))
-	{
-          db_query("UPDATE strtext SET "
-	          ."is_published = $_POST[IS_PUBLISHED] "
-		  ."WHERE id = $_POST[TEXT_ID]");
-
-	  header("Location: $PHP_SELF?M$id$options");
-        }	  
-	else
-	  header("Location: $PHP_SELF?M$id$options");
+        header("Location: login.php?PAGE=$PHP_SELF?F$id$options");
+	return;
       }
-      else
-      {
-        html_header("Modify STR #$id",
-	            array("Return to Bugs &amp; Features"
-		              => "$PHP_SELF?L$options",
-	                  "Return to STR #$id" => "$PHP_SELF?L$id$options",
-	                  "Post Text" => "$PHP_SELF?T$id$options",
-	                  "Post File" => "$PHP_SELF?F$id$options"));
 
-        $result = db_query("SELECT * FROM str WHERE id = $id");
-	if (db_count($result) != 1)
+      $action = "Post File For STR #$id";
+      $str    = new str($id);
+
+      if ($str->id != $id)
+      {
+        html_header($action);
+	print("<p><b>Error:</b> STR #$id was not found!</p>\n");
+	html_footer();
+	exit();
+      }
+
+      if ($LOGIN_LEVEL < AUTH_DEVEL && $str->status <= STR_STATUS_UNRESOLVED)
+      {
+        html_header($action);
+	print("<p><b>Error:</b> STR #$id is closed and cannot be updated.</p>\n");
+	html_footer();
+	exit();
+      }
+
+      if ($REQUEST_METHOD == "POST")
+        $havedata = array_key_exists("file", $_FILES);
+      else
+        $havedata = 0;
+
+      if ($havedata)
+      {
+        // Update STR status and modify user/date...
+        if ($str->status < STR_STATUS_PENDING)
+	  $str->status = STR_STATUS_PENDING;
+
+        if (!$str->save())
 	{
-	  print("<p><b>Error:</b> STR #$id was not found!</p>\n");
+	  html_header($action);
+	  print("<p>Unable to save STR!</p>\n");
 	  html_footer();
 	  exit();
 	}
 
-        $row = db_next($result);
-
-	$create_user   = htmlspecialchars($row['create_user']);
-	$manager_email = htmlspecialchars($row['manager_email']);
-	$summary       = htmlspecialchars($row['summary'], ENT_QUOTES);
-
-        print("<form method='POST' action='$PHP_SELF?M$id$options'>"
-	     ."<p><table width='100%' cellpadding='5' cellspacing='0' border='0'>\n");
-
-        print("<tr><th align='right'>Duplicate Of:</th>"
-	     ."<td><input type='text' name='MASTER_ID' "
-	     ."value='$row[master_id]' size='6'></td></tr>\n");
-
-        print("<tr><th align='right'>Published:</th><td>");
-	print("<select name='IS_PUBLISHED'>");
-	if ($row['is_published'])
+	// Add file...
+	if (($file = add_file($str)) === FALSE)
 	{
-	  print("<option value='0'>No</option>");
-	  print("<option value='1' selected>Yes</option>");
+	  html_header($action);
+	  print("<p>Unable to save file to STR!</p>\n");
+	  html_footer();
+	  exit();
 	}
 	else
-	{
-	  print("<option value='0' selected>No</option>");
-	  print("<option value='1'>Yes</option>");
-	}
-	print("</select></td></tr>\n");
+	  notify_users($str, "", $file);
 
-        print("<tr><th align='right'>Status:</th><td>");
-	print("<select name='STATUS'>");
-	for ($i = 1; $i <= 5; $i ++)
-	{
-	  print("<option value='$i'");
-	  if ($row['status'] == $i)
-	    print(" selected");
-	  print(">$status_long[$i]</option>");
-	}
-        print("</select>\n");
-	print("</td></tr>\n");
+	header("Location: $PHP_SELF?L$id$options");
+      }
+      else
+      {
+        html_header($action,
+	            array("Return to STR #$id" => "$PHP_SELF?L$id$options"));
 
-	print("<tr><th align='right'>Priority:</th><td>");
-	print("<select name='PRIORITY'>");
-        for ($i = 1; $i <= 5; $i ++)
-	{
-	  print("<option value='$i'");
-	  if ($row['priority'] == $i)
-	    print(" selected");
-	  print(">$priority_long[$i]</option>");
-	}
-        print("</select></td></tr>\n");
+	print("<form action='$PHP_SELF?F$id' method='POST' "
+             ."enctype='multipart/form-data'>\n"
+             ."<input type='hidden' name='MAX_FILE_SIZE' value='10485760'>"
+	     ."<p align='center'><table class='edit'>\n");
 
-	print("<tr><th align='right'>Scope:</th><td>");
-	print("<select name='SCOPE'>");
-	for ($i = 1; $i <= 3; $i ++)
-	{
-	  print("<option value='$i'");
-	  if ($row['scope'] == $i)
-	    print(" selected");
-	  print(">$scope_long[$i]</option>");
-	}
-        print("</select></td></tr>\n");
+	// File...
+	print("<tr><th align='right' valign='top'>Post File:</th><td>"
+             ."<input name='file' type='file'></td></tr>\n");
 
-	print("<tr><th align='right'>Subsystem:</th>"
-	     ."<td><select name='SUBSYSTEM'>"
-	     ."<option value=''>Unassigned</option>");
-
-	reset($subsystems);
-	while (list($key, $val) = each($subsystems))
-	{
-	  print("<option value='$val'");
-	  if ($row['subsystem'] == $val)
-	    print(" selected");
-	  print(">$val</option>");
-	}
-        print("</select></td></tr>\n");
-
-	print("<tr><th align='right'>Summary:</th>"
-	     ."<td><input type='text' name='SUMMARY' size='72' "
-	     ."value='$summary'></td></tr>\n");
-
-	print("<tr><th align='right'>Version:</th>"
-	     ."<td><input type='text' name='STR_VERSION' size='16' maxsize='16' "
-	     ."value='$row[str_version]'></td></tr>\n");
-
-	print("<tr><th align='right'>Created By:</th>"
-	     ."<td><input type='text' name='CREATE_EMAIL' maxsize='128' "
-	     ."value='$create_user' size='40'></td></tr>\n");
-
-	print("<tr><th align='right'>Assigned To:</th>"
-	     ."<td><select name='MANAGER_EMAIL'>"
-	     ."<option value=''>Unassigned</option>");
-
-	reset($managers);
-	while (list($key, $val) = each($managers))
-	{
-	  $temail = htmlspecialchars($val, ENT_QUOTES);
-	  $temp   = sanitize_email($val);
-
-	  print("<option value='$temail'");
-	  if ($row['manager_email'] == $val)
-	    print(" selected");
-	  print(">$temp</option>");
-	}
-        print("</select></td></tr>\n");
-
-	print("<tr><th align='right'>Fix Version:</th>"
-	     ."<td><select name='FIX_VERSION'>"
-	     ."<option value=''>Unassigned</option>"
-	     ."<option>Not Applicable</option>");
-
-	reset($versions);
-	while (list($key, $val) = each($versions))
-	{
-	  if ($val[0] == '+')
-	    $val = substr($val, 1);
-
-	  print("<option value='$val'");
-	  if ($row['fix_version'] == $val)
-	    print(" selected");
-	  print(">$val</option>");
-	}
-        print("</select></td></tr>\n");
-
-	print("<tr><th align='right' valign='top'>Text:</th><td>");
-
-	print("<select name='MESSAGE'>"
-	     ."<option value=''>--- Pick a Standard Message ---</option>");
-
-	reset($messages);
-	while (list($key, $val) = each($messages))
-	{
-	  $temp = abbreviate($val, 72);
-	  print("<option value='$key'>$temp</option>");
-	}
-        print("</select><br >\n");
-
-	print("<textarea name='CONTENTS' cols='72' rows='12' wrap='virtual'>"
-             ."</textarea></td></tr>\n");
-
-        print("<tr><th align='center' colspan='2'>"
-	     ."<input type='submit' value='Update Trouble Report'></th></tr>\n");
-        print("</table></p></form>\n");
-
-	print("<hr noshade><p><b>Trouble Report Files:</b> "
-	     ."[ <a href='$PHP_SELF?F$id$options'>Post&nbsp;File</a> ]"
-	     ."</p>\n");
-
-	$result = db_query("SELECT * FROM strfile WHERE str_id = $id");
-
-        if (db_count($result) == 0)
-	  print("<p><i>No files</i></p>\n");
-	else
-	{
-	  print("<p><table width='100%' border='0' cellpadding='5' "
-	       ."cellspacing='0'>\n"
-	       ."<tr class='header'><th>Name/Time/Date</th>"
-	       ."<th>Filename</th></tr>\n");
-
-          $line = 0;
-	  while ($row = db_next($result))
-	  {
-            $date     = date("M d, Y", $row['create_date']);
-            $time     = date("H:i", $row['create_date']);
-	    $email    = sanitize_email($row['create_user']);
-	    $filename = htmlspecialchars($row['filename']);
-
-	    print("<tr class='data$line'>"
-	         ."<td align='center' valign='top'>$email<br >$time $date<br >"
-		 ."<form method='POST' action='$PHP_SELF?M$id$options'>"
-		 ."<input type='hidden' name='FILE_ID' value='$row[id]'>");
-
-            if ($row['is_published'])
-	      print("<input type='hidden' name='IS_PUBLISHED' value='0'>"
-	           ."<input type='submit' value='Hide'>");
-            else
-	      print("<input type='hidden' name='IS_PUBLISHED' value='1'>"
-	           ."<input type='submit' value='Show'>");
-
-	    print("</form></td>"
-		 ."<td align='center' valign='top'>"
-		 ."<a href='strfiles/$id/$filename'>$filename</a></td>"
-		 ."</tr>\n");
-
-	    $line = 1 - $line;
-	  }
-          print("</table></p>\n");
-        }
-
-	db_free($result);
-
-	print("<hr noshade><p><b>Trouble Report Dialog:</b> "
-	     ."[ <a href='$PHP_SELF?T$id$options'>Post&nbsp;Text</a> ]"
-	     ."</p>\n");
-
-	$result = db_query("SELECT * FROM strtext WHERE "
-	                  ."str_id = $id");
-
-        if (db_count($result) == 0)
-	  print("<p><i>No text</i></p>\n");
-	else
-	{
-	  print("<p><table width='100%' border='0' cellpadding='5' "
-	       ."cellspacing='0'>\n"
-	       ."<tr class='header'><th>Name/Time/Date</th>"
-	       ."<th>Text</th></tr>\n");
-
-          $line = 0;
-
-	  while ($row = db_next($result))
-	  {
-            $date     = date("M d, Y", $row['create_date']);
-            $time     = date("H:i", $row['create_date']);
-	    $email    = sanitize_email($row['create_user']);
-	    $contents = quote_text($row['contents']);
-
-	    print("<tr class='data$line'>"
-	         ."<td align='center' valign='top'>$email<br >$time $date<br >"
-		 ."<form method='POST' action='$PHP_SELF?M$id$options'>"
-		 ."<input type='hidden' name='TEXT_ID' value='$row[id]'>");
-
-            if ($row['is_published'])
-	      print("<input type='hidden' name='IS_PUBLISHED' value='0'>"
-	           ."<input type='submit' value='Hide'>");
-            else
-	      print("<input type='hidden' name='IS_PUBLISHED' value='1'>"
-	           ."<input type='submit' value='Show'>");
-
-	    print("</form></td>"
-		 ."<td valign='top'><tt>$contents</tt></td>"
-		 ."</tr>\n");
-
-	    $line = 1 - $line;
-	  }
-          print("</table></p>\n");
-	}
-
-	db_free($result);
+	// Submit
+	print("<tr><td></td><td>"
+             ."<input type='submit' value='$action'>"
+             ."</td></tr>\n"
+             ."</table>\n"
+             ."</form>\n");
 
         html_footer();
       }
       break;
 
   case 'T' : // Post text for STR #
-      if ($REQUEST_METHOD == "POST")
+      if ($LOGIN_USER == "")
       {
-	$contents = $_POST["CONTENTS"];
-
-	if ($LOGIN_USER != "" && $LOGIN_LEVEL < AUTH_DEVEL)
-	  $email = $LOGIN_USER;
-	else if (array_key_exists("EMAIL", $_POST) &&
-	         validate_email($_POST["EMAIL"]))
-	{
-	  $email = $_POST["EMAIL"];
-	  setcookie("FROM", "$email", time() + 90 * 86400, "/");
-	}
-	else if (array_key_exists("FROM", $_COOKIE))
-          $email = $_COOKIE["FROM"];
-	else
-	  $email = "";
-
-	if (ereg("Anonymous.*", $email))
-	  $email = "";
-
-        if ($email != "" && $contents != "")
-	  $havedata = 1;
+        header("Location: login.php?PAGE=$PHP_SELF?T$id$options");
+	return;
       }
-      else
-      {
-	if ($LOGIN_USER != "")
-	  $email = $LOGIN_USER;
-	else if (array_key_exists("FROM", $_COOKIE))
-          $email = $_COOKIE["FROM"];
-	else
-	  $email = "";
 
+      $action = "Post Text For STR #$id";
+      $str    = new str($id);
+
+      if ($str->id != $id)
+      {
+        html_header($action);
+	print("<p><b>Error:</b> STR #$id was not found!</p>\n");
+	html_footer();
+	exit();
+      }
+
+      if ($LOGIN_LEVEL < AUTH_DEVEL && $str->status <= STR_STATUS_UNRESOLVED)
+      {
+        html_header($action);
+	print("<p><b>Error:</b> STR #$id is closed and cannot be updated.</p>\n");
+	html_footer();
+	exit();
+      }
+
+      if (array_key_exists("contents", $_GET))
+	$contents = $_GET["contents"];
+      else if (array_key_exists("contents", $_POST))
+	$contents = $_POST["contents"];
+      else
 	$contents = "";
 
-	if (ereg("Anonymous.*", $email))
-	  $email = "";
-      }
-
-      if ($REQUEST_METHOD == "POST" && $havedata)
+      if ($contents != "")
       {
-        $time      = time();
-	$temail    = db_escape($email);
-	$tcontents = db_escape($contents);
+        // Update STR status and modify user/date...
+        if ($str->status < STR_STATUS_PENDING)
+	  $str->status = STR_STATUS_PENDING;
 
-        db_query("INSERT INTO strtext VALUES(NULL,$id,1,'$tcontents',"
-	        ."$time,'$temail')");
-
-        db_query("UPDATE str SET modify_date=$time, modify_user='$temail' "
-	        ."WHERE id = $id");
-        db_query("UPDATE str SET status=$STR_STATUS_PENDING WHERE "
-	        ."id = $id AND status >= $STR_STATUS_ACTIVE AND "
-		."status < $STR_STATUS_NEW");
-
-	header("Location: $PHP_SELF?L$id$options");
-
-        notify_users($id, "updated", "$contents\n\n");
-      }
-      else
-      {
-        html_header("Post Text For STR #$id",
-	            array("Return to STR #$id" => "$PHP_SELF?L$id$options"));
-
-        if ($REQUEST_METHOD == "POST")
+        if (!$str->save())
 	{
-	  print("<p><b>Error:</b> Please fill in the fields marked in "
-	       ."<b><font color='red'>bold red</font></b> below and resubmit "
-	       ."your trouble report.</p><hr noshade>\n");
-
-	  $hstart = "<font color='red'>";
-	  $hend   = "</font>";
-	}
-	else
-	{
-	  print("<hr noshade>\n");
-
-	  $hstart = "";
-	  $hend   = "";
-	}
-
-        print("<form method='POST' action='$PHP_SELF?T$id$options'>"
-	     ."<p><table width='100%' cellpadding='5' cellspacing='0' border='0'>\n");
-
-	print("<tr><th align='right'>");
-	if ($email != "")
-	  print("EMail:</th><td>");
-	else
-	  print("${hstart}EMail:$hend</th><td>");
-
-        $temp = htmlspecialchars($email);
-        print("<input type='text' name='EMAIL' value='$temp' size='40' "
-	     ."maxsize='128'></td></tr>\n");
-
-	print("<tr><th align='right' valign='top'>");
-	if ($contents != "")
-	  print("Text:</th><td>");
-	else
-	  print("${hstart}Text:$hend</th><td>");
-
-        $temp = htmlspecialchars($contents);
-        print("<textarea name='CONTENTS' cols='72' rows='12' wrap='virtual'>"
-             ."$temp</textarea></td></tr>\n");
-
-        print("<tr><th align='center' colspan='2'>"
-	     ."<input type='submit' value='Post Text to Trouble Report'></th></tr>\n");
-        print("</table></p></form>\n");
-        html_footer();
-      }
-      break;
-
-  case 'F' : // Post file for STR #
-      if ($REQUEST_METHOD == "POST")
-      {
-        if ($LOGIN_USER != "" && $LOGIN_LEVEL < AUTH_DEVEL)
-	  $email = $LOGIN_USER;
-	else if (array_key_exists("EMAIL", $_POST) &&
-	         validate_email($_POST["EMAIL"]))
-	{
-	  $email = $_POST["EMAIL"];
-	  setcookie("FROM", "$email", time() + 90 * 86400, "/");
-	}
-	else if (array_key_exists("FROM", $_COOKIE))
-          $email = $_COOKIE["FROM"];
-	else
-	  $email = "";
-
-	if (ereg("Anonymous.*", $email))
-	  $email = "";
-
-        if (array_key_exists("STRFILE", $_FILES))
-	{
-	  $filename = $_FILES['STRFILE']['name'];
-	  if ($filename[0] == '.' || $filename[0] == '/')
-	    $filename = "";
-	}
-	else
-	  $filename = "";
-
-        if ($email != "" && $filename != "")
-	  $havedata = 1;
-      }
-      else
-      {
-	if ($LOGIN_USER != "")
-	  $email = $LOGIN_USER;
-	else if (array_key_exists("FROM", $_COOKIE))
-          $email = $_COOKIE["FROM"];
-	else
-	  $email = "";
-
-	$filename = "";
-
-	if (ereg("Anonymous.*", $email))
-	  $email = "";
-      }
-
-      if ($REQUEST_METHOD == "POST" && $havedata)
-      {
-        $time     = time();
-	$temail   = db_escape($email);
-        $tmp_name = $_FILES['STRFILE']['tmp_name'];
-        $name     = $_FILES['STRFILE']['name'];
-        $tname    = db_escape($name);
-
-        $infile = fopen($tmp_name, "rb");
-
-	if (!$infile)
-	{
-	  html_header("Error");
-	  print("<p><b>Error!</b> Unable to open file attachment!</p>\n");
+	  html_header($action);
+	  print("<p>Unable to save STR!</p>\n");
 	  html_footer();
 	  exit();
 	}
 
-        mkdir("strfiles/$id");
-	$outfile = fopen("strfiles/$id/$name", "wb");
-
-	if (!$outfile)
+	// Add file...
+	if (($contents = add_text($str)) === FALSE)
 	{
-	  html_header("Error");
-	  print("<p><b>Error!</b> Unable to save file attachment!</p>\n");
+	  html_header($action);
+	  print("<p>Unable to save text to STR!</p>\n");
+	  html_footer();
+	  exit();
+	}
+	else
+	  notify_users($str, $contents);
+
+	header("Location: $PHP_SELF?L$id$options");
+      }
+      else
+      {
+        html_header($action,
+	            array("Return to STR #$id" => "$PHP_SELF?L$id$options"));
+
+	print("<form action='$PHP_SELF?T$id' method='POST'>\n"
+	     ."<p align='center'><table class='edit'>\n");
+
+	if ($contents == "" && $REQUEST_METHOD == "POST")
+	  $hclass = "invalid";
+	else
+	  $hclass = "valid";
+
+	print("<tr><th class='$hclass' align='right' valign='top'>"
+	     ."Additional Text:</th><td>");
+
+	$html = htmlspecialchars($contents);
+	print("<textarea name='contents' cols='72' rows='12' wrap='virtual'>"
+             ."$html</textarea></td></tr>\n");
+
+	// Submit
+	print("<tr><td></td><td>"
+             ."<input type='submit' value='$action'>"
+             ."</td></tr>\n"
+             ."</table>\n"
+             ."</form>\n");
+
+        html_footer();
+      }
+      break;
+
+  case 'U' : // Post new/modify existing STR
+      if ($LOGIN_USER == "")
+      {
+        header("Location: login.php?PAGE=$PHP_SELF?U$id$options");
+	return;
+      }
+
+      $str = new str($id);
+
+      if ($id <= 0)
+      {
+	$str->link_id = $link_id;
+	$action = "Submit Bug or Feature Request";
+      }
+      else
+	$action = "Modify STR #$id";
+
+      if ($str->id != $id)
+      {
+        html_header($action);
+	print("<p><b>Error:</b> STR #$id was not found!</p>\n");
+	html_footer();
+	exit();
+      }
+
+      if ($LOGIN_LEVEL < AUTH_DEVEL && $id != 0)
+      {
+        html_header($action);
+	print("<p><b>Error:</b> You do not have permission to modify "
+	     ."STR #$id!</p>\n");
+	html_footer();
+	exit();
+      }
+
+      if ($REQUEST_METHOD == "POST")
+      {
+        if (array_key_exists("FILE_ID", $_POST) &&
+	    (int)$_POST["FILE_ID"] > 0 &&
+	    array_key_exists("IS_PUBLISHED", $_POST))
+	{
+	  $file_id = (int)$_POST["FILE_ID"];
+	  $strfile = new strfile($file_id);
+
+	  if ($strfile->id == $file_id)
+	  {
+	    $strfile->is_published = (int)$_POST["IS_PUBLISHED"];
+	    $strfile->save();
+	  }
+
+	  header("Location: $PHP_SELF?L$str->id$options");
+	  exit();
+	}
+
+        if (array_key_exists("TEXT_ID", $_POST) &&
+	    (int)$_POST["TEXT_ID"] > 0 &&
+	    array_key_exists("IS_PUBLISHED", $_POST))
+	{
+	  $text_id = (int)$_POST["TEXT_ID"];
+	  $strtext = new strtext($text_id);
+
+	  if ($strtext->id == $text_id)
+	  {
+	    $strtext->is_published = (int)$_POST["IS_PUBLISHED"];
+	    $strtext->save();
+	  }
+
+	  header("Location: $PHP_SELF?L$str->id$options");
+	  exit();
+	}
+
+        $havedata = $str->loadform();
+
+	if ($id == 0 && !array_key_exists("contents", $_POST))
+	  $havedata = 0;
+      }
+      else
+      {
+        $str->validate();
+
+        $havedata = 0;
+      }
+
+      if ($havedata)
+      {
+        if (!$str->save())
+	{
+	  html_header($action);
+	  print("<p>Unable to save STR!</p>\n");
 	  html_footer();
 	  exit();
 	}
 
-        while ($data = fread($infile, 8192))
-	  fwrite($outfile, $data);
-
-        fclose($infile);
-	fclose($outfile);
-
-        db_query("INSERT INTO strfile VALUES(NULL,$id,1,'$tname',"
-	        ."$time,'$temail')");
-
-        db_query("UPDATE str SET modify_date=$time, modify_user='$temail' "
-	        ."WHERE id = $id");
-        db_query("UPDATE str SET status=$STR_STATUS_PENDING WHERE "
-	        ."id = $id AND status >= $STR_STATUS_ACTIVE AND "
-		."status < $STR_STATUS_NEW");
-
-	header("Location: $PHP_SELF?L$id$options");
-
-        notify_users($id, "updated", "Added file $name\n\n");
-      }
-      else
-      {
-        html_header("Post File For STR #$id",
-	            array("Return to STR #$id" => "$PHP_SELF?L$id$options"));
-
-        if ($REQUEST_METHOD == "POST")
+	if (array_key_exists("contents", $_GET) ||
+	    array_key_exists("contents", $_POST) ||
+	    array_key_exists("message", $_GET) ||
+	    array_key_exists("message", $_POST))
 	{
-	  print("<p><b>Error:</b> Please fill in the fields marked in "
-	       ."<b><font color='red'>bold red</font></b> below and resubmit "
-	       ."your trouble report.</p><hr noshade>\n");
-
-	  $hstart = "<font color='red'>";
-	  $hend   = "</font>";
-	}
-	else
-	{
-	  print("<hr noshade>\n");
-
-	  $hstart = "";
-	  $hend   = "";
-	}
-
-        print("<form method='POST' action='$PHP_SELF?F$id$options' "
-	     ."enctype='multipart/form-data'>"
-	     ."<input type='hidden' name='MAX_FILE_SIZE' value='10000000'>");
-
-	print("<p><table width='100%' cellpadding='5' cellspacing='0' "
-             ."border='0'>\n");
-
-	print("<tr><th align='right'>");
-	if ($email != "")
-	  print("EMail:</th><td>");
-	else
-	  print("${hstart}EMail:$hend</th><td>");
-
-        $temp = htmlspecialchars($email);
-        print("<input type='text' name='EMAIL' value='$temp' size='40' "
-	     ."maxsize='128'></td></tr>\n");
-
-	print("<tr><th align='right' valign='top'>");
-	if (array_key_exists("STRFILE", $_FILES))
-	  print("File:</th><td>");
-	else
-	  print("${hstart}File:$hend</th><td>");
-
-        print("<input name='STRFILE' type='FILE'></td></tr>\n");
-
-        print("<tr><th align='center' colspan='2'>"
-	     ."<input type='submit' value='Post File to Trouble Report'></th></tr>\n");
-        print("</table></p></form>\n");
-        html_footer();
-      }
-      break;
-
-  case 'N' : // Post new STR
-      $havedata = 0;
-
-      if ($REQUEST_METHOD == "POST")
-      {
-	$npriority = $_POST["PRIORITY"];
-	$nscope    = $_POST["SCOPE"];
-	$summary   = $_POST["SUMMARY"];
-	$version   = $_POST["VERSION"];
-	$contents  = $_POST["CONTENTS"];
-
-	if ($LOGIN_USER != "" && $LOGIN_LEVEL < AUTH_DEVEL)
-	  $email = $LOGIN_USER;
-	else if (array_key_exists("EMAIL", $_POST) &&
-	         validate_email($_POST["EMAIL"]))
-	{
-	  $email = $_POST["EMAIL"];
-	  setcookie("FROM", "$email", time() + 90 * 86400, "/");
-	}
-	else if (array_key_exists("FROM", $_COOKIE))
-          $email = $_COOKIE["FROM"];
-	else
-	  $email = "";
-
-        if (array_key_exists("STRFILE", $_FILES))
-	{
-	  $filename = $_FILES['STRFILE']['name'];
-	  if ($filename[0] == '.' || $filename[0] == '/')
-	    $filename = "";
-	}
-	else
-	  $filename = "";
-
-        if ($npriority && $nscope && $summary != "" && $email != "" &&
-	    $version != "" && $contents != "")
-	  $havedata = 1;
-      }
-      else
-      {
-	if ($LOGIN_USER != "")
-	  $email = $LOGIN_USER;
-	else if (array_key_exists("FROM", $_COOKIE))
-          $email = $_COOKIE["FROM"];
-	else
-	  $email = "";
-
-        $npriority = 0;
-	$nscope    = 0;
-	$summary   = "";
-	$version   = "";
-	$contents  = "";
-	$filename  = "";
-      }
-
-      if (ereg("Anonymous.*", $email))
-	$email = "";
-
-      if ($REQUEST_METHOD == "POST" && $havedata)
-      {
-        $time      = time();
-	$temail    = db_escape($email);
-	$tsummary  = db_escape($summary);
-	$tcontents = db_escape($contents);
-
-        db_query("INSERT INTO str VALUES(NULL,0,"
-	        ."$_POST[IS_PUBLISHED],$STR_STATUS_NEW,"
-	        ."$npriority,$nscope,'$tsummary','','$version','','',"
-		."$time,'$temail',$time,'$temail')");
-
-	$id = db_insert_id();
-
-        db_query("INSERT INTO strtext VALUES(NULL,$id,1,'$tcontents',"
-	        ."$time,'$temail')");
-
-        if ($filename != "")
-	{
-          $tmp_name = $_FILES['STRFILE']['tmp_name'];
-          $name     = $_FILES['STRFILE']['name'];
-          $tname    = db_escape($name);
-
-          $infile = fopen($tmp_name, "rb");
-
-	  if (!$infile)
+	  // Add text...
+	  if (($contents = add_text($str)) === FALSE)
 	  {
-	    html_header("Error");
-	    print("<p><b>Error!</b> Unable to open file attachment!</p>\n");
+	    html_header($action);
+	    print("<p>Unable to save text to STR!</p>\n");
 	    html_footer();
 	    exit();
 	  }
+	}
+	else
+	  $contents = "";
 
-          mkdir("strfiles/$id");
-	  $outfile = fopen("strfiles/$id/$name", "wb");
-
-	  if (!$outfile)
+        if (array_key_exists("file", $_FILES))
+	{
+	  // Add file...
+	  if (($file = add_file($str)) === FALSE)
 	  {
-	    html_header("Error");
-	    print("<p><b>Error!</b> Unable to save file attachment!</p>\n");
+	    html_header($action);
+	    print("<p>Unable to save file to STR!</p>\n");
 	    html_footer();
 	    exit();
 	  }
+	}
+	else
+	  $file = "";
 
-          while ($data = fread($infile, 8192))
-	    fwrite($outfile, $data);
+        if ($id <= 0)
+	  notify_users($str, $contents, $file, "");
+	else
+	  notify_users($str, $contents, $file);
 
-          fclose($infile);
-	  fclose($outfile);
-
-          db_query("INSERT INTO strfile VALUES(NULL,$id,1,'$tname',"
-	          ."$time,'$temail')");
-        }
-
-	header("Location: $PHP_SELF?L$id$options");
-        notify_users($id, "created", "$contents\n\n");
+	header("Location: $PHP_SELF?L$str->id$options");
       }
       else
       {
-        html_header("Submit Bug or Feature Request",
-	            array("Return to Bugs &amp; Features"
-		              => "$PHP_SELF?L$options"));
+        $links = array("Return to Bugs & Features" => "$PHP_SELF?L$options");
+	if ($id > 0)
+	  $links["Return to STR #$id"] = "$PHP_SELF?L$id$options";
 
-        if ($REQUEST_METHOD == "POST")
-	{
-	  print("<p><b>Error:</b> Please fill in the fields marked in "
-	       ."<b><font color='red'>bold red</font></b> below and resubmit "
-	       ."your trouble report.</p><hr noshade>\n");
+        html_header($action, $links);
 
-	  $hstart = "<font color='red'>";
-	  $hend   = "</font>";
-	}
-	else
-	{
-	  print("<p>Please use this form to report all bugs and request "
-	       ."features in the $PROJECT_NAME software. Be sure to include "
-	       ."the operating system, compiler, sample programs and/or "
-	       ."files, and any other information you can about your "
-	       ."problem. <i>Thank you</i> for helping us to improve "
-	       ."$PROJECT_NAME!</p><hr noshade>\n");
+	if ($REQUEST_METHOD == "POST")
+	  print("<p><b>Error:</b> Fill in the fields as "
+	       ."<span class='invalid'>marked</span> and resubmit.</p>\n"
+	       ."<hr noshade>\n");
+	else if ($id <= 0)
+	  print("<p>Use this form to report confirmed bugs and request "
+	       ."features in the $PROJECT_NAME software. General usage "
+	       ."and compilation questions, as well as potential bug "
+	       ."reports, should be directed to the "
+	       ."<a href='forums.php'>$PROJECT_NAME forums</a>.</p>\n"
+	       ."<p><b>When reporting bugs, include the operating system, "
+	       ."compiler, sample programs and/or files, list files, "
+	       ."and any other information you can about your problem.</b></p>\n"
+	       ."<p><i>Thank you</i> for helping us to improve $PROJECT_NAME!"
+	       ."</p><hr noshade>\n");
 
-	  $hstart = "";
-	  $hend   = "";
-	}
+        $str->edit($action, $options);
 
-        print("<form method='POST' action='$PHP_SELF?N$options' "
-	     ."enctype='multipart/form-data'>"
-	     ."<input type='hidden' name='MAX_FILE_SIZE' value='10000000'>");
+        str_history($str, FALSE, $options);
 
-        print("<p><table width='100%' cellpadding='5' cellspacing='0' "
-	      ."border='0'>\n");
-
-        print("<tr><th align='right'>Security Advisory:</th><td>"
-	     ."<select name='IS_PUBLISHED'>"
-	     ."<option value='1' selected>No, make this STR publicly available.</option>"
-	     ."<option value='0'>Yes, hide this STR from public view.</option>"
-	     ."</select></td></tr>\n");
-
-        print("<tr><th align='right'>Status:</th><td>5 - New</td></tr>\n");
-
-	print("<tr><th align='right' valign='top'>");
-	if ($npriority > 0)
-	  print("Priority:</th><td nowrap>");
-	else
-	  print("${hstart}Priority:$hend</th><td nowrap>");
-        for ($i = 1; $i <= 5; $i ++)
-	{
-	  print("<input type='radio' name='PRIORITY' value='$i'");
-          if ($npriority == $i)
-	    print(" checked");
-	  print(">$priority_long[$i]<br >");
-	}
-	print("</td></tr>\n");
-
-	print("<tr><th align='right' valign='top'>");
-	if ($nscope > 0)
-	  print("Scope:</th><td>");
-	else
-	  print("${hstart}Scope:$hend</th><td>");
-        for ($i = 1; $i <= 3; $i ++)
-	{
-	  print("<input type='radio' name='SCOPE' value='$i'");
-          if ($nscope == $i)
-	    print(" checked");
-	  print(">$scope_long[$i]<br >");
-	}
-	print("</td></tr>\n");
-
-	print("<tr><th align='right'>Subsystem:</th><td><i>Unassigned</i></td></tr>\n");
-
-	print("<tr><th align='right'>");
-	if ($summary != "")
-	  print("Summary:</th><td>");
-	else
-	  print("${hstart}Summary:$hend</th><td>");
-
-        $temp = htmlspecialchars($summary, ENT_QUOTES);
-        print("<input type='text' name='SUMMARY' size='72' value='$temp'></td></tr>\n");
-
-	print("<tr><th align='right'>");
-	if ($version != "")
-	  print("Version:</th><td>");
-	else
-	  print("${hstart}Version:$hend</th><td>");
-
-        print("<select name='VERSION'>"
-	     ."<option value=''>Select a Version Number</option>");
-
-	reset($versions);
-	while (list($key, $val) = each($versions))
-	{
-	  if ($val[0] == '+')
-	    continue;
-
-	  print("<option value='$val'");
-	  if ($version == $val)
-	    print(" selected");
-	  print(">$val</option>");
-	}
-
-        print("</select></td></tr>\n");
-
-	print("<tr><th align='right'>");
-	if ($email != "")
-	  print("EMail:</th><td>");
-	else
-	  print("${hstart}EMail:$hend</th><td>");
-
-        $temp = htmlspecialchars($email);
-        print("<input type='text' name='EMAIL' value='$temp' size='40' "
-	     ."maxsize='128'></td></tr>\n");
-
-	print("<tr><th align='right'>Assigned To:</th><td><i>Unassigned</i></td></tr>\n");
-
-	print("<tr><th align='right'>Fix Version:</th><td><i>Unassigned</i></td></tr>\n");
-
-	print("<tr><th align='right' valign='top'>");
-	if ($contents != "")
-	  print("Detailed Description of Problem:</th><td>");
-	else
-	  print("${hstart}Detailed Description of Problem:$hend</th><td>");
-
-        $temp = htmlspecialchars($contents);
-        print("<textarea name='CONTENTS' cols='72' rows='12' wrap='virtual'>"
-             ."$temp</textarea></td></tr>\n");
-
-	print("<tr><th align='right' valign='top'>File:</th><td>");
-
-        print("<input name='STRFILE' type='FILE'></td></tr>\n");
-
-        print("<tr><th align='center' colspan='2'>"
-	     ."<input type='submit' value='Submit Bug or Feature Request'></th></tr>\n");
-        print("</table></p></form>\n");
-        html_footer();
+	html_footer();
       }
       break;
 
-  case 'U' : // Update notification status
+  case 'N' : // Update notification status
       // EMAIL and NOTIFICATION variables hold status; add/delete from strcc...
       $havedata = 0;
 
       if ($REQUEST_METHOD != "POST")
       {
-	html_header("Bugs &amp; Features Error");
+	html_header("Bugs & Features Error");
 	print("<p>The '$op' command requires a POST request!\n");
 	html_footer();
 	exit();
@@ -1822,7 +1423,7 @@ switch ($op)
       if (($notification != "ON" && $notification != "OFF") || $email == "" ||
           !validate_email($email))
       {
-	html_header("Bugs &amp; Features Error");
+	html_header("Bugs & Features Error");
 	print("<p>Please press your browsers back button and enter a valid "
 	     ."EMail address and choose whether to receive notification "
 	     ."messages.</p>\n");
@@ -1830,7 +1431,7 @@ switch ($op)
 	exit();
       }
 
-      setcookie("FROM", "$email", time() + 90 * 86400, "/");
+      setcookie("${PROJECT_MODULE}FROM", "$email", time() + 90 * 86400, "/");
 
       $result = db_query("SELECT * FROM carboncopy WHERE "
                         ."url = 'str.php_L$id' AND email = '$email'");
@@ -1846,7 +1447,7 @@ switch ($op)
         else
 	{
           db_query("INSERT INTO carboncopy VALUES(NULL,'str.php?L$id','$email')");
-	
+
 	  print("<p>Your email address has been added to the notification list "
                ."for STR #$id.</p>\n");
         }

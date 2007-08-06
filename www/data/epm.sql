@@ -137,7 +137,7 @@ CREATE TABLE strtext (
 -- users to assign stuff to.
 --
 
-CREATE TABLE users (
+CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTO_INCREMENT,-- ID
   is_published INTEGER,			-- 0 = private, 1 = public
   name VARCHAR(255),			-- Login name

@@ -14,12 +14,24 @@ include_once "phplib/html.php";
 
 $usererror = "";
 
+if (array_key_exists("PAGE", $_GET))
+  $page = $_GET["PAGE"];
+else if (array_key_exists("PAGE", $_POST))
+  $page = $_POST["PAGE"];
+else
+  $page = "account.php";
+
 if ($REQUEST_METHOD == "POST")
 {
   if (array_key_exists("USERNAME", $_POST))
     $username = $_POST["USERNAME"];
   else
     $username = "";
+
+  if (array_key_exists("REALNAME", $_POST))
+    $realname = $_POST["REALNAME"];
+  else
+    $realname = "";
 
   if (array_key_exists("PASSWORD", $_POST))
     $password = $_POST["PASSWORD"];
@@ -36,6 +48,11 @@ if ($REQUEST_METHOD == "POST")
   else
     $email = "";
 
+  if (array_key_exists("EMAIL2", $_POST))
+    $email2 = $_POST["EMAIL2"];
+  else
+    $email2 = "";
+
   if (array_key_exists("REGISTER", $_POST))
     $register = $_POST["REGISTER"];
   else
@@ -45,75 +62,98 @@ if ($REQUEST_METHOD == "POST")
     $usererror = "Bad username - only letters, numbers, '.', '-', and '_' "
                 ."are allowed!";
   else if ($argc == 1 && $argv[0] == "A" && $username != "" &&
-           $password != "" && $password == $password2 &&
-           $email != "" && validate_email($email))
+           $realname != "" &&
+	   $email != "" && validate_email($email) && $email == $email2)
   {
     // Good new account request so far; see if account already
     // exists...
-    $name   = db_escape($username);
-    $result = db_query("SELECT * FROM users WHERE name='$name'");
+    $dusername = db_escape($username);
+    $demail    = db_escape($email);
+    $result    = db_query("SELECT * FROM user WHERE "
+                         ."name='$dusername' OR email LIKE '%<$demail>'");
     if (db_count($result) == 0)
     {
       // Nope, add unpublished user account and send registration email.
       db_free($result);
 
-      $hash   = md5("$username:$password");
-      $demail = db_escape($email);
+      // Create a random password until the user activates the account...
+      for ($i = 0, $password = ""; $i < 20; $i ++)
+	$password .= chr(rand(33,126));
+
+      $hash   = crypt($password);
       $date   = time();
+      $demail = db_escape("$realname <$email>");
 
-      db_query("INSERT INTO users VALUES(NULL, 0, '$name', '$demail', '$hash', "
-              ."0, $date, '$name', $date, '$name')");
+      db_query("INSERT INTO user VALUES(NULL, 0, '$dusername', '$demail', "
+              ."'$hash', 0, 0, $date, '$dusername', $date, '$dusername')");
 
-      $userid = db_insert_id();
-      $hash   = md5("$userid:$hash");
+      $userid   = db_insert_id();
+      $register = md5("$userid:$hash");
 
       mail($email, "$PROJECT_NAME User Registration",
            wordwrap("Thank you for requesting an account on the $PROJECT_NAME "
 	           ."home page.  To complete your registration, go to the "
 		   ."following URL:\n\n"
 		   ."    $PHP_URL?E\n\n"
-		   ."and enter your username ($username), password, and the "
+		   ."and enter your username ($username) and the "
 		   ."following registration code:\n\n"
-		   ."    $hash\n\n"
+		   ."    $register\n\n"
+//		   ."    md5('$userid:$hash')\n\n"
 		   ."You will then be able to access your account.\n"),
 	   "From: $PROJECT_EMAIL\r\n");
 
       html_header("Login Registration",
-                  array("Enable Account" => "$PHP_SELF?E"));
+                  array("Login" => "$PHP_SELF",
+		        "Enable Account" => "$PHP_SELF?E"));
 
-      print("Thank you for requesting an account.  You should receive an "
+      print("Thank you for requesting an account. You should receive an "
 	   ."email from $PROJECT_EMAIL shortly with instructions on "
 	   ."completing your registration.</p>\n");
       html_footer();
       exit();
     }
 
-    db_free($result);
+    // Account or email already exists...
+    $row = db_next($result);
 
-    $usererror = "Username already exists!";
+    if ($row["name"] == $username)
+      $usererror = "Username already exists!";
+    else
+      $usererror = "Email address already in use for another account!";
+
+    db_free($result);
   }
   else if ($argc == 1 && $argv[0] == "E" && $username != "" &&
-           $password != "" && $register != "")
+           $password != "" && $password == $password2 &&
+	   $register != "")
   {
     // Check that we have an existing user account...
-    $name   = db_escape($username);
-    $result = db_query("SELECT * FROM users WHERE name='$name'");
+    $dusername = db_escape($username);
+    $result    = db_query("SELECT * FROM user WHERE name='$dusername'");
     if (db_count($result) == 1)
     {
       // Yes, now check the registration code...
-      $row  = db_next($result);
-      $hash = md5("$row[id]:$row[hash]");
-      
+      $row    = db_next($result);
+      $userid = (int)$row["id"];
+      $hash   = md5("$userid:$row[hash]");
+
       if ($hash == $register)
       {
         // Good code, enable the account and login...
-	db_query("UPDATE users SET is_published = 1 WHERE name='$name'");
+	$hash = db_escape(crypt($password));
+
+	print("<p>hash=$hash</p>\n");
+
+	db_query("UPDATE user SET is_published = 1, hash = '$hash' "
+	        ."WHERE name='$dusername'");
 
 	if (auth_login($username, $password) == "")
 	{
-	  db_query("UPDATE users SET is_published = 0 WHERE name='$name'");
+	  db_query("UPDATE user SET is_published = 0 WHERE name='$dusername'");
 	  $usererror = "Login failed!";
 	}
+        else if (!auth_write_file())
+	  $usererror = "Authentication files not created!";
       }
       else
         $usererror = "Bad registration code!";
@@ -130,7 +170,7 @@ if ($REQUEST_METHOD == "POST")
     // exists...
     $dusername = db_escape($username);
     $demail    = db_escape($email);
-    $result    = db_query("SELECT * FROM users WHERE "
+    $result    = db_query("SELECT * FROM user WHERE "
                          ."name='$dusername' OR email LIKE '%<$demail>'");
     if (db_count($result) == 1)
     {
@@ -152,21 +192,12 @@ if ($REQUEST_METHOD == "POST")
 	   "From: $PROJECT_EMAIL\r\n");
 
       html_header("Forgot Username or Password",
-                  array("Enable Account" => "$PHP_SELF?E"));
+                  array("Login" => "$PHP_SELF",
+		        "Reset Password" => "$PHP_SELF?E"));
 
       print("<p>You should receive an email from $PROJECT_EMAIL shortly "
            ."with instructions on resetting your password.</p>\n");
-
-      print("<pre>" .
-            wordwrap("Some one, possibly you, requested that your password "
-	            ."be reset on the $PROJECT_NAME home page.  To enter "
-		    ."a new password, go to the following URL:\n\n"
-		    ."    $PHP_URL?E\n\n"
-		    ."and enter your username ($row[name]) and the "
-		    ."following registration code:\n\n"
-		    ."    $hash\n\n"
-		    ."You will then be able to access your account.\n") .
-	    "</pre>\n");
+      print("<pre>" . htmlspecialchars($row["email"]) . " to $hash.</pre>\n");
 
       html_footer();
       exit();
@@ -184,14 +215,16 @@ if ($REQUEST_METHOD == "POST")
 else
 {
   $username  = "";
+  $realname  = "";
   $password  = "";
   $password2 = "";
   $email     = "";
+  $email2    = "";
   $register  = "";
 }
 
 if ($LOGIN_USER != "")
-  header("Location: account.php");
+  header("Location: $page");
 else if ($argc == 0 || $argv[0] != "E")
 {
   // Header + start of table...
@@ -208,9 +241,12 @@ else if ($argc == 0 || $argv[0] != "E")
   if ($argc == 0 && $usererror != "")
     print("<p><b>$usererror</b></p>\n");
 
+  $page = htmlspecialchars($page, ENT_QUOTES);
+
   print("<p>If you are a registered $PROJECT_NAME user, please enter "
        ."your username and password to login:</p>\n"
        ."<form method='POST' action='$PHP_SELF'>"
+       ."<input type='hidden' name='PAGE' value='$page'>"
        ."<p><table width='100%'>\n"
        ."<tr><th align='right'>Username:</th>"
        ."<td><input type='text' name='USERNAME' size='16' maxsize='255'");
@@ -235,11 +271,13 @@ else if ($argc == 0 || $argv[0] != "E")
   // New users...
   print("<h2>New Users</h2>\n");
 
-  if ($argc == 1 && $usererror != "")
+  if ($argc == 1 && $argv[0] == "A" && $usererror != "")
     print("<p><b>$usererror</b></p>\n");
 
   $username = htmlspecialchars($username, ENT_QUOTES);
+  $realname = htmlspecialchars($realname, ENT_QUOTES);
   $email    = htmlspecialchars($email, ENT_QUOTES);
+  $email2   = htmlspecialchars($email2, ENT_QUOTES);
 
   print("<p>If you are a not registered $PROJECT_NAME user, please fill "
        ."in the form below to register. An email will be sent to the "
@@ -249,16 +287,17 @@ else if ($argc == 0 || $argv[0] != "E")
        ."<tr><th align='right'>Username:</th>"
        ."<td><input type='text' name='USERNAME' size='16' maxsize='255' "
        ." value='$username'></td></tr>\n"
+       ."<tr><th align='right'>Real Name:</th>"
+       ."<td><input type='text' name='REALNAME' size='16' maxsize='255' "
+       ." value='$realname'></td></tr>\n"
        ."<tr><th align='right'>EMail:</th>"
        ."<td><input type='text' name='EMAIL' size='16' maxsize='255' "
        ." value='$email'></td></tr>\n"
-       ."<tr><th align='right'>Password:</th>"
-       ."<td><input type='password' name='PASSWORD' size='16' maxsize='255'>"
+       ."<tr><th align='right'>EMail Again:</th>"
+       ."<td><input type='text' name='EMAIL2' size='16' maxsize='255' "
+       ." value='$email2'></td></tr>\n"
+       ."<tr><th></th><td><input type='submit' value='Request Account'>"
        ."</td></tr>\n"
-       ."<tr><th align='right'>Password Again:</th>"
-       ."<td><input type='password' name='PASSWORD2' size='16' maxsize='255'>"
-       ."</td></tr>\n"
-       ."<tr><th></th><td><input type='submit' value='Request Account'></td></tr>\n"
        ."</table></p></form>\n");
 
   // Separator...
@@ -273,9 +312,6 @@ else if ($argc == 0 || $argv[0] != "E")
 
   if ($argc == 1 && $argv[0] == "F" && $usererror != "")
     print("<p><b>$usererror</b></p>\n");
-
-  $username = htmlspecialchars($username, ENT_QUOTES);
-  $email    = htmlspecialchars($email, ENT_QUOTES);
 
   print("<p>If you are a registered $PROJECT_NAME user "
        ."but have forgotten your username or password, please fill in "
@@ -321,6 +357,9 @@ else
        ."value='$username'></td></tr>\n"
        ."<tr><th align='right'>Password:</th>"
        ."<td><input type='password' name='PASSWORD' size='16' maxsize='255'>"
+       ."</td></tr>\n"
+       ."<tr><th align='right'>Password Again:</th>"
+       ."<td><input type='password' name='PASSWORD2' size='16' maxsize='255'>"
        ."</td></tr>\n"
        ."<tr><th></th><td><input type='submit' value='Enable Account'></td></tr>\n"
        ."</table></center></form>\n");

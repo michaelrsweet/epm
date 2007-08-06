@@ -11,7 +11,7 @@
 
 include_once "phplib/html.php";
 include_once "phplib/common.php";
-include_once "phplib/str.php";
+include_once "phplib/db-str.php";
 
 
 //
