@@ -125,7 +125,7 @@ auth_login($name,			// I - Username
     // Encrypt the password...
     $hash = crypt($password, $row["hash"]);
 
-    print("<p>hash=$hash, row[hash]=$row[hash]</p>\n");
+//    print("<p>hash=$hash, row[hash]=$row[hash]</p>\n");
 
     // See if they match...
     if ($row["hash"] == $hash)
