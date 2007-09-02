@@ -126,15 +126,15 @@ db_query($SQL_QUERY)			// I - SQL query string
 {
   global $DB_NAME, $DB_CONN;
 
-  return (mysql_query($SQL_QUERY, $DB_CONN));
+  $result = mysql_query($SQL_QUERY, $DB_CONN);
 
-//  print("<p>SQL_QUERY: $SQL_QUERY</p>\n");
-//
-//  $result = mysql_query($SQL_QUERY, $DB_CONN);
-//  $count  = db_count($result);
-//  print("<p>Result = $count rows...</p>\n");
-//
-//  return ($result);
+  if ($result == FALSE)
+  {
+    print("<p>SQL query \"" . htmlspecialchars($SQL_QUERY) . "\" failed:</p>\n"
+         ."<p>" . mysql_error() . "</p>\n");
+  }
+
+  return ($result);
 }
 
 

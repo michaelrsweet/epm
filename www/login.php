@@ -85,7 +85,7 @@ if ($REQUEST_METHOD == "POST")
       $demail = db_escape("$realname <$email>");
 
       db_query("INSERT INTO user VALUES(NULL, 0, '$dusername', '$demail', "
-              ."'$hash', 0, 0, $date, '$dusername', $date, '$dusername')");
+              ."'$hash', 0, $date, '$dusername', $date, '$dusername')");
 
       $userid   = db_insert_id();
       $register = md5("$userid:$hash");
@@ -197,7 +197,6 @@ if ($REQUEST_METHOD == "POST")
 
       print("<p>You should receive an email from $PROJECT_EMAIL shortly "
            ."with instructions on resetting your password.</p>\n");
-      print("<pre>" . htmlspecialchars($row["email"]) . " to $hash.</pre>\n");
 
       html_footer();
       exit();
