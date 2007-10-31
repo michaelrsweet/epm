@@ -49,6 +49,7 @@ $STR_SUBSYSTEMS = array(
   "HP-UX Support",
   "Mac OS X Support",
   "Multiple",
+  "OS Support",
   "Portable Support",
   "RPM Support",
   "SGI Support",

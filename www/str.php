@@ -974,14 +974,12 @@ switch ($op)
 	       ."<option>Not Applicable</option>");
 
 	  reset($STR_VERSIONS);
-	  while (list($key, $val) = each($STR_VERSIONS))
+	  foreach ($STR_VERSIONS as $version)
 	  {
-	    $data = explode(":", $val);
+	    if ($version[0] == '+')
+	      $version = substr($version, 1);
 
-	    if ($data[0] != $link_id && $data[0] != PROJECT_LINK_ALL)
-	      continue;
-
-	    print("<option value='$data[2]'>$data[2]</option>");
+	    print("<option value='$version'>$version</option>");
 	  }
           print("</select>\n");
 
@@ -989,14 +987,12 @@ switch ($op)
 	       ."<option value=''>No Change</option>");
 
 	  reset($STR_SUBSYSTEMS);
-	  while (list($key, $val) = each($STR_SUBSYSTEMS))
+	  foreach ($STR_SUBSYSTEMS as $subsystem)
 	  {
-	    $data = explode(":", $val);
+	    if ($subsystem[0] == '+')
+	      $subsystem = substr($subsystem, 1);
 
-	    if ($data[0] != $link_id && $data[0] != PROJECT_LINK_ALL)
-	      continue;
-
-	    print("<option value='$data[2]'>$data[2]</option>");
+	    print("<option value='$subsystem'>$subsystem</option>");
 	  }
           print("</select>\n");
 
