@@ -1008,7 +1008,7 @@ class str
 
     if ($this->str_version == "" ||
         ($this->priority == STR_PRIORITY_RFE &&
-	 !strpos($this->str_version, "-feature")))
+	 strpos($this->str_version, "-feature") !== FALSE))
     {
       $this->str_version_valid = FALSE;
       $valid = FALSE;
