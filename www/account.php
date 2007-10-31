@@ -208,6 +208,8 @@ switch ($op)
         	db_query("UPDATE user SET is_published = 0 WHERE id = $id");
               else if ($op == "enable")
         	db_query("UPDATE user SET is_published = 1 WHERE id = $id");
+              else if ($op == "delete")
+        	db_query("DELETE FROM user WHERE id = $id");
 	    }
 
           db_query("COMMIT TRANSACTION");
@@ -395,6 +397,7 @@ switch ($op)
 	print("<td align='center' colspan='3'><select name='OP'>"
 	     ."<option value='disable'>Disable</option>"
 	     ."<option value='enable'>Enable</option>"
+	     ."<option value='delete'>Delete</option>"
 	     ."</select>"
 	     ."<input type='submit' value='Checked Accounts'></td>");
 	html_end_row();
