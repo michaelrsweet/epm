@@ -136,7 +136,7 @@ switch ($op)
 	  $email = db_escape($email);
 	  $date  = time();
 
-	  db_query("INSERT INTO users VALUES(NULL,$is_published,"
+	  db_query("INSERT INTO user VALUES(NULL,$is_published,"
 	          ."'$name','$email','$hash',$level,$date,'$LOGIN_USER',"
 		  ."$date,'$LOGIN_USER')");
 
@@ -205,9 +205,9 @@ switch ($op)
 	      $id = (int)substr($key, 3);
 
               if ($op == "disable")
-        	db_query("UPDATE users SET is_published = 0 WHERE id = $id");
+        	db_query("UPDATE user SET is_published = 0 WHERE id = $id");
               else if ($op == "enable")
-        	db_query("UPDATE users SET is_published = 1 WHERE id = $id");
+        	db_query("UPDATE user SET is_published = 1 WHERE id = $id");
 	    }
 
           db_query("COMMIT TRANSACTION");
@@ -264,7 +264,7 @@ switch ($op)
 	else
 	{
 	  // Get data from existing account...
-	  $result = db_query("SELECT * FROM users WHERE "
+	  $result = db_query("SELECT * FROM user WHERE "
 	                    ."name='" . db_escape($name) ."'");
           if (db_count($result) != 1)
 	  {
@@ -297,7 +297,7 @@ switch ($op)
 	  $email = db_escape($email);
 	  $date  = time();
 
-	  db_query("UPDATE users SET "
+	  db_query("UPDATE user SET "
 	          ."email='$email'$hash, level='$level', "
 		  ."is_published=$is_published, modify_user='$LOGIN_USER', "
 		  ."modify_date = $date WHERE name='$name'");
@@ -365,7 +365,7 @@ switch ($op)
         // List accounts...
 	account_header("Manage Accounts");
 
-	$result = db_query("SELECT * FROM users ORDER BY name");
+	$result = db_query("SELECT * FROM user ORDER BY name");
 
         print("<form method='POST' action='$PHP_SELF?Abatch'>\n");
 
