@@ -922,7 +922,7 @@ class str
       }
 
       if ($this->priority == STR_PRIORITY_RFE &&
-          strpos($data[2], "-feature") !== FALSE &&
+          strpos($version, "-feature") !== FALSE &&
           $name != "fix_version")
         continue;
 
