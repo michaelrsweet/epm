@@ -878,24 +878,21 @@ class str
     reset($STR_SUBSYSTEMS);
     foreach ($STR_SUBSYSTEMS as $subsystem)
     {
-      $data = explode(":", $subsystem);
+      if ($subsystem[0] == '+')
+      {
+        if ($LOGIN_LEVEL < AUTH_DEVEL)
+          continue;
 
-      if ($data[0] != $this->link_id && $data[0] != PROJECT_LINK_ALL)
-        continue;
-      if (!$data[1] && $LOGIN_LEVEL < AUTH_DEVEL)
-        continue;
+	$subsystem = substr($subsystem, 1);
+      }
 
-      if ($data[2] == $value)
-        print("<option value='$data[2]' selected>$data[2]</option>");
+      if ($subsystem == $value)
+        print("<option value='$subsystem' selected>$subsystem</option>");
       else
-        print("<option value='$data[2]'>$data[2]</option>");
+        print("<option value='$subsystem'>$subsystem</option>");
     }
 
     print("</select><!-- $value -->");
-
-    if ($LOGIN_LEVEL >= AUTH_DEVEL)
-      print(" [&nbsp;<a href='strsubsystems.php?L+S$this->id+P$this->link_id'>"
-           ."Manage</a>&nbsp;]");
   }
 
 
@@ -915,28 +912,26 @@ class str
     reset($STR_VERSIONS);
     foreach ($STR_VERSIONS as $version)
     {
-      $data = explode(":", $version);
+      if ($version[0] == '+')
+      {
+        if ($LOGIN_LEVEL < AUTH_DEVEL)
+          continue;
 
-      if ($data[0] != $this->link_id && $data[0] != PROJECT_LINK_ALL)
-        continue;
-      if (!$data[1] && $LOGIN_LEVEL < AUTH_DEVEL)
-        continue;
+	$version = substr($version, 1);
+      }
 
-      if ($this->priority == STR_PRIORITY_RFE && !strpos($data[2], "-feature") &&
+      if ($this->priority == STR_PRIORITY_RFE &&
+          strpos($data[2], "-feature") !== FALSE &&
           $name != "fix_version")
         continue;
 
-      if ($data[2] == $value)
-        print("<option value='$data[2]' selected>$data[2]</option>");
+      if ($version == $value)
+        print("<option value='$version' selected>$version</option>");
       else
-        print("<option value='$data[2]'>$data[2]</option>");
+        print("<option value='$version'>$version</option>");
     }
 
-    print("</select><!-- value -->");
-
-    if ($LOGIN_LEVEL >= AUTH_DEVEL)
-      print(" [&nbsp;<a href='strversions.php?L+S$this->id+P$this->link_id'>"
-           ."Manage</a>&nbsp;]");
+    print("</select><!-- $value -->");
   }
 
 
