@@ -160,6 +160,6 @@ UL.noindent LI {
   margin-bottom: 0.75em;
 }
 
-.invalid {
+TH.invalid {
   color: #ff0000;
 }
