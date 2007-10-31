@@ -68,9 +68,10 @@ $STR_VERSIONS = array(
   "-current",
   "-feature",
   "5.x-current",
+  "+5.x-feature",
   "+5.0",
-  "+5.0-feature",
   "4.x-current",
+  "+4.x-feature",
   "+4.2",
   "4.1",
   "4.0",
@@ -922,7 +923,7 @@ class str
       }
 
       if ($this->priority == STR_PRIORITY_RFE &&
-          strpos($version, "-feature") == FALSE &&
+          strpos($version, "-feature") === FALSE &&
           $name != "fix_version")
         continue;
 
