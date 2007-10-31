@@ -159,3 +159,7 @@ UL.noindent {
 UL.noindent LI {
   margin-bottom: 0.75em;
 }
+
+.invalid {
+  color: #ff0000;
+}
