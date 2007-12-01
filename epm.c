@@ -532,6 +532,12 @@ main(int  argc,				/* I - Number of command-line args */
   * Make the distribution in the correct format...
   */
 
+  if (access(SetupProgram, 0) && setup)
+  {
+    puts("epm: Setup program not installed, creating non-GUI package.");
+    setup = NULL;
+  }
+
   switch (format)
   {
     case PACKAGE_PORTABLE :
