@@ -99,6 +99,7 @@ enum
   PACKAGE_BSD,				/* BSD package format */
   PACKAGE_DEB,				/* Debian package format */
   PACKAGE_INST,				/* IRIX package format */
+  PACKAGE_LSB,				/* LSB (RPM) package format */
   PACKAGE_OSX,				/* MacOS X package format */
   PACKAGE_PKG,				/* AT&T package format (AIX, Solaris) */
   PACKAGE_RPM,				/* RedHat package format */
@@ -288,7 +289,7 @@ extern int	make_portable(const char *prodname, const char *directory,
 		              const char *platname, dist_t *dist,
 			      struct utsname *platform, const char *setup,
 			      const char *types);
-extern int	make_rpm(const char *prodname, const char *directory,
+extern int	make_rpm(int format, const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform, const char *setup,
 			 const char *types);

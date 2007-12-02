@@ -532,6 +532,12 @@ main(int  argc,				/* I - Number of command-line args */
   * Make the distribution in the correct format...
   */
 
+  if (access(SetupProgram, 0) && setup)
+  {
+    puts("epm: Setup program not installed, creating non-GUI package.");
+    setup = NULL;
+  }
+
   switch (format)
   {
     case PACKAGE_PORTABLE :
@@ -563,8 +569,9 @@ main(int  argc,				/* I - Number of command-line args */
     case PACKAGE_PKG :
         i = make_pkg(prodname, directory, platname, dist, &platform);
 	break;
+    case PACKAGE_LSB :
     case PACKAGE_RPM :
-        i = make_rpm(prodname, directory, platname, dist, &platform,
+        i = make_rpm(format, prodname, directory, platname, dist, &platform,
 	             setup, types);
 	break;
     case PACKAGE_SETLD :
