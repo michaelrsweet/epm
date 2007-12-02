@@ -418,7 +418,7 @@ make_subpackage(
   if (run_command(NULL, "mv %s.tgz %s", name, directory))
     return (1);
 #elif defined(__FreeBSD__)
-  if (run_command(NULL, "pkg_create -p / "
+  if (run_command(NULL, "/usr/sbin/pkg_create -p / "
                         "-c %s "
 			"-d %s "
                         "-f %s "
