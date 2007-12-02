@@ -1,12 +1,11 @@
-README - ESP Package Manager (EPM) 4.1
+README - ESP Package Manager (EPM) 4.2
 --------------------------------------
 
 WHAT IS EPM?
 
-    EPM is the software packaging tool that we now use at Easy
-    Software Products.  It is a simple tool that generates
-    software and patch distributions in various formats,
-    including:
+    EPM is the software packaging tool that we use at Easy Software
+    Products.  It is a simple tool that generates software and patch
+    distributions in various formats, including:
 
 	- AIX software packages ("installp")
 	- AT&T software packages ("pkgadd"), used by Solaris and others
@@ -68,13 +67,19 @@ WHAT'S NEW IN EPM?
 
 REPORTING PROBLEMS
 
-    Report all problems and submit all patches to
-    "epm@easysw.com".
+    Report all problems and submit all patches using the bug
+    reporting form at:
+
+        http://www.epmhome.org/str.php
 
 
 OTHER RESOURCES
 
-    Easy Software Products maintains a news server for the
+    The official home page for EPM is here:
+
+        http://www.epmhome.org/
+
+    Easy Software Products also maintains a news server for the
     discussion of ESP and ESP-sponsored software.  The news
     server is:
 
@@ -83,7 +88,7 @@ OTHER RESOURCES
     If you don't have NNTP access from your systems, point your
     web browser at the following URL:
 
-        http://www.easysw.com/epm/newsgroups.php
+        http://www.epmhome.org/forums.php
 
 
 COPYRIGHT AND LICENSE INFO

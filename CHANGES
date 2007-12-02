@@ -1,8 +1,16 @@
-CHANGES - ESP Package Manager (EPM) 4.1
----------------------------------------
+CHANGES - ESP Package Manager (EPM) 4.1.1
+-----------------------------------------
 
-EPM 4.1.1
+EPM 4.2
 
+	- Added support for an "lsb" package format which uses
+	  RPM with the LSB dependencies.
+	- The configure script now supports a --with-archflags
+	  and no longer automatically builds universal binaries on
+	  Mac OS X.
+	- The epm program now automatically detects when the
+	  setup GUI is not available, displays a warning message,
+	  and then creates a non-GUI package.
 	- RPM packages did not map %replaces to Obsoletes:
 
 
