@@ -3,7 +3,7 @@
  *
  *   Free/Net/OpenBSD package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2006 by Easy Software Products.
+ *   Copyright 1999-2007 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -68,15 +68,12 @@ make_bsd(const char     *prodname,	/* I - Product short name */
  */
 
 static int				/* O - 0 = success, 1 = fail */
-make_subpackage(const char     *prodname,
-					/* I - Product short name */
-        	const char     *directory,
-					/* I - Directory for distribution files */
-        	const char     *platname,
-					/* I - Platform name */
-		dist_t         *dist,	/* I - Distribution information */
-		const char     *subpackage)
-					/* I - Subpackage name */
+make_subpackage(
+    const char     *prodname,		/* I - Product short name */
+    const char     *directory,		/* I - Directory for distribution files */
+    const char     *platname,		/* I - Platform name */
+    dist_t         *dist,		/* I - Distribution information */
+    const char     *subpackage)		/* I - Subpackage name */
 {
   int		i;			/* Looping var */
   FILE		*fp;			/* Spec file */
@@ -265,10 +262,10 @@ make_subpackage(const char     *prodname,
       * avoid a bug in the FreeBSD pkg_delete command.
       */
 
-      fprintf(fp, "@exec /bin/mkdir -p %s\n", file->dst);
-      fprintf(fp, "@exec /bin/chown %s:%s %s\n", file->user, file->group,
+      fprintf(fp, "@exec mkdir -p %s\n", file->dst);
+      fprintf(fp, "@exec chown %s:%s %s\n", file->user, file->group,
               file->dst);
-      fprintf(fp, "@exec /bin/chmod %04o %s\n", file->mode, file->dst);
+      fprintf(fp, "@exec chmod %04o %s\n", file->mode, file->dst);
     }
 
   for (i = dist->num_files, file = dist->files, old_mode = 0, old_user = "",
