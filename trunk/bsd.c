@@ -223,15 +223,10 @@ make_subpackage(
 #else
       fprintf(fp, "@pkgcfl %s", d->product);
 #endif /* __FreeBSD__ */
-    if (d->vernumber[0] == 0)
-    {
-      if (d->vernumber[1] < INT_MAX)
-        fprintf(fp, " <= %s\n", d->version[1]);
-      else
-        putc('\n', fp);
-    }
+    if (d->vernumber[0] > 0)
+      fprintf(fp, "-%s\n", d->version[0]);
     else
-      fprintf(fp, " >= %s, <= %s\n", d->version[0], d->version[1]);
+      putc('\n', fp);
   }
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
