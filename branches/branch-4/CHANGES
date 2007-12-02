@@ -3,6 +3,7 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- EPM now uses /usr/sbin/pkg_create on FreeBSD (STR #2)
 	- FreeBSD packages are now created with a .tbz
 	  extension (STR #1)
 	- FreeBSD packages incorrectly assumed that chown was
