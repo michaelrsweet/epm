@@ -3,6 +3,8 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- FreeBSD packages are now created with a .tbz
+	  extension (STR #1)
 	- FreeBSD packages incorrectly assumed that chown was
 	  installed in /bin (STR #3)
 	- Added support for an "lsb" package format which uses
