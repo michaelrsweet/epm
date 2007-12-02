@@ -1,10 +1,12 @@
-CHANGES - ESP Package Manager (EPM) 4.1.1
------------------------------------------
+CHANGES - ESP Package Manager (EPM) 4.2
+---------------------------------------
 
 EPM 4.2
 
+	- FreeBSD packages incorrectly assumed that chown was
+	  installed in /bin (STR #3)
 	- Added support for an "lsb" package format which uses
-	  RPM with the LSB dependencies.
+	  RPM with the LSB dependencies (STR #7)
 	- The configure script now supports a --with-archflags
 	  and no longer automatically builds universal binaries on
 	  Mac OS X.
