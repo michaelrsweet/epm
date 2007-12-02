@@ -3,7 +3,7 @@
 #
 #   Makefile for the ESP Package Manager (EPM).
 #
-#   Copyright 1999-2006 by Easy Software Products, all rights reserved.
+#   Copyright 1999-2007 by Easy Software Products, all rights reserved.
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -40,10 +40,11 @@ STRIP		=	@STRIP@
 #
 
 ARFLAGS		=	@ARFLAGS@
-CFLAGS		=	@CFLAGS@ $(OPTIM)
-CXXFLAGS	=	@CXXFLAGS@ $(OPTIM)
+ARCHFLAGS	=	@ARCHFLAGS@
+CFLAGS		=	$(ARCHFLAGS) @CFLAGS@ $(OPTIM)
+CXXFLAGS	=	$(ARCHFLAGS) @CXXFLAGS@ $(OPTIM)
 GUILIBS		=	@GUILIBS@
-LDFLAGS		=	@LDFLAGS@ $(OPTIM)
+LDFLAGS		=	$(ARCHFLAGS) @LDFLAGS@ $(OPTIM)
 LIBS		=	@LIBS@
 OPTIM		=	@OPTIM@
 
@@ -54,6 +55,7 @@ OPTIM		=	@OPTIM@
 
 bindir		=	@bindir@
 datadir		=	@datadir@
+datarootdir	=	@datarootdir@
 docdir		=	@docdir@
 exec_prefix	=	@exec_prefix@
 mandir		=	@mandir@
@@ -299,12 +301,16 @@ slackware: $(TARGETS)
 deb: $(TARGETS)
 	./epm -f deb -v epm
 
-gui: $(TARGETS)
+gui portable: $(TARGETS)
 	./epm -v -s doc/epmlogo.gif --setup-program setup \
 		--uninstall-program uninst --data-dir macosx epm
 
 inst tardist: $(TARGETS)
 	./epm -f tardist -v epm
+
+lsb rpm: $(TARGETS)
+	./epm -f $@ -v -s doc/epmlogo.gif --setup-program setup \
+		--uninstall-program uninst --data-dir macosx epm
 
 pkg: $(TARGETS)
 	./epm -f pkg -v epm
@@ -314,12 +320,6 @@ native: $(TARGETS)
 
 osx: $(TARGETS)
 	./epm -f osx -v -s doc/epmlogo.tif epm
-
-portable: $(TARGETS)
-	./epm -v epm
-
-rpm: $(TARGETS)
-	./epm -f rpm -v epm
 
 swinstall depot: $(TARGETS)
 	./epm -f depot -v epm
