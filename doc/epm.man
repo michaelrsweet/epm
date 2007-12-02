@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "5 April 2006" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "2 December 2007" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -74,6 +74,10 @@ inst, tardist
 Generate an IRIX distribution suitable for installation on an system running
 IRIX.
 .TP 5
+lsb
+.br
+Generate RPM packages for LSB-conforming systems.
+.TP 5
 native
 .br
 Generate an native distribution. This uses \fIrpm\fR for Linux,
@@ -122,9 +126,9 @@ removed after the distribution is created. The \fI\-k\fR option keeps these
 files in the distribution directory.
 .LP
 The \fI-s\fR and \fI--setup-image\fR options ("setup") include
-the ESP Software Wizard with the specified XPM image file with
+the ESP Software Wizard with the specified GIF or XPM image file with
 the distribution. This option is currently only supported by
-portable distributions.
+portable and RPM distributions.
 .LP
 The \fI--setup-program\fR option specifies the setup executable
 to use with the distribution. This option is currently only
