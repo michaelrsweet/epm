@@ -3,7 +3,7 @@
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2006 by Easy Software Products.
+ *   Copyright 1999-2007 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -1491,6 +1491,8 @@ expand_name(char   *buffer,		/* O - Output string */
         bufsize -= strlen(buffer);
 	buffer  += strlen(buffer);
       }
+      else
+        fprintf(stderr, "epm: Variable \"%s\" undefined!\n", var);
     }
     else
       *buffer++ = *name++;
