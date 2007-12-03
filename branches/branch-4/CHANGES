@@ -3,6 +3,8 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- EPM now displays a warning message when a variable is
+	  undefined (STR #10)
 	- *BSD dependencies on versioned packages are now
 	  specified correctly (STR #4)
 	- EPM now uses /usr/sbin/pkg_create on FreeBSD (STR #2)
