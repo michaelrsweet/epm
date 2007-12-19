@@ -3,6 +3,7 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- *BSD init scripts were not installed properly.
 	- EPM now displays a warning message when a variable is
 	  undefined (STR #10)
 	- *BSD dependencies on versioned packages are now
