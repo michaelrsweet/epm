@@ -65,7 +65,7 @@ extern int	gethostname(char *, int);
  */
 
 static int	compare_files(const file_t *f0, const file_t *f1);
-static void	expand_name(char *buffer, char *name, size_t bufsize);
+static void	expand_name(char *buffer, char *name, size_t bufsize, int warn);
 static char	*get_file(const char *filename, char *buffer, size_t size);
 static char	*get_inline(const char *term, FILE *fp, char *buffer,
 		            size_t size);
@@ -829,7 +829,8 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
       */
 
       line[0] = buf[0]; /* Don't expand initial $ */
-      expand_name(line + 1, buf + 1, sizeof(line) - 1);
+      expand_name(line + 1, buf + 1, sizeof(line) - 1,
+                  strncmp(buf, "%if", 3) || strncmp(buf, "%elseif", 7));
 
      /*
       * Check line for config stuff...
@@ -1439,10 +1440,12 @@ compare_files(const file_t *f0,		/* I - First file */
 static void
 expand_name(char   *buffer,		/* O - Output string */
             char   *name,		/* I - Input string */
-	    size_t bufsize)		/* I - Size of output string */
+	    size_t bufsize,		/* I - Size of output string */
+	    int    warn)		/* I - Warn when not set? */
 {
   char	var[255],			/* Environment variable name */
-	*varptr;			/* Current position in name */
+	*varptr,			/* Current position in name */
+	delim;				/* Delimiter character */
 
 
   bufsize --;
@@ -1461,16 +1464,17 @@ expand_name(char   *buffer,		/* O - Output string */
 	bufsize --;
 	continue;
       }
-      else if (*name == '{')
+      else if (*name == '{' || *name == '(')
       {
        /*
         * Bracketed variable name...
 	*/
 
-	for (varptr = var, name ++; *name != '}' && *name != '\0';)
-          *varptr++ = *name++;
+	for (varptr = var, delim = *name++; *name != delim && *name; name ++)
+          if (varptr < (var + sizeof(var) - 1))
+	    *varptr++ = *name;
 
-        if (*name == '}')
+        if (*name == delim)
 	  name ++;
       }
       else
@@ -1491,7 +1495,7 @@ expand_name(char   *buffer,		/* O - Output string */
         bufsize -= strlen(buffer);
 	buffer  += strlen(buffer);
       }
-      else
+      else if (warn)
         fprintf(stderr, "epm: Variable \"%s\" undefined!\n", var);
     }
     else
@@ -1561,7 +1565,7 @@ get_file(const char *filename,		/* I  - File to read from */
 
     expand = strdup(buffer);
 
-    expand_name(buffer, expand, size);
+    expand_name(buffer, expand, size, 1);
 
     free(expand);
   }
@@ -1627,7 +1631,7 @@ get_inline(const char *term,		/* I  - Termination string */
 
       expand = strdup(buffer);
 
-      expand_name(buffer, expand, size);
+      expand_name(buffer, expand, size, 1);
 
       free(expand);
     }
