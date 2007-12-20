@@ -1470,7 +1470,9 @@ expand_name(char   *buffer,		/* O - Output string */
         * Bracketed variable name...
 	*/
 
-	for (varptr = var, delim = *name++; *name != delim && *name; name ++)
+        delim = *name == '{' ? '}' : ')';
+
+	for (varptr = var, name ++; *name != delim && *name; name ++)
           if (varptr < (var + sizeof(var) - 1))
 	    *varptr++ = *name;
 
@@ -1483,8 +1485,9 @@ expand_name(char   *buffer,		/* O - Output string */
         * Unbracketed variable name...
 	*/
 
-	for (varptr = var; strchr("/ \t\r\n-", *name) == NULL && *name != '\0';)
-          *varptr++ = *name++;
+	for (varptr = var; !strchr("/ \t\r\n-", *name) && *name; name ++)
+          if (varptr < (var + sizeof(var) - 1))
+	    *varptr++ = *name;
       }
 
       *varptr = '\0';
@@ -1499,7 +1502,10 @@ expand_name(char   *buffer,		/* O - Output string */
         fprintf(stderr, "epm: Variable \"%s\" undefined!\n", var);
     }
     else
+    {
       *buffer++ = *name++;
+      bufsize --;
+    }
   }
 
   *buffer = '\0';
