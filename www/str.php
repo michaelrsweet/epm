@@ -726,8 +726,11 @@ switch ($op)
 		              "$PHP_SELF?U$options",
 	                  "Link To Search Results" => "${bookmark}"));
 
+	$htmlsearch = htmlspecialchars($search, ENT_QUOTES);
+
         print("<form method='POST' action='$PHP_SELF'><p align='center'>"
-	     ."Search&nbsp;Words: &nbsp;<input type='text' size='60' name='SEARCH' value='$search'>"
+	     ."Search&nbsp;Words: &nbsp;<input type='text' size='60' "
+	     ."name='SEARCH' value='$htmlsearch'>"
 	     ."<input type='submit' value='Search Requests'><br>\n");
 
 	print("Priority:&nbsp;<select name='FPRIORITY'>");
@@ -813,7 +816,7 @@ switch ($op)
 
 	  if (($priority || $status || $scope) && $search != "")
 	    print("<p>[ <a href='$PHP_SELF?L+S0+Q" . urlencode($search)
-	         ."'>Search for \"<i>$search</i>\" in all requests</a> ]</p>\n");
+	         ."'>Search for \"<i>$htmlsearch</i>\" in all requests</a> ]</p>\n");
 
 	  html_footer();
 	  exit();
