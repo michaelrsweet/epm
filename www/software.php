@@ -16,7 +16,6 @@ include_once "phplib/html.php";
 $sitelist = array(
   "http://ftp.easysw.com/pub" => "California, USA via HTTP",
   "ftp://ftp.easysw.com/pub" => "California, USA via FTP",
-  "http://www.nu6.org/_/mirror/ftp.easysw.com/pub" => "Gustavsberg, Sweden via HTTP",
   "http://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub" => "Espoo, Finland via HTTP",
   "ftp://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub" => "Espoo, Finland via FTP",
 );
