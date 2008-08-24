@@ -3,7 +3,7 @@
  *
  *   Red Hat package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2007 by Easy Software Products.
+ *   Copyright 1999-2008 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -701,6 +701,19 @@ write_spec(int        format,		/* I - Subformat */
   }
   else
     have_commands = 0;
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
+        (!c->keyword || !strcmp(c->keyword, "spec")))
+      break;
+
+  if (i > 0)
+  {
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
+	  (!c->keyword || !strcmp(c->keyword, "spec")))
+	fprintf(fp, "%s\n", c->command);
+  }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i' && file->subpackage == subpackage)

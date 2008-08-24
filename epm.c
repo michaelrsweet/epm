@@ -160,31 +160,33 @@ main(int  argc,				/* I - Number of command-line args */
               temp = argv[i];
 	    }
 
-	    if (strcasecmp(temp, "portable") == 0)
+	    if (!strcasecmp(temp, "portable"))
 	      format = PACKAGE_PORTABLE;
-	    else if (strcasecmp(temp, "aix") == 0)
+	    else if (!strcasecmp(temp, "aix"))
 	      format = PACKAGE_AIX;
-	    else if (strcasecmp(temp, "bsd") == 0)
+	    else if (!strcasecmp(temp, "bsd"))
 	      format = PACKAGE_BSD;
-	    else if (strcasecmp(temp, "deb") == 0)
+	    else if (!strcasecmp(temp, "deb"))
 	      format = PACKAGE_DEB;
-	    else if (strcasecmp(temp, "inst") == 0 ||
-	             strcasecmp(temp, "tardist") == 0)
+	    else if (!strcasecmp(temp, "inst") ||
+	             strcasecmp(temp, "tardist"))
 	      format = PACKAGE_INST;
-	    else if (strcasecmp(temp, "osx") == 0)
+	    else if (!strcasecmp(temp, "osx"))
 	      format = PACKAGE_OSX;
-	    else if (strcasecmp(temp, "pkg") == 0)
+	    else if (!strcasecmp(temp, "pkg"))
 	      format = PACKAGE_PKG;
-	    else if (strcasecmp(temp, "rpm") == 0)
+	    else if (!strcasecmp(temp, "rpm"))
 	      format = PACKAGE_RPM;
-	    else if (strcasecmp(temp, "setld") == 0)
+	    else if (!strcasecmp(temp, "lsb"))
+	      format = PACKAGE_LSB;
+	    else if (!strcasecmp(temp, "setld"))
 	      format = PACKAGE_SETLD;
-	    else if (strcasecmp(temp, "slackware") == 0)
+	    else if (!strcasecmp(temp, "slackware"))
 	      format = PACKAGE_SLACKWARE;
-	    else if (strcasecmp(temp, "swinstall") == 0 ||
-	             strcasecmp(temp, "depot") == 0)
+	    else if (!strcasecmp(temp, "swinstall") ||
+	             strcasecmp(temp, "depot"))
 	      format = PACKAGE_SWINSTALL;
-	    else if (strcasecmp(temp, "native") == 0)
+	    else if (!strcasecmp(temp, "native"))
 #if defined(__linux)
             {
 	     /*
