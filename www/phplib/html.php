@@ -181,7 +181,7 @@ html_footer()
 
   print("</td></tr>\n"
        ."<tr class='pagefooter'><td>"
-       ."Copyright 1999-2007 by Easy Software Products. This program is free "
+       ."Copyright 1999-2008 by Easy Software Products. This program is free "
        ."software; you can redistribute it and/or modify it under the terms "
        ."of version 2 of the GNU General Public License as published by the "
        ."Free Software Foundation."
