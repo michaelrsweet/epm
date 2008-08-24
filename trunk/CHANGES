@@ -6,6 +6,8 @@ EPM 5.0
 
 EPM 4.2
 
+	- Added support for inclusion of format-specific packaging
+	  files and directives via a %literal directive (STR #5)
 	- *BSD init scripts were not installed properly.
 	- EPM now displays a warning message when a variable is
 	  undefined (STR #10)
