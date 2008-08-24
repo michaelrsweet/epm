@@ -3,7 +3,7 @@
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2007 by Easy Software Products.
+ *   Copyright 1999-2008 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -98,13 +98,14 @@ add_command(dist_t     *dist,		/* I - Distribution */
             FILE       *fp,		/* I - Distribution file */
             int        type,		/* I - Command type */
 	    const char *command,	/* I - Command string */
-	    const char *subpkg)		/* I - Subpackage */
+	    const char *subpkg,		/* I - Subpackage */
+            const char *keyword)	/* I - Literal text keyword */
 {
   command_t	*temp;			/* New command */
   char		buf[16384];		/* File import buffer */
 
 
-  if (strncmp(command, "<<", 2) == 0)
+  if (!strncmp(command, "<<", 2))
   {
     for (command += 2; isspace(*command & 255); command ++);
 
@@ -117,7 +118,7 @@ add_command(dist_t     *dist,		/* I - Distribution */
     command = get_file(command, buf, sizeof(buf));
   }
 
-  if (command == NULL)
+  if (!command)
     return;
 
   if (dist->num_commands == 0)
@@ -125,7 +126,7 @@ add_command(dist_t     *dist,		/* I - Distribution */
   else
     temp = realloc(dist->commands, (dist->num_commands + 1) * sizeof(command_t));
 
-  if (temp == NULL)
+  if (!temp)
   {
     perror("epm: Out of memory allocating a command");
     return;
@@ -135,13 +136,24 @@ add_command(dist_t     *dist,		/* I - Distribution */
   temp             += dist->num_commands;
   temp->type       = type;
   temp->command    = strdup(command);
-  temp->subpackage = subpkg;
-
-  if (temp->command == NULL)
+  if (!temp->command)
   {
     perror("epm: Out of memory duplicating a command string");
     return;
   }
+  temp->subpackage = subpkg;
+  if (keyword && *keyword)
+  {
+    temp->keyword = strdup(keyword);
+    if (!temp->keyword)
+    {
+      perror("epm: Out of memory duplicating a literal keyword");
+      free(temp->command);
+      return;
+    }
+  }
+  else
+    temp->keyword = NULL;
 
   dist->num_commands ++;
 }
@@ -454,7 +466,11 @@ free_dist(dist_t *dist)			/* I - Distribution to free */
     free(dist->subpackages);
 
   for (i = 0; i < dist->num_commands; i ++)
+  {
     free(dist->commands[i].command);
+    if (dist->commands[i].keyword)
+      free(dist->commands[i].keyword);
+  }
 
   if (dist->num_commands)
     free(dist->commands);
@@ -849,7 +865,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
         * Process directive...
         */
 
-	if (strcmp(line, "%include") == 0)
+	if (!strcmp(line, "%include"))
 	{
 	  listlevel ++;
 
@@ -860,72 +876,97 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	    listlevel --;
 	  }
 	}
-	else if (strcmp(line, "%description") == 0)
+	else if (!strcmp(line, "%description"))
 	  add_description(dist, listfiles[listlevel], temp, subpkg);
-	else if (strcmp(line, "%preinstall") == 0)
+	else if (!strcmp(line, "%preinstall"))
           add_command(dist, listfiles[listlevel], COMMAND_PRE_INSTALL, temp,
-	              subpkg);
-	else if (strcmp(line, "%install") == 0 ||
-	         strcmp(line, "%postinstall") == 0)
+	              subpkg, NULL);
+	else if (!strcmp(line, "%install") || !strcmp(line, "%postinstall"))
           add_command(dist, listfiles[listlevel], COMMAND_POST_INSTALL, temp,
-	              subpkg);
-	else if (strcmp(line, "%remove") == 0 ||
-	         strcmp(line, "%preremove") == 0)
+	              subpkg, NULL);
+	else if (!strcmp(line, "%remove") || !strcmp(line, "%preremove"))
           add_command(dist, listfiles[listlevel], COMMAND_PRE_REMOVE, temp,
-	              subpkg);
-	else if (strcmp(line, "%postremove") == 0)
+	              subpkg, NULL);
+	else if (!strcmp(line, "%postremove"))
           add_command(dist, listfiles[listlevel], COMMAND_POST_REMOVE, temp,
-	              subpkg);
-	else if (strcmp(line, "%prepatch") == 0)
+	              subpkg, NULL);
+	else if (!strcmp(line, "%prepatch"))
           add_command(dist, listfiles[listlevel], COMMAND_PRE_PATCH, temp,
-	              subpkg);
-	else if (strcmp(line, "%patch") == 0 ||
-	         strcmp(line, "%postpatch") == 0)
+	              subpkg, NULL);
+	else if (!strcmp(line, "%patch") || !strcmp(line, "%postpatch"))
           add_command(dist, listfiles[listlevel], COMMAND_POST_PATCH, temp,
-	              subpkg);
-        else if (strcmp(line, "%product") == 0)
+	              subpkg, NULL);
+	else if (!strcmp(line, "%literal") || !strncmp(line, "%literal(", 9))
+        {
+          char	*ptr,			/* Pointer to parenthesis */
+		*keyword;		/* Key for literal text */
+
+
+          if ((ptr = strchr(line, '(')) != NULL)
+	  {
+	   /*
+	    * Get literal key...
+	    */
+
+            keyword = ptr + 1;
+	    if ((ptr = strchr(keyword, ')')) != NULL)
+	    {
+	      *ptr = '\0';
+
+	      add_command(dist, listfiles[listlevel], COMMAND_LITERAL, temp,
+			  subpkg, keyword);
+	    }
+	    else
+	      fputs("epm: Ignoring bad %literal(keyword) line in list file.\n",
+	            stderr);
+          }
+	  else
+	    add_command(dist, listfiles[listlevel], COMMAND_LITERAL, temp,
+			subpkg, NULL);
+        }
+        else if (!strcmp(line, "%product"))
 	{
           if (!dist->product[0])
             strcpy(dist->product, temp);
 	  else
 	    fputs("epm: Ignoring %product line in list file.\n", stderr);
 	}
-	else if (strcmp(line, "%copyright") == 0)
+	else if (!strcmp(line, "%copyright"))
 	{
           if (!dist->copyright[0])
             strcpy(dist->copyright, temp);
 	  else
 	    fputs("epm: Ignoring %copyright line in list file.\n", stderr);
 	}
-	else if (strcmp(line, "%vendor") == 0)
+	else if (!strcmp(line, "%vendor"))
 	{
           if (!dist->vendor[0])
             strcpy(dist->vendor, temp);
 	  else
 	    fputs("epm: Ignoring %vendor line in list file.\n", stderr);
 	}
-	else if (strcmp(line, "%packager") == 0)
+	else if (!strcmp(line, "%packager"))
 	{
           if (!dist->packager[0])
             strcpy(dist->packager, temp);
 	  else
 	    fputs("epm: Ignoring %packager line in list file.\n", stderr);
 	}
-	else if (strcmp(line, "%license") == 0)
+	else if (!strcmp(line, "%license"))
 	{
           if (!dist->license[0])
             strcpy(dist->license, temp);
 	  else
 	    fputs("epm: Ignoring %license line in list file.\n", stderr);
 	}
-	else if (strcmp(line, "%readme") == 0)
+	else if (!strcmp(line, "%readme"))
 	{
           if (!dist->readme[0])
             strcpy(dist->readme, temp);
 	  else
 	    fputs("epm: Ignoring %readme line in list file.\n", stderr);
 	}
-	else if (strcmp(line, "%subpackage") == 0)
+	else if (!strcmp(line, "%subpackage"))
 	{
 	  subpkg = find_subpackage(dist, temp);
 	}
@@ -961,18 +1002,18 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	    }
 	  }
 	}
-	else if (strcmp(line, "%release") == 0)
+	else if (!strcmp(line, "%release"))
 	{
 	  strlcpy(dist->release, temp, sizeof(dist->release));
 	  dist->vernumber += atoi(temp);
 	}
-	else if (strcmp(line, "%incompat") == 0)
+	else if (!strcmp(line, "%incompat"))
 	  add_depend(dist, DEPEND_INCOMPAT, temp, subpkg);
-	else if (strcmp(line, "%provides") == 0)
+	else if (!strcmp(line, "%provides"))
 	  add_depend(dist, DEPEND_PROVIDES, temp, subpkg);
-	else if (strcmp(line, "%replaces") == 0)
+	else if (!strcmp(line, "%replaces"))
 	  add_depend(dist, DEPEND_REPLACES, temp, subpkg);
-	else if (strcmp(line, "%requires") == 0)
+	else if (!strcmp(line, "%requires"))
 	  add_depend(dist, DEPEND_REQUIRES, temp, subpkg);
 	else
 	{
