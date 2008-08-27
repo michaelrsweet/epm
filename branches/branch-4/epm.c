@@ -3,7 +3,7 @@
  *
  *   Main program source for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2007 by Easy Software Products.
+ *   Copyright 1999-2008 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -171,14 +171,18 @@ main(int  argc,				/* I - Number of command-line args */
 	    else if (!strcasecmp(temp, "inst") ||
 	             strcasecmp(temp, "tardist"))
 	      format = PACKAGE_INST;
+	    else if (!strcasecmp(temp, "lsb"))
+	      format = PACKAGE_LSB;
+	    else if (!strcasecmp(temp, "lsb-signed"))
+	      format = PACKAGE_LSB_SIGNED;
 	    else if (!strcasecmp(temp, "osx"))
 	      format = PACKAGE_OSX;
 	    else if (!strcasecmp(temp, "pkg"))
 	      format = PACKAGE_PKG;
 	    else if (!strcasecmp(temp, "rpm"))
 	      format = PACKAGE_RPM;
-	    else if (!strcasecmp(temp, "lsb"))
-	      format = PACKAGE_LSB;
+	    else if (!strcasecmp(temp, "rpm-signed"))
+	      format = PACKAGE_RPM_SIGNED;
 	    else if (!strcasecmp(temp, "setld"))
 	      format = PACKAGE_SETLD;
 	    else if (!strcasecmp(temp, "slackware"))
@@ -572,7 +576,9 @@ main(int  argc,				/* I - Number of command-line args */
         i = make_pkg(prodname, directory, platname, dist, &platform);
 	break;
     case PACKAGE_LSB :
+    case PACKAGE_LSB_SIGNED :
     case PACKAGE_RPM :
+    case PACKAGE_RPM_SIGNED :
         i = make_rpm(format, prodname, directory, platname, dist, &platform,
 	             setup, types);
 	break;

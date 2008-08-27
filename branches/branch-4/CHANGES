@@ -3,6 +3,7 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- Added support for signed RPM packages.
 	- Added support for inclusion of format-specific packaging
 	  files and directives via a %literal directive (STR #5)
 	- *BSD init scripts were not installed properly.

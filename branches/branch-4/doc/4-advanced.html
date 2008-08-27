@@ -532,5 +532,47 @@ the startup script.</P>
     i 755 root sys foo foo.sh "runlevel(02) start(50) stop(30)"
 </PRE>
 
+<H2>Literal Package Data</H2>
+
+<P>Sometimes you need to include format-specific package data such as
+keywords, signing keys, and response data. The <CODE>%literal(section)</CODE>
+directive adds format-specific data to the packages you create. Literal
+data is currently only supported for RPM and PKG packages.</P>
+
+<H3>PKG Literal Data</H3>
+
+<P>PKG packages support request files that are used to do batch
+installations when installation commands require user input.  The
+<CODE>%literal(request)</CODE> directive can be used to provide this user
+input:</P>
+
+<PRE>
+    %literal(request) &lt;&lt;EOF
+    John Doe
+    1 Any Lane
+    Forest Lawn, OH 12345
+    EOF
+</PRE>
+
+<H3>RPM Literal Data</H3>
+
+<P>RPM packages support numerous attributes in the "spec" file that control
+how the package is created and what metadata is included with the package. The
+<CODE>%literal(spec)</CODE> directive can be used to provide attributes for
+the spec file:</P>
+
+<PRE>
+    %literal(spec) &lt;&lt;EOF
+    %changelog
+    * Tue Aug 26 2008 John Doe &lt;johndoe@domain.com&gt;
+
+    - Added new feature "bar"
+
+    * Fri Aug 1 2008 John Doe &lt;johndoe@domain.com&gt;
+
+    - Added new feature "foo"
+    EOF
+</PRE>
+
 </BODY>
 </HTML>
