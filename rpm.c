@@ -68,6 +68,7 @@ make_rpm(int            format,		/* I - Subformat */
   char		absdir[1024];		/* Absolute directory */
   char		rpmdir[1024];		/* RPMDIR env var */
   char		release[256];		/* Release: number */
+  const char	*build_option;		/* Additional rpmbuild option */
 
 
   if (Verbosity)
@@ -116,7 +117,7 @@ make_rpm(int            format,		/* I - Subformat */
   fprintf(fp, "Vendor: %s\n", dist->vendor);
   fprintf(fp, "BuildRoot: %s/buildroot\n", absdir);
 
-  if (format == PACKAGE_LSB)
+  if (format == PACKAGE_LSB || format == PACKAGE_LSB_SIGNED)
     fputs("Requires: lsb >= 3.0\n", fp);
 
  /*
@@ -205,7 +206,7 @@ make_rpm(int            format,		/* I - Subformat */
 	    return (1);
           break;
       case 'i' :
-          if (format == PACKAGE_LSB)
+          if (format == PACKAGE_LSB || format == PACKAGE_LSB_SIGNED)
 	    snprintf(filename, sizeof(filename), "%s/buildroot/etc/init.d/%s",
 		     directory, file->dst);
           else
@@ -246,20 +247,25 @@ make_rpm(int            format,		/* I - Subformat */
   if (Verbosity)
     puts("Building RPM binary distribution...");
 
+  if (format == PACKAGE_LSB_SIGNED || format == PACKAGE_RPM_SIGNED)
+    build_option = "-signed ";
+  else
+    build_option = "";
+
   if (!strcmp(platform->machine, "intel"))
   {
-    if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "i386 %s",
-                    specname))
+    if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "i386 %s%s",
+                    build_option, specname))
       return (1);
   }
   else if (!strcmp(platform->machine, "ppc"))
   {
-    if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "powerpc %s",
-                    specname))
+    if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "powerpc %s%s",
+                    build_option, specname))
       return (1);
   }
-  else if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "%s %s",
-                       platform->machine, specname))
+  else if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "%s %s%s",
+                       platform->machine, build_option, specname))
     return (1);
 
  /*
@@ -704,14 +710,14 @@ write_spec(int        format,		/* I - Subformat */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
-        (!c->keyword || !strcmp(c->keyword, "spec")))
+        !strcmp(c->section, "spec"))
       break;
 
   if (i > 0)
   {
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
-	  (!c->keyword || !strcmp(c->keyword, "spec")))
+	  !strcmp(c->section, "spec"))
 	fprintf(fp, "%s\n", c->command);
   }
 

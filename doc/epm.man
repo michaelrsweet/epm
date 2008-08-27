@@ -3,7 +3,7 @@
 .\"
 .\"   Manual page for the ESP Package Manager (EPM).
 .\"
-.\"   Copyright 1999-2007 by Easy Software Products, all rights reserved.
+.\"   Copyright 1999-2008 by Easy Software Products, all rights reserved.
 .\"
 .\"   This program is free software; you can redistribute it and/or modify
 .\"   it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 .\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\"   GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "2 December 2007" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "26 August 2008" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -74,9 +74,10 @@ inst, tardist
 Generate an IRIX distribution suitable for installation on an system running
 IRIX.
 .TP 5
-lsb
+lsb, lsb-signed
 .br
-Generate RPM packages for LSB-conforming systems.
+Generate RPM packages for LSB-conforming systems. The lsb-signed format uses
+the GPG private key you have defined in the ~/.rpmmacros file.
 .TP 5
 native
 .br
@@ -100,10 +101,11 @@ Generate a portable distribution based on shell scripts and tar files.  The
 resulting distribution is installed and removed the same way on all
 operating systems. [default]
 .TP 5
-rpm
+rpm, rpm-signed
 .br
 Generate a Red Hat Package Manager ("RPM") distribution suitable
-for installation on a Red Hat Linux system.
+for installation on a Red Hat Linux system. The rpm-signed format uses
+the GPG private key you have defined in the ~/.rpmmacros file.
 .TP 5
 setld
 .br
@@ -174,7 +176,7 @@ epm.list(5) - epm list file format
 .br
 setup(1) - graphical setup program for the esp package manager
 .SH COPYRIGHT
-Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
+Copyright 1999-2008 by Easy Software Products, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

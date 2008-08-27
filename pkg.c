@@ -338,8 +338,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_LITERAL &&
-        c->keyword && !strcmp(c->keyword, "request"))
+    if (c->type == COMMAND_LITERAL && !strcmp(c->section, "request"))
       break;
 
   if (i)
@@ -367,8 +366,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (; i > 0; i --, c ++)
-      if (c->type == COMMAND_LITERAL &&
-	  c->keyword && !strcmp(c->keyword, "request"))
+      if (c->type == COMMAND_LITERAL && !strcmp(c->section, "request"))
         fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
