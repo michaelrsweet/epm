@@ -704,14 +704,14 @@ write_spec(int        format,		/* I - Subformat */
 
   for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
     if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
-        (!c->keyword || !strcmp(c->keyword, "spec")))
+        !strcmp(c->section, "spec"))
       break;
 
   if (i > 0)
   {
     for (; i > 0; i --, c ++)
       if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
-	  (!c->keyword || !strcmp(c->keyword, "spec")))
+	  !strcmp(c->section, "spec"))
 	fprintf(fp, "%s\n", c->command);
   }
 
