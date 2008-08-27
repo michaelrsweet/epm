@@ -188,7 +188,7 @@ typedef struct				/**** Install/Patch/Remove Commands ****/
   int		type;			/* Command type */
   char		*command;		/* Command string */
   const char	*subpackage;		/* Sub-package name */
-  char		*keyword;		/* Literal keyword */
+  char		*section;		/* Literal section */
 } command_t;
 
 typedef struct				/**** Dependencies ****/
@@ -250,7 +250,7 @@ extern int		Verbosity;	/* Be verbose? */
 
 extern void	add_command(dist_t *dist, FILE *fp, int type,
 		            const char *command, const char *subpkg,
-                            const char *key);
+                            const char *section);
 extern void	add_depend(dist_t *dist, int type, const char *line,
 		           const char *subpkg);
 extern void	add_description(dist_t *dist, FILE *fp, const char *description,

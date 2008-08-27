@@ -99,7 +99,7 @@ add_command(dist_t     *dist,		/* I - Distribution */
             int        type,		/* I - Command type */
 	    const char *command,	/* I - Command string */
 	    const char *subpkg,		/* I - Subpackage */
-            const char *keyword)	/* I - Literal text keyword */
+            const char *section)	/* I - Literal text section */
 {
   command_t	*temp;			/* New command */
   char		buf[16384];		/* File import buffer */
@@ -142,18 +142,18 @@ add_command(dist_t     *dist,		/* I - Distribution */
     return;
   }
   temp->subpackage = subpkg;
-  if (keyword && *keyword)
+  if (section && *section)
   {
-    temp->keyword = strdup(keyword);
-    if (!temp->keyword)
+    temp->section = strdup(section);
+    if (!temp->section)
     {
-      perror("epm: Out of memory duplicating a literal keyword");
+      perror("epm: Out of memory duplicating a literal section");
       free(temp->command);
       return;
     }
   }
   else
-    temp->keyword = NULL;
+    temp->section = NULL;
 
   dist->num_commands ++;
 }
@@ -468,8 +468,8 @@ free_dist(dist_t *dist)			/* I - Distribution to free */
   for (i = 0; i < dist->num_commands; i ++)
   {
     free(dist->commands[i].command);
-    if (dist->commands[i].keyword)
-      free(dist->commands[i].keyword);
+    if (dist->commands[i].section)
+      free(dist->commands[i].section);
   }
 
   if (dist->num_commands)
@@ -896,33 +896,23 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	else if (!strcmp(line, "%patch") || !strcmp(line, "%postpatch"))
           add_command(dist, listfiles[listlevel], COMMAND_POST_PATCH, temp,
 	              subpkg, NULL);
-	else if (!strcmp(line, "%literal") || !strncmp(line, "%literal(", 9))
+	else if (!strncmp(line, "%literal(", 9))
         {
           char	*ptr,			/* Pointer to parenthesis */
-		*keyword;		/* Key for literal text */
+		*section;		/* Section for literal text */
 
 
-          if ((ptr = strchr(line, '(')) != NULL)
+	  section = line + 9;
+	  if ((ptr = strchr(section, ')')) != NULL)
 	  {
-	   /*
-	    * Get literal key...
-	    */
+	    *ptr = '\0';
 
-            keyword = ptr + 1;
-	    if ((ptr = strchr(keyword, ')')) != NULL)
-	    {
-	      *ptr = '\0';
-
-	      add_command(dist, listfiles[listlevel], COMMAND_LITERAL, temp,
-			  subpkg, keyword);
-	    }
-	    else
-	      fputs("epm: Ignoring bad %literal(keyword) line in list file.\n",
-	            stderr);
-          }
-	  else
 	    add_command(dist, listfiles[listlevel], COMMAND_LITERAL, temp,
-			subpkg, NULL);
+			subpkg, section);
+	  }
+	  else
+	    fputs("epm: Ignoring bad %literal(section) line in list file.\n",
+		  stderr);
         }
         else if (!strcmp(line, "%product"))
 	{
