@@ -100,9 +100,11 @@ enum
   PACKAGE_DEB,				/* Debian package format */
   PACKAGE_INST,				/* IRIX package format */
   PACKAGE_LSB,				/* LSB (RPM) package format */
+  PACKAGE_LSB_SIGNED,			/* LSB (RPM) package format (signed) */
   PACKAGE_OSX,				/* MacOS X package format */
   PACKAGE_PKG,				/* AT&T package format (AIX, Solaris) */
   PACKAGE_RPM,				/* RedHat package format */
+  PACKAGE_RPM_SIGNED,			/* RedHat package format (signed) */
   PACKAGE_SETLD,			/* Tru64 package format */
   PACKAGE_SLACKWARE,			/* Slackware package format */
   PACKAGE_SWINSTALL			/* HP-UX package format */
