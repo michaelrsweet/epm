@@ -169,7 +169,7 @@ main(int  argc,				/* I - Number of command-line args */
 	    else if (!strcasecmp(temp, "deb"))
 	      format = PACKAGE_DEB;
 	    else if (!strcasecmp(temp, "inst") ||
-	             strcasecmp(temp, "tardist"))
+	             !strcasecmp(temp, "tardist"))
 	      format = PACKAGE_INST;
 	    else if (!strcasecmp(temp, "lsb"))
 	      format = PACKAGE_LSB;
@@ -188,7 +188,7 @@ main(int  argc,				/* I - Number of command-line args */
 	    else if (!strcasecmp(temp, "slackware"))
 	      format = PACKAGE_SLACKWARE;
 	    else if (!strcasecmp(temp, "swinstall") ||
-	             strcasecmp(temp, "depot"))
+	             !strcasecmp(temp, "depot"))
 	      format = PACKAGE_SWINSTALL;
 	    else if (!strcasecmp(temp, "native"))
 #if defined(__linux)
