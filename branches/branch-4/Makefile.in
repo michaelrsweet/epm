@@ -152,6 +152,17 @@ distclean:
 
 
 #
+# Run the clang.llvm.org static code analysis tool on the C sources.
+#
+
+.PHONY: clang
+clang:
+	$(RM) -r clang
+	scan-build -k -V -o `pwd`/clang $(MAKE) $(MFLAGS) \
+		CC=ccc-analyzer CXX=ccc-analyzer clean all
+
+
+#
 # Install all targets...
 #
 
