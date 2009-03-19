@@ -1,9 +1,9 @@
 /*
- * "$Id: qprintf.c,v 1.8 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
  *   Quoted fprintf function for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2009 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -93,13 +93,10 @@ qprintf(FILE       *fp,		/* I - File to write to */
       else
         prec = -1;
 
-      if (*format == 'l' && format[1] == 'l')
-      {
-        size = 'L';
-	format += 2;
-      }
-      else if (*format == 'h' || *format == 'l' || *format == 'L')
+      if (*format == 'l')
         size = *format++;
+      else
+        size = '\0';
 
       if (!*format)
         break;
@@ -134,7 +131,10 @@ qprintf(FILE       *fp,		/* I - File to write to */
 
 	    strlcpy(tformat, bufformat, (size_t)(format - bufformat + 1));
 
-	    bytes += fprintf(fp, tformat, va_arg(ap, int));
+            if (size == 'l')
+	      bytes += fprintf(fp, tformat, va_arg(ap, long));
+	    else
+	      bytes += fprintf(fp, tformat, va_arg(ap, int));
 	    break;
 	    
 	case 'p' : /* Pointer value */
@@ -213,6 +213,6 @@ qprintf(FILE       *fp,		/* I - File to write to */
 
 
 /*
- * End of "$Id: qprintf.c,v 1.8 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id$".
  */
 

@@ -3,7 +3,7 @@
  *
  *   Portable package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2007 by Easy Software Products.
+ *   Copyright 1999-2009 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -308,8 +308,6 @@ write_combined(const char *title,	/* I - Title */
   if (Verbosity)
     printf("Writing %s archive:\n", title);
 
-  destdir = "";
-
 #ifdef __APPLE__
   if (setup)
   {
@@ -481,6 +479,9 @@ write_combined(const char *title,	/* I - Title */
   }
 
   destdir = "Install.app/Contents/Resources/";
+
+#else /* !__APPLE__ */
+  destdir = "";
 #endif /* __APPLE__ */
 
  /*
