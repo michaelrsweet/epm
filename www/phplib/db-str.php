@@ -49,6 +49,7 @@ $STR_SUBSYSTEMS = array(
   "HP-UX Support",
   "Mac OS X Support",
   "Multiple",
+  "None",
   "OS Support",
   "Portable Support",
   "RPM Support",
@@ -65,6 +66,7 @@ $STR_SUBSYSTEMS = array(
 
 // Version numbers...
 $STR_VERSIONS = array(
+  "+None",
   "-current",
   "-feature",
   "5.x-current",

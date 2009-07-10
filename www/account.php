@@ -632,10 +632,7 @@ switch ($op)
       // Show account info...
       account_header($LOGIN_USER);
 
-      if (array_key_exists("FROM", $_COOKIE))
-        $email = htmlspecialchars($_COOKIE["FROM"]);
-      else
-        $email = "<i>unknown</i>";
+      $email = htmlspecialchars($LOGIN_EMAIL);
 
       print("<center><table border='0'>\n"
            ."<tr><th align='right'>Username:</th><td>$LOGIN_USER</td></tr>\n"
