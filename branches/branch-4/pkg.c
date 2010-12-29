@@ -534,7 +534,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   snprintf(filename, sizeof(filename), "%s.pkg.gz", name);
   unlink(filename);
 
-  if (run_command(directory, EPM_GZIP " -v9 %s.pkg", name))
+  if (run_command(directory, EPM_GZIP " -vf9 %s.pkg", name))
     return (1);
 
  /*

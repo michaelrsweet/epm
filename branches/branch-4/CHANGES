@@ -3,6 +3,8 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- Building Solaris gzip'd packages failed if the pkg.gz file already
+	  existed (STR #16)
 	- Fixed handling of %preremove and %postremove for AIX packages
 	  (STR #22)
 	- Fixed directory permissions in HP-UX packages (STR #24)
