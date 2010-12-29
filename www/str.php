@@ -401,7 +401,7 @@ str_history($str,			// I - STR to show
       $filesize = filesize("strfiles/$str->id/$strfile->filename");
 
       if ($filesize < 262144)
-        $filesize = sprintf("%.0fk", $filesize / 1024.0);
+        $filesize = sprintf("%.0fk", ($filesize + 1023) / 1024.0);
       else
         $filesize = sprintf("%.1fM", $filesize / 1024.0 / 1024.0);
 
