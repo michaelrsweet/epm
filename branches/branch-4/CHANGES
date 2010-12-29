@@ -3,29 +3,29 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- Fixed handling of %preremove and %postremove for AIX packages
+	  (STR #22)
 	- Fixed directory permissions in HP-UX packages (STR #24)
 	- Removed unnecessary quoting of "!" in filenames (STR #26)
 	- Added support for signed RPM packages.
-	- Added support for inclusion of format-specific packaging
-	  files and directives via a %literal directive (STR #5)
+	- Added support for inclusion of format-specific packaging files and
+	  directives via a %literal directive (STR #5)
 	- *BSD init scripts were not installed properly.
-	- EPM now displays a warning message when a variable is
-	  undefined (STR #10)
-	- *BSD dependencies on versioned packages are now
-	  specified correctly (STR #4)
+	- EPM now displays a warning message when a variable is undefined
+	  (STR #10)
+	- *BSD dependencies on versioned packages are now specified correctly
+	  (STR #4)
 	- EPM now uses /usr/sbin/pkg_create on FreeBSD (STR #2)
-	- FreeBSD packages are now created with a .tbz
-	  extension (STR #1)
-	- FreeBSD packages incorrectly assumed that chown was
-	  installed in /bin (STR #3)
-	- Added support for an "lsb" package format which uses
-	  RPM with the LSB dependencies (STR #7)
-	- The configure script now supports a --with-archflags
-	  and no longer automatically builds universal binaries on
-	  Mac OS X.
-	- The epm program now automatically detects when the
-	  setup GUI is not available, displays a warning message,
-	  and then creates a non-GUI package.
+	- FreeBSD packages are now created with a .tbz extension (STR #1)
+	- FreeBSD packages incorrectly assumed that chown was installed in /bin
+	  (STR #3)
+	- Added support for an "lsb" package format which uses RPM with the LSB
+	  dependencies (STR #7)
+	- The configure script now supports a --with-archflags and no longer
+	  automatically builds universal binaries on Mac OS X.
+	- The epm program now automatically detects when the setup GUI is not
+	  available, displays a warning message, and then creates a non-GUI
+	  package.
 	- RPM packages did not map %replaces to Obsoletes:
 
 
