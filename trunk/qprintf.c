@@ -178,7 +178,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
 
             for (i = slen; i > 0; i --, s ++, bytes ++)
 	    {
-	      if (strchr("`~!#$%^&*()[{]}\\|;\'\"<>? ", *s))
+	      if (strchr("`~#$%^&*()[{]}\\|;\'\"<>? ", *s))
 	      {
 	        putc('\\', fp);
 		bytes ++;

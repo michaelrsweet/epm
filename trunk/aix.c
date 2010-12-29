@@ -3,7 +3,7 @@
  *
  *   AIX package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2007 by Easy Software Products.
+ *   Copyright 1999-2010 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -720,8 +720,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fclose(fp);
 
    /*
-    * Write the product.unpre_i file for installp (note, despite the name,
-    * unpre_i is the post-removal script...)
+    * Write the product.unpre_i file for installp...
     */
 
     if (Verbosity > 1)
@@ -742,14 +741,13 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
-      if (c->type == COMMAND_POST_REMOVE && c->subpackage == subpackage)
+      if (c->type == COMMAND_PRE_REMOVE && c->subpackage == subpackage)
 	fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
 
    /*
-    * Write the product.unpost_i file for installp (note, despite the name,
-    * unpost_i is the pre-removal script...)
+    * Write the product.unpost_i file for installp...
     */
 
     if (Verbosity > 1)
@@ -770,7 +768,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fputs("# " EPM_VERSION "\n", fp);
 
     for (c = dist->commands, i = dist->num_commands; i > 0; i --, c ++)
-     if (c->type == COMMAND_PRE_REMOVE && c->subpackage == subpackage)
+     if (c->type == COMMAND_POST_REMOVE && c->subpackage == subpackage)
 	fprintf(fp, "%s\n", c->command);
 
     fclose(fp);
