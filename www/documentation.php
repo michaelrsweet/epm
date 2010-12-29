@@ -26,7 +26,7 @@ on-line and in print:</p>
 
 <ul>
 
-	<li><a href="http://www.easysw.com/epm/book.php">Printed
+	<li><a href="http://www.lulu.com/product/paperback/software-distribution-using-the-esp-package-manager/325920">Printed
 	Book</a></li>
 
 	<li><a href="epm-book.html">On-Line Version</a>
