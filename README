@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 4.0
+README - ESP Package Manager (EPM) 5.0
 --------------------------------------
 
 WHAT IS EPM?
@@ -55,9 +55,8 @@ HOW DO I USE EPM?
 
 DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
 
-    No!  EPM is free software and any installations you create
-    are unencumbered by licensing of any kind (not even the
-    GPL.)
+    No!  EPM is free software and any installations you create are unencumbered
+    by licensing of any kind, not even the GPL.
 
 
 WHAT'S NEW IN EPM?
@@ -67,8 +66,7 @@ WHAT'S NEW IN EPM?
 
 REPORTING PROBLEMS
 
-    Report all problems and submit all patches using the bug
-    reporting form at:
+    Report all problems and submit all patches using the bug reporting form at:
 
         http://www.epmhome.org/str.php
 
@@ -79,30 +77,27 @@ OTHER RESOURCES
 
         http://www.epmhome.org/
 
-    Easy Software Products also maintains a news server for the
-    discussion of ESP and ESP-sponsored software.  The news
-    server is:
+    Easy Software Products also maintains a news server for the discussion of
+    ESP and ESP-sponsored software.  The news server is:
 
         news.easysw.com
 
-    If you don't have NNTP access from your systems, point your
-    web browser at the following URL:
+    If you don't have NNTP access from your systems, point your web browser at
+    the following URL:
 
         http://www.epmhome.org/forums.php
 
 
 COPYRIGHT AND LICENSE INFO
 
-    EPM is Copyright 1999-2006 by Easy Software Products, All
-    Rights Reserved.
+    EPM is copyright 1999-2010 by Easy Software Products. All rights reserved.
 
-    This program is free software; you can redistribute it
-    and/or modify it under the terms of the GNU General Public
-    License as published by the Free Software Foundation; either
-    version 2, or (at your option) any later version.
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the Free
+    Software Foundation; either version 2, or (at your option) any later
+    version.
 
-    This program is distributed in the hope that it will be
-    useful, but WITHOUT ANY WARRANTY; without even the implied
-    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-    PURPOSE.  See the GNU General Public License for more
-    details.
+    This program is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+    more details.

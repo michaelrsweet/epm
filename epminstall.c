@@ -1,9 +1,9 @@
 /*
- * "$Id: epminstall.c,v 1.14 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
  *   Install program replacement for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2010 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -43,7 +43,11 @@ int		Verbosity = 0;
 
 static file_t	*find_file(dist_t *dist, const char *dst);
 static void	info(void);
-static void	usage(void);
+static void	usage(void)
+#ifdef __GNUC__
+__attribute__((__noreturn__))
+#endif /* __GNUC__ */
+;
 
 
 /*
@@ -407,5 +411,5 @@ usage(void)
 
 
 /*
- * End of "$Id: epminstall.c,v 1.14 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id$".
  */

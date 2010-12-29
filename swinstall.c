@@ -3,7 +3,7 @@
  *
  *   HP-UX package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2007 by Easy Software Products.
+ *   Copyright 1999-2010 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -722,7 +722,7 @@ write_fileset(FILE       *fp,		/* I - File to write to */
     switch (tolower(file->type))
     {
       case 'd' :
-          qprintf(fp, "    file -m %o -o %s -g %s . %s\n", file->mode | S_IFDIR,
+          qprintf(fp, "    file -m %04o -o %s -g %s . %s\n", file->mode,
 	          file->user, file->group, file->dst);
           break;
       case 'c' :
