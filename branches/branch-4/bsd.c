@@ -3,7 +3,7 @@
  *
  *   Free/Net/OpenBSD package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2007 by Easy Software Products.
+ *   Copyright 1999-2010 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -446,7 +446,9 @@ make_subpackage(
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    run_command(NULL, "/bin/rm -rf %s/%s.buildroot", directory, prodfull);
+    snprintf(filename, sizeof(filename), "%s/%s.buildroot", directory,
+             prodfull);
+    unlink_directory(filename);
 
     unlink(plistname);
     unlink(commentname);

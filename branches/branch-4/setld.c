@@ -3,7 +3,7 @@
  *
  *   Tru64 package gateway for the ESP Package Manager (EPM)
  *
- *   Copyright 2001-2006 by Easy Software Products
+ *   Copyright 2001-2010 by Easy Software Products
  *   Copyright 2001 by Aneesh Kumar (aneesh.kumar@digital.com) at Digital India.
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -184,9 +184,11 @@ make_setld(const char     *prodname,	/* I - Product short name */
   if (Verbosity)
     puts("Creating Tru64 (setld) distribution...");
 
-  run_command(NULL, "/bin/rm -rf %s/output", directory);
+  snprintf(filename, sizeof(filename), "%s/output", directory);
+  unlink_directory(filename);
 
-  run_command(NULL, "/bin/rm -rf %s/src", directory);
+  snprintf(filename, sizeof(filename), "%s/src", directory);
+  unlink_directory(filename);
 
   snprintf(filename, sizeof(filename), "%s/output", directory);
   mkdir(filename, 0777);
@@ -451,9 +453,11 @@ make_setld(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    run_command(NULL, "/bin/rm -rf %s/output", directory);
+    snprintf(filename, sizeof(filename), "%s/output", directory);
+    unlink_directory(filename);
 
-    run_command(NULL, "/bin/rm -rf %s/src", directory);
+    snprintf(filename, sizeof(filename), "%s/src", directory);
+    unlink_directory(filename);
   }
 
   return (0);
