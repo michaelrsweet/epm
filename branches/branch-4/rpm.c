@@ -115,7 +115,6 @@ make_rpm(int            format,		/* I - Subformat */
   fprintf(fp, "License: %s\n", dist->copyright);
   fprintf(fp, "Packager: %s\n", dist->packager);
   fprintf(fp, "Vendor: %s\n", dist->vendor);
-  fprintf(fp, "BuildRoot: %s/buildroot\n", absdir);
 
   if (format == PACKAGE_LSB || format == PACKAGE_LSB_SIGNED)
     fputs("Requires: lsb >= 3.0\n", fp);
@@ -254,18 +253,21 @@ make_rpm(int            format,		/* I - Subformat */
 
   if (!strcmp(platform->machine, "intel"))
   {
-    if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "i386 %s%s",
-                    build_option, specname))
+    if (run_command(NULL, EPM_RPMBUILD " -bb --buildroot \"%s/buildroot\" "
+                          EPM_RPMARCH "i386 %s%s", absdir, build_option,
+			  specname))
       return (1);
   }
   else if (!strcmp(platform->machine, "ppc"))
   {
-    if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "powerpc %s%s",
-                    build_option, specname))
+    if (run_command(NULL, EPM_RPMBUILD " -bb --buildroot \"%s/buildroot\" "
+                          EPM_RPMARCH "powerpc %s%s", absdir, build_option,
+			  specname))
       return (1);
   }
-  else if (run_command(NULL, EPM_RPMBUILD " -bb " EPM_RPMARCH "%s %s%s",
-                       platform->machine, build_option, specname))
+  else if (run_command(NULL, EPM_RPMBUILD " -bb --buildroot \"%s/buildroot\" "
+                       EPM_RPMARCH "%s %s%s", absdir, platform->machine,
+		       build_option, specname))
     return (1);
 
  /*
