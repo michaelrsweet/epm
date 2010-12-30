@@ -63,8 +63,6 @@ make_rpm(int            format,		/* I - Subformat */
   char		name[1024],		/* Product filename */
 		filename[1024];		/* Destination filename */
   file_t	*file;			/* Current distribution file */
-  struct passwd	*pwd;			/* Pointer to user record */
-  struct group	*grp;			/* Pointer to group record */
   char		absdir[1024];		/* Absolute directory */
   char		rpmdir[1024];		/* RPMDIR env var */
   char		release[256];		/* Release: number */
@@ -178,16 +176,6 @@ make_rpm(int            format,		/* I - Subformat */
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
   {
    /*
-    * Find the username and groupname IDs...
-    */
-
-    pwd = getpwnam(file->user);
-    grp = getgrnam(file->group);
-
-    endpwent();
-    endgrent();
-
-   /*
     * Copy the file or make the directory or make the symlink as needed...
     */
 
@@ -200,8 +188,7 @@ make_rpm(int            format,		/* I - Subformat */
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
 
-	  if (copy_file(filename, file->src, file->mode, pwd ? pwd->pw_uid : 0,
-			grp ? grp->gr_gid : 0))
+	  if (copy_file(filename, file->src, 0, -1, -1))
 	    return (1);
           break;
       case 'i' :
@@ -215,8 +202,7 @@ make_rpm(int            format,		/* I - Subformat */
 	  if (Verbosity > 1)
 	    printf("%s -> %s...\n", file->src, filename);
 
-	  if (copy_file(filename, file->src, file->mode, pwd ? pwd->pw_uid : 0,
-			grp ? grp->gr_gid : 0))
+	  if (copy_file(filename, file->src, 0, -1, -1))
 	    return (1);
           break;
       case 'd' :
@@ -225,8 +211,7 @@ make_rpm(int            format,		/* I - Subformat */
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", filename);
 
-          make_directory(filename, file->mode, pwd ? pwd->pw_uid : 0,
-			 grp ? grp->gr_gid : 0);
+          make_directory(filename, 0755, -1, -1);
           break;
       case 'l' :
           snprintf(filename, sizeof(filename), "%s/buildroot%s", directory, file->dst);
