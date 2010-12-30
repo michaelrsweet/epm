@@ -1,9 +1,9 @@
 /*
  * "$Id$"
  *
- *   MacOS X package gateway for the ESP Package Manager (EPM).
+ *   Mac OS X package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 2002-2006 by Easy Software Products.
+ *   Copyright 2002-2010 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -290,9 +290,11 @@ make_osx(const char     *prodname,	/* I - Product short name */
       if (Verbosity)
 	puts("Removing temporary distribution files...");
 
-      run_command(NULL, "/bin/rm -rf %s/MetaPackage", directory);
+      snprintf(filename, sizeof(filename), "%s/MetaPackage", directory);
+      unlink_directory(filename);
 
-      run_command(NULL, "/bin/rm -rf %s/MetaResources", directory);
+      snprintf(filename, sizeof(filename), "%s/MetaResources", directory);
+      unlink_directory(filename);
 
       snprintf(filename, sizeof(filename), "%s/%s-metadesc.plist", directory,
                prodname);
@@ -785,7 +787,8 @@ make_subpackage(const char *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    run_command(NULL, "/bin/rm -rf %s/%s", directory, prodfull);
+    snprintf(filename, sizeof(filename), "%s/%s", directory, prodfull);
+    unlink_directory(filename);
 
     snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory,
              prodfull);

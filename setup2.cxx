@@ -3,7 +3,7 @@
 //
 //   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2006 by Easy Software Products.
+//   Copyright 1999-2010 by Easy Software Products.
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -443,7 +443,7 @@ install_dist(const gui_dist_t *dist)	// I - Distribution to install
 #ifdef __APPLE__
   // Run the install script using Apple's authorization API...
   FILE		*fp = NULL;
-  char		*args[2] = { "now", NULL };
+  char		*args[2] = { (char *)"now", NULL };
   OSStatus	astatus;
 
 
