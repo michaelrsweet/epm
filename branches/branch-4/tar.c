@@ -153,8 +153,7 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
     * Skip "." and ".."...
     */
 
-    if (strcmp(dent->d_name, ".") == 0 ||
-        strcmp(dent->d_name, "..") == 0)
+    if (!strcmp(dent->d_name, ".") || !strcmp(dent->d_name, ".."))
       continue;
 
    /*
