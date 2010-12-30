@@ -121,8 +121,10 @@ copy_file(const char *dst,		/* I - Destination file */
   fclose(srcfile);
   fclose(dstfile);
 
-  chmod(dst, mode);
-  chown(dst, owner, group);
+  if (mode)
+    chmod(dst, mode);
+  if (owner != (uid_t)-1 && group != (gid_t)-1)
+    chown(dst, owner, group);
 
   return (0);
 }
