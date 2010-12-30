@@ -3,7 +3,7 @@
  *
  *   AT&T package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2008 by Easy Software Products.
+ *   Copyright 1999-2010 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -534,7 +534,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   snprintf(filename, sizeof(filename), "%s.pkg.gz", name);
   unlink(filename);
 
-  if (run_command(directory, EPM_GZIP " -v9 %s.pkg", name))
+  if (run_command(directory, EPM_GZIP " -vf9 %s.pkg", name))
     return (1);
 
  /*
@@ -562,6 +562,9 @@ make_pkg(const char     *prodname,	/* I - Product short name */
       unlink(postremove);
     if (request[0])
       unlink(request);
+
+    snprintf(filename, sizeof(filename), "%s/%s", directory, prodname);
+    unlink_directory(filename);
   }
 
   return (0);
