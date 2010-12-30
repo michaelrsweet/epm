@@ -3,6 +3,8 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- EPM now uses hard links whenever possible instead of copying files for
+	  distribution (STR #21)
 	- EPM no longer puts files in /export in the root file set for AIX
 	  packages (STR #15)
 	- EPM did not work with newer versions of RPM (STR #23, STR #25)
