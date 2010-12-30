@@ -11,7 +11,7 @@ EPM 4.2
 	  (STR #22)
 	- Fixed directory permissions in HP-UX packages (STR #24)
 	- Removed unnecessary quoting of "!" in filenames (STR #26)
-	- Added support for signed RPM packages.
+	- Added support for signed RPM packages (STR #19)
 	- Added support for inclusion of format-specific packaging files and
 	  directives via a %literal directive (STR #5)
 	- *BSD init scripts were not installed properly.
