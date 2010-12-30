@@ -3,7 +3,7 @@
  *
  *   Slackware package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 2003-2006 by Easy Software Products.
+ *   Copyright 2003-2010 by Easy Software Products.
  *
  *   Contributed by Alec Thomas <$givenname at korn dot ch>
  *
@@ -322,7 +322,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    run_command(NULL, "/bin/rm -rf %s", filename);
+    unlink_directory(filename);
   }
 
   return (0);

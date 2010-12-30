@@ -3,7 +3,7 @@
  *
  *   TAR file functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2006 by Easy Software Products.
+ *   Copyright 1999-2010 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
 
   if ((dir = opendir(srcpath)) == NULL)
   {
-    fprintf(stderr, "epm: Unable to open directory \"%s\" - %s.\n", srcpath,
+    fprintf(stderr, "epm: Unable to open directory \"%s\": %s\n", srcpath,
             strerror(errno));
 
     return (-1);
@@ -169,7 +169,7 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
 
     if (stat(src, &srcinfo))
     {
-      fprintf(stderr, "epm: Unable to stat \"%s\" - %s.\n", src,
+      fprintf(stderr, "epm: Unable to stat \"%s\": %s\n", src,
               strerror(errno));
       continue;
     }
@@ -189,10 +189,10 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
 
       if (tar_header(tar, TAR_DIR, srcinfo.st_mode, 0,
                      srcinfo.st_mtime, "root", "sys", dst, NULL))
-        return (-1);
+        goto fail;
 
       if (tar_directory(tar, src, dst))
-        return (-1);
+        goto fail;
     }
     else if (S_ISLNK(srcinfo.st_mode))
     {
@@ -201,11 +201,11 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
       */
 
       if (readlink(src, srclink, sizeof(srclink)) < 0)
-        return (-1);
+        goto fail;
 
       if (tar_header(tar, TAR_SYMLINK, srcinfo.st_mode, 0,
                      srcinfo.st_mtime, "root", "sys", dst, srclink))
-        return (-1);
+        goto fail;
     }
     else
     {
@@ -215,15 +215,20 @@ tar_directory(tarf_t     *tar,		/* I - Tar file to write to */
 
       if (tar_header(tar, TAR_NORMAL, srcinfo.st_mode, srcinfo.st_size,
                      srcinfo.st_mtime, "root", "sys", dst, NULL))
-        return (-1);
+        goto fail;
 
       if (tar_file(tar, src))
-        return (-1);
+        goto fail;
     }
   }
 
   closedir(dir);
   return (0);
+
+  fail:
+
+  closedir(dir);
+  return (-1);
 }
 
 
@@ -536,7 +541,7 @@ tar_package(tarf_t     *tar,		/* I - Tar file */
   snprintf(filename, sizeof(filename), "%s/%s", directory, name);
   if (stat(filename, &filestat))
   {
-    fprintf(stderr, "epm: Error reading package file \"%s\" - %s\n",
+    fprintf(stderr, "epm: Error reading package file \"%s\": %s\n",
             filename, strerror(errno));
     return (-1);
   }

@@ -3,7 +3,7 @@
  *
  *   File functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ *   Copyright 1999-2010 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,12 +17,13 @@
  *
  * Contents:
  *
- *   copy_file()      - Copy a file...
- *   make_directory() - Make a directory.
- *   make_link()      - Make a symbolic link.
- *   strip_execs()    - Strip symbols from executable files in the
- *                      distribution.
- *   unlink_package() - Delete a package file.
+ *   copy_file()        - Copy a file.
+ *   make_directory()   - Make a directory.
+ *   make_link()        - Make a symbolic link.
+ *   strip_execs()      - Strip symbols from executable files in the
+ *                        distribution.
+ *   unlink_directory() - Delete a directory and all of its nodes.
+ *   unlink_package()   - Delete a package file.
  */
 
 /*
@@ -33,7 +34,7 @@
 
 
 /*
- * 'copy_file()' - Copy a file...
+ * 'copy_file()' - Copy a file.
  */
 
 int					/* O - 0 on success, -1 on failure */
@@ -257,6 +258,105 @@ strip_execs(dist_t *dist)		/* I - Distribution to strip... */
 
       run_command(NULL, EPM_STRIP " %s", file->src);
     }
+}
+
+
+/*
+ * 'unlink_directory()' - Delete a directory and all of its nodes.
+ */
+
+int					/* O - 0 on success, -1 on failure */
+unlink_directory(const char *directory)	/* I - Directory */
+{
+  DIR		*dir;			/* Directory */
+  DIRENT	*dent;			/* Directory entry */
+  char		filename[1024];		/* Filename */
+  struct stat	fileinfo;		/* Information on the source file */
+
+
+ /*
+  * Try opening the source directory...
+  */
+
+  if ((dir = opendir(directory)) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to open directory \"%s\": %s\n", directory,
+            strerror(errno));
+
+    return (-1);
+  }
+
+ /*
+  * Read from the directory...
+  */
+
+  while ((dent = readdir(dir)) != NULL)
+  {
+   /*
+    * Skip "." and ".."...
+    */
+
+    if (!strcmp(dent->d_name, ".") || !strcmp(dent->d_name, ".."))
+      continue;
+
+   /*
+    * Get file info...
+    */
+
+    snprintf(filename, sizeof(filename), "%s/%s", directory, dent->d_name);
+
+    if (stat(filename, &fileinfo))
+    {
+      fprintf(stderr, "epm: Unable to stat \"%s\": %s\n", filename,
+              strerror(errno));
+      continue;
+    }
+
+   /*
+    * Process accordingly...
+    */
+
+    if (Verbosity)
+      puts(filename);
+
+    if (S_ISDIR(fileinfo.st_mode))
+    {
+     /*
+      * Directory...
+      */
+
+      if (unlink_directory(filename))
+	goto fail;
+
+      if (rmdir(filename))
+      {
+        fprintf(stderr, "epm: Unable to remove \"%s\": %s\n", filename,
+	        strerror(errno));
+	goto fail;
+      }
+    }
+    else
+    {
+     /*
+      * Regular file or symlink...
+      */
+
+      if (unlink(filename))
+      {
+        fprintf(stderr, "epm: Unable to remove \"%s\": %s\n", filename,
+	        strerror(errno));
+	goto fail;
+      }
+    }
+  }
+
+  closedir(dir);
+  return (0);
+
+  fail:
+
+  closedir(dir);
+  return (-1);
 }
 
 

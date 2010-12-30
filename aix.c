@@ -291,11 +291,13 @@ make_aix(const char     *prodname,	/* I - Product short name */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
-    run_command(NULL, "/bin/rm -rf %s/%s", directory, prodname);
+    snprintf(filename, sizeof(filename), "%s/%s", directory, prodname);
+    unlink_directory(filename);
 
     for (i = 0; i < (sizeof(files) / sizeof(files[0])); i ++)
     {
-      snprintf(filename, sizeof(filename), "%s/%s.%s", directory, prodname, files[i]);
+      snprintf(filename, sizeof(filename), "%s/%s.%s", directory, prodname,
+               files[i]);
       unlink(filename);
     }
 
