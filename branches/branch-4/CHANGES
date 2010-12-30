@@ -3,6 +3,8 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- EPM no longer puts files in /export in the root file set for AIX
+	  packages (STR #15)
 	- EPM did not work with newer versions of RPM (STR #23, STR #25)
 	- EPM did not clean up temporary files from Solaris packages (STR #20)
 	- Building Solaris gzip'd packages failed if the pkg.gz file already
