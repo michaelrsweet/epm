@@ -49,6 +49,7 @@ copy_file(const char *dst,		/* I - Destination file */
   char		buffer[8192];		/* Copy buffer */
   char		*slash;			/* Pointer to trailing slash */
   size_t	bytes;			/* Number of bytes read/written */
+  struct stat	srcinfo;		/* Source file information */
 
 
  /*
@@ -63,10 +64,21 @@ copy_file(const char *dst,		/* I - Destination file */
     make_directory(buffer, 0755, owner, group);
 
  /*
-  * Open files...
+  * Try doing a hard link instead of a copy...
   */
 
   unlink(dst);
+
+  if (!stat(src, &srcinfo) &&
+      (!mode || srcinfo.st_mode == mode) &&
+      (owner == (uid_t)-1 || srcinfo.st_uid == owner) &&
+      (group == (gid_t)-1 || srcinfo.st_gid == group) &&
+      !link(src, dst))
+    return (0);
+
+ /*
+  * Open files...
+  */
 
   if ((dstfile = fopen(dst, "wb")) == NULL)
   {
@@ -109,8 +121,10 @@ copy_file(const char *dst,		/* I - Destination file */
   fclose(srcfile);
   fclose(dstfile);
 
-  chmod(dst, mode);
-  chown(dst, owner, group);
+  if (mode)
+    chmod(dst, mode);
+  if (owner != (uid_t)-1 && group != (gid_t)-1)
+    chown(dst, owner, group);
 
   return (0);
 }
@@ -138,9 +152,11 @@ make_directory(const char *directory,	/* I - Directory */
 
       if (access(buffer, F_OK))
       {
-	mkdir(buffer, 0777);
-	chmod(buffer, mode | 0700);
-	chown(buffer, owner, group);
+	mkdir(buffer, 0755);
+	if (mode)
+          chmod(buffer, mode | 0700);
+	if (owner != (uid_t)-1 && group != (gid_t)-1)
+	  chown(buffer, owner, group);
       }
     }
 
@@ -151,9 +167,11 @@ make_directory(const char *directory,	/* I - Directory */
 
   if (access(buffer, F_OK))
   {
-    mkdir(buffer, 0777);
-    chmod(buffer, mode | 0700);
-    chown(buffer, owner, group);
+    mkdir(buffer, 0755);
+    if (mode)
+      chmod(buffer, mode | 0700);
+    if (owner != (uid_t)-1 && group != (gid_t)-1)
+      chown(buffer, owner, group);
   }
 
   return (0);
