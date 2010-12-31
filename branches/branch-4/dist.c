@@ -3,7 +3,7 @@
  *
  *   Distribution functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2008 by Easy Software Products.
+ *   Copyright 1999-2010 by Easy Software Products.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ static char	*get_line(char *buffer, int size, FILE *fp,
 static char	*get_string(char **src, char *dst, size_t dstsize);
 static int	patmatch(const char *, const char *);
 static int	sort_subpackages(char **a, char **b);
+static void	update_architecture(char *buffer, size_t bufsize);
 
 
 /*
@@ -83,10 +84,11 @@ static int	sort_subpackages(char **a, char **b);
 
 #define SKIP_SYSTEM	1		/* Not the right system */
 #define SKIP_FORMAT	2		/* Not the right format */
-#define SKIP_IF		4		/* Set if the current #if was not satisfied */
-#define SKIP_IFACTIVE	8		/* Set if we're in an #if */
-#define SKIP_IFSAT	16		/* Set if an #if statement has been satisfied */
-#define SKIP_MASK	7		/* Bits to look at */
+#define SKIP_ARCH	4		/* Not the right architecture */
+#define SKIP_IF		8		/* Set if the current #if was not satisfied */
+#define SKIP_IFACTIVE	16		/* Set if we're in an #if */
+#define SKIP_IFSAT	32		/* Set if an #if statement has been satisfied */
+#define SKIP_MASK	15		/* Bits to look at */
 
 
 /*
@@ -308,7 +310,7 @@ add_description(dist_t     *dist,	/* I - Distribution */
   char		buf[16384];		/* File import buffer */
 
 
-  if (strncmp(description, "<<", 2) == 0)
+  if (!strncmp(description, "<<", 2))
   {
     for (description += 2; isspace(*description & 255); description ++);
 
@@ -597,30 +599,8 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   strcpy(platform->machine, "hppa");
 #elif defined(_AIX)
   strcpy(platform->machine, "powerpc");
-#elif defined(__APPLE__)
-  if (strstr(platform->machine, "86") != NULL)
-    strcpy(platform->machine, "intel");
-  else
-    strcpy(platform->machine, "powerpc");
 #else
-  for (temp = platform->machine; *temp != '\0'; temp ++)
-    if (*temp == '-' || *temp == '_')
-    {
-      strcpy(temp, temp + 1);
-      temp --;
-    }
-    else
-      *temp = tolower(*temp);
-
-  if (strstr(platform->machine, "86") != NULL)
-  {
-    if (strstr(platform->machine, "64") != NULL)
-      strcpy(platform->machine, "x86_64");
-    else
-      strcpy(platform->machine, "intel");
-  }
-  else if (strncmp(platform->machine, "sun", 3) == 0)
-    strcpy(platform->machine, "sparc");
+  update_architecture(platform->machine, sizeof(platform->machine));
 #endif /* __sgi */
 
 #ifdef _AIX
@@ -670,8 +650,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   * Digital UNIX a.k.a. Compaq Tru64 UNIX...
   */
 
-  if (strcmp(platform->sysname, "sunos") == 0 &&
-      platform->release[0] >= '5')
+  if (!strcmp(platform->sysname, "sunos") && platform->release[0] >= '5')
   {
     strcpy(platform->sysname, "solaris");
 
@@ -689,9 +668,9 @@ get_platform(struct utsname *platform)	/* O - Platform info */
       *temp = '\0';
     }
   }
-  else if (strcmp(platform->sysname, "osf1") == 0)
+  else if (!strcmp(platform->sysname, "osf1"))
     strcpy(platform->sysname, "tru64"); /* AKA Digital UNIX */
-  else if (strcmp(platform->sysname, "irix64") == 0)
+  else if (!strcmp(platform->sysname, "irix64"))
     strcpy(platform->sysname, "irix"); /* IRIX */
 
 #ifdef DEBUG
@@ -1104,10 +1083,10 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	}
 
 #ifdef __osf__ /* Remap group "sys" to "system" */
-        if (strcmp(group, "sys") == 0)
+        if (!strcmp(group, "sys"))
 	  strcpy(group, "system");
 #elif defined(__linux) /* Remap group "sys" to "root" */
-        if (strcmp(group, "sys") == 0)
+        if (!strcmp(group, "sys"))
 	  strcpy(group, "root");
 #endif /* __osf__ */
 
@@ -1637,7 +1616,7 @@ get_inline(const char *term,		/* I  - Termination string */
 
   while (fgets(bufptr, left, fp) != NULL)
   {
-    if (strncmp(bufptr, term, (size_t)termlen) == 0 && bufptr[termlen] == '\n')
+    if (!strncmp(bufptr, term, (size_t)termlen) && bufptr[termlen] == '\n')
     {
       *bufptr = '\0';
       break;
@@ -1716,7 +1695,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
     * See if this is a %system, %format, or conditional line...
     */
 
-    if (strncmp(buffer, "%system ", 8) == 0)
+    if (!strncmp(buffer, "%system ", 8))
     {
      /*
       * Yes, do filtering based on the OS (+version)...
@@ -1724,7 +1703,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 
       *skip &= ~SKIP_SYSTEM;
 
-      if (strcmp(buffer + 8, "all\n") != 0)
+      if (strcmp(buffer + 8, "all\n"))
       {
 	namelen = strlen(platform->sysname);
         bufptr  = buffer + 8;
@@ -1778,7 +1757,8 @@ get_line(char           *buffer,	/* I - Buffer to read into */
           if (len < namelen)
 	    match = 0;
 	  else
-	    match = strncasecmp(value, namever, strlen(value)) == 0 ? SKIP_SYSTEM : 0;
+	    match = !strncasecmp(value, namever, strlen(value)) ?
+	                SKIP_SYSTEM : 0;
 
           if (op)
 	    *skip |= match;
@@ -1787,7 +1767,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
         }
       }
     }
-    else if (strncmp(buffer, "%format ", 8) == 0)
+    else if (!strncmp(buffer, "%format ", 8))
     {
      /*
       * Yes, do filtering based on the distribution format...
@@ -1795,7 +1775,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 
       *skip &= ~SKIP_FORMAT;
 
-      if (strcmp(buffer + 8, "all\n") != 0)
+      if (strcmp(buffer + 8, "all\n"))
       {
         bufptr = buffer + 8;
 
@@ -1832,7 +1812,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 
 	  *ptr = '\0';
 
-	  match = (strcasecmp(value, format) == 0) ? SKIP_FORMAT : 0;
+	  match = !strcasecmp(value, format) ? SKIP_FORMAT : 0;
 
           if (op)
 	    *skip |= match;
@@ -1841,8 +1821,64 @@ get_line(char           *buffer,	/* I - Buffer to read into */
         }
       }
     }
-    else if (strncmp(buffer, "%ifdef ", 7) == 0 ||
-             strncmp(buffer, "%elseifdef ", 11) == 0)
+    else if (!strncmp(buffer, "%arch ", 6))
+    {
+     /*
+      * Yes, do filtering based on the current architecture...
+      */
+
+      *skip &= ~SKIP_ARCH;
+
+      if (strcmp(buffer + 6, "all\n"))
+      {
+        bufptr = buffer + 8;
+
+	while (isspace(*bufptr & 255))
+	  bufptr ++;
+
+        if (*bufptr != '!')
+	  *skip |= SKIP_ARCH;
+
+        while (*bufptr)
+	{
+	 /*
+          * Skip leading whitespace...
+	  */
+
+	  while (isspace(*bufptr & 255))
+	    bufptr ++;
+
+          if (!*bufptr)
+	    break;
+
+          if (*bufptr == '!')
+	  {
+	    op = 1;
+	    bufptr ++;
+	  }
+	  else
+	    op = 0;
+
+	  for (ptr = value;
+	       *bufptr && !isspace(*bufptr & 255) &&
+	           ptr < (value + sizeof(value) - 1);
+	       *ptr++ = *bufptr++);
+
+	  *ptr = '\0';
+
+          update_architecture(value, sizeof(value));
+
+	  match = !strcasecmp(value, platform->machine) ? SKIP_ARCH : 0;
+
+          if (op)
+	    *skip |= match;
+	  else
+	    *skip &= ~match;
+        }
+      }
+    }
+    else if (!strncmp(buffer, "%ifdef ", 7) ||
+             !strncmp(buffer, "%elseifdef ", 11))
     {
      /*
       * Yes, do filtering based on the presence of variables...
@@ -1916,8 +1952,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	  *skip |= SKIP_IFSAT;
       }
     }
-    else if (strncmp(buffer, "%if ", 4) == 0 ||
-             strncmp(buffer, "%elseif ", 8) == 0)
+    else if (!strncmp(buffer, "%if ", 4) || !strncmp(buffer, "%elseif ", 8))
     {
      /*
       * Yes, do filtering based on the value of variables...
@@ -1991,7 +2026,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	  *skip |= SKIP_IFSAT;
       }
     }
-    else if (strcmp(buffer, "%else\n") == 0)
+    else if (!strcmp(buffer, "%else\n"))
     {
      /*
       * Handle "else" condition of %ifdef statement...
@@ -2015,7 +2050,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	*skip |= SKIP_IFSAT;
       }
     }
-    else if (strcmp(buffer, "%endif\n") == 0)
+    else if (!strcmp(buffer, "%endif\n"))
     {
      /*
       * Cancel any filtering based on environment variables.
@@ -2304,6 +2339,55 @@ sort_subpackages(char **a,		/* I - First subpackage */
                  char **b)		/* I - Second subpackage */
 {
   return (strcmp(*a, *b));
+}
+
+
+/*
+ * 'update_architecture()' - Normalize the machine architecture name.
+ */
+
+static void
+update_architecture(char   *buffer,	/* I - String buffer */
+                    size_t bufsize)	/* I - Size of string buffer */
+{
+  char	*temp;				/* Pointer into string buffer */
+
+
+ /*
+  * Convert the name to lowercase with no underscores or dashes.
+  */
+
+  for (temp = buffer; *temp != '\0'; temp ++)
+    if (*temp == '-' || *temp == '_')
+    {
+      char *ptr;			/* Pointer into string */
+
+      for (ptr = temp; ptr[1]; ptr ++)
+        *ptr = ptr[1];
+      *ptr = '\0';
+
+      temp --;
+    }
+    else
+      *temp = tolower(*temp);
+
+ /*
+  * Convert common synonyms to generic names...
+  */
+
+  if (strstr(buffer, "86"))
+  {
+    if (strstr(buffer, "64"))
+      strlcpy(buffer, "x86_64", bufsize);
+    else
+      strlcpy(buffer, "intel", bufsize);
+  }
+  else if (!strncmp(buffer, "arm", 3))
+    strlcpy(buffer, "arm", bufsize);
+  else if (!strncmp(buffer, "ppc", 3))
+    strlcpy(buffer, "powerpc", bufsize);
+  else if (!strncmp(buffer, "sun", 3))
+    strlcpy(buffer, "sparc", bufsize);
 }
 
 
