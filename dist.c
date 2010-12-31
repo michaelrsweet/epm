@@ -17,30 +17,32 @@
  *
  * Contents:
  *
- *   add_command()      - Add a command to the distribution...
- *   add_depend()       - Add a dependency to the distribution...
- *   add_description()  - Add a description to the distribution.
- *   add_file()         - Add a file to the distribution.
- *   add_subpackage()   - Add a subpackage to the distribution.
- *   find_subpackage()  - Find a subpackage in the distribution.
- *   free_dist()        - Free memory used by a distribution.
- *   getoption()        - Get an option from a file.
- *   get_platform()     - Get the operating system information...
- *   get_runlevels()    - Get the run levels for the specified init script.
- *   get_start()        - Get the start number for an init script.
- *   get_stop()         - Get the stop number for an init script.
- *   new_dist()         - Create a new, empty software distribution.
- *   read_dist()        - Read a software distribution.
- *   sort_dist_files()  - Sort the files in the distribution.
- *   write_dist()       - Write a distribution list file...
- *   compare_files()    - Compare the destination filenames.
- *   expand_name()      - Expand a filename with environment variables.
- *   get_file()         - Read a file into a string...
- *   get_inline()       - Read inline lines into a string...
- *   get_line()         - Get a line from a file, filtering for uname lines...
- *   get_string()       - Get a delimited string from a line.
- *   patmatch()         - Pattern matching...
- *   sort_subpackages() - Compare two subpackage names.
+ *   add_command()         - Add a command to the distribution...
+ *   add_depend()          - Add a dependency to the distribution...
+ *   add_description()     - Add a description to the distribution.
+ *   add_file()            - Add a file to the distribution.
+ *   add_subpackage()      - Add a subpackage to the distribution.
+ *   find_subpackage()     - Find a subpackage in the distribution.
+ *   free_dist()           - Free memory used by a distribution.
+ *   getoption()           - Get an option from a file.
+ *   get_platform()        - Get the operating system information...
+ *   get_runlevels()       - Get the run levels for the specified init script.
+ *   get_start()           - Get the start number for an init script.
+ *   get_stop()            - Get the stop number for an init script.
+ *   new_dist()            - Create a new, empty software distribution.
+ *   read_dist()           - Read a software distribution.
+ *   sort_dist_files()     - Sort the files in the distribution.
+ *   write_dist()          - Write a distribution list file...
+ *   compare_files()       - Compare the destination filenames.
+ *   expand_name()         - Expand a filename with environment variables.
+ *   get_file()            - Read a file into a string...
+ *   get_inline()          - Read inline lines into a string...
+ *   get_line()            - Get a line from a file, filtering for uname
+ *                           lines...
+ *   get_string()          - Get a delimited string from a line.
+ *   patmatch()            - Pattern matching...
+ *   sort_subpackages()    - Compare two subpackage names.
+ *   update_architecture() - Normalize the machine architecture name.
  */
 
 /*
