@@ -3,6 +3,7 @@ CHANGES - ESP Package Manager (EPM) 4.2
 
 EPM 4.2
 
+	- EPM now supports a %arch conditional directive (STR #27)
 	- EPM now uses hard links whenever possible instead of copying files for
 	  distribution (STR #21)
 	- EPM no longer puts files in /export in the root file set for AIX
