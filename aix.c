@@ -189,8 +189,9 @@ make_aix(const char     *prodname,	/* I - Product short name */
     {
       case 'c' :
       case 'f' :
-          if (!strncmp(file->dst, "/usr/", 5) ||
-	      !strncmp(file->dst, "/opt/", 5))
+          if (!strncmp(file->dst, "/export/", 8) ||
+	      !strncmp(file->dst, "/opt/", 5) ||
+	      !strncmp(file->dst, "/usr/", 5))
             snprintf(filename, sizeof(filename), "%s/%s%s", directory, prodname,
 	             file->dst);
 	  else
@@ -235,10 +236,12 @@ make_aix(const char     *prodname,	/* I - Product short name */
 	  }
           break;
       case 'd' :
-          if (!strcmp(file->dst, "/usr") ||
-	      !strncmp(file->dst, "/usr/", 5) ||
+          if (!strcmp(file->dst, "/export") ||
+	      !strncmp(file->dst, "/export/", 8) ||
 	      !strcmp(file->dst, "/opt") ||
-	      !strncmp(file->dst, "/opt/", 5))
+	      !strncmp(file->dst, "/opt/", 5) ||
+	      !strcmp(file->dst, "/usr") ||
+	      !strncmp(file->dst, "/usr/", 5))
             snprintf(filename, sizeof(filename), "%s/%s%s", directory, prodname,
 	             file->dst);
 	  else
@@ -252,8 +255,9 @@ make_aix(const char     *prodname,	/* I - Product short name */
 			 grp ? grp->gr_gid : 0);
           break;
       case 'l' :
-          if (!strncmp(file->dst, "/usr/", 5) ||
-	      !strncmp(file->dst, "/opt/", 5))
+          if (!strncmp(file->dst, "/export/", 8) ||
+	      !strncmp(file->dst, "/opt/", 5) ||
+	      !strncmp(file->dst, "/usr/", 5))
             snprintf(filename, sizeof(filename), "%s/%s%s", directory, prodname,
 	             file->dst);
 	  else

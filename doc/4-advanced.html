@@ -405,6 +405,43 @@ can be used:</P>
 
 </DL></DD></DL>
 
+<P>The <CODE>%arch</CODE> directive can match or not match specific
+architectures. The architecture name is the name reported by
+<CODE>uname -m</CODE>; "arm" is a synonym for "armv6", "armv7", and "armv8",
+"intel" is a synonym for "i386", "i486", "i586", and "i686", and "powerpc" is a
+synonym for "ppc":</P>
+
+<DL><DD><DL>
+
+	<DT><CODE>%arch intel</CODE>
+	<BR>&nbsp;</DT>
+
+	<DD>Only include the following files when building a package for 32-bit
+	Intel processors.
+	<BR>&nbsp;</DD>
+
+	<DT><CODE>%arch armv6</CODE>
+	<BR>&nbsp;</DT>
+
+	<DD>Only include the following files when building a package for ARMv6
+	processors.
+	<BR>&nbsp;</DD>
+
+	<DT><CODE>%system !powerpc</CODE>
+	<BR>&nbsp;</DT>
+
+	<DD>Only include the following files when building a package for
+	processors other than PowerPC.
+	<BR>&nbsp;</DD>
+
+</DL></DD></DL>
+
+<P>The special name <CODE>all</CODE> is used to match all architectures:</P>
+
+<PRE>
+    %arch all
+</PRE>
+
 <P>Finally, EPM can conditionally include lines using the
 <CODE>%if</CODE>, <CODE>%elseif</CODE>, <CODE>%ifdef</CODE>,
 <CODE>%elseifdef</CODE>, <CODE>%else</CODE>, and
