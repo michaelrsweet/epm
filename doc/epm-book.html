@@ -3,8 +3,8 @@
 <HEAD>
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael Sweet">
-<META NAME="copyright" CONTENT="Copyright 1999-2007 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20070410">
+<META NAME="copyright" CONTENT="Copyright 1999-2010 by Easy Software Products">
+<META NAME="docnumber" CONTENT="ESP-004-20101231">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: sans-serif }
@@ -42,12 +42,12 @@ A { text-decoration: none }
 <P>&nbsp;</P>
 <P>&nbsp;<IMG HEIGHT="10" SRC="gradient.gif" WIDTH="100">
 <BR><VAR> ESP Press</VAR>
-<BR> <SMALL>Easy Software Products, 44141 Airport View Drive, Hollywood,
- MD 20636 USA</SMALL></P>
+<BR> <SMALL>Easy Software Products, 516 Rio Grand Ct, Morgan Hill, CA
+ 95037 USA</SMALL></P>
 
 <!-- NEW PAGE -->
 <H2>Software Distribution Using the ESP Package Manager</H2>
-<H3>Copyright &copy; 2006 by Easy Software Products</H3>
+<H3>Copyright &copy; 2006-2010 by Easy Software Products</H3>
 <P><SMALL>This book may be redistributed and/or modified under the terms
  of version 2 of the GNU General Public License as published by the Free
  Software Foundation.</SMALL></P>
@@ -62,7 +62,8 @@ A { text-decoration: none }
 <P><SMALL>This book was created solely using free software tools.</SMALL>
 </P>
 <P><SMALL>International Standard Book Number: 978-1-4116-8913-8</SMALL></P>
-<P><SMALL>First Printing: April 2006</SMALL></P>
+<P><SMALL>First Printing: April 2006
+<BR> Second Printing: December 2010</SMALL></P>
 <HR NOSHADE>
 <H1 ALIGN="CENTER"><A NAME="CONTENTS">Table of Contents</A></H1>
 <BR>
@@ -105,6 +106,7 @@ A { text-decoration: none }
 <LI><A HREF="#5_6">Software Patches</A></LI>
 <LI><A HREF="#5_7">Variables</A></LI>
 <LI><A HREF="#5_8">Init Scripts</A></LI>
+<LI><A HREF="#5_9">Literal Package Data</A></LI>
 </UL>
 <B><A HREF="#EXAMPLES">5 - EPM Packaging Examples</A></B>
 <UL>
@@ -127,13 +129,14 @@ A { text-decoration: none }
 </UL>
 <B><A HREF="#RELNOTES">D - Release Notes</A></B>
 <UL>
-<LI><A HREF="#10_1">Changes in EPM v4.1</A></LI>
-<LI><A HREF="#10_2">Changes in EPM v4.0</A></LI>
+<LI><A HREF="#10_1">Changes in EPM v4.2</A></LI>
+<LI><A HREF="#10_2">Changes in EPM v4.1</A></LI>
+<LI><A HREF="#10_3">Changes in EPM v4.0</A></LI>
 </UL>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="1">Preface</A></H1>
 <P>This book provides a tutorial and reference for the ESP Package
- Manager (&quot;EPM&quot;) software, version 4.1, and is organized into the
+ Manager (&quot;EPM&quot;) software, version 4.2, and is organized into the
  following chapters and appendices:</P>
 <UL>
 <LI><A HREF="#INTRO">1 - Introduction to EPM</A></LI>
@@ -201,7 +204,7 @@ A { text-decoration: none }
 <!-- NEED 4in -->
 <H2><A NAME="1_3">Other References</A></H2>
 <DL>
-<DT><A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A></DT>
+<DT><A HREF="http://www.epmhome.org/">http://www.epmhome.org/</A></DT>
 <DD>The official home page of the ESP Package Manager software.
 <BR> &nbsp;</DD>
 <DT><A HREF="http://www.debian.org/devel/">http://www.debian.org/devel/</A>
@@ -280,8 +283,8 @@ epm-book@easysw.com</A>&quot;.</P>
  keep all of the packaging files synchronized manually. Needless to say,
  this process was far from perfect and we had more than one distribution
  that was not identical on all operating systems.</P>
-<P>As we began developing the Common UNIX Printing System (<A HREF="http://www.cups.org/">
-http://www.cups.org/</A>) in 1998, our initial goal was to add support
+<P>As we began developing CUPS (<A HREF="http://www.cups.org/">
+http://www.cups.org/</A>) in 1997, our initial goal was to add support
  for two additional operating systems: Linux and Compaq Tru64 UNIX. If
  we wanted to avoid the mistakes of the past, we clearly had to change
  how we produced software distributions.</P>
@@ -448,26 +451,15 @@ fakeroot</CODE> software, introducing potential security risks and
  emulates a feature if the vendor package format does not support it
  natively.</P>
 <H2><A NAME="2_5">Resources</A></H2>
-<P>The EPM web site provides access to the current software and
- documentation for EPM:</P>
+<P>The EPM web site provides access to the current software,
+ documentation, and discussion forums for EPM:</P>
 <PRE>
-    <A HREF="http://www.easysw.com/epm/">http://www.easysw.com/epm/</A>
+    <A HREF="http://www.epmhome.org/">http://www.epmhome.org/</A>
 </PRE>
 <P>The EPM source code can be downloaded in compressed tar files or via
  the popular Subversion software. Please see the EPM web site for
  complete instructions.</P>
-<P>The Easy Software Products news server provides several newsgroups
- for EPM. You can access it by pointing your news reader at
- &quot;news.easysw.com&quot;.</P>
-<P>Commercial support for EPM and a soft cover version of this book are
- available from <A HREF="http://www.easysw.com/">Easy Software Products</A>
-; both help fund the continued development of EPM.</P>
-<P>Another way to contribute is by donating code, examples, and bug
- fixes. If you have adapted EPM for another operating system or have
- added a new feature that you feel will be generally useful, please
- contribute it!</P>
-<P>You can send code contributions to &quot;<A HREF="mailto:epm@easysw.com">
-epm@easysw.com</A>&quot; and book contributions to &quot;<A HREF="mailto:epm-book@easysw.com">
+<P>Send book feedback to &quot;<A HREF="mailto:epm-book@easysw.com">
 epm-book@easysw.com</A>&quot;.</P>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="BUILDING">2 - Building EPM</A></H1>
@@ -1180,6 +1172,36 @@ uname -r</CODE>:</P>
 </DL>
 </DD>
 </DL>
+<P>The <CODE>%arch</CODE> directive can match or not match specific
+ architectures. The architecture name is the name reported by <CODE>
+uname -m</CODE>; &quot;arm&quot; is a synonym for &quot;armv6&quot;, &quot;armv7&quot;, and &quot;armv8&quot;,
+ &quot;intel&quot; is a synonym for &quot;i386&quot;, &quot;i486&quot;, &quot;i586&quot;, and &quot;i686&quot;, and
+ &quot;powerpc&quot; is a synonym for &quot;ppc&quot;:</P>
+<DL>
+<DD>
+<DL>
+<DT><CODE>%arch intel</CODE>
+<BR> &nbsp;</DT>
+<DD>Only include the following files when building a package for 32-bit
+ Intel processors.
+<BR> &nbsp;</DD>
+<DT><CODE>%arch armv6</CODE>
+<BR> &nbsp;</DT>
+<DD>Only include the following files when building a package for ARMv6
+ processors.
+<BR> &nbsp;</DD>
+<DT><CODE>%system !powerpc</CODE>
+<BR> &nbsp;</DT>
+<DD>Only include the following files when building a package for
+ processors other than PowerPC.
+<BR> &nbsp;</DD>
+</DL>
+</DD>
+</DL>
+<P>The special name <CODE>all</CODE> is used to match all architectures:</P>
+<PRE>
+    %arch all
+</PRE>
 <P>Finally, EPM can conditionally include lines using the <CODE>%if</CODE>
 , <CODE>%elseif</CODE>, <CODE>%ifdef</CODE>, <CODE>%elseifdef</CODE>, <CODE>
 %else</CODE>, and <CODE>%endif</CODE> directives.</P>
@@ -1272,6 +1294,40 @@ $</CODE>). As with most shells, variable names can be surrounded by
 , <CODE>start()</CODE>, and <CODE>stop()</CODE> options:</P>
 <PRE>
     i 755 root sys foo foo.sh &quot;runlevel(02) start(50) stop(30)&quot;
+</PRE>
+<H2><A NAME="5_9">Literal Package Data</A></H2>
+<P>Sometimes you need to include format-specific package data such as
+ keywords, signing keys, and response data. The <CODE>%literal(section)</CODE>
+ directive adds format-specific data to the packages you create. Literal
+ data is currently only supported for RPM and PKG packages.</P>
+<H3>PKG Literal Data</H3>
+<P>PKG packages support request files that are used to do batch
+ installations when installation commands require user input. The <CODE>
+%literal(request)</CODE> directive can be used to provide this user
+ input:</P>
+<PRE>
+    %literal(request) &lt;&lt;EOF
+    John Doe
+    1 Any Lane
+    Forest Lawn, OH 12345
+    EOF
+</PRE>
+<H3>RPM Literal Data</H3>
+<P>RPM packages support numerous attributes in the &quot;spec&quot; file that
+ control how the package is created and what metadata is included with
+ the package. The <CODE>%literal(spec)</CODE> directive can be used to
+ provide attributes for the spec file:</P>
+<PRE>
+    %literal(spec) &lt;&lt;EOF
+    %changelog
+    * Tue Aug 26 2008 John Doe &lt;johndoe@domain.com&gt;
+
+    - Added new feature &quot;bar&quot;
+
+    * Fri Aug 1 2008 John Doe &lt;johndoe@domain.com&gt;
+
+    - Added new feature &quot;foo&quot;
+    EOF
 </PRE>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="EXAMPLES">5 - EPM Packaging Examples</A></H1>
@@ -2192,6 +2248,12 @@ product</I>.list&quot;.
  running IRIX.</DD>
 
 <!-- NEED 3 -->
+<DT>lsb, lsb-signed</DT>
+<DD>Generate RPM packages for LSB-conforming systems. The lsb-signed
+ format uses the GPG private key you have defined in the ~/.rpmmacros
+ file.</DD>
+
+<!-- NEED 3 -->
 <DT>native</DT>
 <DD>Generate an native distribution. This uses<I> rpm</I> for Linux,<I>
  inst</I> for IRIX,<I> pkg</I> for Solaris,<I> swinstall</I> for HP-UX,<I>
@@ -2214,9 +2276,10 @@ product</I>.list&quot;.
  on all operating systems. [default]</DD>
 
 <!-- NEED 3 -->
-<DT>rpm</DT>
+<DT>rpm, rpm-signed</DT>
 <DD>Generate a Red Hat Package Manager (&quot;RPM&quot;) distribution suitable for
- installation on a Red Hat Linux system.</DD>
+ installation on a Red Hat Linux system. The rpm-signed format uses the
+ GPG private key you have defined in the ~/.rpmmacros file.</DD>
 
 <!-- NEED 3 -->
 <DT>setld</DT>
@@ -2237,9 +2300,9 @@ product</I>.list&quot;.
  normally removed after the distribution is created. The<I> -k</I>
  option keeps these files in the distribution directory.</P>
 <P>The<I> -s</I> and<I> --setup-image</I> options (&quot;setup&quot;) include the
- ESP Software Wizard with the specified XPM image file with the
- distribution. This option is currently only supported by portable
- distributions.</P>
+ ESP Software Wizard with the specified GIF or XPM image file with the
+ distribution. This option is currently only supported by portable and
+ RPM distributions.</P>
 <P>The<I> --setup-program</I> option specifies the setup executable to
  use with the distribution. This option is currently only supported by
  portable distributions.</P>
@@ -2275,7 +2338,7 @@ product</I>.list&quot;.
 <BR> epm.list(5) - epm list file format
 <BR> setup(1) - graphical setup program for the esp package manager
 <H3><A name="COPYRIGHT">Copyright</A></H3>
- Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
+ Copyright 1999-2008 by Easy Software Products, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2765,7 +2828,43 @@ product</I>.list&quot;.
 <H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
 <P>This appendix lists the change log for each release of the EPM
  software.</P>
-<H2><A NAME="10_1">Changes in EPM v4.1</A></H2>
+<H2><A NAME="10_1">Changes in EPM v4.2</A></H2>
+<UL>
+<LI>EPM now supports a %arch conditional directive (STR #27)</LI>
+<LI>EPM now uses hard links whenever possible instead of copying files
+ for distribution (STR #21)</LI>
+<LI>EPM no longer puts files in /export in the root file set for AIX
+ packages (STR #15)</LI>
+<LI>EPM did not work with newer versions of RPM (STR #23, STR #25)</LI>
+<LI>EPM did not clean up temporary files from Solaris packages (STR #20)</LI>
+<LI>Building Solaris gzip'd packages failed if the pkg.gz file already
+ existed (STR #16)</LI>
+<LI>Fixed handling of %preremove and %postremove for AIX packages (STR
+ #22)</LI>
+<LI>Fixed directory permissions in HP-UX packages (STR #24)</LI>
+<LI>Removed unnecessary quoting of &quot;!&quot; in filenames (STR #26)</LI>
+<LI>Added support for signed RPM packages (STR #19)</LI>
+<LI>Added support for inclusion of format-specific packaging files and
+ directives via a %literal directive (STR #5)</LI>
+<LI>*BSD init scripts were not installed properly.</LI>
+<LI>EPM now displays a warning message when a variable is undefined (STR
+ #10)</LI>
+<LI>*BSD dependencies on versioned packages are now specified correctly
+ (STR #4)</LI>
+<LI>EPM now uses /usr/sbin/pkg_create on FreeBSD (STR #2)</LI>
+<LI>FreeBSD packages are now created with a .tbz extension (STR #1)</LI>
+<LI>FreeBSD packages incorrectly assumed that chown was installed in
+ /bin (STR #3)</LI>
+<LI>Added support for an &quot;lsb&quot; package format which uses RPM with the
+ LSB dependencies (STR #7)</LI>
+<LI>The configure script now supports a --with-archflags and no longer
+ automatically builds universal binaries on Mac OS X.</LI>
+<LI>The epm program now automatically detects when the setup GUI is not
+ available, displays a warning message, and then creates a non-GUI
+ package.</LI>
+<LI>RPM packages did not map %replaces to Obsoletes:</LI>
+</UL>
+<H2><A NAME="10_2">Changes in EPM v4.1</A></H2>
 <UL>
 <LI>Mac OS X portable packages did not create a correct Uninstall
  application.</LI>
@@ -2795,7 +2894,7 @@ product</I>.list&quot;.
 <LI>EPM now generates disk images as well as a .tar.gz file when
  creating portable packages on Mac OS X.</LI>
 </UL>
-<H2><A NAME="10_2">Changes in EPM v4.0</A></H2>
+<H2><A NAME="10_3">Changes in EPM v4.0</A></H2>
 <UL>
 <LI>New subpackage support for creating multiple dependent packages or a
  combined package with selectable subpackages, depending on the package
