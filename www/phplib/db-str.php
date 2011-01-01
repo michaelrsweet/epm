@@ -74,7 +74,7 @@ $STR_VERSIONS = array(
   "+5.0",
   "4.x-current",
   "+4.x-feature",
-  "+4.2",
+  "4.2",
   "4.1",
   "4.0",
   "3.x and earlier",

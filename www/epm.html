@@ -68,6 +68,11 @@ system.
 <dd>Generate an IRIX distribution suitable for installation on an system running
 IRIX.
 </dd>
+<!-- NEED 3 --><dt>lsb, lsb-signed
+</dt>
+<dd>Generate RPM packages for LSB-conforming systems. The lsb-signed format uses
+the GPG private key you have defined in the ~/.rpmmacros file.
+</dd>
 <!-- NEED 3 --><dt>native
 </dt>
 <dd>Generate an native distribution. This uses <i>rpm</i> for Linux,
@@ -90,10 +95,11 @@ for MacOS X. All other operating systems default to the
 resulting distribution is installed and removed the same way on all
 operating systems. [default]
 </dd>
-<!-- NEED 3 --><dt>rpm
+<!-- NEED 3 --><dt>rpm, rpm-signed
 </dt>
 <dd>Generate a Red Hat Package Manager ("RPM") distribution suitable
-for installation on a Red Hat Linux system.
+for installation on a Red Hat Linux system. The rpm-signed format uses
+the GPG private key you have defined in the ~/.rpmmacros file.
 </dd>
 <!-- NEED 3 --><dt>setld
 </dt>
@@ -115,9 +121,9 @@ information when packaged. To disable this functionality use the
 removed after the distribution is created. The <i>-k</i> option keeps these
 files in the distribution directory.
 <p>The <i>-s</i> and <i>--setup-image</i> options ("setup") include
-the ESP Software Wizard with the specified XPM image file with
+the ESP Software Wizard with the specified GIF or XPM image file with
 the distribution. This option is currently only supported by
-portable distributions.
+portable and RPM distributions.
 <p>The <i>--setup-program</i> option specifies the setup executable
 to use with the distribution. This option is currently only
 supported by portable distributions.
@@ -156,7 +162,7 @@ epm.list(5) - epm list file format
 <br>
 setup(1) - graphical setup program for the esp package manager
 <h3><a name='COPYRIGHT'>Copyright</a></h3>
-Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
+Copyright 1999-2008 by Easy Software Products, All Rights Reserved.
 <p>This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2, or (at your option)
