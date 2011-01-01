@@ -1,0 +1,33 @@
+ESP Package Manager 4.1
+
+The 4.1 release of the ESP Package Manager ("EPM") is now
+available for download.  The new release adds disk image creation
+on Mac OS X and fixes several RPM and GUI bugs.  It is available
+on-line at:
+
+    http://www.easysw.com/epm/
+
+EPM is a software packaging tool for all versions of UNIX that
+generates software and patch distributions in various formats,
+including:
+
+    - AIX software packages ("installp")
+    - AT&T software packages ("pkgadd"), used by Solaris and
+      others
+    - BSD packages ("pkg_create")
+    - Compaq Tru64 UNIX ("setld")
+    - Debian Package Manager ("dpkg")
+    - HP-UX software packages ("swinstall")
+    - IRIX software manager ("inst", "swmgr", or "tardist")
+    - MacOS X software packages ("name.pkg" and "name.mpkg")
+    - Portable (installation and removal scripts with tar files)
+    - Red Hat Package Manager ("rpm")
+    - Slackware software packages ("name.pkg")
+
+EPM also includes graphical "setup" and "uninstall" programs
+that can be provided with your distributions to make
+installation and removal of more than one package a snap.
+
+EPM is provided under the terms of the GNU General Public
+License.  Please contact Easy Software Products at
+"info@easysw.com" for commercial support.
