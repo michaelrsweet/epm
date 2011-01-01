@@ -9,9 +9,9 @@ if test $# = 0; then
 	echo Updating for snapshot...
 	svn up
 	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
-	version="4.0svn"
+	version="4.3svn"
 	revision="-r$rev"
-	fileversion="4.0svn-r$rev"
+	fileversion="4.3svn-r$rev"
 	url="."
 else
 	echo Creating tag for release...
@@ -40,6 +40,12 @@ tar czf epm-$fileversion-source.tar.gz epm-$version
 echo -n ...bz2
 tar cjf epm-$fileversion-source.tar.bz2 epm-$version
 echo "..."
+
+if test -x /usr/bin/md5sum; then
+        (cd /tmp; md5sum epm-$fileversion-source.tar.* | awk '{print $1, "'$fileversion' epm/'$fileversion'/" $2}')
+elif test -x /sbin/md5; then
+        (cd /tmp; md5 epm-$fileversion-source.tar.* | awk '{print $4, "'$fileversion' epm/'$fileversion'/" substr($2, 2, length($2) - 2)}')
+fi
 
 echo Removing temporary files...
 rm -rf epm-$version
