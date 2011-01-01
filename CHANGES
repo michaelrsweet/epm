@@ -1,38 +1,47 @@
-CHANGES - ESP Package Manager (EPM) 5.0
+CHANGES - ESP Package Manager (EPM) 4.2
 ---------------------------------------
 
-EPM 5.0
+CHANGES IN EPM 4.2
 
-
-EPM 4.2
-
+	- EPM now supports a %arch conditional directive (STR #27)
+	- EPM now uses hard links whenever possible instead of copying files for
+	  distribution (STR #21)
+	- EPM no longer puts files in /export in the root file set for AIX
+	  packages (STR #15)
+	- EPM did not work with newer versions of RPM (STR #23, STR #25)
+	- EPM did not clean up temporary files from Solaris packages (STR #20)
+	- Building Solaris gzip'd packages failed if the pkg.gz file already
+	  existed (STR #16)
+	- Fixed handling of %preremove and %postremove for AIX packages
+	  (STR #22)
+	- Fixed directory permissions in HP-UX packages (STR #24)
 	- Removed unnecessary quoting of "!" in filenames (STR #26)
-	- Added support for signed RPM packages.
-	- Added support for inclusion of format-specific packaging
-	  files and directives via a %literal directive (STR #5)
+	- Added support for signed RPM packages (STR #19)
+	- Added support for inclusion of format-specific packaging files and
+	  directives via a %literal directive (STR #5)
 	- *BSD init scripts were not installed properly.
-	- EPM now displays a warning message when a variable is
-	  undefined (STR #10)
-	- *BSD dependencies on versioned packages are now
-	  specified correctly (STR #4)
+	- EPM now displays a warning message when a variable is undefined
+	  (STR #10)
+	- *BSD dependencies on versioned packages are now specified correctly
+	  (STR #4)
 	- EPM now uses /usr/sbin/pkg_create on FreeBSD (STR #2)
-	- FreeBSD packages are now created with a .tbz
-	  extension (STR #1)
-	- FreeBSD packages incorrectly assumed that chown was
-	  installed in /bin (STR #3)
-	- Added support for an "lsb" package format which uses
-	  RPM with the LSB dependencies (STR #7)
-	- The configure script now supports a --with-archflags
-	  and no longer automatically builds universal binaries on
-	  Mac OS X.
-	- The epm program now automatically detects when the
-	  setup GUI is not available, displays a warning message,
-	  and then creates a non-GUI package.
+	- FreeBSD packages are now created with a .tbz extension (STR #1)
+	- FreeBSD packages incorrectly assumed that chown was installed in /bin
+	  (STR #3)
+	- Added support for an "lsb" package format which uses RPM with the LSB
+	  dependencies (STR #7)
+	- The configure script now supports a --with-archflags and no longer
+	  automatically builds universal binaries on Mac OS X.
+	- The epm program now automatically detects when the setup GUI is not
+	  available, displays a warning message, and then creates a non-GUI
+	  package.
 	- RPM packages did not map %replaces to Obsoletes:
 
 
-EPM 4.1
+CHANGES IN EPM 4.1
 
+	- Mac OS X portable packages did not create a correct
+	  Uninstall application.
 	- The temporary package files for portable packages are
 	  now removed after creation of the .tar.gz file unless
 	  the -k (keep files) option is used.
@@ -63,9 +72,8 @@ EPM 4.1
 	  file when creating portable packages on Mac OS X.
 
 
-EPM 4.0
+CHANGES IN EPM 4.0
 
-	- New GUI editor for list files.
 	- New subpackage support for creating multiple dependent
 	  packages or a combined package with selectable
 	  subpackages, depending on the package format.
@@ -92,7 +100,8 @@ EPM 4.0
 	- Portable product names containing spaces will now
 	  display properly.
 
-EPM 3.7.1
+
+CHANGES IN EPM 3.7.1
 
 	- Solaris packages were not created when the output
 	  directory was absolute.
@@ -119,7 +128,7 @@ EPM 3.7.1
 	  some AIX packaging issues with patch from David Maltz.
 
 
-EPM 3.7
+CHANGES IN EPM 3.7
 
 	- Fixed init script support for Tru64 packages.
 	- AIX output now correctly generates the inventory file
@@ -165,7 +174,7 @@ EPM 3.7
 	  scripts.
 
 
-EPM 3.6
+CHANGES IN EPM 3.6
 
 	- Added a GUI uninstall program to be distributed with
 	  portable distributions with a setup image.
@@ -209,7 +218,7 @@ EPM 3.6
 	  systems.
 
 
-EPM 3.5.1
+CHANGES IN EPM 3.5.1
 
 	- OSX packages did not set the "install as root" package
 	  type, so package installation usually failed.
@@ -222,7 +231,7 @@ EPM 3.5.1
 	  creating OSX packages.
 
 
-EPM 3.5
+CHANGES IN EPM 3.5
 
 	- Added support for MacOS X package generation.
 	- No longer need/use RPMDIR when building RPMs, just
@@ -246,7 +255,7 @@ EPM 3.5
 	  separately and in reverse order.
 
 
-EPM 3.4
+CHANGES IN EPM 3.4
 
 	- No longer install init scripts in run levels 2 and 5
 	  under Solaris, which runs all init scripts in each run
@@ -266,7 +275,7 @@ EPM 3.4
 	  of disk space per distribution.
 
 
-EPM 3.3
+CHANGES IN EPM 3.3
 
 	- UnixWare 7 needs the absolute path when transferring
 	  an AT&T package directory to a .pkg file.
@@ -293,14 +302,14 @@ EPM 3.3
 	  script before running the "strip" command.
 
 
-EPM 3.2.1
+CHANGES IN EPM 3.2.1
 
 	- The check for Darwin (MacOS X) in the portable
 	  installation scripts was using "==" instead of just
 	  "=".
 
 
-EPM 3.2
+CHANGES IN EPM 3.2
 
 	- Added "SHELL=/bin/sh" line to portable installation,
 	  patch, and remove scripts in case the root shell is
@@ -328,7 +337,7 @@ EPM 3.2
 	- The setup GUI now requires FLTK 1.1.x.
 
 
-EPM 3.1
+CHANGES IN EPM 3.1
 
 	- Added support for "<<end ... end" and "<filename" to
 	  insert descriptions and commands in-line and from a
@@ -358,7 +367,7 @@ EPM 3.1
 	  uses "--target arch" instead of "--target=arch".
 
 
-EPM 3.0?
+CHANGES IN EPM 3.0
 
 	- Added new documentation.
 	- Added new "-a arch" option to support specific
@@ -392,7 +401,7 @@ EPM 3.0?
 	  upgrade/install, while changed ones are preserved.
 
 
-EPM 2.8
+CHANGES IN EPM 2.8
 
 	- The line breaking code did not include an extra
 	  space, so filenames in the portable install/patch/
@@ -410,7 +419,7 @@ EPM 2.8
 	  even with GNU test even though it isn't documented...
 
 
-EPM 2.7
+CHANGES IN EPM 2.7
 
 	- Fixed a bug in the configuration script with the
 	  --with-fltk-includes option.
@@ -424,7 +433,7 @@ EPM 2.7
 	  remove scripts.
 
 
-EPM 2.6
+CHANGES IN EPM 2.6
 
 	- Changed the automatic version number generation code to
 	  properly handle patch, beta, and pre releases.
@@ -448,7 +457,7 @@ EPM 2.6
 	  right filename for Solaris PKG distributions.	
   
 
-EPM 2.5
+CHANGES IN EPM 2.5
 
 	- Added support for pre-install, post-install, pre-patch,
 	  post-patch, pre-remove, and post-remove commands.
@@ -474,14 +483,14 @@ EPM 2.5
 	  rather then hardcoding this based on the build system.
 
 
-EPM 2.4
+CHANGES IN EPM 2.4
 
 	- The [] wildcard matching did not skip over the
 	  character that was matched.  This prevented matches in
 	  most cases...
 
 
-EPM 2.3
+CHANGES IN EPM 2.3
 
 	- Fix for an incredibly stupid bug in the portable
 	  distribution code - was using ! instead of ~ to mask
@@ -504,7 +513,7 @@ EPM 2.3
 	- The variable expansion code didn't check for ${name}.
 
 
-EPM 2.2
+CHANGES IN EPM 2.2
 
 	- New HTML documentation files.
 	- Updated the BuildRoot directive in RPM spec files to
@@ -537,7 +546,7 @@ EPM 2.2
 	  the major and minor release numbers.
 
 
-EPM 2.1
+CHANGES IN EPM 2.1
 
 	- Moved setup program to /usr/lib/epm ($prefix/lib/epm)
 	  to avoid name clash with RedHat setup program.
@@ -569,7 +578,7 @@ EPM 2.1
 	  tar.gz file formats.
 
 
-EPM 2.0?
+CHANGES IN EPM 2.0
 
 	- New "-f" option to generate vendor-specific software
 	  distributions.  Now support AT&T, Debian, HP-UX, IRIX,
@@ -587,7 +596,7 @@ EPM 2.0?
 	- Portable distributions should now be more portable.
 
 
-EPM 1.7
+CHANGES IN EPM 1.7
 
 	- The %requires and %incompat directives now support
 	  specification of files as well as products.
@@ -598,7 +607,7 @@ EPM 1.7
 	  the same.
 
 
-EPM 1.6
+CHANGES IN EPM 1.6
 
 	- Installation archives were missing the ".ss" and ".pss"
 	  files that were added to support diskless installations.
@@ -608,13 +617,13 @@ EPM 1.6
 	  user did not agree with the license or want to install.
 
 
-EPM 1.5
+CHANGES IN EPM 1.5
 
 	- Now support diskless installations; all files destined for
 	  /usr are put in a separate archive and are installed (or
 	  removed) only if /usr is read+write.
 
-EPM 1.4
+CHANGES IN EPM 1.4
 
 	- Now map group "sys" to "system" for Digital UNIX and "root" for
 	  Linux.
@@ -622,7 +631,7 @@ EPM 1.4
 	  of run levels 4 and 5.
 
 
-EPM 1.3
+CHANGES IN EPM 1.3
 
 	- Now use the "p" option to tar to ensure that file permissions
 	  are created properly.  This is normally the default for the
@@ -631,7 +640,7 @@ EPM 1.3
 	  and 5.
 
 
-EPM 1.2
+CHANGES IN EPM 1.2
 
 	- Patch distributions were not correctly named.
 	- Added new "initialization script" file types "i" and "I". The
@@ -641,7 +650,7 @@ EPM 1.2
 	  accordingly.
 
 
-EPM 1.1
+CHANGES IN EPM 1.1
 
 	- The "whoami" command isn't always in the user's path, so
 	  scripts now use a hard-coded path (setup by the configure

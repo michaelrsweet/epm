@@ -1728,8 +1728,8 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-VERSION=5.0svn
-VERNUMBER=491
+VERSION=4.2
+VERNUMBER=420
 
 
 cat >>confdefs.h <<_ACEOF
@@ -5906,7 +5906,7 @@ if test "x$FLTKCONFIG" = x; then
 echo "$as_me: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&2;}
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
-	GUIS="epmeditor setup uninst"
+	GUIS="setup uninst"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
 
