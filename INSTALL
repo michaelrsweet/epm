@@ -1,4 +1,4 @@
-INSTALL - ESP Package Manager (EPM) 4.2
+INSTALL - ESP Package Manager (EPM) 4.3
 ---------------------------------------
 
 Complete installation instructions can be found in the file
@@ -11,7 +11,7 @@ WHAT IS REQUIRED FOR EPM?
     program, the Bourne (or Korn or Bash) shell, and gzip.
 
     The graphical setup program needs a C++ compiler and the
-    FLTK library, version 1.1 or higher, available at
+    FLTK library, version 1.1.x or 1.3.x, available at
     "http://www.fltk.org".
 
     EPM can generate so-called "portable" distributions that are
@@ -28,7 +28,7 @@ WHAT IS REQUIRED FOR EPM?
 
 HOW DO I COMPILE EPM?
 
-    EPM uses GNU autoconf to configure itself for your system. 
+    EPM uses GNU autoconf to configure itself for your system.
     To build it, use:
 
         ./configure ENTER

@@ -1,4 +1,4 @@
-README - ESP Package Manager (EPM) 4.2
+README - ESP Package Manager (EPM) 4.3
 --------------------------------------
 
 WHAT IS EPM?
@@ -75,22 +75,12 @@ OTHER RESOURCES
 
     The official home page for EPM is here:
 
-        http://www.epmhome.org/
-
-    Easy Software Products also maintains a news server for the discussion of
-    ESP and ESP-sponsored software.  The news server is:
-
-        news.easysw.com
-
-    If you don't have NNTP access from your systems, point your web browser at
-    the following URL:
-
-        http://www.epmhome.org/forums.php
+        https://www.msweet.org/projects.php/EPM
 
 
 COPYRIGHT AND LICENSE INFO
 
-    EPM is copyright 1999-2010 by Easy Software Products. All rights reserved.
+    EPM is copyright 1999-2014 by Michael R Sweet. All rights reserved.
 
     This program is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the Free

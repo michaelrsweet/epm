@@ -1,23 +1,20 @@
 /*
  * "$Id$"
  *
- *   Quoted fprintf function for the ESP Package Manager (EPM).
+ * Quoted fprintf function for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2009 by Easy Software Products.
+ * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2009 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   qprintf() - Do formatted output to a file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*
@@ -136,7 +133,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
 	    else
 	      bytes += fprintf(fp, tformat, va_arg(ap, int));
 	    break;
-	    
+
 	case 'p' : /* Pointer value */
 	    if ((format - bufformat + 1) > sizeof(tformat))
 	      break;

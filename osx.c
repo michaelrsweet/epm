@@ -1,25 +1,20 @@
 /*
  * "$Id$"
  *
- *   Mac OS X package gateway for the ESP Package Manager (EPM).
+ * Mac OS X package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 2002-2010 by Easy Software Products.
+ * Copyright 2002-2014 by Michael R Sweet
+ * Copyright 2002-2010 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   make_osx()        - Make a MacOS X software distribution package.
- *   make_subpackage() - Make a OSX subpackage.
- *   write_rtf()       - Write an RTF welcome file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*
@@ -32,7 +27,7 @@
 /*
  * Local globals...
  */
- 
+
 static const char * const pm_paths[] =	/* Paths to PackageMaker program */
 		{
 		  "/Developer/Applications/PackageMaker.app",
