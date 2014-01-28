@@ -1,26 +1,20 @@
 /*
  * "$Id$"
  *
- *   Main program source for the ESP Package Manager (EPM).
+ * Main program source for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2008 by Easy Software Products.
+ * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2008 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   main()   - Read a product list and produce a distribution.
- *   depend() - Show dependencies.
- *   info()   - Show the EPM copyright and license.
- *   usage()  - Show command-line usage instructions.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*
@@ -399,7 +393,7 @@ main(int  argc,				/* I - Number of command-line args */
       usage();
     }
 
- /* 
+ /*
   * Check for product name and list file...
   */
 
@@ -423,7 +417,7 @@ main(int  argc,				/* I - Number of command-line args */
   * Format the build directory and platform name strings...
   */
 
-  if (!directory[0]) 
+  if (!directory[0])
   {
    /*
     * User did not specify an output directory, so use our default...

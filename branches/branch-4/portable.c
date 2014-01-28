@@ -1,35 +1,20 @@
 /*
  * "$Id$"
  *
- *   Portable package gateway for the ESP Package Manager (EPM).
+ * Portable package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2010 by Easy Software Products.
+ * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2010 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   make_portable()      - Make a portable software distribution package.
- *   clean_distfiles()    - Remove temporary software distribution files...
- *   write_combined()     - Write all of the distribution files in tar files.
- *   write_commands()     - Write commands.
- *   write_common()       - Write the common shell script header.
- *   write_confcheck()    - Write the echo check to find the right echo options.
- *   write_depends()      - Write dependencies.
- *   write_distfiles()    - Write a software distribution...
- *   write_install()      - Write the installation script.
- *   write_instfiles()    - Write the installer files to the tar file...
- *   write_patch()        - Write the patch script.
- *   write_remove()       - Write the removal script.
- *   write_space_checks() - Write disk space checks for the installer.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*

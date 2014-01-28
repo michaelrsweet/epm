@@ -1,35 +1,21 @@
 /*
- * "$Id: mkepmlist.c,v 1.10 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
- *   List file generation utility for the ESP Package Manager (EPM).
+ * List file generation utility for the ESP Package Manager (EPM).
  *
- *   Copyright 2003-2005 by Easy Software Products
- *   Copyright 2003 Andreas Voegele
+ * Copyright 2003-2014 by Michael R Sweet
+ * Copyright 2003-2005 by Easy Software Products
+ * Copyright 2003 Andreas Voegele
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   main()         - Scan directories to produce a distribution list.
- *   get_group()    - Get a group name for the given group ID.
- *   get_user()     - Get a user name for the given user ID.
- *   hash_deinit()  - Deinitialize a hash table.
- *   hash_id()      - Generate a hash for a user or group ID.
- *   hash_init()    - Initialize a hash table.
- *   hash_insert()  - Insert a new entry in a hash table.
- *   hash_search()  - Find a user or group ID in the hash table...
- *   info()         - Show the EPM copyright and license.
- *   process_dir()  - Process a directory...
- *   process_file() - Process a file...
- *   usage()        - Show command-line usage instructions.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 #include "epm.h"
@@ -224,7 +210,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 
   hash_deinit(Users);
   hash_deinit(Groups);
-  
+
   return (0);
 }
 
@@ -247,7 +233,7 @@ get_group(gid_t gid)		/* I - Group ID */
 
   if (DefaultGroup)
     return (DefaultGroup);
-  
+
  /*
   * See if the group ID is already in the hash table...
   */
@@ -299,7 +285,7 @@ get_user(uid_t uid)		/* I - User ID */
 
   if (DefaultUser)
     return (DefaultUser);
-  
+
  /*
   * See if the user ID is already in the hash table...
   */
@@ -621,5 +607,5 @@ usage(void)
 
 
 /*
- * End of "$Id: mkepmlist.c,v 1.10 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id$".
  */

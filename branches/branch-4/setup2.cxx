@@ -1,34 +1,20 @@
 //
 // "$Id$"
 //
-//   ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
+// ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2010 by Easy Software Products.
+// Copyright 1999-2014 by Michael R Sweet
+// Copyright 1999-2010 by Easy Software Products.
 //
-//   This program is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2, or (at your option)
-//   any later version.
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
 //
-//   This program is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-//
-// Contents:
-//
-//   main()         - Main entry for software wizard...
-//   get_dists()    - Get a list of available software products.
-//   install_dist() - Install a distribution...
-//   license_dist() - Show the license for a distribution...
-//   list_cb()      - Handle selections in the software list.
-//   load_image()   - Load the setup image file (setup.gif/xpm)...
-//   load_readme()  - Load the readme file...
-//   load_types()   - Load the installation types from the setup.types file.
-//   log_cb()       - Add one or more lines of text to the installation log.
-//   next_cb()      - Show software selections or install software.
-//   type_cb()      - Handle selections in the type list.
-//   update_size()  - Update the total +/- sizes of the installations.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
 
 #define _DEFINE_GLOBALS_
@@ -768,7 +754,7 @@ load_readme(void)
   }
   else
     gui_load_file(ReadmeFile, "setup.readme");
- 
+
 }
 
 

@@ -1,24 +1,21 @@
 /*
  * "$Id$"
  *
- *   Tru64 package gateway for the ESP Package Manager (EPM)
+ * Tru64 package gateway for the ESP Package Manager (EPM)
  *
- *   Copyright 2001-2010 by Easy Software Products
- *   Copyright 2001 by Aneesh Kumar (aneesh.kumar@digital.com) at Digital India.
+ * Copyright 2001-2014 by Michael R Sweet
+ * Copyright 2001-2010 by Easy Software Products
+ * Copyright 2001 by Aneesh Kumar (aneesh.kumar@digital.com) at Digital India.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   make_setld() - Make a Tru64 setld package.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*

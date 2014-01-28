@@ -1,19 +1,20 @@
 dnl
 dnl "$Id$"
 dnl
-dnl   Configuration script for the ESP Package Manager (EPM).
+dnl Configuration script for the ESP Package Manager (EPM).
 dnl
-dnl   Copyright 1999-2007 by Easy Software Products, all rights reserved.
+dnl Copyright 1999-2014 by Michael R Sweet
+dnl Copyright 1999-2007 by Easy Software Products, all rights reserved.
 dnl
-dnl   This program is free software; you can redistribute it and/or modify
-dnl   it under the terms of the GNU General Public License as published by
-dnl   the Free Software Foundation; either version 2, or (at your option)
-dnl   any later version.
+dnl This program is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU General Public License as published by
+dnl the Free Software Foundation; either version 2, or (at your option)
+dnl any later version.
 dnl
-dnl   This program is distributed in the hope that it will be useful,
-dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-dnl   GNU General Public License for more details.
+dnl This program is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU General Public License for more details.
 dnl
 
 AC_INIT(epm.c)
@@ -22,8 +23,8 @@ AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=4.2
-VERNUMBER=420
+VERSION=4.3
+VERNUMBER=430
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -77,8 +78,8 @@ AC_ARG_WITH(softwaredir, [  --with-softwaredir=/dir set directory for EPM uninst
 	softwaredir="")
 
 dnl Checks for programs...
-AC_PROG_CC
-AC_PROG_CXX
+AC_PROG_CC(clang cc gcc)
+AC_PROG_CXX(clang++ c++ g++)
 AC_PROG_RANLIB
 AC_PATH_PROG(AR,ar)
 AC_PATH_PROG(CHMOD,chmod)
@@ -175,7 +176,7 @@ case "$uname" in
 		AC_DEFINE(EPM_COMPRESS, 0)
 		;;
 esac
-		
+
 dnl Update compiler options...
 if test -n "$GCC"; then
 	# Add standard optimization options...
