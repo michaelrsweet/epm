@@ -1,27 +1,20 @@
 /*
- * "$Id: string.c,v 1.9 2005/01/11 21:36:57 mike Exp $"
+ * "$Id$"
  *
- *   String functions for the ESP Package Manager (EPM).
+ * String functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2005 by Easy Software Products.
+ * Copyright 1999-2014 by Michael R Sweet.
+ * Copyright 1999-2005 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   epm_strdup()      - Duplicate a string.
- *   epm_strcasecmp()  - Do a case-insensitive comparison.
- *   epm_strlcat()     - Safely concatenate two strings.
- *   epm_strlcpy()     - Safely copy two strings.
- *   epm_strncasecmp() - Do a case-insensitive comparison on up to N chars.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*
@@ -199,5 +192,5 @@ epm_strncasecmp(const char *s,		/* I - First string */
 
 
 /*
- * End of "$Id: string.c,v 1.9 2005/01/11 21:36:57 mike Exp $".
+ * End of "$Id$".
  */

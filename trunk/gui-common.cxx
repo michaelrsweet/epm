@@ -1,28 +1,20 @@
 //
 // "$Id$"
 //
-//   ESP Software Wizard common functions for the ESP Package Manager (EPM).
+// ESP Software Wizard common functions for the ESP Package Manager (EPM).
 //
-//   Copyright 1999-2006 by Easy Software Products.
+// Copyright 1999-2014 by Michael R Sweet
+// Copyright 1999-2006 by Easy Software Products.
 //
-//   This program is free software; you can redistribute it and/or modify
-//   it under the terms of the GNU General Public License as published by
-//   the Free Software Foundation; either version 2, or (at your option)
-//   any later version.
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
 //
-//   This program is distributed in the hope that it will be useful,
-//   but WITHOUT ANY WARRANTY; without even the implied warranty of
-//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//   GNU General Public License for more details.
-//
-// Contents:
-//
-//   gui_add_depend()    - Add a dependency to a distribution.
-//   gui_add_dist()      - Add a distribution.
-//   gui_find_dist()     - Find a distribution.
-//   gui_get_installed() - Get a list of installed software products.
-//   gui_load_file()     - Load a file into a help widget.
-//   gui_sort_dists()    - Compare two distribution names...
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
 
 #include "gui-common.h"

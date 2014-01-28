@@ -1,29 +1,20 @@
 /*
  * "$Id$"
  *
- *   File functions for the ESP Package Manager (EPM).
+ * File functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2010 by Easy Software Products.
+ * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2010 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   copy_file()        - Copy a file.
- *   make_directory()   - Make a directory.
- *   make_link()        - Make a symbolic link.
- *   strip_execs()      - Strip symbols from executable files in the
- *                        distribution.
- *   unlink_directory() - Delete a directory and all of its nodes.
- *   unlink_package()   - Delete a package file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*
@@ -201,7 +192,7 @@ make_link(const char *dst,		/* I - Destination file */
   if (access(buffer, F_OK))
     make_directory(buffer, 0755, 0, 0);
 
- /* 
+ /*
   * Make the symlink...
   */
 
