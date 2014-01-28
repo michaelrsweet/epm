@@ -1,27 +1,20 @@
 /*
  * "$Id$"
  *
- *   AIX package gateway for the ESP Package Manager (EPM).
+ * AIX package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2010 by Easy Software Products.
+ * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2010 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   make_aix()     - Make an AIX software distribution package.
- *   aix_addfile()  - Add a file to the AIX directory list...
- *   aix_fileset()  - Write a subpackage description...
- *   aix_version()  - Generate an AIX version number.
- *   write_liblpp() - Create the liblpp.a file for the root or /usr parts.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*
@@ -591,9 +584,9 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 	    break;
 
 	default :
-            shared_file = !(strcmp(file->dst, "/usr") && 
-                            strncmp(file->dst, "/usr/", 5) && 
-                            strcmp(file->dst, "/opt") && 
+            shared_file = !(strcmp(file->dst, "/usr") &&
+                            strncmp(file->dst, "/usr/", 5) &&
+                            strcmp(file->dst, "/opt") &&
                             strncmp(file->dst, "/opt/", 5));
 
            /*

@@ -4,6 +4,9 @@ CHANGES - ESP Package Manager (EPM) 5.0
 EPM 5.0
 
 
+EPM 4.3
+
+
 EPM 4.2
 
 	- Removed unnecessary quoting of "!" in filenames (STR #26)
@@ -170,7 +173,7 @@ EPM 3.6
 	- Added a GUI uninstall program to be distributed with
 	  portable distributions with a setup image.
 	- MacOS X portable packages now support graphical setup
-	  and uninstall using the Apple authorization API. 
+	  and uninstall using the Apple authorization API.
 	- Debian packages did not include the (required)
 	  trailing period when running the update-rc.d script.
 	- BSD packages now create directories using postinstall
@@ -445,8 +448,8 @@ EPM 2.6
 	- Patch distributions were incorrectly backing up the
 	  original files, causing the original backup to be lost.
 	- Pre/post install/remove scripts were not using the
-	  right filename for Solaris PKG distributions.	
-  
+	  right filename for Solaris PKG distributions.
+
 
 EPM 2.5
 

@@ -1,25 +1,20 @@
 /*
  * "$Id$"
  *
- *   Red Hat package gateway for the ESP Package Manager (EPM).
+ * Red Hat package gateway for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2010 by Easy Software Products.
+ * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2010 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   make_rpm()   - Make a Red Hat software distribution package.
- *   move_rpms()  - Move RPM packages to the build directory...
- *   write_spec() - Write the subpackage-specific parts of the RPM spec file.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*
@@ -452,7 +447,7 @@ make_rpm(int            format,		/* I - Subformat */
 	return (1);
       }
     }
-    
+
     tar_close(tarfile);
   }
 

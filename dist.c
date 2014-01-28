@@ -1,48 +1,20 @@
 /*
  * "$Id$"
  *
- *   Distribution functions for the ESP Package Manager (EPM).
+ * Distribution functions for the ESP Package Manager (EPM).
  *
- *   Copyright 1999-2010 by Easy Software Products.
+ * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2010 by Easy Software Products.
  *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 2, or (at your option)
- *   any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- * Contents:
- *
- *   add_command()         - Add a command to the distribution...
- *   add_depend()          - Add a dependency to the distribution...
- *   add_description()     - Add a description to the distribution.
- *   add_file()            - Add a file to the distribution.
- *   add_subpackage()      - Add a subpackage to the distribution.
- *   find_subpackage()     - Find a subpackage in the distribution.
- *   free_dist()           - Free memory used by a distribution.
- *   getoption()           - Get an option from a file.
- *   get_platform()        - Get the operating system information...
- *   get_runlevels()       - Get the run levels for the specified init script.
- *   get_start()           - Get the start number for an init script.
- *   get_stop()            - Get the stop number for an init script.
- *   new_dist()            - Create a new, empty software distribution.
- *   read_dist()           - Read a software distribution.
- *   sort_dist_files()     - Sort the files in the distribution.
- *   write_dist()          - Write a distribution list file...
- *   compare_files()       - Compare the destination filenames.
- *   expand_name()         - Expand a filename with environment variables.
- *   get_file()            - Read a file into a string...
- *   get_inline()          - Read inline lines into a string...
- *   get_line()            - Get a line from a file, filtering for uname
- *                           lines...
- *   get_string()          - Get a delimited string from a line.
- *   patmatch()            - Pattern matching...
- *   sort_subpackages()    - Compare two subpackage names.
- *   update_architecture() - Normalize the machine architecture name.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 /*
@@ -2322,7 +2294,7 @@ patmatch(const char *s,			/* I - String to match against */
 
   while (*pat == '*')
     pat ++;
-    
+
  /*
   * Done parsing the pattern and string; return 1 if the last character matches
   * and 0 otherwise...
