@@ -343,7 +343,7 @@ aix_addfile(int        type,		/* I  - Filetype */
     if (type == 'l')
       blocks = 1;
     else if (!stat(src, &fileinfo))
-      blocks = (fileinfo.st_size + 511) / 512;
+      blocks = (int)((fileinfo.st_size + 511) / 512);
     else
       blocks = 0;
   }

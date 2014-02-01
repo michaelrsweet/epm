@@ -923,7 +923,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	      * Grab the epoch...
 	      */
 
-	      dist->epoch = strtol(temp, &temp, 10);
+	      dist->epoch = (int)strtol(temp, &temp, 10);
 
 	      if (*temp == ':')
 	        temp ++;
@@ -1574,11 +1574,11 @@ get_inline(const char *term,		/* I  - Termination string */
            char       *buffer,		/* IO - String buffer */
 	   size_t     size)		/* I  - Size of string buffer */
 {
-  char	*bufptr;			/* Pointer into buffer */
-  int	left;				/* Remaining bytes in buffer */
-  int	termlen;			/* Length of termination string */
-  int	linelen;			/* Length of line */
-  char	*expand;			/* Expansion buffer */
+  char		*bufptr;		/* Pointer into buffer */
+  size_t	left;			/* Remaining bytes in buffer */
+  size_t	termlen;		/* Length of termination string */
+  size_t	linelen;		/* Length of line */
+  char		*expand;		/* Expansion buffer */
 
 
   bufptr  = buffer;
@@ -1588,7 +1588,7 @@ get_inline(const char *term,		/* I  - Termination string */
   if (termlen == 0)
     return (NULL);
 
-  while (fgets(bufptr, left, fp) != NULL)
+  while (fgets(bufptr, (int)left, fp) != NULL)
   {
     if (!strncmp(bufptr, term, (size_t)termlen) && bufptr[termlen] == '\n')
     {
@@ -1646,9 +1646,9 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	 int            *skip)		/* IO - Skip lines? */
 {
   int		op,			/* Operation (0 = OR, 1 = AND) */
-		namelen,		/* Length of system name + version */
-		len,			/* Length of string */
 		match;			/* 1 = match, 0 = not */
+  size_t	namelen,		/* Length of system name + version */
+		len;			/* Length of string */
   char		*ptr,			/* Pointer into value */
 		*bufptr,		/* Pointer into buffer */
 		namever[255],		/* Name + version */

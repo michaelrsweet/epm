@@ -131,31 +131,31 @@
 		274B0A48189CABE10050EF96 /* epm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = epm; sourceTree = BUILT_PRODUCTS_DIR; };
 		274B0A5B189CACE00050EF96 /* epm copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "epm copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		274B0A63189CACFB0050EF96 /* epminstall copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "epminstall copy"; sourceTree = BUILT_PRODUCTS_DIR; };
-		274B0A64189CAD6E0050EF96 /* aix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aix.c; path = ../aix.c; sourceTree = "<group>"; };
-		274B0A65189CAD6E0050EF96 /* bsd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bsd.c; path = ../bsd.c; sourceTree = "<group>"; };
-		274B0A66189CAD6E0050EF96 /* deb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = deb.c; path = ../deb.c; sourceTree = "<group>"; };
-		274B0A67189CAD6E0050EF96 /* dist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dist.c; path = ../dist.c; sourceTree = "<group>"; };
-		274B0A68189CAD6E0050EF96 /* epm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = epm.c; path = ../epm.c; sourceTree = "<group>"; };
-		274B0A69189CAD6E0050EF96 /* epm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = epm.h; path = ../epm.h; sourceTree = "<group>"; };
-		274B0A6A189CAD6E0050EF96 /* epmstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = epmstring.h; path = ../epmstring.h; sourceTree = "<group>"; };
-		274B0A6B189CAD6E0050EF96 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = file.c; path = ../file.c; sourceTree = "<group>"; };
-		274B0A6C189CAD6E0050EF96 /* inst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inst.c; path = ../inst.c; sourceTree = "<group>"; };
-		274B0A6D189CAD6E0050EF96 /* osx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = osx.c; path = ../osx.c; sourceTree = "<group>"; };
-		274B0A6E189CAD6E0050EF96 /* pkg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pkg.c; path = ../pkg.c; sourceTree = "<group>"; };
-		274B0A6F189CAD6E0050EF96 /* portable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = portable.c; path = ../portable.c; sourceTree = "<group>"; };
-		274B0A70189CAD6E0050EF96 /* qprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = qprintf.c; path = ../qprintf.c; sourceTree = "<group>"; };
-		274B0A71189CAD6E0050EF96 /* rpm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rpm.c; path = ../rpm.c; sourceTree = "<group>"; };
-		274B0A72189CAD6E0050EF96 /* run.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = run.c; path = ../run.c; sourceTree = "<group>"; };
-		274B0A73189CAD6E0050EF96 /* setld.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = setld.c; path = ../setld.c; sourceTree = "<group>"; };
-		274B0A74189CAD6E0050EF96 /* slackware.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = slackware.c; path = ../slackware.c; sourceTree = "<group>"; };
-		274B0A75189CAD6E0050EF96 /* snprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = snprintf.c; path = ../snprintf.c; sourceTree = "<group>"; };
-		274B0A76189CAD6E0050EF96 /* string.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = string.c; path = ../string.c; sourceTree = "<group>"; };
-		274B0A77189CAD6E0050EF96 /* support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = support.c; path = ../support.c; sourceTree = "<group>"; };
-		274B0A78189CAD6E0050EF96 /* swinstall.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = swinstall.c; path = ../swinstall.c; sourceTree = "<group>"; };
-		274B0A79189CAD6E0050EF96 /* tar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tar.c; path = ../tar.c; sourceTree = "<group>"; };
+		274B0A64189CAD6E0050EF96 /* aix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = aix.c; path = ../aix.c; sourceTree = SOURCE_ROOT; };
+		274B0A65189CAD6E0050EF96 /* bsd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bsd.c; path = ../bsd.c; sourceTree = SOURCE_ROOT; };
+		274B0A66189CAD6E0050EF96 /* deb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = deb.c; path = ../deb.c; sourceTree = SOURCE_ROOT; };
+		274B0A67189CAD6E0050EF96 /* dist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dist.c; path = ../dist.c; sourceTree = SOURCE_ROOT; };
+		274B0A68189CAD6E0050EF96 /* epm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = epm.c; path = ../epm.c; sourceTree = SOURCE_ROOT; };
+		274B0A69189CAD6E0050EF96 /* epm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = epm.h; path = ../epm.h; sourceTree = SOURCE_ROOT; };
+		274B0A6A189CAD6E0050EF96 /* epmstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = epmstring.h; path = ../epmstring.h; sourceTree = SOURCE_ROOT; };
+		274B0A6B189CAD6E0050EF96 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = file.c; path = ../file.c; sourceTree = SOURCE_ROOT; };
+		274B0A6C189CAD6E0050EF96 /* inst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inst.c; path = ../inst.c; sourceTree = SOURCE_ROOT; };
+		274B0A6D189CAD6E0050EF96 /* osx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = osx.c; path = ../osx.c; sourceTree = SOURCE_ROOT; };
+		274B0A6E189CAD6E0050EF96 /* pkg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pkg.c; path = ../pkg.c; sourceTree = SOURCE_ROOT; };
+		274B0A6F189CAD6E0050EF96 /* portable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = portable.c; path = ../portable.c; sourceTree = SOURCE_ROOT; };
+		274B0A70189CAD6E0050EF96 /* qprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = qprintf.c; path = ../qprintf.c; sourceTree = SOURCE_ROOT; };
+		274B0A71189CAD6E0050EF96 /* rpm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rpm.c; path = ../rpm.c; sourceTree = SOURCE_ROOT; };
+		274B0A72189CAD6E0050EF96 /* run.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = run.c; path = ../run.c; sourceTree = SOURCE_ROOT; };
+		274B0A73189CAD6E0050EF96 /* setld.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = setld.c; path = ../setld.c; sourceTree = SOURCE_ROOT; };
+		274B0A74189CAD6E0050EF96 /* slackware.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = slackware.c; path = ../slackware.c; sourceTree = SOURCE_ROOT; };
+		274B0A75189CAD6E0050EF96 /* snprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = snprintf.c; path = ../snprintf.c; sourceTree = SOURCE_ROOT; };
+		274B0A76189CAD6E0050EF96 /* string.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = string.c; path = ../string.c; sourceTree = SOURCE_ROOT; };
+		274B0A77189CAD6E0050EF96 /* support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = support.c; path = ../support.c; sourceTree = SOURCE_ROOT; };
+		274B0A78189CAD6E0050EF96 /* swinstall.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = swinstall.c; path = ../swinstall.c; sourceTree = SOURCE_ROOT; };
+		274B0A79189CAD6E0050EF96 /* tar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tar.c; path = ../tar.c; sourceTree = SOURCE_ROOT; };
 		274B0A92189CADF80050EF96 /* libepm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libepm.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		274B0A98189CAE7F0050EF96 /* mkepmlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mkepmlist.c; path = ../mkepmlist.c; sourceTree = "<group>"; };
-		274B0AB0189CAEC60050EF96 /* epminstall.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = epminstall.c; path = ../epminstall.c; sourceTree = "<group>"; };
+		274B0A98189CAE7F0050EF96 /* mkepmlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mkepmlist.c; path = ../mkepmlist.c; sourceTree = SOURCE_ROOT; };
+		274B0AB0189CAEC60050EF96 /* epminstall.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = epminstall.c; path = ../epminstall.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -677,6 +677,7 @@
 				274B0A95189CADF80050EF96 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		274B0ABC189CAF780050EF96 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
@@ -685,6 +686,7 @@
 				274B0ABE189CAF780050EF96 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -61,7 +61,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 		*src,		/* Source filename */
 		dst[1024],	/* Destination filename */
 		linkname[1024];	/* Symlink name */
-  int		linklen;	/* Length of symlink */
+  ssize_t	linklen;	/* Length of symlink */
   int		num_files;	/* Number of files to install */
   char		*files[1000];	/* Files to install */
   struct stat	fileinfo;	/* File information */
@@ -102,7 +102,7 @@ main(int  argc,			/* I - Number of command-line arguments */
     {
       i ++;
       if (i < argc)
-	mode = strtol(argv[i], NULL, 8);
+	mode = (int)strtol(argv[i], NULL, 8);
       else
 	usage();
     }
