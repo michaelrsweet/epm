@@ -307,7 +307,7 @@ tar_header(tarf_t     *fp,		/* I - Tar file to write to */
 	   const char *linkname)	/* I - File link name (for links only) */
 {
   tar_t		record;			/* TAR header record */
-  int		pathlen;		/* Length of pathname */
+  size_t	pathlen;		/* Length of pathname */
   const char	*pathsep;		/* Path separator */
   int		i,			/* Looping var... */
 		sum;			/* Checksum */

@@ -160,7 +160,7 @@ qprintf(FILE       *fp,		/* I - File to write to */
 	    if ((s = va_arg(ap, char *)) == NULL)
 	      s = "(null)";
 
-	    slen = strlen(s);
+	    slen = (int)strlen(s);
 	    if (slen > width && prec != width)
 	      width = slen;
 
