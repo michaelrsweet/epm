@@ -355,7 +355,7 @@ $(EPM_OBJS):	epm.h epmstring.h
 # epm
 #
 
-epm:	epm.o $(EPM_OBJS)
+epm:	epm.o libepm.a
 	echo Linking epm...
 	$(CC) $(LDFLAGS) -o epm epm.o libepm.a $(LIBS)
 
