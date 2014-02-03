@@ -11,6 +11,8 @@ CHANGES IN EPM 4.3
 	- Fixed some incorrect string handling (Bug #290)
 	- Fixed a compatibility issue with RPM 4.8 (Bug #292)
 	- Fixed a build dependency problem (Bug #291)
+	- The EPM makefile now uses CPPFLAGS from the configure script
+	  (Bug #300)
 	- Updated the standard path used by portable package scripts to include
 	  /usr/gnu/bin for Solaris (Bug #301)
 	- Added support for %literal(control) in Debian packages
