@@ -173,7 +173,7 @@ main(int  argc,			/* I - Number of command-line arguments */
       strlcpy(file->user, user, sizeof(file->user));
       strlcpy(file->group, group, sizeof(file->group));
       strlcpy(file->dst, files[i], sizeof(file->dst));
-      strcpy(file->src, "-");
+      strlcpy(file->src, "-", sizeof(file->src));
     }
   }
   else
@@ -252,7 +252,7 @@ main(int  argc,			/* I - Number of command-line arguments */
 	strlcpy(file->user, user, sizeof(file->user));
 	strlcpy(file->group, group, sizeof(file->group));
 	strlcpy(file->dst, files[num_files], sizeof(file->dst));
-	strcpy(file->src, "-");
+	strlcpy(file->src, "-", sizeof(file->src));
       }
       else if (file->type != 'd')
       {

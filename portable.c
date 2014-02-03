@@ -1483,7 +1483,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 	      snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
 	               file->dst);
 	    else
-              strcpy(filename, file->dst);
+              strlcpy(filename, file->dst, sizeof(filename));
 
             if (Verbosity > 1)
 	      printf("%s -> %s...\n", file->src, filename);
@@ -1592,7 +1592,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 	      snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
 	               file->dst);
 	    else
-              strcpy(filename, file->dst);
+              strlcpy(filename, file->dst, sizeof(filename));
 
             if (Verbosity > 1)
 	      printf("%s -> %s...\n", file->src, filename);
@@ -1696,7 +1696,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 		snprintf(filename, sizeof(filename), "%s/init.d/%s", SoftwareDir,
 		         file->dst);
 	      else
-        	strcpy(filename, file->dst);
+        	strlcpy(filename, file->dst, sizeof(filename));
 
               if (Verbosity > 1)
 		printf("%s -> %s...\n", file->src, filename);
@@ -1784,7 +1784,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 		snprintf(filename, sizeof(filename), "%s/init.d/%s",
 		         SoftwareDir, file->dst);
 	      else
-        	strcpy(filename, file->dst);
+        	strlcpy(filename, file->dst, sizeof(filename));
 
               if (Verbosity > 1)
 		printf("%s -> %s...\n", file->src, filename);

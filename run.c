@@ -86,10 +86,10 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
 
       for (argptr ++; *argptr && *argptr != '\''; argptr ++)
         if (*argptr == '\\' && argptr[1])
-	  strcpy(argptr, argptr + 1);
+	  memmove(argptr, argptr + 1, strlen(argptr));
 
       if (*argptr == '\'')
-        strcpy(argptr, argptr + 1);
+        memmove(argptr, argptr + 1, strlen(argptr));
 
       argptr --;
     }
@@ -100,10 +100,10 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
 
       for (argptr ++; *argptr && *argptr != '\"'; argptr ++)
         if (*argptr == '\\' && argptr[1])
-	  strcpy(argptr, argptr + 1);
+	  memmove(argptr, argptr + 1, strlen(argptr));
 
       if (*argptr == '\"')
-        strcpy(argptr, argptr + 1);
+        memmove(argptr, argptr + 1, strlen(argptr));
 
       argptr --;
     }

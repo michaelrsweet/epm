@@ -123,11 +123,11 @@ make_rpm(int            format,		/* I - Subformat */
   if (getenv("RPMDIR"))
     strlcpy(rpmdir, getenv("RPMDIR"), sizeof(rpmdir));
   else if (!access("/usr/src/redhat", 0))
-    strcpy(rpmdir, "/usr/src/redhat");
+    strlcpy(rpmdir, "/usr/src/redhat", sizeof(rpmdir));
   else if (!access("/usr/src/Mandrake", 0))
-    strcpy(rpmdir, "/usr/src/Mandrake");
+    strlcpy(rpmdir, "/usr/src/Mandrake", sizeof(rpmdir));
   else
-    strcpy(rpmdir, "/usr/src/RPM");
+    strlcpy(rpmdir, "/usr/src/RPM", sizeof(rpmdir));
 #endif /* EPM_RPMTOPDIR */
 
   snprintf(filename, sizeof(filename), "%s/RPMS", directory);

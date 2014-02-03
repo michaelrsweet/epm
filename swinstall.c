@@ -281,8 +281,8 @@ make_swinstall(const char     *prodname,/* I - Product short name */
 	file = add_file(dist, dist->files[i].subpackage);
 	file->type = 'l';
 	file->mode = 0;
-	strcpy(file->user, "root");
-	strcpy(file->group, "sys");
+	strlcpy(file->user, "root", sizeof(file->user));
+	strlcpy(file->group, "sys", sizeof(file->group));
 	snprintf(file->src, sizeof(file->src), "../init.d/%s",
         	 dist->files[i].dst);
 
@@ -302,7 +302,7 @@ make_swinstall(const char     *prodname,/* I - Product short name */
       file = dist->files + i;
 
       snprintf(filename, sizeof(filename), "/sbin/init.d/%s", file->dst);
-      strcpy(file->dst, filename);
+      strlcpy(file->dst, filename, sizeof(file->dst));
     }
 
  /*
