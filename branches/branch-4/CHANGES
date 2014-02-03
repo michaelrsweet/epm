@@ -9,6 +9,7 @@ CHANGES IN EPM 4.3
 	- %literal(spec) did not insert the literal content in the correct
 	  location (Bug #302)
 	- Fixed some incorrect string handling (Bug #290)
+	- Fixed a compatibility issue with RPM 4.8 (Bug #292)
 
 
 CHANGES IN EPM 4.2
