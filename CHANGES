@@ -3,6 +3,8 @@ CHANGES - ESP Package Manager (EPM) 4.3
 
 CHANGES IN EPM 4.3
 
+	- EPM now maps the x86_64 architecture to amd64 when creating
+	  Debian packages (Bug #295)
 
 
 CHANGES IN EPM 4.2
