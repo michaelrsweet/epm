@@ -13,6 +13,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				2734A4D6189D2CCF00106285 /* PBXTargetDependency */,
 				274B0AC0189CAF840050EF96 /* PBXTargetDependency */,
 				274B0AC2189CAF840050EF96 /* PBXTargetDependency */,
 				274B0AC4189CAF840050EF96 /* PBXTargetDependency */,
@@ -23,6 +24,13 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		2734A4A4189D2BEE00106285 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2734A4A3189D2BEE00106285 /* Cocoa.framework */; };
+		2734A4AE189D2BEE00106285 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2734A4AC189D2BEE00106285 /* InfoPlist.strings */; };
+		2734A4B0189D2BEE00106285 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2734A4AF189D2BEE00106285 /* main.m */; };
+		2734A4B4189D2BEE00106285 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2734A4B2189D2BEE00106285 /* Credits.rtf */; };
+		2734A4B7189D2BEE00106285 /* EPMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2734A4B6189D2BEE00106285 /* EPMAppDelegate.m */; };
+		2734A4BA189D2BEE00106285 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2734A4B8189D2BEE00106285 /* MainMenu.xib */; };
+		2734A4BC189D2BEE00106285 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2734A4BB189D2BEE00106285 /* Images.xcassets */; };
 		274B0A7E189CAD6E0050EF96 /* epm.c in Sources */ = {isa = PBXBuildFile; fileRef = 274B0A68189CAD6E0050EF96 /* epm.c */; };
 		274B0A99189CAE7F0050EF96 /* mkepmlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 274B0A98189CAE7F0050EF96 /* mkepmlist.c */; };
 		274B0A9A189CAE8A0050EF96 /* aix.c in Sources */ = {isa = PBXBuildFile; fileRef = 274B0A64189CAD6E0050EF96 /* aix.c */; };
@@ -53,6 +61,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2734A4D5189D2CCF00106285 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 274B0A40189CABE10050EF96 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2734A4A0189D2BEE00106285;
+			remoteInfo = Uninstall;
+		};
 		274B0AB2189CAF010050EF96 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 274B0A40189CABE10050EF96 /* Project object */;
@@ -128,6 +143,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2734A4A1189D2BEE00106285 /* Uninstall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Uninstall.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2734A4A3189D2BEE00106285 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		2734A4A6189D2BEE00106285 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		2734A4A7189D2BEE00106285 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		2734A4A8189D2BEE00106285 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2734A4AB189D2BEE00106285 /* Uninstall-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Uninstall-Info.plist"; sourceTree = "<group>"; };
+		2734A4AD189D2BEE00106285 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2734A4AF189D2BEE00106285 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2734A4B1189D2BEE00106285 /* Uninstall-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Uninstall-Prefix.pch"; sourceTree = "<group>"; };
+		2734A4B3189D2BEE00106285 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		2734A4B5189D2BEE00106285 /* EPMAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EPMAppDelegate.h; sourceTree = "<group>"; };
+		2734A4B6189D2BEE00106285 /* EPMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EPMAppDelegate.m; sourceTree = "<group>"; };
+		2734A4BB189D2BEE00106285 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		2734A4C2189D2BEE00106285 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		2734A4D9189D315500106285 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		2734A4DA189F183700106285 /* CHANGES */ = {isa = PBXFileReference; lastKnownFileType = text; name = CHANGES; path = ../CHANGES; sourceTree = "<group>"; };
+		2734A4DB189F183700106285 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; name = INSTALL; path = ../INSTALL; sourceTree = "<group>"; };
+		2734A4DC189F183700106285 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; name = README; path = ../README; sourceTree = "<group>"; };
 		274B0A48189CABE10050EF96 /* epm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = epm; sourceTree = BUILT_PRODUCTS_DIR; };
 		274B0A5B189CACE00050EF96 /* epm copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "epm copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		274B0A63189CACFB0050EF96 /* epminstall copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "epminstall copy"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,6 +192,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2734A49E189D2BEE00106285 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2734A4A4189D2BEE00106285 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		274B0A45189CABE10050EF96 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -193,13 +234,62 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2734A4A2189D2BEE00106285 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2734A4A3189D2BEE00106285 /* Cocoa.framework */,
+				2734A4C2189D2BEE00106285 /* XCTest.framework */,
+				2734A4A5189D2BEE00106285 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2734A4A5189D2BEE00106285 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2734A4A6189D2BEE00106285 /* AppKit.framework */,
+				2734A4A7189D2BEE00106285 /* CoreData.framework */,
+				2734A4A8189D2BEE00106285 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		2734A4A9189D2BEE00106285 /* Uninstall */ = {
+			isa = PBXGroup;
+			children = (
+				2734A4B5189D2BEE00106285 /* EPMAppDelegate.h */,
+				2734A4B6189D2BEE00106285 /* EPMAppDelegate.m */,
+				2734A4B8189D2BEE00106285 /* MainMenu.xib */,
+				2734A4BB189D2BEE00106285 /* Images.xcassets */,
+				2734A4AA189D2BEE00106285 /* Supporting Files */,
+			);
+			path = Uninstall;
+			sourceTree = "<group>";
+		};
+		2734A4AA189D2BEE00106285 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2734A4AB189D2BEE00106285 /* Uninstall-Info.plist */,
+				2734A4AC189D2BEE00106285 /* InfoPlist.strings */,
+				2734A4AF189D2BEE00106285 /* main.m */,
+				2734A4B1189D2BEE00106285 /* Uninstall-Prefix.pch */,
+				2734A4B2189D2BEE00106285 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		274B0A3F189CABE10050EF96 = {
 			isa = PBXGroup;
 			children = (
+				2734A4DA189F183700106285 /* CHANGES */,
+				2734A4DB189F183700106285 /* INSTALL */,
+				2734A4DC189F183700106285 /* README */,
 				274B0A96189CAE270050EF96 /* epm */,
 				274B0AAF189CAEB00050EF96 /* epminstall */,
 				274B0A4A189CABE10050EF96 /* libepm */,
 				274B0A97189CAE540050EF96 /* mkepmlist */,
+				2734A4A9189D2BEE00106285 /* Uninstall */,
+				2734A4A2189D2BEE00106285 /* Frameworks */,
 				274B0A49189CABE10050EF96 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -211,6 +301,7 @@
 				274B0A5B189CACE00050EF96 /* epm copy */,
 				274B0A63189CACFB0050EF96 /* epminstall copy */,
 				274B0A92189CADF80050EF96 /* libepm.a */,
+				2734A4A1189D2BEE00106285 /* Uninstall.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -283,6 +374,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		2734A4A0189D2BEE00106285 /* Uninstall */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2734A4CF189D2BEE00106285 /* Build configuration list for PBXNativeTarget "Uninstall" */;
+			buildPhases = (
+				2734A49D189D2BEE00106285 /* Sources */,
+				2734A49E189D2BEE00106285 /* Frameworks */,
+				2734A49F189D2BEE00106285 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Uninstall;
+			productName = Uninstall;
+			productReference = 2734A4A1189D2BEE00106285 /* Uninstall.app */;
+			productType = "com.apple.product-type.application";
+		};
 		274B0A47189CABE10050EF96 /* epm */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 274B0A51189CABE10050EF96 /* Build configuration list for PBXNativeTarget "epm" */;
@@ -369,6 +477,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 274B0A3F189CABE10050EF96;
 			productRefGroup = 274B0A49189CABE10050EF96 /* Products */;
@@ -380,11 +489,35 @@
 				274B0A54189CACE00050EF96 /* epminstall */,
 				274B0A5C189CACFB0050EF96 /* mkepmlist */,
 				274B0A91189CADF80050EF96 /* libepm */,
+				2734A4A0189D2BEE00106285 /* Uninstall */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		2734A49F189D2BEE00106285 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2734A4AE189D2BEE00106285 /* InfoPlist.strings in Resources */,
+				2734A4BC189D2BEE00106285 /* Images.xcassets in Resources */,
+				2734A4B4189D2BEE00106285 /* Credits.rtf in Resources */,
+				2734A4BA189D2BEE00106285 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		2734A49D189D2BEE00106285 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2734A4B0189D2BEE00106285 /* main.m in Sources */,
+				2734A4B7189D2BEE00106285 /* EPMAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		274B0A44189CABE10050EF96 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -438,6 +571,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2734A4D6189D2CCF00106285 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2734A4A0189D2BEE00106285 /* Uninstall */;
+			targetProxy = 2734A4D5189D2CCF00106285 /* PBXContainerItemProxy */;
+		};
 		274B0AB3189CAF010050EF96 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 274B0A91189CADF80050EF96 /* libepm */;
@@ -470,14 +608,71 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		2734A4AC189D2BEE00106285 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2734A4AD189D2BEE00106285 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2734A4B2189D2BEE00106285 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2734A4B3189D2BEE00106285 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		2734A4B8189D2BEE00106285 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2734A4D9189D315500106285 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		2734A4D0189D2BEE00106285 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Uninstall/Uninstall-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Uninstall/Uninstall-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		2734A4D1189D2BEE00106285 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Uninstall/Uninstall-Prefix.pch";
+				INFOPLIST_FILE = "Uninstall/Uninstall-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		274B0A4F189CABE10050EF96 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -487,6 +682,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 4.3;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -507,7 +703,7 @@
 					.,
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -519,7 +715,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -529,6 +725,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
+				CURRENT_PROJECT_VERSION = 4.3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -544,7 +741,7 @@
 					.,
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -634,6 +831,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2734A4CF189D2BEE00106285 /* Build configuration list for PBXNativeTarget "Uninstall" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2734A4D0189D2BEE00106285 /* Debug */,
+				2734A4D1189D2BEE00106285 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		274B0A43189CABE10050EF96 /* Build configuration list for PBXProject "EPM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
