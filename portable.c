@@ -1077,7 +1077,7 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fprintf(fp, "#%%usrsize %d\n", usrsize);
   fputs("#\n", fp);
 
-  fputs("PATH=/usr/xpg4/bin:/bin:/usr/bin:/usr/ucb:${PATH}\n", fp);
+  fputs("PATH=/usr/gnu/bin:/usr/xpg4/bin:/bin:/usr/bin:/usr/ucb:${PATH}\n", fp);
   fputs("SHELL=/bin/sh\n", fp);
   fputs("case \"`uname`\" in\n", fp);
   fputs("\tDarwin*)\n", fp);
