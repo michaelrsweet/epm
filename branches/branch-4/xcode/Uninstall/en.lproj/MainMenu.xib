@@ -244,29 +244,27 @@
 				<string key="NSWindowContentMaxSize">{480, 103}</string>
 				<string key="NSWindowContentMinSize">{480, 103}</string>
 				<object class="NSView" key="NSWindowView" id="385041158">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
-						<object class="NSButton" id="19763739">
+						<object class="NSButton" id="566966214">
 							<reference key="NSNextResponder" ref="385041158"/>
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{386, 13}, {82, 32}}</string>
 							<reference key="NSSuperview" ref="385041158"/>
-							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
-							<object class="NSButtonCell" key="NSCell" id="333206943">
+							<object class="NSButtonCell" key="NSCell" id="1001788887">
 								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">134217728</int>
 								<string key="NSContents">Cancel</string>
-								<object class="NSFont" key="NSSupport" id="499353881">
+								<object class="NSFont" key="NSSupport" id="664124507">
 									<string key="NSName">.LucidaGrandeUI</string>
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">1044</int>
 								</object>
 								<string key="NSCellIdentifier">_NS:9</string>
-								<reference key="NSControlView" ref="19763739"/>
+								<reference key="NSControlView" ref="566966214"/>
 								<int key="NSButtonFlags">-2038284288</int>
 								<int key="NSButtonFlags2">1</int>
 								<string key="NSAlternateContents"/>
@@ -276,22 +274,21 @@
 							</object>
 							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 						</object>
-						<object class="NSButton" id="487945655">
+						<object class="NSButton" id="896231962">
 							<reference key="NSNextResponder" ref="385041158"/>
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{291, 13}, {95, 32}}</string>
 							<reference key="NSSuperview" ref="385041158"/>
-							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="19763739"/>
+							<reference key="NSNextKeyView" ref="566966214"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
-							<object class="NSButtonCell" key="NSCell" id="139048989">
+							<object class="NSButtonCell" key="NSCell" id="355125507">
 								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">134217728</int>
 								<string key="NSContents">Uninstall</string>
-								<reference key="NSSupport" ref="499353881"/>
+								<reference key="NSSupport" ref="664124507"/>
 								<string key="NSCellIdentifier">_NS:9</string>
-								<reference key="NSControlView" ref="487945655"/>
+								<reference key="NSControlView" ref="896231962"/>
 								<int key="NSButtonFlags">-2038284288</int>
 								<int key="NSButtonFlags2">1</int>
 								<string key="NSAlternateContents"/>
@@ -301,23 +298,22 @@
 							</object>
 							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 						</object>
-						<object class="NSTextField" id="197592075">
+						<object class="NSTextField" id="280235788">
 							<reference key="NSNextResponder" ref="385041158"/>
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{18, 49}, {452, 34}}</string>
 							<reference key="NSSuperview" ref="385041158"/>
-							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="586812119"/>
+							<reference key="NSNextKeyView" ref="993090053"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<string key="NSAntiCompressionPriority">{250, 750}</string>
 							<bool key="NSEnabled">YES</bool>
-							<object class="NSTextFieldCell" key="NSCell" id="625937545">
+							<object class="NSTextFieldCell" key="NSCell" id="8728473">
 								<int key="NSCellFlags">67108864</int>
 								<int key="NSCellFlags2">272629760</int>
 								<string key="NSContents">Do you want to uninstall Foo from your computer?</string>
-								<reference key="NSSupport" ref="499353881"/>
+								<reference key="NSSupport" ref="664124507"/>
 								<string key="NSCellIdentifier">_NS:9</string>
-								<reference key="NSControlView" ref="197592075"/>
+								<reference key="NSControlView" ref="280235788"/>
 								<object class="NSColor" key="NSBackgroundColor">
 									<int key="NSColorSpace">6</int>
 									<string key="NSCatalogName">System</string>
@@ -341,22 +337,19 @@
 							<double key="NSPreferredMaxLayoutWidth">92</double>
 							<int key="NSTextFieldAlignmentRectInsetsVersion">1</int>
 						</object>
-						<object class="NSProgressIndicator" id="586812119">
+						<object class="NSProgressIndicator" id="993090053">
 							<reference key="NSNextResponder" ref="385041158"/>
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{273, 22}, {16, 16}}</string>
 							<reference key="NSSuperview" ref="385041158"/>
-							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="487945655"/>
+							<reference key="NSNextKeyView" ref="896231962"/>
 							<string key="NSReuseIdentifierKey">_NS:984</string>
 							<int key="NSpiFlags">20746</int>
 							<double key="NSMaxValue">100</double>
 						</object>
 					</array>
 					<string key="NSFrameSize">{480, 103}</string>
-					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
-					<reference key="NSNextKeyView" ref="197592075"/>
+					<reference key="NSNextKeyView" ref="280235788"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMinSize">{480, 125}</string>
@@ -385,7 +378,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">terminate:</string>
 						<reference key="source" ref="136857598"/>
-						<reference key="destination" ref="19763739"/>
+						<reference key="destination" ref="566966214"/>
 					</object>
 					<string key="id">Hi3-JU-8t4</string>
 				</object>
@@ -465,7 +458,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">message</string>
 						<reference key="source" ref="102611238"/>
-						<reference key="destination" ref="197592075"/>
+						<reference key="destination" ref="280235788"/>
 					</object>
 					<string key="id">rOH-UI-Ecs</string>
 				</object>
@@ -473,7 +466,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">progressIndicator</string>
 						<reference key="source" ref="102611238"/>
-						<reference key="destination" ref="586812119"/>
+						<reference key="destination" ref="993090053"/>
 					</object>
 					<string key="id">IZ9-WG-Ixw</string>
 				</object>
@@ -481,7 +474,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">uninstallButton</string>
 						<reference key="source" ref="102611238"/>
-						<reference key="destination" ref="487945655"/>
+						<reference key="destination" ref="896231962"/>
 					</object>
 					<string key="id">nTC-5l-bxi</string>
 				</object>
@@ -489,7 +482,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">cancelButton</string>
 						<reference key="source" ref="102611238"/>
-						<reference key="destination" ref="19763739"/>
+						<reference key="destination" ref="566966214"/>
 					</object>
 					<string key="id">Sce-U5-Dnh</string>
 				</object>
@@ -497,7 +490,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">doUninstall:</string>
 						<reference key="source" ref="102611238"/>
-						<reference key="destination" ref="487945655"/>
+						<reference key="destination" ref="896231962"/>
 					</object>
 					<string key="id">WXf-9L-aaR</string>
 				</object>
@@ -505,7 +498,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">indicator</string>
 						<reference key="source" ref="102611238"/>
-						<reference key="destination" ref="586812119"/>
+						<reference key="destination" ref="993090053"/>
 					</object>
 					<string key="id">BfU-e5-wAA</string>
 				</object>
@@ -689,10 +682,10 @@
 						<string key="id">372</string>
 						<reference key="object" ref="385041158"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="197592075"/>
-							<reference ref="19763739"/>
-							<reference ref="487945655"/>
-							<reference ref="586812119"/>
+							<reference ref="280235788"/>
+							<reference ref="566966214"/>
+							<reference ref="896231962"/>
+							<reference ref="993090053"/>
 						</array>
 						<reference key="parent" ref="934869174"/>
 					</object>
@@ -703,46 +696,46 @@
 					</object>
 					<object class="IBObjectRecord">
 						<string key="id">Wjg-zf-yGF</string>
-						<reference key="object" ref="19763739"/>
+						<reference key="object" ref="566966214"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="333206943"/>
+							<reference ref="1001788887"/>
 						</array>
 						<reference key="parent" ref="385041158"/>
 					</object>
 					<object class="IBObjectRecord">
 						<string key="id">uo2-UT-7ud</string>
-						<reference key="object" ref="333206943"/>
-						<reference key="parent" ref="19763739"/>
+						<reference key="object" ref="1001788887"/>
+						<reference key="parent" ref="566966214"/>
 					</object>
 					<object class="IBObjectRecord">
 						<string key="id">yOD-X6-hFX</string>
-						<reference key="object" ref="197592075"/>
+						<reference key="object" ref="280235788"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="625937545"/>
+							<reference ref="8728473"/>
 						</array>
 						<reference key="parent" ref="385041158"/>
 					</object>
 					<object class="IBObjectRecord">
 						<string key="id">iIs-nK-eST</string>
-						<reference key="object" ref="625937545"/>
-						<reference key="parent" ref="197592075"/>
+						<reference key="object" ref="8728473"/>
+						<reference key="parent" ref="280235788"/>
 					</object>
 					<object class="IBObjectRecord">
 						<string key="id">7VX-VQ-1ID</string>
-						<reference key="object" ref="487945655"/>
+						<reference key="object" ref="896231962"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="139048989"/>
+							<reference ref="355125507"/>
 						</array>
 						<reference key="parent" ref="385041158"/>
 					</object>
 					<object class="IBObjectRecord">
 						<string key="id">dZl-gs-86j</string>
-						<reference key="object" ref="139048989"/>
-						<reference key="parent" ref="487945655"/>
+						<reference key="object" ref="355125507"/>
+						<reference key="parent" ref="896231962"/>
 					</object>
 					<object class="IBObjectRecord">
 						<string key="id">P8M-D4-jZU</string>
-						<reference key="object" ref="586812119"/>
+						<reference key="object" ref="993090053"/>
 						<reference key="parent" ref="385041158"/>
 					</object>
 				</array>
@@ -819,58 +812,7 @@
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">EPMAppDelegate</string>
-					<string key="superclassName">NSObject</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">doUninstall:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">doUninstall:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">doUninstall:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="cancelButton">NSButton</string>
-						<string key="indicator">NSProgressIndicator</string>
-						<string key="message">NSTextField</string>
-						<string key="uninstallButton">NSButton</string>
-						<string key="window">NSWindow</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="cancelButton">
-							<string key="name">cancelButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="indicator">
-							<string key="name">indicator</string>
-							<string key="candidateClassName">NSProgressIndicator</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="message">
-							<string key="name">message</string>
-							<string key="candidateClassName">NSTextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="uninstallButton">
-							<string key="name">uninstallButton</string>
-							<string key="candidateClassName">NSButton</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="window">
-							<string key="name">window</string>
-							<string key="candidateClassName">NSWindow</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/EPMAppDelegate.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<bool key="IBDocument.previouslyAttemptedUpgradeToXcode5">YES</bool>

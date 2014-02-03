@@ -47,7 +47,7 @@ copy_file(const char *dst,		/* I - Destination file */
   * Check that the destination directory exists...
   */
 
-  strcpy(buffer, dst);
+  strlcpy(buffer, dst, sizeof(buffer));
   if ((slash = strrchr(buffer, '/')) != NULL)
     *slash = '\0';
 
@@ -185,7 +185,7 @@ make_link(const char *dst,		/* I - Destination file */
   * Check that the destination directory exists...
   */
 
-  strcpy(buffer, dst);
+  strlcpy(buffer, dst, sizeof(buffer));
   if ((slash = strrchr(buffer, '/')) != NULL)
     *slash = '\0';
 

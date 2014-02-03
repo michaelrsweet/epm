@@ -8,6 +8,7 @@ CHANGES IN EPM 4.3
 	- %format stopped working in EPM 4.2 (Bug #296)
 	- %literal(spec) did not insert the literal content in the correct
 	  location (Bug #302)
+	- Fixed some incorrect string handling (Bug #290)
 
 
 CHANGES IN EPM 4.2

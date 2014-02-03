@@ -384,7 +384,7 @@ aix_addfile(int        type,		/* I  - Filetype */
   if (i < num_dirs)
     memmove(temp + 1, temp, (num_dirs - i) * sizeof(aixdir_t));
 
-  strcpy(temp->dst, dstpath);
+  strlcpy(temp->dst, dstpath, sizeof(temp->dst));
   temp->blocks = blocks;
 
   return (num_dirs + 1);
