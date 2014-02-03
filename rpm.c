@@ -130,6 +130,10 @@ make_rpm(int            format,		/* I - Subformat */
     strlcpy(rpmdir, "/usr/src/RPM", sizeof(rpmdir));
 #endif /* EPM_RPMTOPDIR */
 
+  snprintf(filename, sizeof(filename), "%s/BUILD", directory);
+
+  make_directory(filename, 0777, getuid(), getgid());
+
   snprintf(filename, sizeof(filename), "%s/RPMS", directory);
 
   make_directory(filename, 0777, getuid(), getgid());
