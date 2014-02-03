@@ -662,6 +662,19 @@ write_spec(int        format,		/* I - Subformat */
       fprintf(fp, " = %s\n", d->version[0]);
   }
 
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
+        !strcmp(c->section, "spec"))
+      break;
+
+  if (i > 0)
+  {
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
+	  !strcmp(c->section, "spec"))
+	fprintf(fp, "%s\n", c->command);
+  }
+
  /*
   * Pre/post install commands...
   */
@@ -694,19 +707,6 @@ write_spec(int        format,		/* I - Subformat */
   }
   else
     have_commands = 0;
-
-  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
-        !strcmp(c->section, "spec"))
-      break;
-
-  if (i > 0)
-  {
-    for (; i > 0; i --, c ++)
-      if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
-	  !strcmp(c->section, "spec"))
-	fprintf(fp, "%s\n", c->command);
-  }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i' && file->subpackage == subpackage)

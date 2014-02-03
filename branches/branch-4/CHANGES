@@ -6,6 +6,8 @@ CHANGES IN EPM 4.3
 	- EPM now maps the x86_64 architecture to amd64 when creating
 	  Debian packages (Bug #295)
 	- %format stopped working in EPM 4.2 (Bug #296)
+	- %literal(spec) did not insert the literal content in the correct
+	  location (Bug #302)
 
 
 CHANGES IN EPM 4.2
