@@ -43,6 +43,7 @@ STRIP		=	@STRIP@
 ARFLAGS		=	@ARFLAGS@
 ARCHFLAGS	=	@ARCHFLAGS@
 CFLAGS		=	$(ARCHFLAGS) @CFLAGS@ $(OPTIM)
+CPPFLAGS	=	@CPPFLAGS@
 CXXFLAGS	=	$(ARCHFLAGS) @CXXFLAGS@ $(OPTIM)
 GUILIBS		=	@GUILIBS@
 LDFLAGS		=	$(ARCHFLAGS) @LDFLAGS@ $(OPTIM)
@@ -76,10 +77,10 @@ VPATH		=	$(srcdir)
 .SUFFIXES:	.c .cxx .h .o
 .c.o:
 	echo Compiling $<...
-	$(CC) $(CFLAGS) -I. -I$(srcdir) -c $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) -I. -I$(srcdir) -c $<
 .cxx.o:
 	echo Compiling $<...
-	$(CXX) $(CXXFLAGS) -I. -I$(srcdir) -c $<
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -I. -I$(srcdir) -c $<
 
 
 #
