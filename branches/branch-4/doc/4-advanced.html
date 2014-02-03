@@ -576,6 +576,17 @@ keywords, signing keys, and response data. The <CODE>%literal(section)</CODE>
 directive adds format-specific data to the packages you create. Literal
 data is currently only supported for RPM and PKG packages.</P>
 
+<H3>Debian Literal Data</H3>
+
+<p>Debian packages have control files that provide metadata for each package. The <CODE>%literal(control)</CODE> directive can be used to provide this metadata:</P>
+
+<PRE>
+    %literal(control) &lt;&lt;EOF
+    Section: misc
+    Priority: extra
+    EOF
+</PRE>
+
 <H3>PKG Literal Data</H3>
 
 <P>PKG packages support request files that are used to do batch

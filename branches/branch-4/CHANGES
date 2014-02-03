@@ -11,8 +11,10 @@ CHANGES IN EPM 4.3
 	- Fixed some incorrect string handling (Bug #290)
 	- Fixed a compatibility issue with RPM 4.8 (Bug #292)
 	- Fixed a build dependency problem (Bug #291)
-	- Update the standard path used by portable package scripts to include
+	- Updated the standard path used by portable package scripts to include
 	  /usr/gnu/bin for Solaris (Bug #301)
+	- Added support for %literal(control) in Debian packages
+	  (Bug #297)
 
 
 CHANGES IN EPM 4.2
