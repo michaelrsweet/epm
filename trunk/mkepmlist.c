@@ -3,7 +3,7 @@
  *
  * List file generation utility for the ESP Package Manager (EPM).
  *
- * Copyright 2003-2014 by Michael R Sweet.
+ * Copyright 2003-2014 by Michael R Sweet
  * Copyright 2003-2005 by Easy Software Products
  * Copyright 2003 Andreas Voegele
  *
@@ -445,7 +445,7 @@ process_dir(const char *srcpath,/* I - Source path */
 {
   DIR		*dir;		/* Directory to read from */
   struct dirent *dent;		/* Current directory entry */
-  int		srclen;		/* Length of source path */
+  size_t	srclen;		/* Length of source path */
   char		src[1024];	/* Temporary source path */
 
 
@@ -508,8 +508,8 @@ process_file(const char *src,	/* I - Source path */
 {
   const char	*srcptr;	/* Pointer into source path */
   struct stat	srcinfo;	/* Information on the source file */
-  int		linklen,	/* Length of link path */
-		dstlen;		/* Length of destination path */
+  ssize_t	linklen;	/* Length of link path */
+  size_t	dstlen;		/* Length of destination path */
   char		link[1024],	/* Link for source */
 		dst[1024];	/* Temporary destination path */
 

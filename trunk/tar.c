@@ -307,7 +307,7 @@ tar_header(tarf_t     *fp,		/* I - Tar file to write to */
 	   const char *linkname)	/* I - File link name (for links only) */
 {
   tar_t		record;			/* TAR header record */
-  int		pathlen;		/* Length of pathname */
+  size_t	pathlen;		/* Length of pathname */
   const char	*pathsep;		/* Path separator */
   int		i,			/* Looping var... */
 		sum;			/* Checksum */
@@ -341,7 +341,7 @@ tar_header(tarf_t     *fp,		/* I - Tar file to write to */
     * Pathname is short enough to fit in the initial pathname field...
     */
 
-    strcpy(record.header.pathname, pathname);
+    strlcpy(record.header.pathname, pathname, sizeof(record.header.pathname));
     if (type == TAR_DIR && pathname[pathlen - 1] != '/')
       record.header.pathname[pathlen] = '/';
   }
@@ -385,7 +385,7 @@ tar_header(tarf_t     *fp,		/* I - Tar file to write to */
       return (-1);
     }
 
-    strcpy(record.header.pathname, pathsep + 1);
+    strlcpy(record.header.pathname, pathsep + 1, sizeof(record.header.pathname));
     if (type == TAR_DIR && pathname[pathlen - 1] != '/')
       record.header.pathname[pathlen - (pathsep - pathname + 1)] = '/';
 
@@ -401,7 +401,7 @@ tar_header(tarf_t     *fp,		/* I - Tar file to write to */
   record.header.linkflag = type;
   if (type == TAR_SYMLINK)
     strlcpy(record.header.linkname, linkname, sizeof(record.header.linkname));
-  strcpy(record.header.magic, TAR_MAGIC);
+  strlcpy(record.header.magic, TAR_MAGIC, sizeof(record.header.magic));
   memcpy(record.header.version, TAR_VERSION, 2);
   strlcpy(record.header.uname, user, sizeof(record.header.uname));
   strlcpy(record.header.gname, group, sizeof(record.header.uname));

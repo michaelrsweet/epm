@@ -76,8 +76,11 @@ main(int  argc,				/* I - Number of command-line args */
 		  "bsd",
 		  "deb",
 		  "inst",
+		  "rpm",
+		  "rpm",
 		  "osx",
 		  "pkg",
+		  "rpm",
 		  "rpm",
 		  "setld",
 		  "slackware",
@@ -384,9 +387,9 @@ main(int  argc,				/* I - Number of command-line args */
     else if (strchr(argv[i], '=') != NULL)
       putenv(argv[i]);
     else if (prodname[0] == '\0')
-      strcpy(prodname, argv[i]);
+      strlcpy(prodname, argv[i], sizeof(prodname));
     else if (listname[0] == '\0')
-      strcpy(listname, argv[i]);
+      strlcpy(listname, argv[i], sizeof(listname));
     else
     {
       printf("epm: Unknown argument \"%s\".\n", argv[i]);

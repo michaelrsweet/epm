@@ -204,7 +204,7 @@ add_depend(dist_t     *dist,		/* I - Distribution */
     {
       if (*line == '<' && i == 0)
       {
-        strcpy(temp->version[0], "0.0");
+        strlcpy(temp->version[0], "0.0", sizeof(temp->version[0]));
 	i ++;
       }
 
@@ -260,10 +260,10 @@ add_depend(dist_t     *dist,		/* I - Distribution */
   switch (i)
   {
     case 0 :
-        strcpy(temp->version[0], "0.0");
+        strlcpy(temp->version[0], "0.0", sizeof(temp->version[0]));
 	/* fall through to set max version number */
     case 1 :
-        strcpy(temp->version[1], "999.99.99p99");
+        strlcpy(temp->version[1], "999.99.99p99", sizeof(temp->version[1]));
 	temp->vernumber[1] = INT_MAX;
 	break;
   }
@@ -486,7 +486,7 @@ get_option(file_t     *file,		/* I - File */
   */
 
   ptr += strlen(option);
-  strcpy(option, ptr);	/* option and file->options are of equal size */
+  memmove(option, ptr, strlen(ptr) + 1);
 
   if ((ptr = strchr(option, ')')) != NULL)
   {
@@ -554,12 +554,12 @@ get_platform(struct utsname *platform)	/* O - Platform info */
       * Couldn't find the version number, so assume it is 10.1...
       */
 
-      strcpy(platform->release, "10.1");
+      strlcpy(platform->release, "10.1", sizeof(platform->release));
     }
 
     fclose(fp);
 
-    strcpy(platform->sysname, "macosx");
+    strlcpy(platform->sysname, "macosx", sizeof(platform->sysname));
   }
 #endif /* __APPLE__ */
 
@@ -592,10 +592,10 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   */
 
   while (!isdigit((int)platform->release[0]) && platform->release[0])
-    strcpy(platform->release, platform->release + 1);
+    memmove(platform->release, platform->release + 1, strlen(platform->release));
 
   if (platform->release[0] == '.')
-    strcpy(platform->release, platform->release + 1);
+    memmove(platform->release, platform->release + 1, strlen(platform->release));
 
   for (temp = platform->release; *temp && isdigit(*temp & 255); temp ++);
 
@@ -613,7 +613,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   for (temp = platform->sysname; *temp != '\0'; temp ++)
     if (*temp == '-' || *temp == '_')
     {
-      strcpy(temp, temp + 1);
+      memmove(temp, temp + 1, strlen(temp));
       temp --;
     }
     else
@@ -626,7 +626,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
 
   if (!strcmp(platform->sysname, "sunos") && platform->release[0] >= '5')
   {
-    strcpy(platform->sysname, "solaris");
+    strlcpy(platform->sysname, "solaris", sizeof(platform->sysname));
 
     if (atoi(platform->release + 2) < 7)
       platform->release[0] -= 3;
@@ -643,9 +643,9 @@ get_platform(struct utsname *platform)	/* O - Platform info */
     }
   }
   else if (!strcmp(platform->sysname, "osf1"))
-    strcpy(platform->sysname, "tru64"); /* AKA Digital UNIX */
+    strlcpy(platform->sysname, "tru64", sizeof(platform->sysname)); /* AKA Digital UNIX */
   else if (!strcmp(platform->sysname, "irix64"))
-    strcpy(platform->sysname, "irix"); /* IRIX */
+    strlcpy(platform->sysname, "irix", sizeof(platform->sysname)); /* IRIX */
 
 #ifdef DEBUG
   printf("sysname = %s\n", platform->sysname);
@@ -870,42 +870,42 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
         else if (!strcmp(line, "%product"))
 	{
           if (!dist->product[0])
-            strcpy(dist->product, temp);
+            strlcpy(dist->product, temp, sizeof(dist->product));
 	  else
 	    fputs("epm: Ignoring %product line in list file.\n", stderr);
 	}
 	else if (!strcmp(line, "%copyright"))
 	{
           if (!dist->copyright[0])
-            strcpy(dist->copyright, temp);
+            strlcpy(dist->copyright, temp, sizeof(dist->copyright));
 	  else
 	    fputs("epm: Ignoring %copyright line in list file.\n", stderr);
 	}
 	else if (!strcmp(line, "%vendor"))
 	{
           if (!dist->vendor[0])
-            strcpy(dist->vendor, temp);
+            strlcpy(dist->vendor, temp, sizeof(dist->vendor));
 	  else
 	    fputs("epm: Ignoring %vendor line in list file.\n", stderr);
 	}
 	else if (!strcmp(line, "%packager"))
 	{
           if (!dist->packager[0])
-            strcpy(dist->packager, temp);
+            strlcpy(dist->packager, temp, sizeof(dist->packager));
 	  else
 	    fputs("epm: Ignoring %packager line in list file.\n", stderr);
 	}
 	else if (!strcmp(line, "%license"))
 	{
           if (!dist->license[0])
-            strcpy(dist->license, temp);
+            strlcpy(dist->license, temp, sizeof(dist->license));
 	  else
 	    fputs("epm: Ignoring %license line in list file.\n", stderr);
 	}
 	else if (!strcmp(line, "%readme"))
 	{
           if (!dist->readme[0])
-            strcpy(dist->readme, temp);
+            strlcpy(dist->readme, temp, sizeof(dist->readme));
 	  else
 	    fputs("epm: Ignoring %readme line in list file.\n", stderr);
 	}
@@ -923,7 +923,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	      * Grab the epoch...
 	      */
 
-	      dist->epoch = strtol(temp, &temp, 10);
+	      dist->epoch = (int)strtol(temp, &temp, 10);
 
 	      if (*temp == ':')
 	        temp ++;
@@ -976,8 +976,8 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  * Remove {} from name...
 	  */
 
-	  strcpy(temp, temp + 1);
-          strcpy(line + 1, line + 2);
+	  memmove(temp, temp + 1, strlen(temp));
+          memmove(line + 1, line + 2, strlen(line + 1));
         }
 	else if (line[1] == '(' && (temp = strchr(line + 2, ')')) != NULL)
 	{
@@ -985,8 +985,8 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  * Remove () from name...
 	  */
 
-	  strcpy(temp, temp + 1);
-          strcpy(line + 1, line + 2);
+	  memmove(temp, temp + 1, strlen(temp));
+          memmove(line + 1, line + 2, strlen(line + 1));
         }
 
         if ((temp = strchr(line + 1, '=')) != NULL)
@@ -1052,7 +1052,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
 	if (tolower(type) == 'd' || type == 'R')
 	{
-	  strcpy(options, src);
+	  strlcpy(options, src, sizeof(options));
 	  src[0] = '\0';
 	}
 
@@ -1087,7 +1087,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  strlcpy(pattern, temp, sizeof(pattern));
 
           if (dst[strlen(dst) - 1] != '/')
-	    strncat(dst, "/", sizeof(dst) - 1);
+	    strlcat(dst, "/", sizeof(dst));
 
           if (temp == src)
 	    dir = opendir(".");
@@ -1108,7 +1108,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
 	    while ((dent = readdir(dir)) != NULL)
 	    {
-	      strcpy(temp, dent->d_name);
+	      strlcpy(temp, dent->d_name, sizeof(temp));
 	      if (stat(src, &fileinfo))
 	        continue; /* Skip files we can't read */
 
@@ -1122,12 +1122,12 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
               file->type = type;
 	      file->mode = mode;
-              strcpy(file->src, src);
-	      strcpy(file->dst, dst);
-	      strncat(file->dst, dent->d_name, sizeof(file->dst) - 1);
-	      strcpy(file->user, user);
-	      strcpy(file->group, group);
-	      strcpy(file->options, options);
+              strlcpy(file->src, src, sizeof(file->src));
+	      strlcpy(file->dst, dst, sizeof(file->dst));
+	      strlcat(file->dst, dent->d_name, sizeof(file->dst));
+	      strlcpy(file->user, user, sizeof(file->user));
+	      strlcpy(file->group, group, sizeof(file->group));
+	      strlcpy(file->options, options, sizeof(file->options));
 	    }
 
             closedir(dir);
@@ -1143,11 +1143,11 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
           file->type = type;
 	  file->mode = mode;
-          strcpy(file->src, src);
-	  strcpy(file->dst, dst);
-	  strcpy(file->user, user);
-	  strcpy(file->group, group);
-	  strcpy(file->options, options);
+          strlcpy(file->src, src, sizeof(file->src));
+	  strlcpy(file->dst, dst, sizeof(file->dst));
+	  strlcpy(file->user, user, sizeof(file->user));
+	  strlcpy(file->group, group, sizeof(file->group));
+	  strlcpy(file->options, options, sizeof(file->options));
 	}
       }
     }
@@ -1574,11 +1574,11 @@ get_inline(const char *term,		/* I  - Termination string */
            char       *buffer,		/* IO - String buffer */
 	   size_t     size)		/* I  - Size of string buffer */
 {
-  char	*bufptr;			/* Pointer into buffer */
-  int	left;				/* Remaining bytes in buffer */
-  int	termlen;			/* Length of termination string */
-  int	linelen;			/* Length of line */
-  char	*expand;			/* Expansion buffer */
+  char		*bufptr;		/* Pointer into buffer */
+  size_t	left;			/* Remaining bytes in buffer */
+  size_t	termlen;		/* Length of termination string */
+  size_t	linelen;		/* Length of line */
+  char		*expand;		/* Expansion buffer */
 
 
   bufptr  = buffer;
@@ -1588,7 +1588,7 @@ get_inline(const char *term,		/* I  - Termination string */
   if (termlen == 0)
     return (NULL);
 
-  while (fgets(bufptr, left, fp) != NULL)
+  while (fgets(bufptr, (int)left, fp) != NULL)
   {
     if (!strncmp(bufptr, term, (size_t)termlen) && bufptr[termlen] == '\n')
     {
@@ -1646,9 +1646,9 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	 int            *skip)		/* IO - Skip lines? */
 {
   int		op,			/* Operation (0 = OR, 1 = AND) */
-		namelen,		/* Length of system name + version */
-		len,			/* Length of string */
 		match;			/* 1 = match, 0 = not */
+  size_t	namelen,		/* Length of system name + version */
+		len;			/* Length of string */
   char		*ptr,			/* Pointer into value */
 		*bufptr,		/* Pointer into buffer */
 		namever[255],		/* Name + version */

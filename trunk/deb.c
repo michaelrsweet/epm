@@ -51,6 +51,10 @@ make_deb(const char     *prodname,	/* I - Product short name */
 		filename[1024];		/* File to archive */
 
 
+ /* Debian packages use "amd64" instead of "x86_64" for the architecture... */
+  if (!strcmp(platname, "x86_64"))
+    platname = "amd64";
+
   if (make_subpackage(prodname, directory, platname, dist, platform, NULL))
     return (1);
 
@@ -283,6 +287,19 @@ make_subpackage(const char     *prodname,
 
       putc('\n', fp);
     }
+  }
+
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
+        !strcmp(c->section, "control"))
+      break;
+
+  if (i > 0)
+  {
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
+	  !strcmp(c->section, "control"))
+	fprintf(fp, "%s\n", c->command);
   }
 
   fclose(fp);

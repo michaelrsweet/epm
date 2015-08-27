@@ -3,7 +3,7 @@
  *
  * External program function for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet.
+ * Copyright 1999-2014 by Michael R Sweet
  * Copyright 1999-2005 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -86,10 +86,10 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
 
       for (argptr ++; *argptr && *argptr != '\''; argptr ++)
         if (*argptr == '\\' && argptr[1])
-	  strcpy(argptr, argptr + 1);
+	  memmove(argptr, argptr + 1, strlen(argptr));
 
       if (*argptr == '\'')
-        strcpy(argptr, argptr + 1);
+        memmove(argptr, argptr + 1, strlen(argptr));
 
       argptr --;
     }
@@ -100,10 +100,10 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
 
       for (argptr ++; *argptr && *argptr != '\"'; argptr ++)
         if (*argptr == '\\' && argptr[1])
-	  strcpy(argptr, argptr + 1);
+	  memmove(argptr, argptr + 1, strlen(argptr));
 
       if (*argptr == '\"')
-        strcpy(argptr, argptr + 1);
+        memmove(argptr, argptr + 1, strlen(argptr));
 
       argptr --;
     }
