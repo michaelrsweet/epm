@@ -3,7 +3,7 @@
  *
  * Red Hat package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2015 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -123,12 +123,16 @@ make_rpm(int            format,		/* I - Subformat */
   if (getenv("RPMDIR"))
     strlcpy(rpmdir, getenv("RPMDIR"), sizeof(rpmdir));
   else if (!access("/usr/src/redhat", 0))
-    strcpy(rpmdir, "/usr/src/redhat");
+    strlcpy(rpmdir, "/usr/src/redhat", sizeof(rpmdir));
   else if (!access("/usr/src/Mandrake", 0))
-    strcpy(rpmdir, "/usr/src/Mandrake");
+    strlcpy(rpmdir, "/usr/src/Mandrake", sizeof(rpmdir));
   else
-    strcpy(rpmdir, "/usr/src/RPM");
+    strlcpy(rpmdir, "/usr/src/RPM", sizeof(rpmdir));
 #endif /* EPM_RPMTOPDIR */
+
+  snprintf(filename, sizeof(filename), "%s/BUILD", directory);
+
+  make_directory(filename, 0777, getuid(), getgid());
 
   snprintf(filename, sizeof(filename), "%s/RPMS", directory);
 
@@ -460,14 +464,17 @@ make_rpm(int            format,		/* I - Subformat */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
+    snprintf(filename, sizeof(filename), "%s/BUILD", directory);
+    unlink_directory(filename);
+
     snprintf(filename, sizeof(filename), "%s/RPMS", directory);
+    unlink_directory(filename);
+
+    snprintf(filename, sizeof(filename), "%s/buildroot", directory);
     unlink_directory(filename);
 
     snprintf(filename, sizeof(filename), "%s/rpms", directory);
     unlink(filename);
-
-    snprintf(filename, sizeof(filename), "%s/buildroot", directory);
-    unlink_directory(filename);
 
     unlink(specname);
 
@@ -662,6 +669,19 @@ write_spec(int        format,		/* I - Subformat */
       fprintf(fp, " = %s\n", d->version[0]);
   }
 
+  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
+    if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
+        !strcmp(c->section, "spec"))
+      break;
+
+  if (i > 0)
+  {
+    for (; i > 0; i --, c ++)
+      if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
+	  !strcmp(c->section, "spec"))
+	fprintf(fp, "%s\n", c->command);
+  }
+
  /*
   * Pre/post install commands...
   */
@@ -694,19 +714,6 @@ write_spec(int        format,		/* I - Subformat */
   }
   else
     have_commands = 0;
-
-  for (i = dist->num_commands, c = dist->commands; i > 0; i --, c ++)
-    if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
-        !strcmp(c->section, "spec"))
-      break;
-
-  if (i > 0)
-  {
-    for (; i > 0; i --, c ++)
-      if (c->type == COMMAND_LITERAL && c->subpackage == subpackage &&
-	  !strcmp(c->section, "spec"))
-	fprintf(fp, "%s\n", c->command);
-  }
 
   for (i = dist->num_files, file = dist->files; i > 0; i --, file ++)
     if (tolower(file->type) == 'i' && file->subpackage == subpackage)
