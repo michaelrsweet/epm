@@ -470,9 +470,6 @@ make_rpm(int            format,		/* I - Subformat */
     snprintf(filename, sizeof(filename), "%s/RPMS", directory);
     unlink_directory(filename);
 
-    snprintf(filename, sizeof(filename), "%s/buildroot", directory);
-    unlink_directory(filename);
-
     snprintf(filename, sizeof(filename), "%s/rpms", directory);
     unlink(filename);
 
