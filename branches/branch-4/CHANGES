@@ -3,6 +3,7 @@ CHANGES - ESP Package Manager (EPM) 4.3
 
 CHANGES IN EPM 4.3
 
+	- Fixed some file handling issues when creating RPM packages (Bug #523)
 	- EPM now maps the x86_64 architecture to amd64 when creating
 	  Debian packages (Bug #295)
 	- %format stopped working in EPM 4.2 (Bug #296)
