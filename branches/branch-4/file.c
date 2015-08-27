@@ -3,7 +3,7 @@
  *
  * File functions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2015 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -336,13 +336,6 @@ unlink_directory(const char *directory)	/* I - Directory */
 
       if (unlink_directory(filename))
 	goto fail;
-
-      if (rmdir(filename))
-      {
-        fprintf(stderr, "epm: Unable to remove \"%s\": %s\n", filename,
-	        strerror(errno));
-	goto fail;
-      }
     }
     else
     {
@@ -360,6 +353,13 @@ unlink_directory(const char *directory)	/* I - Directory */
   }
 
   closedir(dir);
+
+  if (rmdir(directory))
+  {
+    fprintf(stderr, "epm: Unable to remove \"%s\": %s\n", directory, strerror(errno));
+    return (-1);
+  }
+
   return (0);
 
   fail:

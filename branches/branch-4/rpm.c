@@ -3,7 +3,7 @@
  *
  * Red Hat package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2015 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -464,14 +464,17 @@ make_rpm(int            format,		/* I - Subformat */
     if (Verbosity)
       puts("Removing temporary distribution files...");
 
+    snprintf(filename, sizeof(filename), "%s/BUILD", directory);
+    unlink_directory(filename);
+
     snprintf(filename, sizeof(filename), "%s/RPMS", directory);
+    unlink_directory(filename);
+
+    snprintf(filename, sizeof(filename), "%s/buildroot", directory);
     unlink_directory(filename);
 
     snprintf(filename, sizeof(filename), "%s/rpms", directory);
     unlink(filename);
-
-    snprintf(filename, sizeof(filename), "%s/buildroot", directory);
-    unlink_directory(filename);
 
     unlink(specname);
 
