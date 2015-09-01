@@ -21,7 +21,7 @@ else
 	fileversion=$1
 	url="svn+ssh://msweet.org/var/svn/epm/tags/release-$version"
 
-	svn copy hsvn+ssh://msweet.org/var/svn/epm/branches/branch-4 "$url" \
+	svn copy svn+ssh://msweet.org/var/svn/epm/branches/branch-4 "$url" \
 		-m "Tag $version" || exit 1
 fi
 
