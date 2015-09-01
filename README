@@ -1,11 +1,10 @@
-README - ESP Package Manager (EPM) 5.0
+README - ESP Package Manager (EPM) 4.3
 --------------------------------------
 
 WHAT IS EPM?
 
-    EPM is the software packaging tool that we use at Easy Software
-    Products.  It is a simple tool that generates software and patch
-    distributions in various formats, including:
+    EPM is a simple tool that generates software and patch distributions in
+    various formats, including:
 
 	- AIX software packages ("installp")
 	- AT&T software packages ("pkgadd"), used by Solaris and others
@@ -14,28 +13,14 @@ WHAT IS EPM?
 	- Debian Package Manager ("dpkg")
 	- HP-UX software packages ("swinstall")
 	- IRIX software manager ("inst", "swmgr", or "tardist")
-	- MacOS X software packages ("name.pkg")
+	- OS X software packages ("name.pkg")
 	- Portable (installation and removal scripts with tar files)
         - Red Hat Package Manager ("rpm")
 	- Slackware software packages ("name.tgz")
 
-    EPM also includes graphical "setup" and "uninstall" programs
-    that can be provided with your distributions to make
-    installation and removal of more than one package a snap.
-
-
-WHY ANOTHER SOFTWARE PACKAGING TOOL?
-
-    We developed EPM because we are tired of developing and
-    testing N different software distributions, each with their
-    own input files and setup requirements.
-
-    Also, when we looked at software distribution on Linux we
-    saw that there are at least four different "standard"
-    distribution formats, and none of them are compatible with
-    the other.  Clearly we needed something that could be used
-    for all platforms *without* requiring special software
-    packages on the customer's system!
+    EPM also includes graphical "setup" and "uninstall" programs that can be
+    provided with your distributions to make installation and removal of more
+    than one package a snap.
 
 
 HOW DO I COMPILE EPM?
@@ -45,12 +30,11 @@ HOW DO I COMPILE EPM?
 
 HOW DO I USE EPM?
 
-    Please look at the EPM manual; preformatted copies are
-    included in the "doc/epm-manual.html" and
-    "doc/epm-manual.pdf" files.
+    Please look at the EPM manual; preformatted copies are included in the
+    "doc/epm-manual.html" and "doc/epm-manual.pdf" files.
 
-    An example EPM software list file is provided with this
-    distribution in the file "epm.list".
+    An example EPM software list file is provided with this distribution in the
+    file "epm.list".
 
 
 DO I HAVE TO PAY TO DISTRIBUTE SOFTWARE USING EPM?
@@ -68,19 +52,19 @@ REPORTING PROBLEMS
 
     Report all problems and submit all patches using the bug reporting form at:
 
-        http://www.epmhome.org/str.php
+        https://www.msweet.org/bugs.php/epm
 
 
 OTHER RESOURCES
 
     The official home page for EPM is here:
 
-        https://www.msweet.org/projects.php/EPM
+        https://www.msweet.org/projects.php/epm
 
 
 COPYRIGHT AND LICENSE INFO
 
-    EPM is copyright 1999-2014 by Michael R Sweet. All rights reserved.
+    EPM is copyright 1999-2015 by Michael R Sweet. All rights reserved.
 
     This program is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the Free

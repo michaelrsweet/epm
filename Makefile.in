@@ -43,6 +43,7 @@ STRIP		=	@STRIP@
 ARFLAGS		=	@ARFLAGS@
 ARCHFLAGS	=	@ARCHFLAGS@
 CFLAGS		=	$(ARCHFLAGS) @CFLAGS@ $(OPTIM)
+CPPFLAGS	=	@CPPFLAGS@
 CXXFLAGS	=	$(ARCHFLAGS) @CXXFLAGS@ $(OPTIM)
 GUILIBS		=	@GUILIBS@
 LDFLAGS		=	$(ARCHFLAGS) @LDFLAGS@ $(OPTIM)
@@ -76,10 +77,10 @@ VPATH		=	$(srcdir)
 .SUFFIXES:	.c .cxx .h .o
 .c.o:
 	echo Compiling $<...
-	$(CC) $(CFLAGS) -I. -I$(srcdir) -c $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) -I. -I$(srcdir) -c $<
 .cxx.o:
 	echo Compiling $<...
-	$(CXX) $(CXXFLAGS) -I. -I$(srcdir) -c $<
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -I. -I$(srcdir) -c $<
 
 
 #
@@ -116,18 +117,12 @@ SETUP_OBJS	=	setup.o \
 UNINST_OBJS	=	uninst.o \
 			uninst2.o \
 			gui-common.o
-LEDIT_OBJS	=	epmeditor.o \
-			ListEditor.o \
-			ListEditor2.o \
-			ListEditor3.o \
-			ListManager.o
 OBJS		=	epm.o \
 			$(EPM_OBJS) \
 			epminstall.o \
 			mkepmlist.o \
 			$(SETUP_OBJS) \
-			$(UNINST_OBJS) \
-			$(LEDIT_OBJS)
+			$(UNINST_OBJS)
 
 
 #
@@ -207,18 +202,10 @@ install: all @INSTALL_GUIS@ @INSTALL_OSX@
 	$(CP) $(srcdir)/COPYING $(docdir)
 	$(RM) $(docdir)/README
 	$(CP) $(srcdir)/README $(docdir)
-	$(RM) $(docdir)/epm-manual.html
-	$(CP) $(srcdir)/doc/epm-manual.html $(docdir)
-	$(RM) $(docdir)/epm-manual.pdf
-	$(CP) $(srcdir)/doc/epm-manual.pdf $(docdir)
+	$(RM) $(docdir)/epm-book.html
+	$(CP) $(srcdir)/doc/epm-book.html $(docdir)
 
-install-guis:	setup uninst epmeditor
-	echo Installing EPM editor in $(bindir)
-	-$(MKDIR) $(bindir)
-	$(RM) $(bindir)/epmeditor
-	$(CP) epmeditor $(bindir)
-	$(STRIP) $(bindir)/epmeditor
-	$(FLTKCONFIG) --post $(bindir)/epmeditor
+install-guis:	setup uninst
 	echo Installing EPM setup/uninst in $(libdir)/epm
 	$(RM) -r $(libdir)/epm
 	-$(MKDIR) $(libdir)/epm
@@ -256,8 +243,6 @@ uninstall:
 	$(RM) $(mandir)/man5/setup.types.5
 	echo Uninstalling EPM documentation from $(docdir)
 	$(RM) -r $(docdir)
-	echo Uninstalling EPM editor from $(bindir)
-	$(RM) $(bindir)/epmeditor
 	echo Uninstalling EPM setup/uninstall from $(libdir)/epm
 	$(RM) -r $(libdir)/epm
 	echo Uninstalling EPM OSX data files from $(datadir)/epm
@@ -371,7 +356,7 @@ $(EPM_OBJS):	epm.h epmstring.h
 # epm
 #
 
-epm:	epm.o $(EPM_OBJS)
+epm:	epm.o libepm.a
 	echo Linking epm...
 	$(CC) $(LDFLAGS) -o epm epm.o libepm.a $(LIBS)
 
@@ -424,19 +409,6 @@ uninst:	$(UNINST_OBJS) libepm.a
 uninst.o:	uninst.h epmstring.h gui-common.h
 uninst2.o:	uninst.h epmstring.h gui-common.h
 gui-common.o:	gui-common.h
-
-
-#
-# epmeditor
-#
-
-epmeditor:	$(LEDIT_OBJS) libepm.a
-	echo Linking epmeditor...
-	$(CXX) $(LDFLAGS) -o epmeditor $(LEDIT_OBJS) libepm.a \
-		$(GUILIBS) $(LIBS)
-	$(FLTKCONFIG) --post epmeditor
-
-$(LEDIT_OBJS):	ListEditor.h ListManager.h epm.h epmstring.h
 
 
 #

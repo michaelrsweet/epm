@@ -17,14 +17,14 @@ dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl GNU General Public License for more details.
 dnl
 
-AC_INIT(epm.c)
+AC_INIT([EPM],[4.3],[https://www.msweet.org/bugs.php/epm],[epm],[https://www.msweet.org/projects.php/epm])
 AC_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT(/usr)
 
 dnl Version number...
 
-VERSION=5.0svn
-VERNUMBER=491
+VERSION="AC_PACKAGE_VERSION"
+VERNUMBER=430
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -147,7 +147,7 @@ if test "x$FLTKCONFIG" = x; then
 	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x.])
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
-	GUIS="epmeditor setup uninst"
+	GUIS="setup uninst"
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
 
