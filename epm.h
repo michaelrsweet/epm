@@ -3,7 +3,7 @@
  *
  * Definitions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2015 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,7 +102,8 @@ enum
   PACKAGE_INST,				/* IRIX package format */
   PACKAGE_LSB,				/* LSB (RPM) package format */
   PACKAGE_LSB_SIGNED,			/* LSB (RPM) package format (signed) */
-  PACKAGE_OSX,				/* MacOS X package format */
+  PACKAGE_OSX,				/* OS X package format */
+  PACKAGE_OSX_SIGNED,			/* OS X package format (signed) */
   PACKAGE_PKG,				/* AT&T package format (AIX, Solaris) */
   PACKAGE_RPM,				/* RedHat package format */
   PACKAGE_RPM_SIGNED,			/* RedHat package format (signed) */
@@ -285,7 +286,7 @@ extern int	make_inst(const char *prodname, const char *directory,
 		          const char *platname, dist_t *dist,
 			  struct utsname *platform);
 extern int	make_link(const char *dst, const char *src);
-extern int	make_osx(const char *prodname, const char *directory,
+extern int	make_osx(int format, const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform, const char *setup);
 extern int	make_pkg(const char *prodname, const char *directory,
