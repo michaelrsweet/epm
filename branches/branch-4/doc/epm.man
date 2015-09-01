@@ -3,7 +3,7 @@
 .\"
 .\" Manual page for the ESP Package Manager (EPM).
 .\"
-.\" Copyright 1999-2014 by Michael R Sweet
+.\" Copyright 1999-2015 by Michael R Sweet
 .\" Copyright 1999-2008 by Easy Software Products, all rights reserved.
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "26 August 2008" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "1 September 2015" "Easy Software Products"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -77,24 +77,23 @@ IRIX.
 .TP 5
 lsb, lsb-signed
 .br
-Generate RPM packages for LSB-conforming systems. The lsb-signed format uses
-the GPG private key you have defined in the ~/.rpmmacros file.
+Generate RPM packages for LSB-conforming systems.
+The lsb-signed format uses the GPG private key you have defined in the ~/.rpmmacros file.
 .TP 5
 native
 .br
-Generate an native distribution. This uses \fIrpm\fR for Linux,
-\fIinst\fR for IRIX, \fIpkg\fR for Solaris, \fIswinstall\fR for
-HP-UX, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fIosx\fR
-for MacOS X. All other operating systems default to the
-\fIportable\fR format.
+Generate an native distribution. This uses \fIrpm\fR for Linux, \fIinst\fR for IRIX, \fIpkg\fR for Solaris, \fIswinstall\fR for HP-UX, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fIosx\fR for OS X.
+All other operating systems default to the \fIportable\fR format.
 .TP 5
-osx
+osx, osx-signed
 .br
-Generate a MacOS X software package.
+Generate an OS X software package.
+The osx-signed format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
 .TP 5
 pkg
 .br
-Generate an AT&T software package. These are used primarily under Solaris.
+Generate an AT&T software package.
+These are used primarily under Solaris.
 .TP 5
 portable
 .br

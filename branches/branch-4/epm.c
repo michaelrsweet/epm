@@ -3,7 +3,7 @@
  *
  * Main program source for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2015 by Michael R Sweet
  * Copyright 1999-2008 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,6 +78,7 @@ main(int  argc,				/* I - Number of command-line args */
 		  "inst",
 		  "rpm",
 		  "rpm",
+		  "osx",
 		  "osx",
 		  "pkg",
 		  "rpm",
@@ -174,6 +175,8 @@ main(int  argc,				/* I - Number of command-line args */
 	      format = PACKAGE_LSB_SIGNED;
 	    else if (!strcasecmp(temp, "osx"))
 	      format = PACKAGE_OSX;
+	    else if (!strcasecmp(temp, "osx-signed"))
+	      format = PACKAGE_OSX_SIGNED;
 	    else if (!strcasecmp(temp, "pkg"))
 	      format = PACKAGE_PKG;
 	    else if (!strcasecmp(temp, "rpm"))
@@ -567,7 +570,8 @@ main(int  argc,				/* I - Number of command-line args */
         i = make_inst(prodname, directory, platname, dist, &platform);
 	break;
     case PACKAGE_OSX :
-        i = make_osx(prodname, directory, platname, dist, &platform, setup);
+    case PACKAGE_OSX_SIGNED :
+        i = make_osx(format, prodname, directory, platname, dist, &platform, setup);
 	break;
     case PACKAGE_PKG :
         i = make_pkg(prodname, directory, platname, dist, &platform);

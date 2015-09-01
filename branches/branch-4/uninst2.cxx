@@ -3,7 +3,7 @@
 //
 // ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
-// Copyright 1999-2014 by Michael R Sweet
+// Copyright 1999-2015 by Michael R Sweet
 // Copyright 1999-2010 by Easy Software Products.
 //
 // This program is free software; you can redistribute it and/or modify
@@ -485,7 +485,7 @@ remove_dist(const gui_dist_t *dist)	// I - Distribution to remove
 {
   char		command[1024];		// Command string
   int		fds[2];			// Pipe FDs
-  int		status;			// Exit status
+  int		status = 0;		// Exit status
 #ifndef __APPLE__
   int		pid;			// Process ID
 #endif // !__APPLE__
