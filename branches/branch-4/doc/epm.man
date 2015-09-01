@@ -16,167 +16,182 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "1 September 2015" "Easy Software Products"
+.TH epm 1 "ESP Package Manager" "1 September 2015" "Michael R Sweet"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
 .B epm
-[ -a
+[
+.B \-a
 .I architecture
-] [ -f
+] [
+.B \-f
 .I format
-] [ -g ] [ -k ] [ -m
+] [
+.B \-g
+] [
+.B \-k
+] [
+.B \-m
 .I name
-] [ -n[mrs] ] [ -s
-.I setup.xpm
-] [ --depend ] [ --help ] [ --keep-files ] [ --output-dir
+] [
+\fB\-n\fR[\fBmrs\fR] ] [
+.B \-s
+.I setup.ext
+] [
+.B \-\-depend
+] [
+.B \-\-help
+] [
+.B \-\-keep\-files
+] [
+.B \-\-output\-dir
 .I directory
-] [ --setup-image
-.I setup.xpm
-] [ --setup-program
+] [
+.B \-\-setup\-image
+.I setup.ext
+] [
+.B \-\-setup\-program
 .I /foo/bar/setup
-] [ --setup-types
+] [
+.B \-\-setup\-types
 .I setup.types
-] [ -v ] [
+] [
+.B \-v
+] [
 .I name=value
 \...
 .I name=value
-] product [
+]
+.I product
+[
 .I listfile
 ]
 .SH DESCRIPTION
-\fBepm\fR generates software packages complete with installation,
-removal, and (if necessary) patch scripts. Unless otherwise
-specified, the files required for \fIproduct\fR are read from a
-file named "\fIproduct\fR.list".
-.LP
-The \fI-a\fR option ("architecture") specifies the actual
-architecture for the software. Without this option the generic
-processor architecture is used ("intel", "sparc", "mips", etc.)
-.LP
-The \fI-f\fR option ("format") specifies the distribution format:
+.BR epm (1)
+generates software packages complete with installation, removal, and (if necessary) patch scripts.
+Unless otherwise specified, the files required for \fIproduct\fR are read from a file named "\fIproduct\fR.list".
+.SH OPTIONS
+The following options are recognized:
 .TP 5
-aix
-.br
+\fB\-a \fIarchitecture\fR
+Specifies the actual architecture for the software.
+Without this option the generic processor architecture is used ("intel", "sparc", "mips", etc.)
+.TP 5
+\fB\-f aix\fR
 Generate an AIX distribution suitable for installation on an AIX system.
 .TP 5
-bsd
-.br
-Generate a BSD distribution suitable for installation on a FreeBSD, NetBSD,
-or OpenBSD system.
+\fB\-f bsd\fR
+Generate a BSD distribution suitable for installation on a FreeBSD, NetBSD, or OpenBSD system.
 .TP 5
-deb
-.br
-Generate a Debian distribution suitable for installation on a Debian Linux
-system.
+\fB\-f deb\fR
+Generate a Debian distribution suitable for installation on a Debian Linux system.
 .TP 5
-inst, tardist
-.br
-Generate an IRIX distribution suitable for installation on an system running
-IRIX.
+\fB\-f inst\fR
 .TP 5
-lsb, lsb-signed
-.br
+\fB\-f tardist\fR
+Generate an IRIX distribution suitable for installation on an system running IRIX.
+.TP 5
+\fB\-f lsb\fR
+.TP 5
+\fB\-f lsb\-signed\fR
 Generate RPM packages for LSB-conforming systems.
-The lsb-signed format uses the GPG private key you have defined in the ~/.rpmmacros file.
+The \fIlsb\-signed\fR format uses the GPG private key you have defined in the ~/.rpmmacros file.
 .TP 5
-native
-.br
-Generate an native distribution. This uses \fIrpm\fR for Linux, \fIinst\fR for IRIX, \fIpkg\fR for Solaris, \fIswinstall\fR for HP-UX, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fIosx\fR for OS X.
+\fB\-f native\fR
+Generate a native distribution.
+This uses \fIrpm\fR for Linux, \fIinst\fR for IRIX, \fIpkg\fR for Solaris, \fIswinstall\fR for HP-UX, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fIosx\fR for OS X.
 All other operating systems default to the \fIportable\fR format.
 .TP 5
-osx, osx-signed
-.br
-Generate an OS X software package.
-The osx-signed format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
+\fB\-f osx\fR
 .TP 5
-pkg
-.br
+\fB\-f osx\-signed\fR
+Generate an OS X software package.
+The \fIosx\-signed\fR format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
+.TP 5
+\fB\-f pkg\fR
 Generate an AT&T software package.
 These are used primarily under Solaris.
 .TP 5
-portable
-.br
-Generate a portable distribution based on shell scripts and tar files.  The
-resulting distribution is installed and removed the same way on all
-operating systems. [default]
+\fB\-f portable\fR
+Generate a portable distribution based on shell scripts and tar files.
+The resulting distribution is installed and removed the same way on all operating systems. [default]
 .TP 5
-rpm, rpm-signed
-.br
-Generate a Red Hat Package Manager ("RPM") distribution suitable
-for installation on a Red Hat Linux system. The rpm-signed format uses
-the GPG private key you have defined in the ~/.rpmmacros file.
+\fB\-f rpm\fR
 .TP 5
-setld
-.br
+\fB\-f rpm\-signed\fR
+Generate a Red Hat Package Manager ("RPM") distribution suitable for installation on a Red Hat Linux system.
+The \fIrpm\-signed\fR format uses the GPG private key you have defined in the ~/.rpmmacros file.
+.TP 5
+\fB\-f setld\fR
 Generate a Tru64 (setld) software distribution.
 .TP 5
-slackware
-.br
+\fB\-f slackware\fR
 Generate a Slackware Linux software distribution.
 .TP 5
-swinstall, depot
-.br
+\fB\-f swinstall\fR
+.TP 5
+\fB\-f depot\fR
 Generate a HP-UX software distribution.
+.TP 5
+\fB\-g\fR
+Disable stripping of executable files in the distribution.
+.TP 5
+\fB\-k\fR
+Keep intermediate (spec, etc.) files used to create the distribution in the distribution directory.
+.TP 5
+\fB\-m \fIname\fR
+Specifies the platform name as a string.
+The default is to use the auto-generated name from the \fI\-n\fR option.
+.TP 5
+\fB\-n\fR[\fImrs\fR]
+Specifies the operating system and machine information that is included in the package name.
+Distributions normally are named "product-version-system-release-machine.ext" and "product-version-system-release-machine-patch.ext" for patch distributions.
+The "system-release-machine" information can be customized or eliminated using the appropriate trailing letters.
+Using \fI-n\fR by itself will remove the "system-release-machine" string from the filename entirely.
+The letter 'm' includes the architecture (machine).
+The letter 'r' includes the operating system version (release).
+The letter 's' includes the operating system name.
+.TP 5
+\fB\-s \fIsetup.ext\fR
+.TP 5
+\fB\-v\fR
+Increases the amount of information that is reported.
+Use multiple v's for more verbose output.
+.TP 5
+\fB\-\-depend\fR
+Lists the dependent (source) files for all files in the package.
+.TP 5
+\fB\-\-output\-dir \fIdirectory\fR
+Specifies the directory for output files.
+The default directory is based on the operating system, version, and architecture.
+.TP 5
+\fB\-\-setup\-image \fIsetup.ext\fR
+Include the ESP Software Wizard with the specified image file with the distribution.
+This option is currently only supported by portable distributions.
+.TP 5
+\fB\-\-setup\-program \fI/foo/bar/setup\fR
+Specifies the setup executable to use with the distribution.
+This option is currently only supported by portable distributions.
+.TP 5
+\fB\-\-setup\-types \fIsetup.types\fR
 .LP
-Executable files in the distribution are normally stripped of debugging
-information when packaged. To disable this functionality use the
-\fI\-g\fR option.
-.LP
-Intermediate (spec, etc.) files used to create the distribution are normally
-removed after the distribution is created. The \fI\-k\fR option keeps these
-files in the distribution directory.
-.LP
-The \fI-s\fR and \fI--setup-image\fR options ("setup") include
-the ESP Software Wizard with the specified GIF or XPM image file with
-the distribution. This option is currently only supported by
-portable and RPM distributions.
-.LP
-The \fI--setup-program\fR option specifies the setup executable
-to use with the distribution. This option is currently only
-supported by portable distributions.
-.LP
-The \fI--setup-types\fR option specifies the \fIsetup.types\fR
-file to include with the distribution. This option is currently
-only supported by portable distributions.
-.LP
-The \fI--output-dir\fR option specifies the directory to
-place output file into. The default directory is based on the
-operating system, version, and architecture.
-.LP
-The \fI-v\fR option ("verbose") increases the amount of information that is
-reported. Use multiple v's for more verbose output.
-.LP
-The \fI--depend\fR option lists the dependent (source) files for
-all files in the package.
-.LP
-Distributions normally are named
-"product-version-system-release-machine.ext" and
-"product-version-system-release-machine-patch.ext" (for patch
-distributions.) The "system-release-machine" information can be
-customized or eliminated using the \fI-n\fR option with the
-appropriate trailing letters. Using \fI-n\fR by itself will
-remove the "system-release-machine" string from the filename
-entirely. The "system-release-machine" information can also be
-customized by using the \fI-m\fR option with an arbitrary string.
-.LP
-Debian, IRIX, portable, and Red Hat distributions use the extensions ".deb",
-".tardist", "tar.gz", and ".rpm" respectively.
+Specifies the \fIsetup.types\fR file to include with the distribution.
+This option is currently only supported by portable distributions.
+.SH ENVIRONMENT
+The following environment variables are supported by \fBepm\R.
+.TP 5 EPM_SIGNING_IDENTITY
+The common name that should be used when signing a package.
 .SH LIST FILES
 The EPM list file format is now described in the \fIepm.list(5)\fR
 man page.
-.SH KNOWN BUGS
-EPM does not currently support generation of IRIX software patches.
 .SH SEE ALSO
-epminstall(1) - add a directory, file, or symlink to a list file
-.br
-mkepmlist(1) - make an epm list file from a directory
-.br
-epm.list(5) - epm list file format
-.br
-setup(1) - graphical setup program for the esp package manager
+.BR epminstall (1),
+.BR mkepmlist (1),
+.BR epm.list (5),
+.BR setup (1).
 .SH COPYRIGHT
-Copyright 1999-2008 by Easy Software Products, All Rights Reserved.
+Copyright \[co] 1999-2015 by Michael R Sweet, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
