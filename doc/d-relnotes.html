@@ -3,12 +3,23 @@
 
 <H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
 
-<P>This appendix lists the change log for each release of the
-EPM software.</P>
+<P>This appendix lists the change log for each release of the EPM software.</P>
 
 <h2>Changes in EPM v4.3</h2>
 
 <ul>
+
+	<li>Now use pkgbuild on newer versions of OS X, and added support for signed packages (Bug #497)</li>
+	<li>Fixed some file handling issues when creating RPM packages (Bug #523)</li>
+	<li>EPM now maps the x86_64 architecture to amd64 when creating Debian packages (Bug #295)</li>
+	<li>%format stopped working in EPM 4.2 (Bug #296)</li>
+	<li>%literal(spec) did not insert the literal content in the correct location (Bug #302)</li>
+	<li>Fixed some incorrect string handling (Bug #290)</li>
+	<li>Fixed a compatibility issue with RPM 4.8 (Bug #292)</li>
+	<li>Fixed a build dependency problem (Bug #291)</li>
+	<li>The EPM makefile now uses CPPFLAGS from the configure script (Bug #300)</li>
+	<li>Updated the standard path used by portable package scripts to include /usr/gnu/bin for Solaris (Bug #301)</li>
+	<li>Added support for %literal(control) in Debian packages (Bug #297)</li>
 
 </ul>
 

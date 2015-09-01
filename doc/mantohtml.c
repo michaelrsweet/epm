@@ -3,6 +3,7 @@
  *
  * Man page to HTML conversion program.
  *
+ * Copyright 2015 by Michael R Sweet
  * Copyright 2007-2010, 2014 by Apple Inc.
  * Copyright 2004-2006 by Easy Software Products.
  *
@@ -151,9 +152,9 @@ main(int  argc,				/* I - Number of command-line args */
 	        "\t<title>%s(%d)</title>\n"
 	        "</head>\n"
 	        "<body>\n"
-		"<h1 class=\"title\">%s(%d)</h1>\n"
+		"<h2 class=\"title\"><a name=\"%s\">%s(%d)</a></h2>\n"
 		"%s",
-	        name, section, name, section, start_fonts[font]);
+	        name, section, name, name, section, start_fonts[font]);
       }
       else if (section < 0)
         continue;
@@ -175,9 +176,9 @@ main(int  argc,				/* I - Number of command-line args */
 	}
 
         if (line[2] == 'H')
-	  fputs("<h2 class=\"title\"><a name=\"", outfile);
+	  fputs("<h3 class=\"title\"><a name=\"", outfile);
 	else
-	  fputs("<h3><a name=\"", outfile);
+	  fputs("<h4><a name=\"", outfile);
 
         if (anchor[0])
         {
@@ -219,9 +220,9 @@ main(int  argc,				/* I - Number of command-line args */
         }
 
         if (line[2] == 'H')
-	  fputs("</a></h2>\n", outfile);
-	else
 	  fputs("</a></h3>\n", outfile);
+	else
+	  fputs("</a></h4>\n", outfile);
       }
       else if (!strncmp(line, ".B ", 3))
       {
@@ -951,7 +952,7 @@ html_alternate(const char *s,		/* I - String */
           name[end - s] = '\0';
 
         snprintf(manfile, sizeof(manfile), "%s.man", name);
-	snprintf(manurl, sizeof(manurl), "man-%s.html?TOPIC=Man+Pages", name);
+	snprintf(manurl, sizeof(manurl), "%s.html#%s", name, name);
 
 	if (!access(manfile, 0))
 	{
