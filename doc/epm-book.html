@@ -2,9 +2,8 @@
 <HTML>
 <HEAD>
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
-<META NAME="author" CONTENT="Michael Sweet">
-<META NAME="copyright" CONTENT="Copyright 1999-2010 by Easy Software Products">
-<META NAME="docnumber" CONTENT="ESP-004-20101231">
+<META NAME="author" CONTENT="Michael R Sweet">
+<META NAME="copyright" CONTENT="Copyright 1999-2014 by Michael R Sweet">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: sans-serif }
@@ -33,20 +32,10 @@ A { text-decoration: none }
 <P>&nbsp;</P>
 <H1 ALIGN="CENTER">Software Distribution Using the ESP Package Manager</H1>
 <P ALIGN="CENTER">MICHAEL R. SWEET</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;</P>
-<P>&nbsp;<IMG HEIGHT="10" SRC="gradient.gif" WIDTH="100">
-<BR><VAR> ESP Press</VAR>
-<BR> <SMALL>Easy Software Products, 516 Rio Grand Ct, Morgan Hill, CA
- 95037 USA</SMALL></P>
 
 <!-- NEW PAGE -->
 <H2>Software Distribution Using the ESP Package Manager</H2>
+<H3>Copyright &copy; 2006-2014 by Michael R Sweet</H3>
 <H3>Copyright &copy; 2006-2010 by Easy Software Products</H3>
 <P><SMALL>This book may be redistributed and/or modified under the terms
  of version 2 of the GNU General Public License as published by the Free
@@ -72,7 +61,7 @@ A { text-decoration: none }
 <LI><A HREF="#1_1">Notation Conventions</A></LI>
 <LI><A HREF="#1_2">Abbreviations</A></LI>
 <LI><A HREF="#1_3">Other References</A></LI>
-<LI><A HREF="#1_4">Help Us Improve This Book!</A></LI>
+<LI><A HREF="#1_4">Help Me Improve This Book!</A></LI>
 <LI><A HREF="#1_5">Acknowledgments</A></LI>
 </UL>
 <B><A HREF="#INTRO">1 - Introduction to EPM</A></B>
@@ -111,32 +100,65 @@ A { text-decoration: none }
 <B><A HREF="#EXAMPLES">5 - EPM Packaging Examples</A></B>
 <UL>
 <LI><A HREF="#6_1">Packaging the EPM Software</A></LI>
-<LI><A HREF="#6_2">Packaging the CUPS Software</A></LI>
 </UL>
 <B><A HREF="#LICENSE">A - GNU General Public License</A></B>
 <BR>
 <BR><B><A HREF="#MANPAGES">B - Command Reference</A></B>
+<BR>
+<BR><B><A HREF="#9">epm(1)</A></B>
 <UL>
-<LI><A HREF="#8_1">epm(1)</A></LI>
-<LI><A HREF="#8_2">epminstall(1)</A></LI>
-<LI><A HREF="#8_3">mkepmlist(1)</A></LI>
-<LI><A HREF="#8_4">setup(1)</A></LI>
+<LI><A HREF="#NAME">Name</A></LI>
+<LI><A HREF="#SYNOPSIS">Synopsis</A></LI>
+<LI><A HREF="#DESCRIPTION">Description</A></LI>
+<LI><A HREF="#OPTIONS">Options</A></LI>
+<LI><A HREF="#ENVIRONMENT">Environment</A></LI>
+<LI><A HREF="#LIST_FILES">List Files</A></LI>
+<LI><A HREF="#SEE_ALSO">See Also</A></LI>
+<LI><A HREF="#COPYRIGHT">Copyright</A></LI>
+</UL>
+<B><A HREF="#10">epminstall(1)</A></B>
+<UL>
+<LI><A HREF="#NAME">Name</A></LI>
+<LI><A HREF="#SYNOPSIS">Synopsis</A></LI>
+<LI><A HREF="#DESCRIPTION">Description</A></LI>
+<LI><A HREF="#OPTIONS">Options</A></LI>
+<LI><A HREF="#SEE_ALSO">See Also</A></LI>
+<LI><A HREF="#COPYRIGHT">Copyright</A></LI>
+</UL>
+<B><A HREF="#11">mkepmlist(1)</A></B>
+<UL>
+<LI><A HREF="#NAME">Name</A></LI>
+<LI><A HREF="#SYNOPSIS">Synopsis</A></LI>
+<LI><A HREF="#DESCRIPTION">Description</A></LI>
+<LI><A HREF="#OPTIONS">Options</A></LI>
+<LI><A HREF="#SEE_ALSO">See Also</A></LI>
+<LI><A HREF="#COPYRIGHT">Copyright</A></LI>
+</UL>
+<B><A HREF="#12">setup(1)</A></B>
+<UL>
+<LI><A HREF="#NAME">Name</A></LI>
+<LI><A HREF="#SYNOPSIS">Synopsis</A></LI>
+<LI><A HREF="#DESCRIPTION">Description</A></LI>
+<LI><A HREF="#INSTALLATION_TYPES">Installation Types</A></LI>
+<LI><A HREF="#SEE_ALSO">See Also</A></LI>
+<LI><A HREF="#COPYRIGHT">Copyright</A></LI>
 </UL>
 <B><A HREF="#REFERENCE">C - List File Reference</A></B>
 <UL>
-<LI><A HREF="#9_1">The EPM List File Format</A></LI>
+<LI><A HREF="#13_1">The EPM List File Format</A></LI>
 <LI><A HREF="#SETUPTYPES">The setup.types File</A></LI>
 </UL>
 <B><A HREF="#RELNOTES">D - Release Notes</A></B>
 <UL>
-<LI><A HREF="#10_1">Changes in EPM v4.2</A></LI>
-<LI><A HREF="#10_2">Changes in EPM v4.1</A></LI>
-<LI><A HREF="#10_3">Changes in EPM v4.0</A></LI>
+<LI><A HREF="#14_1">Changes in EPM v4.3</A></LI>
+<LI><A HREF="#14_2">Changes in EPM v4.2</A></LI>
+<LI><A HREF="#14_3">Changes in EPM v4.1</A></LI>
+<LI><A HREF="#14_4">Changes in EPM v4.0</A></LI>
 </UL>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="1">Preface</A></H1>
 <P>This book provides a tutorial and reference for the ESP Package
- Manager (&quot;EPM&quot;) software, version 4.2, and is organized into the
+ Manager (&quot;EPM&quot;) software, version 4.3, and is organized into the
  following chapters and appendices:</P>
 <UL>
 <LI><A HREF="#INTRO">1 - Introduction to EPM</A></LI>
@@ -221,13 +243,15 @@ A { text-decoration: none }
 <DD>Solaris Documentation On-Line
 <BR> &nbsp;</DD>
 </DL>
-<H2><A NAME="1_4">Help Us Improve This Book!</A></H2>
-<P>We've done our best to ensure that this book is both accurate and
+<H2><A NAME="1_4">Help Me Improve This Book!</A></H2>
+<P>I've done my best to ensure that this book is both accurate and
  clear. If you find errors or have a suggestion for improving the book,
- please send us an email to &quot;<A HREF="mailto:epm-book@easysw.com">
-epm-book@easysw.com</A>&quot;.</P>
+ please file a bug at:</P>
+<PRE>
+    <A href="https://www.msweet.org/bugs.php/EPM">https://www.msweet.org/bugs.php/EPM</A>
+</PRE>
 <H2><A NAME="1_5">Acknowledgments</A></H2>
-<P>We'd like to thank the following people for their contributions to
+<P>I'd like to thank the following people for their contributions to
  EPM:</P>
 <UL>
 <LI>Gareth Armstrong: HP-UX and %release enhancements</LI>
@@ -283,8 +307,8 @@ epm-book@easysw.com</A>&quot;.</P>
  keep all of the packaging files synchronized manually. Needless to say,
  this process was far from perfect and we had more than one distribution
  that was not identical on all operating systems.</P>
-<P>As we began developing CUPS (<A HREF="http://www.cups.org/">
-http://www.cups.org/</A>) in 1997, our initial goal was to add support
+<P>As we began developing CUPS (<A HREF="https://www.cups.org/">
+https://www.cups.org/</A>) in 1997, our initial goal was to add support
  for two additional operating systems: Linux and Compaq Tru64 UNIX. If
  we wanted to avoid the mistakes of the past, we clearly had to change
  how we produced software distributions.</P>
@@ -451,16 +475,14 @@ fakeroot</CODE> software, introducing potential security risks and
  emulates a feature if the vendor package format does not support it
  natively.</P>
 <H2><A NAME="2_5">Resources</A></H2>
-<P>The EPM web site provides access to the current software,
- documentation, and discussion forums for EPM:</P>
+<P>The EPM project page provides access to the current software,
+ documentation, and mailing list for EPM:</P>
 <PRE>
-    <A HREF="http://www.epmhome.org/">http://www.epmhome.org/</A>
+    <A HREF="https://www.msweet.org/projects.php/EPM">https://www.msweet.org/projects.php/EPM</A>
 </PRE>
 <P>The EPM source code can be downloaded in compressed tar files or via
- the popular Subversion software. Please see the EPM web site for
+ the popular Subversion software. Please see the EPM project page for
  complete instructions.</P>
-<P>Send book feedback to &quot;<A HREF="mailto:epm-book@easysw.com">
-epm-book@easysw.com</A>&quot;.</P>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="BUILDING">2 - Building EPM</A></H1>
 <P>This chapter shows how to configure, build, and install the ESP
@@ -472,8 +494,8 @@ epm-book@easysw.com</A>&quot;.</P>
  most vendor <CODE>make</CODE> programs should work), the Bourne (or
  Korn or Bash) shell (<CODE>sh(1)</CODE>), and <CODE>gzip(1)</CODE>.</P>
 <P>The optional graphical setup program requires a C++ compiler, the
- FLTK library, version 1.1.x, and (for UNIX/Linux) the X11 libraries.
- FLTK is available at the following URL:</P>
+ FLTK library, version 1.1.x or 1.3.x, and (for UNIX/Linux) the X11
+ libraries. FLTK is available at the following URL:</P>
 <PRE>
     <A HREF="http://www.fltk.org/">http://www.fltk.org/</A>
 </PRE>
@@ -527,9 +549,9 @@ dpkg(8)</CODE>, to generate the software distribution on the development
 </PRE>
 <H3>Options for the Setup GUI</H3>
 <P>The setup GUI requires the FLTK library. The configure script will
- look for the <CODE>fltk-config</CODE> utility that comes with FLTK
- 1.1.x. Set the FLTKCONFIG environment variable to the full path of this
- utility if it cannot be found in the current path:</P>
+ look for the <CODE>fltk-config</CODE> utility that comes with FLTK. Set
+ the FLTKCONFIG environment variable to the full path of this utility if
+ it cannot be found in the current path:</P>
 <PRE>
     <KBD>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</KBD>
 </PRE>
@@ -1300,6 +1322,16 @@ $</CODE>). As with most shells, variable names can be surrounded by
  keywords, signing keys, and response data. The <CODE>%literal(section)</CODE>
  directive adds format-specific data to the packages you create. Literal
  data is currently only supported for RPM and PKG packages.</P>
+<H3>Debian Literal Data</H3>
+<P>Debian packages have control files that provide metadata for each
+ package. The <CODE>%literal(control)</CODE> directive can be used to
+ provide this metadata:</P>
+<PRE>
+    %literal(control) &lt;&lt;EOF
+    Section: misc
+    Priority: extra
+    EOF
+</PRE>
 <H3>PKG Literal Data</H3>
 <P>PKG packages support request files that are used to do batch
  installations when installation commands require user input. The <CODE>
@@ -1357,12 +1389,12 @@ $</CODE>). As with most shells, variable names can be surrounded by
  COPYING and README files:</P>
 <PRE><FONT SIZE="1">
     %product ESP Package Manager
-    %copyright 1999-2006 by Easy Software Products, All Rights Reserved.
-    %vendor Easy Software Products
+    %copyright 1999-2014 by Michael R Sweet, All Rights Reserved.
+    %vendor Michael R Sweet
     %license ${srcdir}/COPYING
     %readme ${srcdir}/README
     %description Universal software packaging tool for UNIX.
-    %version 4.0 400
+    %version 4.3 430
 </FONT></PRE>
 <P>After the product information, we include all of the non-GUI files
  that are part of EPM:</P>
@@ -1414,533 +1446,6 @@ $</CODE>). As with most shells, variable names can be surrounded by
     f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
 
     %endif
-</FONT></PRE>
-<H2><A NAME="6_2">Packaging the CUPS Software</A></H2>
-<P>The Common UNIX Printing System provides an EPM list file to generate
- software distributions for most UNIX operating systems. This list file
- is more complex than the EPM example and contains several subpackages:</P>
-<UL>
-<LI>&quot;devel&quot;; Developer header, library, and documentation files</LI>
-<LI>&quot;es&quot;; Spanish localization files</LI>
-<LI>&quot;ja&quot;; Japanese localization files</LI>
-<LI>&quot;libs&quot;; Shared libraries</LI>
-<LI>&quot;lpd&quot;; LPD client support</LI>
-</UL>
-<H3>Variables Used for the Distribution</H3>
-<P>In addition to the autoconf variables defined in the EPM list file,
- the CUPS list file defines the following autoconf-derived variables for
- the distribution:</P>
-<UL>
-<LI><CODE>AMANDIR</CODE>; The directory for administrative manual pages.</LI>
-<LI><CODE>BINDIR</CODE>; The directory for user programs.</LI>
-<LI><CODE>CACHEDIR</CODE>; The directory for cache files.</LI>
-<LI><CODE>DATADIR</CODE>; The directory for data files.</LI>
-<LI><CODE>DOCDIR</CODE>; The directory for documentation files.</LI>
-<LI><CODE>INCLUDEDIR</CODE>; The directory for header files.</LI>
-<LI><CODE>INITDIR</CODE>; The directory for startup scripts.</LI>
-<LI><CODE>INITDDIR</CODE>; The directory to reference from run-level
- scripts.</LI>
-<LI><CODE>LIBDIR</CODE>; The directory for library files.</LI>
-<LI><CODE>LIB32DIR</CODE>; The directory for 32-bit library files.</LI>
-<LI><CODE>LIB64DIR</CODE>; The directory for 64-bit library files.</LI>
-<LI><CODE>LOCALEDIR</CODE>; The directory for message (localization)
- files.</LI>
-<LI><CODE>LOGDIR</CODE>; The directory for log files.</LI>
-<LI><CODE>MANDIR</CODE>; The directory for man pages.</LI>
-<LI><CODE>PAMDIR</CODE>; The directory for PAM configuration files.</LI>
-<LI><CODE>REQUESTS</CODE>; The directory for request files.</LI>
-<LI><CODE>SBINDIR</CODE>; The directory for administration programs.</LI>
-<LI><CODE>SERVERBIN</CODE>; The directory for server programs.</LI>
-<LI><CODE>SERVERROOT</CODE>; The directory for server configuration
- files.</LI>
-<LI><CODE>STATEDIR</CODE>; The directory for server state files.</LI>
-</UL>
-<H3>Product Information</H3>
-<P>The list file starts with the standard product information:</P>
-<PRE><FONT SIZE="1">
-    %product Common UNIX Printing System
-    %copyright 1993-2006 by Easy Software Products, All Rights Reserved.
-    %vendor Easy Software Products
-    %license LICENSE.txt
-    %readme packaging/cups.license
-    %version 1.2.0
-    %description The Common UNIX Printing System provides a portable
-    %description printing layer for UNIX(r) operating systems.  It
-    %description has been developed by Easy Software Products to
-    %description promote a standard printing solution for all UNIX
-    %description vendors and users.  CUPS provides the System V and
-    %description Berkeley command-line interfaces. 
-</FONT></PRE>
-<P>We then list different dependencies depending on the package format:</P>
-<PRE><FONT SIZE="1">
-    %format rpm
-    %provides cups 1:1.2.0
-    %provides lpd, lpr, LPRng
-    %replaces lpd, lpr, LPRng
-
-    %format deb
-    %provides cupsys
-    %provides cupsys-client
-    %provides cupsys-bsd
-
-    %format pkg
-    %replaces SUNWlpmsg LP Alerts
-    %replaces SUNWlpr LP Print Service, (Root)
-    %replaces SUNWlps LP Print Service - Server, (Usr)
-    %replaces SUNWlpu LP Print Service - Client, (Usr)
-    %replaces SUNWpsu LP Print Server, (Usr)
-    %replaces SUNWpsr LP Print Server, (Root)
-    %replaces SUNWpcu LP Print Client, (Usr)
-    %replaces SUNWpcr LP Print Client, (Root)
-    %replaces SUNWppm
-    %replaces SUNWmp
-    %replaces SUNWscplp SunOS Print Compatibility
-
-    %format inst
-    %replaces patch*.print_*.* 0 0 1289999999 1289999999
-    %replaces maint*.print_*.* 0 0 1289999999 1289999999
-    %replaces print 0 0 1289999999 1289999999
-    %replaces fw_cups 0 0 1289999999 1289999999
-    %incompat patch*.print_*.* 0 0 1289999999 1289999999
-    %incompat maint*.print_*.* 0 0 1289999999 1289999999
-    %incompat print 0 0 1289999999 1289999999
-    %incompat fw_cups 0 0 1289999999 1289999999
-
-    %format all
-</FONT></PRE>
-<P>The subpackages come next, each with their own dependencies:</P>
-<PRE><FONT SIZE="1">
-    %subpackage libs
-    %description Common UNIX Printing System - shared libraries
-    %format rpm
-    %provides cups-libs 1:1.2.0
-    %format deb
-    %provides libcups1
-    %provides libcupsys2
-    %provides libcupsys2-gnutls10
-    %provides libcupsimage2
-    %format all
-
-    %subpackage devel
-    %description Common UNIX Printing System - development environment
-    %format rpm
-    %provides cups-devel 1:1.2.0
-    %format deb
-    %provides libcupsys2-dev
-    %provides libcupsimage2-dev
-    %format all
-
-    %subpackage lpd
-    %description Common UNIX Printing System - LPD support
-    %format rpm
-    %provides cups-lpd 1:1.2.0
-    %format all
-
-    %subpackage es
-    %description Common UNIX Printing System - Spanish support
-
-    %subpackage ja
-    %description Common UNIX Printing System - Japanese support
-
-    %subpackage
-</FONT></PRE>
-
-<!-- NEED 3in -->
-<H3>Server Programs</H3>
-<P>The server programs are installed in the <CODE>SBINDIR</CODE> and <CODE>
-SERVERBIN</CODE> directories. The image and PDF filters are
- conditionally included based on the <CODE>IMGFILTERS</CODE> and <CODE>
-PDFTOPS</CODE> variables, respectively:</P>
-<PRE><FONT SIZE="1">
-    f 0755 root sys $SBINDIR/cupsd scheduler/cupsd
-
-    d 0755 root sys $SERVERBIN -
-    d 0755 root sys $SERVERBIN/backend -
-    f 0755 root sys $SERVERBIN/backend/ipp backend/ipp
-    l 0755 root sys $SERVERBIN/backend/http ipp
-    f 0755 root sys $SERVERBIN/backend/lpd backend/lpd
-    f 0755 root sys $SERVERBIN/backend/parallel backend/parallel
-    f 0755 root sys $SERVERBIN/backend/scsi backend/scsi
-    f 0755 root sys $SERVERBIN/backend/serial backend/serial
-    f 0755 root sys $SERVERBIN/backend/socket backend/socket
-    f 0755 root sys $SERVERBIN/backend/usb backend/usb
-    d 0755 root sys $SERVERBIN/cgi-bin -
-    f 0755 root sys $SERVERBIN/cgi-bin/admin.cgi cgi-bin/admin.cgi
-    f 0755 root sys $SERVERBIN/cgi-bin/classes.cgi cgi-bin/classes.cgi
-    f 0755 root sys $SERVERBIN/cgi-bin/help.cgi cgi-bin/help.cgi
-    f 0755 root sys $SERVERBIN/cgi-bin/jobs.cgi cgi-bin/jobs.cgi
-    f 0755 root sys $SERVERBIN/cgi-bin/printers.cgi cgi-bin/printers.cgi
-    d 0755 root sys $SERVERBIN/daemon -
-    f 0755 root sys $SERVERBIN/daemon/cups-deviced scheduler/cups-deviced
-    f 0755 root sys $SERVERBIN/daemon/cups-driverd scheduler/cups-driverd
-    f 0755 root sys $SERVERBIN/daemon/cups-polld scheduler/cups-polld
-    d 0755 root sys $SERVERBIN/driver -
-    d 0755 root sys $SERVERBIN/filter -
-    f 0755 root sys $SERVERBIN/filter/gziptoany filter/gziptoany
-    f 0755 root sys $SERVERBIN/filter/hpgltops filter/hpgltops
-    %if IMGFILTERS
-    f 0755 root sys $SERVERBIN/filter/imagetops filter/imagetops
-    f 0755 root sys $SERVERBIN/filter/imagetoraster filter/imagetoraster
-    %endif
-    %if PDFTOPS
-    f 0755 root sys $SERVERBIN/filter/pdftops pdftops/pdftops
-    %endif
-    f 0755 root sys $SERVERBIN/filter/pstops filter/pstops
-    f 0755 root sys $SERVERBIN/filter/rastertolabel filter/rastertolabel
-    l 0755 root sys $SERVERBIN/filter/rastertodymo rastertolabel
-    f 0755 root sys $SERVERBIN/filter/rastertoepson filter/rastertoepson
-    f 0755 root sys $SERVERBIN/filter/rastertohp filter/rastertohp
-    f 0755 root sys $SERVERBIN/filter/texttops filter/texttops
-    d 0755 root sys $SERVERBIN/notifier -
-    f 0755 root sys $SERVERBIN/notifier/mailto notifier/mailto
-</FONT></PRE>
-<P>The <CODE>cups-lpd</CODE> program goes in the &quot;lpd&quot; subpackage:</P>
-<PRE><FONT SIZE="1">
-    %subpackage lpd
-    d 0755 root sys $SERVERBIN/daemon -
-    f 0755 root sys $SERVERBIN/daemon/cups-lpd scheduler/cups-lpd
-    %subpackage
-</FONT></PRE>
-<H3>Administration Commands</H3>
-<P>The administration commands are all pretty much the same. The only
- difference is that IRIX needs a symlink for the <CODE>lpc</CODE>
- program in the<VAR> /usr/etc</VAR> directory.</P>
-<PRE><FONT SIZE="1">
-    d 0755 root sys $BINDIR -
-    l 0755 root sys $BINDIR/enable $SBINDIR/accept
-    l 0755 root sys $LIBDIR/accept $SBINDIR/accept
-    d 0755 root sys $SBINDIR -
-    l 0755 root sys $SBINDIR/cupsdisable accept
-    l 0755 root sys $SBINDIR/cupsenable accept
-    l 0755 root sys $BINDIR/disable $SBINDIR/accept
-    d 0755 root sys $LIBDIR -
-    l 0755 root sys $LIBDIR/lpadmin $SBINDIR/lpadmin
-    l 0755 root sys $LIBDIR/reject accept
-    f 0755 root sys $SBINDIR/accept systemv/accept
-    f 0755 root sys $SBINDIR/cupsaddsmb systemv/cupsaddsmb
-    f 0755 root sys $SBINDIR/lpadmin systemv/lpadmin
-    f 0755 root sys $SBINDIR/lpc berkeley/lpc
-    f 0755 root sys $SBINDIR/lpinfo systemv/lpinfo
-    f 0755 root sys $SBINDIR/lpmove systemv/lpmove
-    l 0755 root sys $SBINDIR/reject accept
-
-    %system irix
-    l 0755 root sys /usr/etc/lpc $SBINDIR/lpc
-    %system all
-</FONT></PRE>
-<H3>User Commands</H3>
-<P>The user commands are all pretty much the same. As with the
- administration commands, IRIX needs the Berkeley commands linked to a
- different directory,<VAR> /usr/bsd</VAR>.</P>
-<PRE><FONT SIZE="1">
-    d 0755 root sys $BINDIR -
-    f 0755 root sys $BINDIR/cancel systemv/cancel
-    f 0755 root sys $BINDIR/cupstestdsc systemv/cupstestdsc
-    f 0755 root sys $BINDIR/cupstestppd systemv/cupstestppd
-    f 0755 root sys $BINDIR/lp systemv/lp
-    f 0755 root sys $BINDIR/lpoptions systemv/lpoptions
-    f 4755 $CUPS_USER sys $BINDIR/lppasswd systemv/lppasswd
-    f 0755 root sys $BINDIR/lpq berkeley/lpq
-    f 0755 root sys $BINDIR/lpr berkeley/lpr
-    f 0755 root sys $BINDIR/lprm berkeley/lprm
-    f 0755 root sys $BINDIR/lpstat systemv/lpstat
-
-    %system irix
-    l 0755 root sys /usr/bsd/lpq $BINDIR/lpq
-    l 0755 root sys /usr/bsd/lpr $BINDIR/lpr
-    l 0755 root sys /usr/bsd/lprm $BINDIR/lprm
-    %system all
-</FONT></PRE>
-<H3>Shared Libraries</H3>
-<P>Shared libraries present their own challenges. AIX, HP-UX, and MacOS
- X uses a different extension for shared libraries than the other
- operating systems, and we only include the shared libraries if they are
- enabled in the build:</P>
-<PRE><FONT SIZE="1">
-    %if DSOLIBS
-    %subpackage libs
-    %system hpux
-    f 0755 root sys $LIBDIR/libcups.sl.2 cups/libcups.sl.2
-    l 0755 root sys $LIBDIR/libcups.sl libcups.sl.2
-    f 0755 root sys $LIBDIR/libcupsimage.sl.2 filter/libcupsimage.sl.2
-    l 0755 root sys $LIBDIR/libcupsimage.sl libcupsimage.sl.2
-    %system aix
-    f 0755 root sys $LIBDIR/libcups_s.a cups/libcups_s.a
-    f 0755 root sys $LIBDIR/libcupsimage_s.a filter/libcupsimage_s.a
-    %system darwin
-    f 0755 root sys $LIBDIR/libcups.2.dylib cups/libcups.2.dylib
-    l 0755 root sys $LIBDIR/libcups.dylib libcups.2.dylib
-    f 0755 root sys $LIBDIR/libcupsimage.2.dylib filter/libcupsimage.2.dylib
-    l 0755 root sys $LIBDIR/libcupsimage.dylib libcupsimage.2.dylib
-    %system !hpux !aix !darwin
-    f 0755 root sys $LIBDIR/libcups.so.2 cups/libcups.so.2
-    l 0755 root sys $LIBDIR/libcups.so libcups.so.2
-    f 0755 root sys $LIBDIR/libcupsimage.so.2 filter/libcupsimage.so.2
-    l 0755 root sys $LIBDIR/libcupsimage.so libcupsimage.so.2
-    %system all
-    %subpackage
-    %endif
-</FONT></PRE>
-<P>To keep things interesting, CUPS also supports separately compiled
- 32-bit and 64-bit libraries on systems that support a mix of 32-bit and
- 64-bit binaries. The <CODE>LIB32DIR</CODE> and <CODE>LIB64DIR</CODE>
- variables are used to conditionally include the corresponding
- libraries:</P>
-<PRE><FONT SIZE="1">
-    %if LIB32DIR
-    %subpackage libs
-    f 0755 root sys $LIB32DIR/libcups.so.2 cups/libcups.32.so.2
-    l 0755 root sys $LIB32DIR/libcups.so libcups.so.2
-    f 0755 root sys $LIB32DIR/libcupsimage.so.2 filter/libcupsimage.32.so.2
-    l 0755 root sys $LIB32DIR/libcupsimage.so libcupsimage.so.2
-    %system all
-    %subpackage
-    %endif
-
-    %if LIB64DIR
-    %subpackage libs
-    f 0755 root sys $LIB64DIR/libcups.so.2 cups/libcups.64.so.2
-    l 0755 root sys $LIB64DIR/libcups.so libcups.so.2
-    f 0755 root sys $LIB64DIR/libcupsimage.so.2 filter/libcupsimage.64.so.2
-    l 0755 root sys $LIB64DIR/libcupsimage.so libcupsimage.so.2
-    %system all
-    %subpackage
-    %endif
-</FONT></PRE>
-<H3>Directories</H3>
-<P>The CUPS distribution uses several directories to hold the log,
- request, and temporary files. The <CODE>CUPS_GROUP</CODE> and <CODE>
-CUPS_PRIMARY_SYSTEM_GROUP</CODE> variables define the group names to use
- for these directories:</P>
-<PRE><FONT SIZE="1">
-    d 0755 root sys $LOGDIR -
-    d 0710 root $CUPS_GROUP $REQUESTS -
-    d 1770 root $CUPS_GROUP $REQUESTS/tmp -
-    d 0775 root $CUPS_GROUP $CACHEDIR -
-    d 0755 root $CUPS_GROUP $STATEDIR -
-    d 0511 root $CUPS_PRIMARY_SYSTEM_GROUP $STATEDIR/certs -
-</FONT></PRE>
-<H3>Data Files</H3>
-<P>CUPS has lots of data files. We use wildcards whenever possible:</P>
-<PRE><FONT SIZE="1">
-    d 0755 root sys $DATADIR -
-
-    d 0755 root sys $DATADIR/banners -
-    f 0644 root sys $DATADIR/banners/classified data/classified
-    f 0644 root sys $DATADIR/banners/confidential data/confidential
-    f 0644 root sys $DATADIR/banners/secret data/secret
-    f 0644 root sys $DATADIR/banners/standard data/standard
-    f 0644 root sys $DATADIR/banners/topsecret data/topsecret
-    f 0644 root sys $DATADIR/banners/unclassified data/unclassified
-
-    d 0755 root sys $DATADIR/charsets -
-    f 0644 root sys $DATADIR/charsets data/*.txt
-    f 0644 root sys $DATADIR/charsets/windows-874 data/windows-874
-    f 0644 root sys $DATADIR/charsets/windows-1250 data/windows-1250
-    f 0644 root sys $DATADIR/charsets/windows-1251 data/windows-1251
-    f 0644 root sys $DATADIR/charsets/windows-1252 data/windows-1252
-    f 0644 root sys $DATADIR/charsets/windows-1253 data/windows-1253
-    f 0644 root sys $DATADIR/charsets/windows-1254 data/windows-1254
-    f 0644 root sys $DATADIR/charsets/windows-1255 data/windows-1255
-    f 0644 root sys $DATADIR/charsets/windows-1256 data/windows-1256
-    f 0644 root sys $DATADIR/charsets/windows-1257 data/windows-1257
-    f 0644 root sys $DATADIR/charsets/windows-1258 data/windows-1258
-    f 0644 root sys $DATADIR/charsets/iso-8859-1 data/iso-8859-1
-    f 0644 root sys $DATADIR/charsets/iso-8859-2 data/iso-8859-2
-    f 0644 root sys $DATADIR/charsets/iso-8859-3 data/iso-8859-3
-    f 0644 root sys $DATADIR/charsets/iso-8859-4 data/iso-8859-4
-    f 0644 root sys $DATADIR/charsets/iso-8859-5 data/iso-8859-5
-    f 0644 root sys $DATADIR/charsets/iso-8859-6 data/iso-8859-6
-    f 0644 root sys $DATADIR/charsets/iso-8859-7 data/iso-8859-7
-    f 0644 root sys $DATADIR/charsets/iso-8859-8 data/iso-8859-8
-    f 0644 root sys $DATADIR/charsets/iso-8859-9 data/iso-8859-9
-    f 0644 root sys $DATADIR/charsets/iso-8859-10 data/iso-8859-10
-    f 0644 root sys $DATADIR/charsets/iso-8859-13 data/iso-8859-13
-    f 0644 root sys $DATADIR/charsets/iso-8859-14 data/iso-8859-14
-    f 0644 root sys $DATADIR/charsets/iso-8859-15 data/iso-8859-15
-    f 0644 root sys $DATADIR/charsets/utf-8 data/utf-8
-
-    d 0755 root sys $DATADIR/data -
-    f 0644 root sys $DATADIR/data/HPGLprolog data/HPGLprolog
-    f 0644 root sys $DATADIR/data/psglyphs data/psglyphs
-    f 0644 root sys $DATADIR/data/testprint.ps data/testprint.ps
-
-    d 0755 root sys $DATADIR/fonts -
-    f 0644 root sys $DATADIR/fonts fonts/Courier*
-    f 0644 root sys $DATADIR/fonts/Symbol fonts/Symbol
-
-    d 0755 root sys $DATADIR/model -
-    f 0644 root sys $DATADIR/model ppd/*.ppd
-
-    d 0755 root sys $DATADIR/templates -
-    c 0644 root sys $DATADIR/templates templates/*.tmpl
-</FONT></PRE>
-<P>The template files for each of the language localizations are put in
- separate subpackages:</P>
-<PRE><FONT SIZE="1">
-    # Japanese template files
-    %subpackage es
-    d 0755 root sys $DATADIR/templates/es
-    f 0644 root sys $DATADIR/templates/es templates/es/*.tmpl
-    %subpackage ja
-    d 0755 root sys $DATADIR/templates/ja
-    f 0644 root sys $DATADIR/templates/ja templates/ja/*.tmpl
-    %subpackage
-</FONT></PRE>
-<H3>Configuration Files</H3>
-<P>The server configuration files and directories go in <CODE>SERVERROOT</CODE>
-. The MIME configuration files are not treated as configuration files in
- the distribution since new versions of CUPS may add filters and file
- types that are required to make CUPS work:</P>
-<PRE><FONT SIZE="1">
-    d 0755 root sys $SERVERROOT -
-    d 0755 root $CUPS_GROUP $SERVERROOT/interfaces -
-    d 0755 root $CUPS_GROUP $SERVERROOT/ppd -
-    c $CUPS_PERM root $CUPS_GROUP $SERVERROOT conf/*.conf
-    f $CUPS_PERM root $CUPS_GROUP $SERVERROOT/cupsd.conf.default conf/cupsd.conf
-    f $CUPS_PERM root $CUPS_GROUP $SERVERROOT/mime.convs conf/mime.convs
-    f $CUPS_PERM root $CUPS_GROUP $SERVERROOT/mime.types conf/mime.types
-</FONT></PRE>
-<P>The PAM configuration file is only included if the configure script
- found a PAM configuration directory:</P>
-<PRE><FONT SIZE="1">
-    %if PAMDIR
-    d 0755 root sys $PAMDIR -
-    c 0644 root sys $PAMDIR/cups conf/pam.std
-    %endif
-</FONT></PRE>
-<H3>Developer Files</H3>
-<P>The developer files include the C header files, static libraries, and
- help files. The static libraries are only included if they have been
- built, which is specified using the <CODE>INSTALLSTATIC</CODE>
- variable:</P>
-<PRE><FONT SIZE="1">
-    %subpackage devel
-    f 0755 root sys $BINDIR/cups-config cups-config
-    d 0755 root sys $INCLUDEDIR/cups -
-    f 0644 root sys $INCLUDEDIR/cups/cups.h cups/cups.h
-    f 0644 root sys $INCLUDEDIR/cups/http.h cups/http.h
-    f 0644 root sys $INCLUDEDIR/cups/image.h filter/image.h
-    f 0644 root sys $INCLUDEDIR/cups/ipp.h cups/ipp.h
-    f 0644 root sys $INCLUDEDIR/cups/language.h cups/language.h
-    f 0644 root sys $INCLUDEDIR/cups/md5.h cups/md5.h
-    f 0644 root sys $INCLUDEDIR/cups/ppd.h cups/ppd.h
-    f 0644 root sys $INCLUDEDIR/cups/raster.h filter/raster.h
-
-    %if INSTALLSTATIC
-    f 0644 root sys $LIBDIR/libcups.a cups/libcups.a
-    f 0644 root sys $LIBDIR/libcupsimage.a filter/libcupsimage.a
-    %endif
-
-    d 0755 root sys $DOCDIR/help -
-    f 0644 root sys $DOCDIR/help doc/help/api*.html
-    f 0644 root sys $DOCDIR/help doc/help/spec*.html
-    %subpackage
-</FONT></PRE>
-<H3>Documentation Files</H3>
-<P>The documentation files go under <CODE>DOCDIR</CODE>. Wildcards take
- care of most of the work:</P>
-<PRE><FONT SIZE="1">
-    d 0755 root sys $DOCDIR -
-    f 0644 root sys $DOCDIR doc/*.css
-    f 0644 root sys $DOCDIR doc/*.html
-    d 0755 root sys $DOCDIR/help -
-    f 0644 root sys $DOCDIR/help/cgi.html doc/help/cgi.html
-    f 0644 root sys $DOCDIR/help/glossary.html doc/help/glossary.html
-    f 0644 root sys $DOCDIR/help/license.html doc/help/license.html
-    f 0644 root sys $DOCDIR/help/network.html doc/help/network.html
-    f 0644 root sys $DOCDIR/help/options.html doc/help/options.html
-    f 0644 root sys $DOCDIR/help/overview.html doc/help/overview.html
-    f 0644 root sys $DOCDIR/help/security.html doc/help/security.html
-    f 0644 root sys $DOCDIR/help/standard.html doc/help/standard.html
-    f 0644 root sys $DOCDIR/help/translation.html doc/help/translation.html
-    f 0644 root sys $DOCDIR/help/whatsnew.html doc/help/whatsnew.html
-    f 0644 root sys $DOCDIR/help doc/help/man-*.html
-    f 0644 root sys $DOCDIR/help doc/help/ref-*.html
-    d 0755 root sys $DOCDIR/images -
-    f 0644 root sys $DOCDIR/images doc/images/*.gif
-    f 0644 root sys $DOCDIR/images doc/images/*.jpg
-    f 0644 root sys $DOCDIR/images doc/images/*.png
-    f 0644 root sys $DOCDIR/robots.txt doc/robots.txt
-</FONT></PRE>
-<P>The Japanese and Spanish version of the documentation files go in the
- corresponding subpackages:</P>
-<PRE><FONT SIZE="1">
-    # Localized documentation files
-    %subpackage es
-    d 0755 root sys $DOCDIR/es
-    f 0644 root sys $DOCDIR/es doc/es/*.html
-    d 0755 root sys $DOCDIR/es/images -
-    f 0644 root sys $DOCDIR/es/images doc/es/images/*.gif
-    %subpackage ja
-    d 0755 root sys $DOCDIR/ja
-    f 0644 root sys $DOCDIR/ja doc/ja/*.html
-    d 0755 root sys $DOCDIR/ja/images -
-    f 0644 root sys $DOCDIR/ja/images doc/ja/images/*.gif
-    %subpackage
-</FONT></PRE>
-<H3>Man Pages</H3>
-<P>Man pages are almost as much fun as initialization scripts. HP-UX,
- IRIX, and Solaris follow the System V convention of using section 1m
- for administration commands instead of section 8 as is used for all
- other operating systems. IRIX also places administrative commands in a
- separate subdirectory:</P>
-<PRE><FONT SIZE="1">
-    d 0755 root sys $AMANDIR -
-    d 0755 root sys $AMANDIR/man$MAN8DIR -
-    d 0755 root sys $MANDIR -
-    d 0755 root sys $MANDIR/man1 -
-    d 0755 root sys $MANDIR/man5 -
-    d 0755 root sys $MANDIR/man7 -
-
-    f 0644 root sys $MANDIR/man1/cancel.$MAN1EXT man/cancel.$MAN1EXT
-    f 0644 root sys $MANDIR/man1/cupstestdsc.$MAN1EXT man/cupstestdsc.$MAN1EXT
-    f 0644 root sys $MANDIR/man1/cupstestppd.$MAN1EXT man/cupstestppd.$MAN1EXT
-    f 0644 root sys $MANDIR/man1/lpoptions.$MAN1EXT man/lpoptions.$MAN1EXT
-    f 0644 root sys $MANDIR/man1/lppasswd.$MAN1EXT man/lppasswd.$MAN1EXT
-    f 0644 root sys $MANDIR/man1/lpq.$MAN1EXT man/lpq.$MAN1EXT
-    f 0644 root sys $MANDIR/man1/lprm.$MAN1EXT man/lprm.$MAN1EXT
-    f 0644 root sys $MANDIR/man1/lpr.$MAN1EXT man/lpr.$MAN1EXT
-    f 0644 root sys $MANDIR/man1/lpstat.$MAN1EXT man/lpstat.$MAN1EXT
-    f 0644 root sys $MANDIR/man1/lp.$MAN1EXT man/lp.$MAN1EXT
-
-    f 0644 root sys $MANDIR/man5/classes.conf.$MAN5EXT man/classes.conf.$MAN5EXT
-    f 0644 root sys $MANDIR/man5/cupsd.conf.$MAN5EXT man/cupsd.conf.$MAN5EXT
-    f 0644 root sys $MANDIR/man5/mime.convs.$MAN5EXT man/mime.convs.$MAN5EXT
-    f 0644 root sys $MANDIR/man5/mime.types.$MAN5EXT man/mime.types.$MAN5EXT
-    f 0644 root sys $MANDIR/man5/printers.conf.$MAN5EXT man/printers.conf.$MAN5EXT
-
-    f 0644 root sys $MANDIR/man7/backend.$MAN7EXT man/backend.$MAN7EXT
-    f 0644 root sys $MANDIR/man7/filter.$MAN7EXT man/filter.$MAN7EXT
-
-    f 0644 root sys $AMANDIR/man$MAN8DIR/accept.$MAN8EXT man/accept.$MAN8EXT
-    l 0644 root sys $AMANDIR/man$MAN8DIR/reject.$MAN8EXT accept.$MAN8EXT
-    f 0644 root sys $AMANDIR/man$MAN8DIR/cupsaddsmb.$MAN8EXT man/cupsaddsmb.$MAN8EXT
-    f 0644 root sys $AMANDIR/man$MAN8DIR/cups-polld.$MAN8EXT man/cups-polld.$MAN8EXT
-    f 0644 root sys $AMANDIR/man$MAN8DIR/cupsd.$MAN8EXT man/cupsd.$MAN8EXT
-    f 0644 root sys $AMANDIR/man$MAN8DIR/cupsenable.$MAN8EXT man/cupsenable.$MAN8EXT
-    l 0644 root sys $AMANDIR/man$MAN8DIR/cupsdisable.$MAN8EXT cupsenable.$MAN8EXT
-    f 0644 root sys $AMANDIR/man$MAN8DIR/lpadmin.$MAN8EXT man/lpadmin.$MAN8EXT
-    f 0644 root sys $AMANDIR/man$MAN8DIR/lpc.$MAN8EXT man/lpc.$MAN8EXT
-    f 0644 root sys $AMANDIR/man$MAN8DIR/lpinfo.$MAN8EXT man/lpinfo.$MAN8EXT
-    f 0644 root sys $AMANDIR/man$MAN8DIR/lpmove.$MAN8EXT man/lpmove.$MAN8EXT
-
-    %subpackage devel
-    f 0644 root sys $MANDIR/man1/cups-config.$MAN1EXT man/cups-config.$MAN1EXT
-
-    %subpackage lpd
-    d 0755 root sys $AMANDIR/man$MAN8DIR -
-    f 0644 root sys $AMANDIR/man$MAN8DIR/cups-lpd.$MAN8EXT man/cups-lpd.$MAN8EXT
-    %subpackage
-</FONT></PRE>
-<H3>Startup Script</H3>
-<P>The CUPS startup script is last and specifies a script name of <CODE>
-cups</CODE>. Startup and shutdown scripts will be created with the
- (default) names <CODE>S99cups</CODE> and <CODE>K00cups</CODE>,
- respectively.</P>
-<PRE><FONT SIZE="1">
-    %system all
-    i 0555 root sys cups init/cups.sh
 </FONT></PRE>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="LICENSE">A - GNU General Public License</A></H1>
@@ -2207,138 +1712,150 @@ Ty Coon, President of Vice
 <!-- NEW PAGE -->
 
 <!-- SECTION: Man Pages -->
-<H2><A NAME="8_1">epm(1)</A></H2>
-<H3><A name="NAME">Name</A></H3>
+<H1 class="title"><A NAME="9">epm(1)</A></H1>
+<H2 class="title"><A name="NAME">Name</A></H2>
  epm - create software packages.
-<H3><A name="SYNOPSIS">Synopsis</A></H3>
-<B> epm</B> [ -a<I> architecture</I> ] [ -f<I> format</I> ] [ -g ] [ -k
- ] [ -m<I> name</I> ] [ -n[mrs] ] [ -s<I> setup.xpm</I> ] [ --depend ] [
- --help ] [ --keep-files ] [ --output-dir<I> directory</I> ] [
- --setup-image<I> setup.xpm</I> ] [ --setup-program<I> /foo/bar/setup</I>
- ] [ --setup-types<I> setup.types</I> ] [ -v ] [<I> name=value</I> ...<I>
- name=value</I> ] product [<I> listfile</I> ]
-<H3><A name="DESCRIPTION">Description</A></H3>
-<B> epm</B> generates software packages complete with installation,
- removal, and (if necessary) patch scripts. Unless otherwise specified,
- the files required for<I> product</I> are read from a file named &quot;<I>
-product</I>.list&quot;.
-<P>The<I> -a</I> option (&quot;architecture&quot;) specifies the actual
- architecture for the software. Without this option the generic
- processor architecture is used (&quot;intel&quot;, &quot;sparc&quot;, &quot;mips&quot;, etc.)</P>
-<P>The<I> -f</I> option (&quot;format&quot;) specifies the distribution format:</P>
-<DL>
-<!-- NEED 3 -->
-<DT>aix</DT>
-<DD>Generate an AIX distribution suitable for installation on an AIX
- system.</DD>
-
-<!-- NEED 3 -->
-<DT>bsd</DT>
-<DD>Generate a BSD distribution suitable for installation on a FreeBSD,
- NetBSD, or OpenBSD system.</DD>
-
-<!-- NEED 3 -->
-<DT>deb</DT>
-<DD>Generate a Debian distribution suitable for installation on a Debian
- Linux system.</DD>
-
-<!-- NEED 3 -->
-<DT>inst, tardist</DT>
-<DD>Generate an IRIX distribution suitable for installation on an system
- running IRIX.</DD>
-
-<!-- NEED 3 -->
-<DT>lsb, lsb-signed</DT>
-<DD>Generate RPM packages for LSB-conforming systems. The lsb-signed
- format uses the GPG private key you have defined in the ~/.rpmmacros
- file.</DD>
-
-<!-- NEED 3 -->
-<DT>native</DT>
-<DD>Generate an native distribution. This uses<I> rpm</I> for Linux,<I>
- inst</I> for IRIX,<I> pkg</I> for Solaris,<I> swinstall</I> for HP-UX,<I>
- bsd</I> for FreeBSD, NetBSD, and OpenBSD, and<I> osx</I> for MacOS X.
- All other operating systems default to the<I> portable</I> format.</DD>
-
-<!-- NEED 3 -->
-<DT>osx</DT>
-<DD>Generate a MacOS X software package.</DD>
-
-<!-- NEED 3 -->
-<DT>pkg</DT>
-<DD>Generate an AT&amp;T software package. These are used primarily under
- Solaris.</DD>
-
-<!-- NEED 3 -->
-<DT>portable</DT>
-<DD>Generate a portable distribution based on shell scripts and tar
- files. The resulting distribution is installed and removed the same way
- on all operating systems. [default]</DD>
-
-<!-- NEED 3 -->
-<DT>rpm, rpm-signed</DT>
-<DD>Generate a Red Hat Package Manager (&quot;RPM&quot;) distribution suitable for
- installation on a Red Hat Linux system. The rpm-signed format uses the
- GPG private key you have defined in the ~/.rpmmacros file.</DD>
-
-<!-- NEED 3 -->
-<DT>setld</DT>
-<DD>Generate a Tru64 (setld) software distribution.</DD>
-
-<!-- NEED 3 -->
-<DT>slackware</DT>
-<DD>Generate a Slackware Linux software distribution.</DD>
-
-<!-- NEED 3 -->
-<DT>swinstall, depot</DT>
-<DD>Generate a HP-UX software distribution.</DD>
+<H2 class="title"><A name="SYNOPSIS">Synopsis</A></H2>
+<B> epm</B> [<B> -a</B><I> architecture</I> ] [<B> -f</B><I> format</I>
+ ] [<B> -g</B> ] [<B> -k</B> ] [<B> -m</B><I> name</I> ] [<B> -n</B>[<B>
+mrs</B>] ] [<B> -s</B><I> setup.ext</I> ] [<B> --depend</B> ] [<B>
+ --help</B> ] [<B> --keep-files</B> ] [<B> --output-dir</B><I> directory</I>
+ ] [<B> --setup-image</B><I> setup.ext</I> ] [<B> --setup-program</B><I>
+ /foo/bar/setup</I> ] [<B> --setup-types</B><I> setup.types</I> ] [<B>
+ -v</B> ] [<I> name=value</I> ...<I> name=value</I> ]<I> product</I> [<I>
+ listfile</I> ]
+<H2 class="title"><A name="DESCRIPTION">Description</A></H2>
+ <A href="man-epm.html?TOPIC=Man+Pages"><B>epm</B>(1)</A> generates
+ software packages complete with installation, removal, and (if
+ necessary) patch scripts. Unless otherwise specified, the files
+ required for<I> product</I> are read from a file named &quot;<I>product</I>
+.list&quot;.
+<H2 class="title"><A name="OPTIONS">Options</A></H2>
+ The following options are recognized:
+<DL class="man">
+<DT><B>-a</B><I> architecture</I></DT>
+<DD style="margin-left: 5.0em">Specifies the actual architecture for the
+ software. Without this option the generic processor architecture is
+ used (&quot;intel&quot;, &quot;sparc&quot;, &quot;mips&quot;, etc.)</DD>
+<DT><B>-f aix</B></DT>
+<DD style="margin-left: 5.0em">Generate an AIX distribution suitable for
+ installation on an AIX system.</DD>
+<DT><B>-f bsd</B></DT>
+<DD style="margin-left: 5.0em">Generate a BSD distribution suitable for
+ installation on a FreeBSD, NetBSD, or OpenBSD system.</DD>
+<DT><B>-f deb</B></DT>
+<DD style="margin-left: 5.0em">Generate a Debian distribution suitable
+ for installation on a Debian Linux system.</DD>
+<DT><B>-f inst</B></DT>
+<DD style="margin-left: 5.0em"></DD>
+<DT><B>-f tardist</B></DT>
+<DD style="margin-left: 5.0em">Generate an IRIX distribution suitable
+ for installation on an system running IRIX.</DD>
+<DT><B>-f lsb</B></DT>
+<DD style="margin-left: 5.0em"></DD>
+<DT><B>-f lsb-signed</B></DT>
+<DD style="margin-left: 5.0em">Generate RPM packages for LSB-conforming
+ systems. The<I> lsb-signed</I> format uses the GPG private key you have
+ defined in the ~/.rpmmacros file.</DD>
+<DT><B>-f native</B></DT>
+<DD style="margin-left: 5.0em">Generate a native distribution. This uses<I>
+ rpm</I> for Linux,<I> inst</I> for IRIX,<I> pkg</I> for Solaris,<I>
+ swinstall</I> for HP-UX,<I> bsd</I> for FreeBSD, NetBSD, and OpenBSD,
+ and<I> osx</I> for OS X. All other operating systems default to the<I>
+ portable</I> format.</DD>
+<DT><B>-f osx</B></DT>
+<DD style="margin-left: 5.0em"></DD>
+<DT><B>-f osx-signed</B></DT>
+<DD style="margin-left: 5.0em">Generate an OS X software package. The<I>
+ osx-signed</I> format uses the signing identity in the
+ EPM_SIGNING_IDENTITY environment variable.</DD>
+<DT><B>-f pkg</B></DT>
+<DD style="margin-left: 5.0em">Generate an AT&amp;T software package. These
+ are used primarily under Solaris.</DD>
+<DT><B>-f portable</B></DT>
+<DD style="margin-left: 5.0em">Generate a portable distribution based on
+ shell scripts and tar files. The resulting distribution is installed
+ and removed the same way on all operating systems. [default]</DD>
+<DT><B>-f rpm</B></DT>
+<DD style="margin-left: 5.0em"></DD>
+<DT><B>-f rpm-signed</B></DT>
+<DD style="margin-left: 5.0em">Generate a Red Hat Package Manager
+ (&quot;RPM&quot;) distribution suitable for installation on a Red Hat Linux
+ system. The<I> rpm-signed</I> format uses the GPG private key you have
+ defined in the ~/.rpmmacros file.</DD>
+<DT><B>-f setld</B></DT>
+<DD style="margin-left: 5.0em">Generate a Tru64 (setld) software
+ distribution.</DD>
+<DT><B>-f slackware</B></DT>
+<DD style="margin-left: 5.0em">Generate a Slackware Linux software
+ distribution.</DD>
+<DT><B>-f swinstall</B></DT>
+<DD style="margin-left: 5.0em"></DD>
+<DT><B>-f depot</B></DT>
+<DD style="margin-left: 5.0em">Generate a HP-UX software distribution.</DD>
+<DT><B>-g</B></DT>
+<DD style="margin-left: 5.0em">Disable stripping of executable files in
+ the distribution.</DD>
+<DT><B>-k</B></DT>
+<DD style="margin-left: 5.0em">Keep intermediate (spec, etc.) files used
+ to create the distribution in the distribution directory.</DD>
+<DT><B>-m</B><I> name</I></DT>
+<DD style="margin-left: 5.0em">Specifies the platform name as a string.
+ The default is to use the auto-generated name from the<I> -n</I>
+ option.</DD>
+<DT><B>-n</B>[<I>mrs</I>]</DT>
+<DD style="margin-left: 5.0em">Specifies the operating system and
+ machine information that is included in the package name. Distributions
+ normally are named &quot;product-version-system-release-machine.ext&quot; and
+ &quot;product-version-system-release-machine-patch.ext&quot; for patch
+ distributions. The &quot;system-release-machine&quot; information can be
+ customized or eliminated using the appropriate trailing letters. Using<I>
+ -n</I> by itself will remove the &quot;system-release-machine&quot; string from
+ the filename entirely. The letter 'm' includes the architecture
+ (machine). The letter 'r' includes the operating system version
+ (release). The letter 's' includes the operating system name.</DD>
+<DT><B>-s</B><I> setup.ext</I></DT>
+<DD style="margin-left: 5.0em"></DD>
+<DT><B>-v</B></DT>
+<DD style="margin-left: 5.0em">Increases the amount of information that
+ is reported. Use multiple v's for more verbose output.</DD>
+<DT><B>--depend</B></DT>
+<DD style="margin-left: 5.0em">Lists the dependent (source) files for
+ all files in the package.</DD>
+<DT><B>--output-dir</B><I> directory</I></DT>
+<DD style="margin-left: 5.0em">Specifies the directory for output files.
+ The default directory is based on the operating system, version, and
+ architecture.</DD>
+<DT><B>--setup-image</B><I> setup.ext</I></DT>
+<DD style="margin-left: 5.0em">Include the ESP Software Wizard with the
+ specified image file with the distribution. This option is currently
+ only supported by portable distributions.</DD>
+<DT><B>--setup-program</B><I> /foo/bar/setup</I></DT>
+<DD style="margin-left: 5.0em">Specifies the setup executable to use
+ with the distribution. This option is currently only supported by
+ portable distributions.</DD>
+<DT><B>--setup-types</B><I> setup.types</I></DT>
+<DD style="margin-left: 5.0em"></DD>
 </DL>
-<P>Executable files in the distribution are normally stripped of
- debugging information when packaged. To disable this functionality use
- the<I> -g</I> option.</P>
-<P>Intermediate (spec, etc.) files used to create the distribution are
- normally removed after the distribution is created. The<I> -k</I>
- option keeps these files in the distribution directory.</P>
-<P>The<I> -s</I> and<I> --setup-image</I> options (&quot;setup&quot;) include the
- ESP Software Wizard with the specified GIF or XPM image file with the
- distribution. This option is currently only supported by portable and
- RPM distributions.</P>
-<P>The<I> --setup-program</I> option specifies the setup executable to
- use with the distribution. This option is currently only supported by
- portable distributions.</P>
-<P>The<I> --setup-types</I> option specifies the<I> setup.types</I> file
- to include with the distribution. This option is currently only
- supported by portable distributions.</P>
-<P>The<I> --output-dir</I> option specifies the directory to place
- output file into. The default directory is based on the operating
- system, version, and architecture.</P>
-<P>The<I> -v</I> option (&quot;verbose&quot;) increases the amount of information
- that is reported. Use multiple v's for more verbose output.</P>
-<P>The<I> --depend</I> option lists the dependent (source) files for all
- files in the package.</P>
-<P>Distributions normally are named
- &quot;product-version-system-release-machine.ext&quot; and
- &quot;product-version-system-release-machine-patch.ext&quot; (for patch
- distributions.) The &quot;system-release-machine&quot; information can be
- customized or eliminated using the<I> -n</I> option with the
- appropriate trailing letters. Using<I> -n</I> by itself will remove the
- &quot;system-release-machine&quot; string from the filename entirely. The
- &quot;system-release-machine&quot; information can also be customized by using
- the<I> -m</I> option with an arbitrary string.</P>
-<P>Debian, IRIX, portable, and Red Hat distributions use the extensions
- &quot;.deb&quot;, &quot;.tardist&quot;, &quot;tar.gz&quot;, and &quot;.rpm&quot; respectively.</P>
-<H3><A name="LIST_FILES">List Files</A></H3>
+<P>Specifies the<I> setup.types</I> file to include with the
+ distribution. This option is currently only supported by portable
+ distributions.</P>
+<H2 class="title"><A name="ENVIRONMENT">Environment</A></H2>
+ The following environment variables are supported by<B> epmR.</B>
+<DL class="man">
+<DT>The common name that should be used when signing a package.</DT>
+<DD style="margin-left: 5.0em"></DD>
+</DL>
+<H2 class="title"><A name="LIST_FILES">List Files</A></H2>
  The EPM list file format is now described in the<I> epm.list(5)</I> man
  page.
-<H3><A name="KNOWN_BUGS">Known Bugs</A></H3>
- EPM does not currently support generation of IRIX software patches.
-<H3><A name="SEE_ALSO">See Also</A></H3>
- epminstall(1) - add a directory, file, or symlink to a list file
-<BR> mkepmlist(1) - make an epm list file from a directory
-<BR> epm.list(5) - epm list file format
-<BR> setup(1) - graphical setup program for the esp package manager
-<H3><A name="COPYRIGHT">Copyright</A></H3>
- Copyright 1999-2008 by Easy Software Products, All Rights Reserved.
+<H2 class="title"><A name="SEE_ALSO">See Also</A></H2>
+ <A href="man-epminstall.html?TOPIC=Man+Pages"><B>epminstall</B>(1),</A>
+ <A href="man-mkepmlist.html?TOPIC=Man+Pages"><B>mkepmlist</B>(1),</A> <A
+href="man-epm.list.html?TOPIC=Man+Pages"><B>epm.list</B>(5),</A> <A href="man-setup.html?TOPIC=Man+Pages">
+<B>setup</B>(1).</A>
+<H2 class="title"><A name="COPYRIGHT">Copyright</A></H2>
+ Copyright &copy; 1999-2015 by Michael R Sweet, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2351,15 +1868,16 @@ product</I>.list&quot;.
 <!-- NEW PAGE -->
 
 <!-- SECTION: Man Pages -->
-<H2><A NAME="8_2">epminstall(1)</A></H2>
-<H3><A name="NAME">Name</A></H3>
+<H1 class="title"><A NAME="10">epminstall(1)</A></H1>
+<H2 class="title"><A name="NAME">Name</A></H2>
  epminstall - add a directory, file, or symlink to a list file.
-<H3><A name="SYNOPSIS">Synopsis</A></H3>
-<B> epminstall</B><I> options</I> file1 file2 ... fileN directory
-<BR><B> epminstall</B><I> options</I> file1 file2
-<BR><B> epminstall</B><I> options</I> -d directory1 directory2 ...
- directoryN
-<H3><A name="DESCRIPTION">Description</A></H3>
+<H2 class="title"><A name="SYNOPSIS">Synopsis</A></H2>
+<B> epminstall</B> [<I> options</I> ]<I> file1</I><I>file2</I><I>...</I><I>
+fileN</I><I>directory</I>
+<BR><B> epminstall</B> [<I> options</I> ]<I> file1</I><I>file2</I>
+<BR><B> epminstall</B> [<I> options</I> ]<B> -d</B><I> directory1</I><I>
+directory2</I><I>...</I><I>directoryN</I>
+<H2 class="title"><A name="DESCRIPTION">Description</A></H2>
 <B> epminstall</B> adds or replaces a directory, file, or symlink in a
  list file. The default list file is &quot;epm.list&quot; and can be overridden
  using the<I> EPMLIST</I> environment variable or the<I> --list-file</I>
@@ -2367,48 +1885,36 @@ product</I>.list&quot;.
 <P>Entries are either added to the end of the list file or replaced
  in-line. Comments, directives, and variable declarations in the list
  file are preserved.</P>
-<H3><A name="OPTIONS">Options</A></H3>
-<B> epminstall</B> recognizes the standard Berkeley<I> install</I>
+<H2 class="title"><A name="OPTIONS">Options</A></H2>
+<B> epminstall</B> recognizes the standard Berkeley<B> install</B>(8)
  command options:
-<DL>
-<!-- NEED 3 -->
-<DT>-b</DT>
-<DD>Make a backup of existing files (ignored, default for EPM.)</DD>
-
-<!-- NEED 3 -->
-<DT>-c</DT>
-<DD>BSD old compatibility mode (ignored.)</DD>
-
-<!-- NEED 3 -->
-<DT>-g<I> group</I></DT>
-<DD>Set the group owner of the file or directory to<I> group</I>. The
- default group is &quot;sys&quot;.</DD>
-
-<!-- NEED 3 -->
-<DT>-m<I> mode</I></DT>
-<DD>Set the permissions of the file or directory to<I> mode</I>. The
- default permissions are 0755 for directories and executable files and
- 0644 for non-executable files.</DD>
-
-<!-- NEED 3 -->
-<DT>-o<I> owner</I></DT>
-<DD>Set the owner of the file or directory to<I> owner</I>. The default
- owner is &quot;root&quot;.</DD>
-
-<!-- NEED 3 -->
-<DT>-s</DT>
-<DD>Strip the files (ignored, default for EPM.)</DD>
-
-<!-- NEED 3 -->
-<DT>--list-file<I> filename.list</I></DT>
-<DD>Specify the list file to update.</DD>
+<DL class="man">
+<DT><B>-b</B></DT>
+<DD style="margin-left: 5.0em">Make a backup of existing files (ignored,
+ default for<B> epm</B>.)</DD>
+<DT><B>-c</B></DT>
+<DD style="margin-left: 5.0em">BSD old compatibility mode (ignored.)</DD>
+<DT><B>-g</B><I> group</I></DT>
+<DD style="margin-left: 5.0em">Set the group owner of the file or
+ directory to<I> group</I>. The default group is &quot;sys&quot;.</DD>
+<DT><B>-m</B><I> mode</I></DT>
+<DD style="margin-left: 5.0em">Set the permissions of the file or
+ directory to<I> mode</I>. The default permissions are 0755 for
+ directories and executable files and 0644 for non-executable files.</DD>
+<DT><B>-o</B><I> owner</I></DT>
+<DD style="margin-left: 5.0em">Set the owner of the file or directory to<I>
+ owner</I>. The default owner is &quot;root&quot;.</DD>
+<DT><B>-s</B></DT>
+<DD style="margin-left: 5.0em">Strip the files (ignored, default for<B>
+ epm</B>.)</DD>
+<DT><B>--list-file</B><I> filename.list</I></DT>
+<DD style="margin-left: 5.0em">Specify the list file to update.</DD>
 </DL>
-<H3><A name="SEE_ALSO">See Also</A></H3>
- epm(1) - create software packages
-<BR> mkepmlist(1) - make an epm list file from a directory
-<BR> epm.list(5) - epm list file format
-<H3><A name="COPYRIGHT">Copyright</A></H3>
- Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
+<H2 class="title"><A name="SEE_ALSO">See Also</A></H2>
+<B> epm(1),</B><B> mkepmlist(1),</B> <A href="man-epm.list.html?TOPIC=Man+Pages">
+<B>epm.list</B>(5).</A>
+<H2 class="title"><A name="COPYRIGHT">Copyright</A></H2>
+ Copyright &copy; 1999-2015 by Michael R Sweet, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2421,33 +1927,44 @@ product</I>.list&quot;.
 <!-- NEW PAGE -->
 
 <!-- SECTION: Man Pages -->
-<H2><A NAME="8_3">mkepmlist(1)</A></H2>
-<H3><A name="NAME">Name</A></H3>
+<H1 class="title"><A NAME="11">mkepmlist(1)</A></H1>
+<H2 class="title"><A name="NAME">Name</A></H2>
  mkepmlist - make an epm list file from a directory.
-<H3><A name="SYNOPSIS">Synopsis</A></H3>
-<B> mkepmlist</B> [ -g<I> group</I> ] [ -u<I> user</I> ] [ --prefix<I>
- directory</I> ]<I> directory</I> [ ...<I> directory</I> ]
-<H3><A name="DESCRIPTION">Description</A></H3>
-<B> mkepmlist</B> recursively generates file list entries for files,
- links, and directories. The file list is send to the standard output.
-<P>The<I> -g</I> option overrides the group ownership of the files in
- the specified directories with the specified group name.</P>
-<P>The<I> -u</I> option overrides the user ownership of the files in the
- specified directories with the specified user name.</P>
-<P>The<I> --prefix</I> option adds the specified directory to the
+<H2 class="title"><A name="SYNOPSIS">Synopsis</A></H2>
+<B> mkepmlist</B> [<B> -g</B><I> group</I> ] [<B> -u</B><I> user</I> ] [<B>
+ --prefix</B><I> directory</I> ]<I> directory</I> [ ...<I> directory</I>
+ ]
+<H2 class="title"><A name="DESCRIPTION">Description</A></H2>
+<B> mkepmlist</B><B>(1)</B> recursively generates file list entries for
+ files, links, and directories. The file list is send to the standard
+ output.
+<H2 class="title"><A name="OPTIONS">Options</A></H2>
+<B> mkepmlist</B> supports the following options:
+<DL class="man">
+<DT><B>-g</B><I> group</I></DT>
+<DD style="margin-left: 5.0em">Overrides the group ownership of the
+ files in the specified directories with the specified group name.</DD>
+<DT><B>-u</B><I> user</I></DT>
+<DD style="margin-left: 5.0em">Overrides the user ownership of the files
+ in the specified directories with the specified user name.</DD>
+<DT><B>--prefix</B><I> directory</I></DT>
+<DD style="margin-left: 5.0em">Adds the specified directory to the
  destination path. For example, if you installed files to &quot;/opt/foo&quot; and
  wanted to build a distribution that installed the files in
  &quot;/usr/local&quot;, the following command would generate a file list that is
- installed in &quot;/usr/local&quot;:</P>
-<PRE>
+ installed in &quot;/usr/local&quot;:
+<PRE class="man">
+<BR>
      mkepmlist --prefix=/usr/local /opt/foo &gt;foo.list
 </PRE>
-<H3><A name="SEE_ALSO">See Also</A></H3>
- epm(1) - create software packages
-<BR> epminstall(1) - add a directory, file, or symlink to a list file
-<BR> epm.list(5) - epm list file format
-<H3><A name="COPYRIGHT">Copyright</A></H3>
- Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
+</DD>
+</DL>
+<H2 class="title"><A name="SEE_ALSO">See Also</A></H2>
+ <A href="man-epm.html?TOPIC=Man+Pages"><B>epm</B>(1),</A> <A href="man-epminstall.html?TOPIC=Man+Pages">
+<B>epminstall</B>(1),</A> <A href="man-epm.list.html?TOPIC=Man+Pages"><B>
+epm.list</B>(5).</A>
+<H2 class="title"><A name="COPYRIGHT">Copyright</A></H2>
+ Copyright &copy; 1999-2015 by Michael R Sweet, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2460,28 +1977,29 @@ product</I>.list&quot;.
 <!-- NEW PAGE -->
 
 <!-- SECTION: Man Pages -->
-<H2><A NAME="8_4">setup(1)</A></H2>
-<H3><A name="NAME">Name</A></H3>
+<H1 class="title"><A NAME="12">setup(1)</A></H1>
+<H2 class="title"><A name="NAME">Name</A></H2>
  setup - graphical setup program for the esp package manager
-<H3><A name="SYNOPSIS">Synopsis</A></H3>
+<H2 class="title"><A name="SYNOPSIS">Synopsis</A></H2>
 <B> setup</B> [<I> directory</I> ]
-<H3><A name="DESCRIPTION">Description</A></H3>
-<B> setup</B> provides a graphical installation interface for
- EPM-generated portable installation packages. It presents a
- step-by-step dialog for collecting a list of packages to install and
- accepting any license agreements for those packages.
+<H2 class="title"><A name="DESCRIPTION">Description</A></H2>
+ <A href="man-setup.html?TOPIC=Man+Pages"><B>setup</B>(1)</A> provides a
+ graphical installation interface for EPM-generated portable
+ installation packages. It presents a step-by-step dialog for collecting
+ a list of packages to install and accepting any license agreements for
+ those packages.
 <P><B>setup</B> searches for products in the current directory or the
  directory specified on the command-line.</P>
-<H3><A name="INSTALLATION_TYPES">Installation Types</A></H3>
+<H2 class="title"><A name="INSTALLATION_TYPES">Installation Types</A></H2>
  The default type of installation is &quot;custom&quot;. That is, users will be
  able to select from the list of products and install them.
 <P><B>setup</B> also supports other types of installations. The<I>
  setup.types</I> file, if present, defines the other installation types.</P>
-<H3><A name="SEE_ALSO">See Also</A></H3>
- epm(1) - create software packages.
-<BR> setup.types(5) - epm gui setup types file format.
-<H3><A name="COPYRIGHT">Copyright</A></H3>
- Copyright 1999-2007 by Easy Software Products, All Rights Reserved.
+<H2 class="title"><A name="SEE_ALSO">See Also</A></H2>
+ <A href="man-epm.html?TOPIC=Man+Pages"><B>epm</B>(1),</A> <A href="man-setup.types.html?TOPIC=Man+Pages">
+<B>setup.types</B>(5).</A>
+<H2 class="title"><A name="COPYRIGHT">Copyright</A></H2>
+ Copyright &copy; 1999-2015 by Michael R Sweet, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2494,7 +2012,7 @@ product</I>.list&quot;.
 <H1 ALIGN="RIGHT"><A NAME="REFERENCE">C - List File Reference</A></H1>
 <P>This appendix provides a complete reference for the EPM list file and
  setup types formats.</P>
-<H2><A NAME="9_1">The EPM List File Format</A></H2>
+<H2><A NAME="13_1">The EPM List File Format</A></H2>
 <P>Each<I> EPM</I> product has an associated list file that describes
  the files to include with the product. Comment lines begin with the &quot;#&quot;
  character and are ignored. All other non-blank lines must begin with a
@@ -2828,7 +2346,9 @@ product</I>.list&quot;.
 <H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
 <P>This appendix lists the change log for each release of the EPM
  software.</P>
-<H2><A NAME="10_1">Changes in EPM v4.2</A></H2>
+<H2><A NAME="14_1">Changes in EPM v4.3</A></H2>
+<UL></UL>
+<H2><A NAME="14_2">Changes in EPM v4.2</A></H2>
 <UL>
 <LI>EPM now supports a %arch conditional directive (STR #27)</LI>
 <LI>EPM now uses hard links whenever possible instead of copying files
@@ -2864,7 +2384,7 @@ product</I>.list&quot;.
  package.</LI>
 <LI>RPM packages did not map %replaces to Obsoletes:</LI>
 </UL>
-<H2><A NAME="10_2">Changes in EPM v4.1</A></H2>
+<H2><A NAME="14_3">Changes in EPM v4.1</A></H2>
 <UL>
 <LI>Mac OS X portable packages did not create a correct Uninstall
  application.</LI>
@@ -2894,7 +2414,7 @@ product</I>.list&quot;.
 <LI>EPM now generates disk images as well as a .tar.gz file when
  creating portable packages on Mac OS X.</LI>
 </UL>
-<H2><A NAME="10_3">Changes in EPM v4.0</A></H2>
+<H2><A NAME="14_4">Changes in EPM v4.0</A></H2>
 <UL>
 <LI>New subpackage support for creating multiple dependent packages or a
  combined package with selectable subpackages, depending on the package
@@ -2918,7 +2438,7 @@ product</I>.list&quot;.
 <LI>Portable product names containing spaces will now display properly.</LI>
 </UL>
 
-<!-- NEW SHEET 
+<!-- NEW SHEET
      HEADER CENTER &quot;&quot;
      FOOTER LEFT &quot;&quot;
      FOOTER RIGHT &quot;&quot; -->
