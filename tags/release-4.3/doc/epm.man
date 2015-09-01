@@ -1,0 +1,207 @@
+.\"
+.\" "$Id$"
+.\"
+.\" Manual page for the ESP Package Manager (EPM).
+.\"
+.\" Copyright 1999-2015 by Michael R Sweet
+.\" Copyright 1999-2008 by Easy Software Products, all rights reserved.
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2, or (at your option)
+.\" any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.TH epm 1 "ESP Package Manager" "1 September 2015" "Michael R Sweet"
+.SH NAME
+epm \- create software packages.
+.SH SYNOPSIS
+.B epm
+[
+.B \-a
+.I architecture
+] [
+.B \-f
+.I format
+] [
+.B \-g
+] [
+.B \-k
+] [
+.B \-m
+.I name
+] [
+\fB\-n\fR[\fBmrs\fR] ] [
+.B \-s
+.I setup.ext
+] [
+.B \-\-depend
+] [
+.B \-\-help
+] [
+.B \-\-keep\-files
+] [
+.B \-\-output\-dir
+.I directory
+] [
+.B \-\-setup\-image
+.I setup.ext
+] [
+.B \-\-setup\-program
+.I /foo/bar/setup
+] [
+.B \-\-setup\-types
+.I setup.types
+] [
+.B \-v
+] [
+.I name=value
+\...
+.I name=value
+]
+.I product
+[
+.I listfile
+]
+.SH DESCRIPTION
+.BR epm (1)
+generates software packages complete with installation, removal, and (if necessary) patch scripts.
+Unless otherwise specified, the files required for \fIproduct\fR are read from a file named "\fIproduct\fR.list".
+.SH OPTIONS
+The following options are recognized:
+.TP 5
+\fB\-a \fIarchitecture\fR
+Specifies the actual architecture for the software.
+Without this option the generic processor architecture is used ("intel", "sparc", "mips", etc.)
+.TP 5
+\fB\-f aix\fR
+Generate an AIX distribution suitable for installation on an AIX system.
+.TP 5
+\fB\-f bsd\fR
+Generate a BSD distribution suitable for installation on a FreeBSD, NetBSD, or OpenBSD system.
+.TP 5
+\fB\-f deb\fR
+Generate a Debian distribution suitable for installation on a Debian Linux system.
+.TP 5
+\fB\-f inst\fR
+.TP 5
+\fB\-f tardist\fR
+Generate an IRIX distribution suitable for installation on an system running IRIX.
+.TP 5
+\fB\-f lsb\fR
+.TP 5
+\fB\-f lsb\-signed\fR
+Generate RPM packages for LSB-conforming systems.
+The \fIlsb\-signed\fR format uses the GPG private key you have defined in the ~/.rpmmacros file.
+.TP 5
+\fB\-f native\fR
+Generate a native distribution.
+This uses \fIrpm\fR for Linux, \fIinst\fR for IRIX, \fIpkg\fR for Solaris, \fIswinstall\fR for HP-UX, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fIosx\fR for OS X.
+All other operating systems default to the \fIportable\fR format.
+.TP 5
+\fB\-f osx\fR
+.TP 5
+\fB\-f osx\-signed\fR
+Generate an OS X software package.
+The \fIosx\-signed\fR format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
+.TP 5
+\fB\-f pkg\fR
+Generate an AT&T software package.
+These are used primarily under Solaris.
+.TP 5
+\fB\-f portable\fR
+Generate a portable distribution based on shell scripts and tar files.
+The resulting distribution is installed and removed the same way on all operating systems. [default]
+.TP 5
+\fB\-f rpm\fR
+.TP 5
+\fB\-f rpm\-signed\fR
+Generate a Red Hat Package Manager ("RPM") distribution suitable for installation on a Red Hat Linux system.
+The \fIrpm\-signed\fR format uses the GPG private key you have defined in the ~/.rpmmacros file.
+.TP 5
+\fB\-f setld\fR
+Generate a Tru64 (setld) software distribution.
+.TP 5
+\fB\-f slackware\fR
+Generate a Slackware Linux software distribution.
+.TP 5
+\fB\-f swinstall\fR
+.TP 5
+\fB\-f depot\fR
+Generate a HP-UX software distribution.
+.TP 5
+\fB\-g\fR
+Disable stripping of executable files in the distribution.
+.TP 5
+\fB\-k\fR
+Keep intermediate (spec, etc.) files used to create the distribution in the distribution directory.
+.TP 5
+\fB\-m \fIname\fR
+Specifies the platform name as a string.
+The default is to use the auto-generated name from the \fI\-n\fR option.
+.TP 5
+\fB\-n\fR[\fImrs\fR]
+Specifies the operating system and machine information that is included in the package name.
+Distributions normally are named "product-version-system-release-machine.ext" and "product-version-system-release-machine-patch.ext" for patch distributions.
+The "system-release-machine" information can be customized or eliminated using the appropriate trailing letters.
+Using \fI-n\fR by itself will remove the "system-release-machine" string from the filename entirely.
+The letter 'm' includes the architecture (machine).
+The letter 'r' includes the operating system version (release).
+The letter 's' includes the operating system name.
+.TP 5
+\fB\-s \fIsetup.ext\fR
+.TP 5
+\fB\-v\fR
+Increases the amount of information that is reported.
+Use multiple v's for more verbose output.
+.TP 5
+\fB\-\-depend\fR
+Lists the dependent (source) files for all files in the package.
+.TP 5
+\fB\-\-output\-dir \fIdirectory\fR
+Specifies the directory for output files.
+The default directory is based on the operating system, version, and architecture.
+.TP 5
+\fB\-\-setup\-image \fIsetup.ext\fR
+Include the ESP Software Wizard with the specified image file with the distribution.
+This option is currently only supported by portable distributions.
+.TP 5
+\fB\-\-setup\-program \fI/foo/bar/setup\fR
+Specifies the setup executable to use with the distribution.
+This option is currently only supported by portable distributions.
+.TP 5
+\fB\-\-setup\-types \fIsetup.types\fR
+.LP
+Specifies the \fIsetup.types\fR file to include with the distribution.
+This option is currently only supported by portable distributions.
+.SH ENVIRONMENT
+The following environment variables are supported by \fBepm\R.
+.TP 5 EPM_SIGNING_IDENTITY
+The common name that should be used when signing a package.
+.SH LIST FILES
+The EPM list file format is now described in the \fIepm.list(5)\fR
+man page.
+.SH SEE ALSO
+.BR epminstall (1),
+.BR mkepmlist (1),
+.BR epm.list (5),
+.BR setup (1).
+.SH COPYRIGHT
+Copyright \[co] 1999-2015 by Michael R Sweet, All Rights Reserved.
+.LP
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+.LP
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.\"
+.\" End of "$Id$".
+.\"

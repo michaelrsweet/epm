@@ -1,0 +1,105 @@
+<HTML>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="EXAMPLES">5 - EPM Packaging Examples</A></H1>
+
+<P>This chapter shows how the EPM and CUPS software is packaged using
+EPM list files. The EPM list file example highlights the basic features
+of EPM, while the CUPS list file example shows the more advanced features
+of EPM.</P>
+
+<H2>Packaging the EPM Software</H2>
+
+<P>The EPM software comes with its own autoconf-generated
+<VAR>epm.list</VAR> file that is used to package and test EPM.
+The EPM package consists of the main package plus a
+"documentation" subpackage for the documentation files and a
+"man" subpackage for the man pages.</P>
+
+<P>We start by defining variables for each of the autoconf directory
+variables:</P>
+
+<PRE><FONT SIZE="1">
+    $prefix=/usr
+    $exec_prefix=/usr
+    $bindir=${exec_prefix}/bin
+    $datadir=/usr/share
+    $docdir=${datadir}/doc/epm
+    $libdir=/usr/lib
+    $mandir=/usr/share/man
+    $srcdir=.
+</FONT></PRE>
+
+<P>Then we provide the general product information that is
+required for all packages; notice the use of
+<CODE>${srcdir}</CODE> to reference the COPYING and README
+files:</P>
+
+<PRE><FONT SIZE="1">
+    %product ESP Package Manager
+    %copyright 1999-2014 by Michael R Sweet, All Rights Reserved.
+    %vendor Michael R Sweet
+    %license ${srcdir}/COPYING
+    %readme ${srcdir}/README
+    %description Universal software packaging tool for UNIX.
+    %version 4.3 430
+</FONT></PRE>
+
+<P>After the product information, we include all of the non-GUI
+files that are part of EPM:</P>
+
+<PRE><FONT SIZE="1">
+    # Executables
+    %system all
+    f 0555 root sys ${bindir}/epm epm
+    f 0555 root sys ${bindir}/epminstall epminstall
+    f 0555 root sys ${bindir}/mkepmlist mkepmlist
+
+    # Documentation
+    %subpackage documentation
+    %description Documentation for EPM
+    f 0444 root sys ${docdir}/README $srcdir/README
+    f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
+    f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
+
+    # Man pages
+    %subpackage man
+    %description Man pages for EPM
+    f 0444 root sys ${mandir}/man1/epm.1 $srcdir/doc/epm.man
+    f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.man
+    f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.man
+    f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.man
+</FONT></PRE>
+
+<P>Finally, we conditionally include the GUI files depending on
+the state of a variable called <CODE>GUIS</CODE>:</P>
+
+<PRE><FONT SIZE="1">
+    # GUI files...
+    $GUIS=setup uninst
+
+    %if GUIS
+    %subpackage
+    f 0555 root sys ${libdir}/epm/setup setup
+    f 0555 root sys ${libdir}/epm/uninst uninst
+
+    %system darwin
+    f 0444 root sys ${datadir}/epm/setup.icns macosx/setup.icns
+    f 0444 root sys ${datadir}/epm/setup.info macosx/setup.info
+    f 0444 root sys ${datadir}/epm/setup.plist macosx/setup.plist
+
+    f 0444 root sys ${datadir}/epm/uninst.icns macosx/uninst.icns
+    f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
+    f 0444 root sys ${datadir}/epm/uninst.plist macosx/uninst.plist
+    %system all
+
+    %subpackage man
+    f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.man
+    f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
+
+    %endif
+</FONT></PRE>
+
+
+</BODY>
+</HTML>

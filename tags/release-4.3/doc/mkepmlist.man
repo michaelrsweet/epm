@@ -1,0 +1,78 @@
+.\"
+.\" "$Id$"
+.\"
+.\" Manual page for the ESP Package Manager (EPM).
+.\"
+.\" Copyright 1999-2015 by Michael R Sweet
+.\" Copyright 1999-2007 by Easy Software Products, all rights reserved.
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2, or (at your option)
+.\" any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.TH mkepmlist 1 "ESP Package Manager" "1 September 2015" "Michael R Sweet"
+.SH NAME
+mkepmlist \- make an epm list file from a directory.
+.SH SYNOPSIS
+.B mkepmlist
+[
+.B \-g
+.I group
+] [
+.B \-u
+.I user
+] [
+.B \-\-prefix
+.I directory
+]
+.I directory
+[ ...
+.I directory
+]
+.SH DESCRIPTION
+.B mkepmlist (1)
+recursively generates file list entries for files, links, and directories.
+The file list is send to the standard output.
+.SH OPTIONS
+.B mkepmlist
+supports the following options:
+.TP 5
+\fB\-g \fIgroup\fR
+Overrides the group ownership of the files in the specified directories with the specified group name.
+.TP 5
+\fB\-u \fIuser\fR
+Overrides the user ownership of the files in the specified directories with the specified user name.
+.TP 5
+\fB\-\-prefix \fIdirectory\fR
+Adds the specified directory to the destination path.
+For example, if you installed files to "/opt/foo" and wanted to build a distribution that installed the files in "/usr/local", the following command would generate a file
+list that is installed in "/usr/local":
+.nf
+.br
+     mkepmlist \-\-prefix=/usr/local /opt/foo >foo.list
+.fi
+.SH SEE ALSO
+.BR epm (1),
+.BR epminstall (1),
+.BR epm.list (5).
+.SH COPYRIGHT
+Copyright \[co] 1999-2015 by Michael R Sweet, All Rights Reserved.
+.LP
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+.LP
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.\"
+.\" End of "$Id$".
+.\"
