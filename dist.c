@@ -1108,7 +1108,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
 	    while ((dent = readdir(dir)) != NULL)
 	    {
-	      strlcpy(temp, dent->d_name, sizeof(temp));
+	      strlcpy(temp, dent->d_name, sizeof(src) - (size_t)(temp - src));
 	      if (stat(src, &fileinfo))
 	        continue; /* Skip files we can't read */
 
