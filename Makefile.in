@@ -54,14 +54,14 @@ OPTIM		=	@OPTIM@
 # Directories...
 #
 
+prefix		=	$(DESTDIR)@prefix@
+exec_prefix	=	$(DESTDIR)@exec_prefix@
 bindir		=	@bindir@
-datadir		=	@datadir@
-datarootdir	=	@datarootdir@
+datadir		=	$(DESTDIR)@datadir@
+datarootdir	=	$(DESTDIR)@datarootdir@
 docdir		=	@docdir@
-exec_prefix	=	@exec_prefix@
 mandir		=	@mandir@
-prefix		=	@prefix@
-libdir		=	@libdir@
+libdir		=	$(DESTDIR)@libdir@
 srcdir		=	@srcdir@
 
 VPATH		=	$(srcdir)
