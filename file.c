@@ -60,12 +60,17 @@ copy_file(const char *dst,		/* I - Destination file */
 
   unlink(dst);
 
-  if (!stat(src, &srcinfo) &&
-      (!mode || srcinfo.st_mode == mode) &&
-      (owner == (uid_t)-1 || srcinfo.st_uid == owner) &&
-      (group == (gid_t)-1 || srcinfo.st_gid == group) &&
-      !link(src, dst))
-    return (0);
+/* hardlinking may lead to cross device hard links - which will cause an error after package installation
+ * like this:
+ * error: unpacking of archive failed on file /etc/init.d/xxxxxx;56703af6: cpio: link failed - Invalid cross-device link
+ *
+ * if (!stat(src, &srcinfo) &&
+ *     (!mode || srcinfo.st_mode == mode) &&
+ *     (owner == (uid_t)-1 || srcinfo.st_uid == owner) &&
+ *     (group == (gid_t)-1 || srcinfo.st_gid == group) &&
+ *     !link(src, dst))
+ *   return (0);
+ */
 
  /*
   * Open files...
