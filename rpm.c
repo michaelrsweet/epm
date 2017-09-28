@@ -144,7 +144,7 @@ make_rpm(int            format,		/* I - Subformat */
   if (!strcmp(platform->machine, "intel"))
     snprintf(filename, sizeof(filename), "%s/RPMS/i386", directory);
   else if (!strcmp(platform->machine, "ppc"))
-    snprintf(filename, sizeof(filename), "%s/RPMS/powerpc", directory);
+    snprintf(filename, sizeof(filename), "%s/RPMS/ppc", directory);
   else
     snprintf(filename, sizeof(filename), "%s/RPMS/%s", directory,
              platform->machine);
@@ -245,7 +245,7 @@ make_rpm(int            format,		/* I - Subformat */
   else if (!strcmp(platform->machine, "ppc"))
   {
     if (run_command(NULL, EPM_RPMBUILD " -bb --buildroot \"%s/buildroot\" "
-                          EPM_RPMARCH "powerpc %s%s", absdir, build_option,
+                          EPM_RPMARCH "ppc %s%s", absdir, build_option,
 			  specname))
       return (1);
   }
@@ -541,6 +541,10 @@ move_rpms(const char     *prodname,	/* I - Product short name */
     run_command(NULL, "/bin/mv %s/RPMS/i386/%s-%s-%s.i386.rpm %s",
 		rpmdir, prodfull, dist->version, release,
 		rpmname);
+  else if (!strcmp(platform->sysname, "aix") && !strcmp(platform->machine, "ppc"))
+    run_command(NULL, "/bin/mv %s/RPMS/ppc/%s-%s-%s.%s%s.ppc.rpm %s",
+		rpmdir, prodfull, dist->version, release, platform->sysname, platform->release,
+		rpmname); 
   else if (!strcmp(platform->machine, "ppc"))
     run_command(NULL, "/bin/mv %s/RPMS/powerpc/%s-%s-%s.powerpc.rpm %s",
 		rpmdir, prodfull, dist->version, release,
