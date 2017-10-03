@@ -572,7 +572,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
 #elif defined(__hpux)
   strcpy(platform->machine, "hppa");
 #elif defined(_AIX)
-  strcpy(platform->machine, "powerpc");
+  strcpy(platform->machine, "ppc");
 #else
   update_architecture(platform->machine, sizeof(platform->machine));
 #endif /* __sgi */
