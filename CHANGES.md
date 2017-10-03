@@ -6,6 +6,7 @@ Changes in EPM 4.4
 
 - The default prefix is now the usual `/usr/local` (Issue #45)
 - Really fix 64-bit Intel packages on Debian-based OS's (Issue #48)
+- Fixed a build issue on Solaris 11 (Issue #50)
 - Added DESTDIR support to makefiles (Issue #55)
 - Fixed RPM support on AIX (Issue #56)
 

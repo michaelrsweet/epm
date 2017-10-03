@@ -1,7 +1,7 @@
 /*
  * Distribution functions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  */
 
 #ifdef __sun
-extern int	gethostname(char *, int);
+extern int	gethostname(char *, size_t);
 #endif /* __sun */
 
 

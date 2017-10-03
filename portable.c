@@ -1,7 +1,7 @@
 /*
  * Portable package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1148,11 +1148,11 @@ write_confcheck(FILE *fp)		/* I - Script file */
   fputs("# Determine correct extract options for the tar command...\n", fp);
   fputs("if test `uname` = Darwin; then\n", fp);
   fputs("	ac_tar=\"tar -xpPf\"\n", fp);
-  fputs("else if test \"`tar --help 2>&1 | grep GNU`\" = \"\"; then\n", fp);
+  fputs("elif test \"`tar --help 2>&1 | grep GNU`\" = \"\"; then\n", fp);
   fputs("	ac_tar=\"tar -xpf\"\n", fp);
   fputs("else\n", fp);
   fputs("	ac_tar=\"tar -xpPf\"\n", fp);
-  fputs("fi fi\n", fp);
+  fputs("fi\n", fp);
 
   return (0);
 }
