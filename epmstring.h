@@ -3,7 +3,7 @@
  *
  * String definitions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet.
+ * Copyright 1999-2014 by Michael R Sweet
  * Copyright 1999-2005 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify

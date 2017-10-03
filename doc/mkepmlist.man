@@ -1,30 +1,34 @@
 .\"
 .\" "$Id$"
 .\"
-.\"   Manual page for the ESP Package Manager (EPM).
+.\" Manual page for the ESP Package Manager (EPM).
 .\"
-.\"   Copyright 1999-2006 by Easy Software Products, all rights reserved.
+.\" Copyright 1999-2015 by Michael R Sweet
+.\" Copyright 1999-2007 by Easy Software Products, all rights reserved.
 .\"
-.\"   This program is free software; you can redistribute it and/or modify
-.\"   it under the terms of the GNU General Public License as published by
-.\"   the Free Software Foundation; either version 2, or (at your option)
-.\"   any later version.
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2, or (at your option)
+.\" any later version.
 .\"
-.\"   This program is distributed in the hope that it will be useful,
-.\"   but WITHOUT ANY WARRANTY; without even the implied warranty of
-.\"   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-.\"   GNU General Public License for more details.
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
 .\"
-.TH mkepmlist 1 "ESP Package Manager" "3 April 2006" "Easy Software Products"
+.TH mkepmlist 1 "ESP Package Manager" "1 September 2015" "Michael R Sweet"
 .SH NAME
 mkepmlist \- make an epm list file from a directory.
 .SH SYNOPSIS
 .B mkepmlist
-[ \-g
+[
+.B \-g
 .I group
-] [ \-u
+] [
+.B \-u
 .I user
-] [ \--prefix
+] [
+.B \-\-prefix
 .I directory
 ]
 .I directory
@@ -32,33 +36,33 @@ mkepmlist \- make an epm list file from a directory.
 .I directory
 ]
 .SH DESCRIPTION
-\fBmkepmlist\fR recursively generates file list entries for
-files, links, and directories. The file list is send to the
-standard output.
-.LP
-The \fI-g\fR option overrides the group ownership of the files in
-the specified directories with the specified group name.
-.LP
-The \fI-u\fR option overrides the user ownership of the files in
-the specified directories with the specified user name.
-.LP
-The \fI--prefix\fR option adds the specified directory to the
-destination path. For example, if you installed files to
-"/opt/foo" and wanted to build a distribution that installed the
-files in "/usr/local", the following command would generate a file
+.B mkepmlist (1)
+recursively generates file list entries for files, links, and directories.
+The file list is send to the standard output.
+.SH OPTIONS
+.B mkepmlist
+supports the following options:
+.TP 5
+\fB\-g \fIgroup\fR
+Overrides the group ownership of the files in the specified directories with the specified group name.
+.TP 5
+\fB\-u \fIuser\fR
+Overrides the user ownership of the files in the specified directories with the specified user name.
+.TP 5
+\fB\-\-prefix \fIdirectory\fR
+Adds the specified directory to the destination path.
+For example, if you installed files to "/opt/foo" and wanted to build a distribution that installed the files in "/usr/local", the following command would generate a file
 list that is installed in "/usr/local":
 .nf
 .br
-     mkepmlist --prefix=/usr/local /opt/foo >foo.list
+     mkepmlist \-\-prefix=/usr/local /opt/foo >foo.list
 .fi
 .SH SEE ALSO
-epm(1) - create software packages
-.br
-epminstall(1) - add a directory, file, or symlink to a list file
-.br
-epm.list(5) - epm list file format
+.BR epm (1),
+.BR epminstall (1),
+.BR epm.list (5).
 .SH COPYRIGHT
-Copyright 1999-2006 by Easy Software Products, All Rights Reserved.
+Copyright \[co] 1999-2015 by Michael R Sweet, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

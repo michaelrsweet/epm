@@ -9,9 +9,9 @@ if test $# = 0; then
 	echo Updating for snapshot...
 	svn up
 	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
-	version="5.0svn"
+	version="4.3svn"
 	revision="-r$rev"
-	fileversion="5.0svn-r$rev"
+	fileversion="4.3svn-r$rev"
 	url="."
 else
 	echo Creating tag for release...
@@ -19,9 +19,9 @@ else
 	version=$1
 	revision=""
 	fileversion=$1
-	url="https://svn.easysw.com/public/epm/tags/release-$version"
+	url="svn+ssh://msweet.org/var/svn/epm/tags/release-$version"
 
-	svn copy https://svn.easysw.com/public/epm/trunk "$url" \
+	svn copy svn+ssh://msweet.org/var/svn/epm/branches/branch-4 "$url" \
 		-m "Tag $version" || exit 1
 fi
 
@@ -41,10 +41,16 @@ echo -n ...bz2
 tar cjf epm-$fileversion-source.tar.bz2 epm-$version
 echo "..."
 
+#if test -x /usr/bin/md5sum; then
+#        (cd /tmp; md5sum epm-$fileversion-source.tar.* | awk '{print $1, "'$fileversion' epm/'$fileversion'/" $2}')
+#elif test -x /sbin/md5; then
+#        (cd /tmp; md5 epm-$fileversion-source.tar.* | awk '{print $4, "'$fileversion' epm/'$fileversion'/" substr($2, 2, length($2) - 2)}')
+#fi
+
 echo Removing temporary files...
 rm -rf epm-$version
 
-echo "Done!"
+echo "Done."
 
 #
 # End of "$Id$".

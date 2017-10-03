@@ -3,7 +3,7 @@
  *
  * Mac OS X package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 2002-2014 by Michael R Sweet
+ * Copyright 2002-2015 by Michael R Sweet
  * Copyright 2002-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ static const char * const pm_paths[] =	/* Paths to legacy PackageMaker program *
  * Local functions...
  */
 
-static int	make_subpackage(const char *prodname, const char *directory,
+static int	make_subpackage(int format, const char *prodname, const char *directory,
 		                dist_t *dist, const char *subpackage,
 				const char *setup);
 static int	write_rtf(dist_t *dist, const char *title,
@@ -53,7 +53,8 @@ static int	write_rtf(dist_t *dist, const char *title,
  */
 
 int					/* O - 0 = success, 1 = fail */
-make_osx(const char     *prodname,	/* I - Product short name */
+make_osx(int            format,		/* I - Format */
+	 const char     *prodname,	/* I - Product short name */
          const char     *directory,	/* I - Directory for distribution files */
          const char     *platname,	/* I - Platform name */
          dist_t         *dist,		/* I - Distribution information */
@@ -76,13 +77,13 @@ make_osx(const char     *prodname,	/* I - Product short name */
   * Create the main package and subpackages (if any)...
   */
 
-  if (make_subpackage(prodname, directory, dist, NULL, setup))
+  if (make_subpackage(format, prodname, directory, dist, NULL, setup))
     return (1);
 
   if (!have_pkgbuild)
   {
     for (i = 0; i < dist->num_subpackages; i ++)
-      if (make_subpackage(prodname, directory, dist, dist->subpackages[i], setup))
+      if (make_subpackage(format, prodname, directory, dist, dist->subpackages[i], setup))
 	return (1);
 
     if (dist->num_subpackages)
@@ -246,9 +247,12 @@ make_osx(const char     *prodname,	/* I - Product short name */
       else
 	snprintf(filename, sizeof(filename), "%s/%s", current, directory);
 
-      if (!access("/usr/bin/pkgbuild", 0))
-      {
-	run_command(NULL, "/usr/bin/pkgbuild -build "
+      for (i = 0; pm_paths[i]; i ++)
+	if (!access(pm_paths[i], 0))
+	  break;
+
+      if (pm_paths[i])
+	run_command(NULL, "%s/Contents/MacOS/PackageMaker -build "
 			  "-p %s/%s.mpkg "
 			  "-f %s/MetaPackage "
 			  "-r %s/MetaResources "
@@ -260,31 +264,10 @@ make_osx(const char     *prodname,	/* I - Product short name */
 		    filename,
 		    filename, prodname,
 		    filename, prodname);
-      }
       else
       {
-	for (i = 0; pm_paths[i]; i ++)
-	  if (!access(pm_paths[i], 0))
-	    break;
-
-	if (pm_paths[i])
-	  run_command(NULL, "%s/Contents/MacOS/PackageMaker -build "
-			    "-p %s/%s.mpkg "
-			    "-f %s/MetaPackage "
-			    "-r %s/MetaResources "
-			    "-d %s/%s-metadesc.plist "
-			    "-i %s/%s-metainfo.plist",
-		      pm_paths[i],
-		      filename, prodname,
-		      filename,
-		      filename,
-		      filename, prodname,
-		      filename, prodname);
-	else
-	{
-	  fputs("epm: Unable to find \"PackageMaker\" program!\n", stderr);
-	  return (1);
-	}
+	fputs("epm: Unable to find \"PackageMaker\" program!\n", stderr);
+	return (1);
       }
 
       snprintf(filename, sizeof(filename), "%s/%s.mpkg", directory, prodname);
@@ -363,7 +346,8 @@ make_osx(const char     *prodname,	/* I - Product short name */
  */
 
 static int
-make_subpackage(const char *prodname,	/* I - Product short name */
+make_subpackage(int        format,	/* I - Format */
+	        const char *prodname,	/* I - Product short name */
                 const char *directory,	/* I - Directory for distribution files */
 		dist_t     *dist,	/* I - Distribution  information */
                 const char *subpackage,	/* I - Subpackage */
@@ -421,112 +405,115 @@ make_subpackage(const char *prodname,	/* I - Product short name */
   snprintf(filename, sizeof(filename), "%s/%s/Resources", directory, prodfull);
   make_directory(filename, 0777, 0, 0);
 
-  if (dist->license[0])
+  if (!have_pkgbuild)
   {
-    if ((ext = strrchr(dist->license, '.')) == NULL || strcmp(ext, ".rtf"))
-      ext = ".txt";
+    if (dist->license[0])
+    {
+      if ((ext = strrchr(dist->license, '.')) == NULL || strcmp(ext, ".rtf"))
+	ext = ".txt";
 
-    snprintf(filename, sizeof(filename), "%s/%s/Resources/License%s",
-             directory, prodfull, ext);
-    copy_file(filename, dist->license, 0644, 0, 0);
-  }
+      snprintf(filename, sizeof(filename), "%s/%s/Resources/License%s",
+	       directory, prodfull, ext);
+      copy_file(filename, dist->license, 0644, 0, 0);
+    }
 
-  if (dist->readme[0])
-  {
-    if ((ext = strrchr(dist->readme, '.')) == NULL || strcmp(ext, ".rtf"))
-      ext = ".txt";
+    if (dist->readme[0])
+    {
+      if ((ext = strrchr(dist->readme, '.')) == NULL || strcmp(ext, ".rtf"))
+	ext = ".txt";
 
-    snprintf(filename, sizeof(filename), "%s/%s/Resources/ReadMe%s",
-             directory, prodfull, ext);
-    copy_file(filename, dist->readme, 0644, 0, 0);
-  }
+      snprintf(filename, sizeof(filename), "%s/%s/Resources/ReadMe%s",
+	       directory, prodfull, ext);
+      copy_file(filename, dist->readme, 0644, 0, 0);
+    }
 
-  if (setup && (ext = strrchr(setup, '.')) != NULL &&
-      (!strcmp(ext, ".gif") || !strcmp(ext, ".jpg") || !strcmp(ext, ".tif")))
-  {
-    snprintf(filename, sizeof(filename), "%s/%s/Resources/background%s",
-             directory, prodfull, ext);
-    copy_file(filename, setup, 0644, 0, 0);
-  }
+    if (setup && (ext = strrchr(setup, '.')) != NULL &&
+	(!strcmp(ext, ".gif") || !strcmp(ext, ".jpg") || !strcmp(ext, ".tif")))
+    {
+      snprintf(filename, sizeof(filename), "%s/%s/Resources/background%s",
+	       directory, prodfull, ext);
+      copy_file(filename, setup, 0644, 0, 0);
+    }
 
-  snprintf(filename, sizeof(filename), "%s/%s/Resources/Welcome.rtf",
-           directory, prodfull);
-  if (write_rtf(dist, title, subpackage, filename))
-   return (1);
+    snprintf(filename, sizeof(filename), "%s/%s/Resources/Welcome.rtf",
+	     directory, prodfull);
+    if (write_rtf(dist, title, subpackage, filename))
+     return (1);
 
-  snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory, prodfull);
-  if ((fp = fopen(filename, "w")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
-            filename, strerror(errno));
-    return (1);
-  }
+   /*
+    * Do the plist files for the packager...
+    */
 
-  fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", fp);
-  fputs("<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n", fp);
-  fputs("<plist version=\"1.0\">\n", fp);
-  fputs("<dict>\n", fp);
-  fputs("        <key>IFPkgDescriptionDeleteWarning</key>\n", fp);
-  fputs("        <string></string>\n", fp);
-  fputs("        <key>IFPkgDescriptionDescription</key>\n", fp);
-  fputs("        <string>", fp);
-  for (i = 0; i < dist->num_descriptions; i ++)
-    if (dist->descriptions[i].subpackage == subpackage)
-      fprintf(fp, "%s\n", dist->descriptions[i].description);
-  fputs("</string>\n", fp);
-  fputs("        <key>IFPkgDescriptionTitle</key>\n", fp);
-  fprintf(fp, "        <string>%s</string>\n", title);
-  fputs("        <key>IFPkgDescriptionVersion</key>\n", fp);
-  fprintf(fp, "        <string>%s</string>\n", dist->version);
-  fputs("</dict>\n", fp);
-  fputs("</plist>\n", fp);
+    snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory, prodfull);
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
+	      filename, strerror(errno));
+      return (1);
+    }
 
-  fclose(fp);
+    fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", fp);
+    fputs("<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n", fp);
+    fputs("<plist version=\"1.0\">\n", fp);
+    fputs("<dict>\n", fp);
+    fputs("        <key>IFPkgDescriptionDeleteWarning</key>\n", fp);
+    fputs("        <string></string>\n", fp);
+    fputs("        <key>IFPkgDescriptionDescription</key>\n", fp);
+    fputs("        <string>", fp);
+    for (i = 0; i < dist->num_descriptions; i ++)
+      if (dist->descriptions[i].subpackage == subpackage)
+	fprintf(fp, "%s\n", dist->descriptions[i].description);
+    fputs("</string>\n", fp);
+    fputs("        <key>IFPkgDescriptionTitle</key>\n", fp);
+    fprintf(fp, "        <string>%s</string>\n", title);
+    fputs("        <key>IFPkgDescriptionVersion</key>\n", fp);
+    fprintf(fp, "        <string>%s</string>\n", dist->version);
+    fputs("</dict>\n", fp);
+    fputs("</plist>\n", fp);
 
- /*
-  * Do the info file for the packager...
-  */
+    fclose(fp);
 
-  snprintf(filename, sizeof(filename), "%s/%s-info.plist", directory, prodfull);
-  if ((fp = fopen(filename, "w")) == NULL)
-  {
-    fprintf(stderr, "epm: Unable to create package information file \"%s\" - %s\n",
-            filename, strerror(errno));
-    return (1);
-  }
+    snprintf(filename, sizeof(filename), "%s/%s-info.plist", directory, prodfull);
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+      fprintf(stderr, "epm: Unable to create package information file \"%s\" - %s\n",
+	      filename, strerror(errno));
+      return (1);
+    }
 
-  fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", fp);
-  fputs("<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n", fp);
-  fputs("<plist version=\"1.0\">\n", fp);
-  fputs("<dict>\n", fp);
-  fputs("        <key>IFPkgFormatVersion</key>\n", fp);
-  fputs("        <real>0.1</real>\n", fp);
-  fputs("        <key>IFPkgFlagAuthorizationAction</key>\n", fp);
-  fputs("        <string>RootAuthorization</string>\n", fp);
-  if (dist->num_subpackages && !subpackage)
-  {
-    fputs("        <key>IFPkgFlagIsRequired</key>\n", fp);
+    fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", fp);
+    fputs("<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n", fp);
+    fputs("<plist version=\"1.0\">\n", fp);
+    fputs("<dict>\n", fp);
+    fputs("        <key>IFPkgFormatVersion</key>\n", fp);
+    fputs("        <real>0.1</real>\n", fp);
+    fputs("        <key>IFPkgFlagAuthorizationAction</key>\n", fp);
+    fputs("        <string>RootAuthorization</string>\n", fp);
+    if (dist->num_subpackages && !subpackage)
+    {
+      fputs("        <key>IFPkgFlagIsRequired</key>\n", fp);
+      fputs("        <true/>\n", fp);
+    }
+    fputs("        <key>IFPkgFlagAllowBackRev</key>\n", fp);
     fputs("        <true/>\n", fp);
-  }
-  fputs("        <key>IFPkgFlagAllowBackRev</key>\n", fp);
-  fputs("        <true/>\n", fp);
-  fputs("        <key>IFPkgFlagBackgroundAlignment</key>\n", fp);
-  fputs("        <string>bottomleft</string>\n", fp);
-  fputs("        <key>IFPkgFlagBackgroundScaling</key>\n", fp);
-  fputs("        <string>none</string>\n", fp);
-  fputs("        <key>CFBundleIdentifier</key>\n", fp);
-  fprintf(fp, "        <string>%s.%s</string>\n", prodname,
-          subpackage ? subpackage : "base");
-  fputs("        <key>CFBundleName</key>\n", fp);
-  fprintf(fp, "        <string>%s</string>\n", title);
-  fputs("        <key>CFBundleGetInfoString</key>\n", fp);
-  fprintf(fp, "        <string>%s %s</string>\n", title, dist->version);
-  fputs("        <key>CFBundleShortVersionString</key>\n", fp);
-  fprintf(fp, "        <string>%s</string>\n", dist->version);
-  fputs("</dict>\n", fp);
-  fputs("</plist>\n", fp);
+    fputs("        <key>IFPkgFlagBackgroundAlignment</key>\n", fp);
+    fputs("        <string>bottomleft</string>\n", fp);
+    fputs("        <key>IFPkgFlagBackgroundScaling</key>\n", fp);
+    fputs("        <string>none</string>\n", fp);
+    fputs("        <key>CFBundleIdentifier</key>\n", fp);
+    fprintf(fp, "        <string>%s.%s</string>\n", prodname,
+	    subpackage ? subpackage : "base");
+    fputs("        <key>CFBundleName</key>\n", fp);
+    fprintf(fp, "        <string>%s</string>\n", title);
+    fputs("        <key>CFBundleGetInfoString</key>\n", fp);
+    fprintf(fp, "        <string>%s %s</string>\n", title, dist->version);
+    fputs("        <key>CFBundleShortVersionString</key>\n", fp);
+    fprintf(fp, "        <string>%s</string>\n", dist->version);
+    fputs("</dict>\n", fp);
+    fputs("</plist>\n", fp);
 
-  fclose(fp);
+    fclose(fp);
+  }
 
  /*
   * Do pre/post install commands...
@@ -538,8 +525,11 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
   if (i)
   {
-    snprintf(filename, sizeof(filename), "%s/%s/Resources/preflight",
-             directory, prodfull);
+    if (have_pkgbuild)
+      snprintf(filename, sizeof(filename), "%s/%s/Resources/preinstall", directory, prodfull);
+    else
+      snprintf(filename, sizeof(filename), "%s/%s/Resources/preflight", directory, prodfull);
+
     if ((fp = fopen(filename, "w")) == NULL)
     {
       fprintf(stderr, "epm: Unable to create preinstall script \"%s\" - %s\n",
@@ -570,8 +560,11 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
   if (i)
   {
-    snprintf(filename, sizeof(filename), "%s/%s/Resources/postflight",
-             directory, prodfull);
+    if (have_pkgbuild)
+      snprintf(filename, sizeof(filename), "%s/%s/Resources/postinstall", directory, prodfull);
+    else
+      snprintf(filename, sizeof(filename), "%s/%s/Resources/postflight", directory, prodfull);
+
     if ((fp = fopen(filename, "w")) == NULL)
     {
       fprintf(stderr, "epm: Unable to create postinstall script \"%s\" - %s\n",
@@ -771,16 +764,45 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
   if (have_pkgbuild)
   {
-    run_command(NULL, "/usr/bin/pkgbuild "
-                      "--identifier %s "
-		      "--version %s "
-//		      "--scripts %s "
-		      "--root %s/%s "
-		      "%s",
-		prodfull,
-		dist->version,
-		directory, prodfull,
-		pkgname);
+    if (format == PACKAGE_OSX_SIGNED)
+    {
+      const char *identity = getenv("EPM_SIGNING_IDENTITY");
+      if (!identity)
+      {
+        fputs("epm: Using default signing identity; set EPM_SIGNING_IDENTITY environment variable to override.\n", stderr);
+	identity = "-";
+      }
+
+      run_command(NULL, "/usr/bin/pkgbuild "
+			"--identifier %s "
+			"--version %s "
+			"--ownership preserve "
+			"--scripts %s/%s/Resources "
+			"--root %s/%s/Package "
+			"--sign '%s' "
+			"%s",
+		  prodfull,
+		  dist->version,
+		  directory, prodfull,
+		  directory, prodfull,
+		  identity,
+		  pkgname);
+    }
+    else
+    {
+      run_command(NULL, "/usr/bin/pkgbuild "
+			"--identifier %s "
+			"--version %s "
+			"--ownership preserve "
+			"--scripts %s/%s/Resources "
+			"--root %s/%s/Package "
+			"%s",
+		  prodfull,
+		  dist->version,
+		  directory, prodfull,
+		  directory, prodfull,
+		  pkgname);
+    }
   }
   else
   {
@@ -827,13 +849,14 @@ make_subpackage(const char *prodname,	/* I - Product short name */
     snprintf(filename, sizeof(filename), "%s/%s", directory, prodfull);
     unlink_directory(filename);
 
-    snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory,
-             prodfull);
-    unlink(filename);
+    if (!have_pkgbuild)
+    {
+      snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory, prodfull);
+      unlink(filename);
 
-    snprintf(filename, sizeof(filename), "%s/%s-info.plist", directory,
-             prodfull);
-    unlink(filename);
+      snprintf(filename, sizeof(filename), "%s/%s-info.plist", directory, prodfull);
+      unlink(filename);
+    }
   }
 
   return (0);
