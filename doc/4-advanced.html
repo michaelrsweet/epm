@@ -1,7 +1,7 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN="RIGHT"><A NAME="ADVANCED">4 - Advanced Packaging with EPM</A></H1>
+<H1><A NAME="ADVANCED">4 - Advanced Packaging with EPM</A></H1>
 
 <P>This chapter describes the advanced packaging features of EPM.</P>
 
@@ -11,7 +11,7 @@
 file:</P>
 
 <PRE>
-    %include filename
+%include filename
 </PRE>
 
 <P>Includes can usually be nested up to 250 levels depending on
@@ -142,19 +142,19 @@ used.</P>
 lower and upper version numbers:
 
 <PRE>
-    %requires foobar
-    %requires foobar 1.0
-    %incompat foobar 0.9
-    %replaces foobar
-    %replaces foobar 1.2 3.4
-    %provides foobar
+%requires foobar
+%requires foobar 1.0
+%incompat foobar 0.9
+%replaces foobar
+%replaces foobar 1.2 3.4
+%provides foobar
 </PRE>
 
 <P>or the filename:</P>
 
 <PRE>
-    %requires /usr/lib/libfoobar.so
-    %incompat /usr/lib/libfoobar.so.1.2
+%requires /usr/lib/libfoobar.so
+%incompat /usr/lib/libfoobar.so.1.2
 </PRE>
 
 <P>Package dependencies are currently enforced only for the same
@@ -178,8 +178,8 @@ directives specify commands to be run before and after
 installation, respectively:</P>
 
 <PRE>
-    %preinstall echo Command before installing
-    %postinstall echo Command after installing
+%preinstall echo Command before installing
+%postinstall echo Command after installing
 </PRE>
 
 <P>Similarly, the <CODE>%prepatch</CODE> and <CODE>%postpatch</CODE>
@@ -187,8 +187,8 @@ directives specify commands to be executed before and after patching
 the software:</P>
 
 <PRE>
-    %prepatch echo Command before patching
-    %postpatch echo Command after patching
+%prepatch echo Command before patching
+%postpatch echo Command after patching
 </PRE>
 
 <P>Finally, the <CODE>%preremove</CODE> and <CODE>%postremove</CODE>
@@ -196,8 +196,8 @@ directives specify commands that are run before and after removal
 of the software:</P>
 
 <PRE>
-    %preremove echo Command before removing
-    %postremove echo Command after removing
+%preremove echo Command before removing
+%postremove echo Command after removing
 </PRE>
 
 <!-- NEED 3in -->
@@ -319,17 +319,17 @@ of the software:</P>
 <CODE>&lt;filename</CODE> notation:</P>
 
 <PRE>
-    %postinstall &lt;filename
+%postinstall &lt;filename
 </PRE>
 
 <P>To include multiple lines directly, use the
 <CODE>&lt;&lt;string</CODE> notation (a.k.a. a "here" document):</P>
 
 <PRE>
-    %postinstall &lt;&lt;EOF
-    echo Command before installing
-    /usr/bin/foo
-    EOF
+%postinstall &lt;&lt;EOF
+echo Command before installing
+/usr/bin/foo
+EOF
 </PRE>
 
 <P>Note that all commands specified in the list file will use
@@ -376,7 +376,7 @@ minor version number reported by <CODE>uname -r</CODE>:
 operating systems:</P>
 
 <PRE>
-    %system all
+%system all
 </PRE>
 
 <P>For format-specific files, the <CODE>%format</CODE> directive
@@ -439,7 +439,7 @@ synonym for "ppc":</P>
 <P>The special name <CODE>all</CODE> is used to match all architectures:</P>
 
 <PRE>
-    %arch all
+%arch all
 </PRE>
 
 <P>Finally, EPM can conditionally include lines using the
@@ -476,7 +476,7 @@ of a file line to prevent EPM from stripping the symbols and
 debugging information from a file:</P>
 
 <PRE>
-    f 755 root sys /usr/lib/libfoo.so libfoo.so nostrip()
+f 755 root sys /usr/lib/libfoo.so libfoo.so nostrip()
 </PRE>
 
 <H2>Software Patches</H2>

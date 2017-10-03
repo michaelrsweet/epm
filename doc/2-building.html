@@ -1,7 +1,7 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN="RIGHT"><A NAME="BUILDING">2 - Building EPM</A></H1>
+<H1><A NAME="BUILDING">2 - Building EPM</A></H1>
 
 <P>This chapter shows how to configure, build, and install the
 ESP Package Manager.</P>
@@ -20,7 +20,7 @@ the FLTK library, version 1.1.x or 1.3.x, and (for UNIX/Linux) the X11
 libraries. FLTK is available at the following URL:</P>
 
 <PRE>
-    <A HREF="http://www.fltk.org/">http://www.fltk.org/</A>
+<A HREF="http://www.fltk.org/">http://www.fltk.org/</A>
 </PRE>
 
 <P>Your end-user systems will require the Bourne (or Korn or
@@ -43,7 +43,7 @@ your system. The <CODE>configure</CODE> script is used to
 configure the EPM software, as follows:</P>
 
 <PRE>
-    <KBD>./configure ENTER</KBD>
+<KBD>./configure ENTER</KBD>
 </PRE>
 
 <H3>Choosing Compilers</H3>
@@ -56,16 +56,16 @@ using the following commands in the Bourne, Korn, or Bash
 shells:</P>
 
 <PRE>
-    <KBD>export CC=/foo/bar/gcc ENTER
-    export CXX=/foo/bar/gcc ENTER</KBD>
+<KBD>export CC=/foo/bar/gcc ENTER
+export CXX=/foo/bar/gcc ENTER</KBD>
 </PRE>
 
 <P>If you are using C shell or tcsh, use the following commands
 instead:</P>
 
 <PRE>
-    <KBD>setenv CC /foo/bar/gcc ENTER
-    setenv CXX /foo/bar/gcc ENTER</KBD>
+<KBD>setenv CC /foo/bar/gcc ENTER
+setenv CXX /foo/bar/gcc ENTER</KBD>
 </PRE>
 
 <P>Run the <CODE>configure</CODE> script again to use the new
@@ -82,7 +82,7 @@ relocate these files</P>
 <P>to another directory:</P>
 
 <PRE>
-    <KBD>./configure --prefix=/example/path ENTER</KBD>
+<KBD>./configure --prefix=/example/path ENTER</KBD>
 </PRE>
 
 <P>The <CODE>configure</CODE> script also accepts the
@@ -91,8 +91,8 @@ relocate these files</P>
 separately, as follows:
 
 <PRE>
-    <KBD>./configure --bindir=/example/path/bin --libdir=/example/path/lib \
-        --mandir=/example/path/share/man ENTER</KBD>
+<KBD>./configure --bindir=/example/path/bin --libdir=/example/path/lib \
+    --mandir=/example/path/share/man ENTER</KBD>
 </PRE>
 
 <H3>Options for the Setup GUI</H3>
@@ -104,14 +104,14 @@ full path of this utility if it cannot be found in the current
 path:</P>
 
 <PRE>
-    <KBD>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</KBD>
+<KBD>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</KBD>
 </PRE>
 
 <P>or:</P>
 
 <PRE>
-    <KBD>FLTKCONFIG=/foo/bar/bin/fltk-config ENTER
-    export FLTKCONFIG</KBD>
+<KBD>FLTKCONFIG=/foo/bar/bin/fltk-config ENTER
+export FLTKCONFIG</KBD>
 </PRE>
 
 <H2>Building the Software</H2>
@@ -120,7 +120,7 @@ path:</P>
 command to compile it:</P>
 
 <PRE>
-    <KBD>make ENTER</KBD>
+<KBD>make ENTER</KBD>
 </PRE>
 
 <P>Compilation should take a few minutes at most. Then type the
@@ -129,9 +129,9 @@ following command to determine if the software</P>
 <P>compiled successfully:</P>
 
 <PRE>
-    <KBD>make test ENTER</KBD>
-    Portable distribution build test PASSED.
-    Native distribution build test PASSED.
+<KBD>make test ENTER</KBD>
+Portable distribution build test PASSED.
+Native distribution build test PASSED.
 </PRE>
 
 <P>The <CODE>test</CODE> target builds a portable and native
@@ -148,7 +148,7 @@ which you have write permission. The <CODE>su(8)</CODE> command
 is usually sufficient to install software:</P>
 
 <PRE>
-    <KBD>su ENTER</KBD>
+<KBD>su ENTER</KBD>
 </PRE>
 
 <P>Operating systems such as macOS do not enable the root
@@ -156,7 +156,7 @@ account by default. The <CODE>sudo(8)</CODE> command is used
 instead:</P>
 
 <PRE>
-    <KBD>sudo <I>installation command</I> ENTER</KBD>
+<KBD>sudo <I>installation command</I> ENTER</KBD>
 </PRE>
 
 <!-- NEED 2in -->
@@ -166,21 +166,21 @@ instead:</P>
 <CODE>make</CODE> command:</P>
 
 <PRE>
-    <KBD>make install ENTER</KBD>
-    Installing EPM setup in /usr/local/lib/epm
-    Installing EPM programs in /usr/local/bin
-    Installing EPM manpages in /usr/local/share/man/man1
-    Installing EPM documentation in /usr/local/share/doc/epm
+<KBD>make install ENTER</KBD>
+Installing EPM setup in /usr/local/lib/epm
+Installing EPM programs in /usr/local/bin
+Installing EPM manpages in /usr/local/share/man/man1
+Installing EPM documentation in /usr/local/share/doc/epm
 </PRE>
 
 <P>Use the <CODE>sudo</CODE> command to install on macOS:</P>
 
 <PRE>
-    <KBD>sudo make install ENTER</KBD>
-    Installing EPM setup in /usr/local/lib/epm
-    Installing EPM programs in /usr/local/bin
-    Installing EPM manpages in /usr/local/share/man/man1
-    Installing EPM documentation in /usr/local/share/doc/epm
+<KBD>sudo make install ENTER</KBD>
+Installing EPM setup in /usr/local/lib/epm
+Installing EPM programs in /usr/local/bin
+Installing EPM manpages in /usr/local/share/man/man1
+Installing EPM documentation in /usr/local/share/doc/epm
 </PRE>
 
 <H3><A NAME="INSTALL_PORTABLE">Installing Using the Portable
@@ -193,7 +193,7 @@ Intel-based system would be <VAR>linux-2.4-intel</VAR>. The
 subdirectory name is built from the following template:</P>
 
 <PRE>
-    <I>os-major.minor-architecture</I>
+<I>os-major.minor-architecture</I>
 </PRE>
 
 <P>The <CODE>os</CODE> name is the common name for the operating
@@ -308,8 +308,8 @@ distribution, type the following commands to install EPM from
 the portable distribution:</P>
 
 <PRE>
-    <KBD>cd <I>os-major.minor-architecture<I> ENTER
-    ./epm.install ENTER</KBD>
+<KBD>cd <I>os-major.minor-architecture<I> ENTER
+./epm.install ENTER</KBD>
 </PRE>
 
 <P>The software will be installed after answering a few yes/no

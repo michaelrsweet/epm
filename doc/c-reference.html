@@ -1,7 +1,7 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN="RIGHT"><A NAME="REFERENCE">C - List File Reference</A></H1>
+<H1><A NAME="REFERENCE">C - List File Reference</A></H1>
 
 <P>This appendix provides a complete reference for the EPM list file
 and setup types formats.</P>
@@ -393,14 +393,14 @@ occur when the variable name is referenced with the dollar sign
 ($):</P>
 
 <PRE>
-    %postinstall &lt;&lt;EOF
-    echo What is your name:
-    read $$name
-    echo Your name is $$name
-    EOF
+%postinstall &lt;&lt;EOF
+echo What is your name:
+read $$name
+echo Your name is $$name
+EOF
 
-    f 0555 root sys ${bindir}/foo foo
-    f 0555 root sys $datadir/foo/foo.dat foo.dat
+f 0555 root sys ${bindir}/foo foo
+f 0555 root sys $datadir/foo/foo.dat foo.dat
 </PRE>
 
 <P>Variable names can be surrounded by curly brackets (${name})
@@ -431,20 +431,20 @@ Products are defined by a line starting with the word
 <CODE>INSTALL</CODE>:</P>
 
 <PRE>
-    # Pre-select the user packages
-    TYPE Typical End-User Configuration
-    INSTALL foo
-    INSTALL foo-help
+# Pre-select the user packages
+TYPE Typical End-User Configuration
+INSTALL foo
+INSTALL foo-help
 
-    # Pre-select the developer packages
-    TYPE Typical Developer Configuration
-    INSTALL foo
-    INSTALL foo-help
-    INSTALL foo-devel
-    INSTALL foo-examples
+# Pre-select the developer packages
+TYPE Typical Developer Configuration
+INSTALL foo
+INSTALL foo-help
+INSTALL foo-devel
+INSTALL foo-examples
 
-    # Allow the user to select packages
-    TYPE Custom Configuration
+# Allow the user to select packages
+TYPE Custom Configuration
 </PRE>
 
 <P>In the example above, three installation types are defined.

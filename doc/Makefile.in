@@ -50,8 +50,8 @@ all:	$(MANPAGES)	epm-book.epub epm-book.html epm-book.pdf
 clean:
 	$(RM) epm-book.html $(MANPAGES) mantohtml mantohtml.o
 
-epm-book.epub:	$(HTMLFILES) epm-book.book
-	$(HTMLDOC) --batch epm-book.book -f epm-book.epub
+epm-book.epub:	$(HTMLFILES) title.png epm-book.book
+	$(HTMLDOC) --batch epm-book.book --titleimage title.png -f epm-book.epub
 
 epm-book.html:	$(HTMLFILES) epm-book.book
 	$(HTMLDOC) --batch epm-book.book -f epm-book.html

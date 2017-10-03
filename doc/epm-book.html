@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <HTML>
 <HEAD>
-<TITLE>Software Distribution Using the ESP Package Manager</TITLE>
+<TITLE>Software Distribution with ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael R Sweet">
 <META NAME="copyright" CONTENT="Copyright 1999-2017 by Michael R Sweet">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
@@ -30,11 +30,11 @@ A { text-decoration: none }
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h1 ALIGN="CENTER">Software Distribution Using the ESP Package Manager</h1>
+<h1 ALIGN="CENTER">Software Distribution with ESP Package Manager</h1>
 <p ALIGN="CENTER">MICHAEL R. SWEET</p>
 
 <!-- NEW PAGE -->
-<h2>Software Distribution Using the ESP Package Manager</h2>
+<h2>Software Distribution with ESP Package Manager</h2>
 <h3>Copyright &copy; 2006-2017 by Michael R Sweet</h3>
 <h3>Copyright &copy; 2006-2010 by Easy Software Products</h3>
 <p><small>This book may be redistributed and/or modified under the terms
@@ -48,8 +48,6 @@ A { text-decoration: none }
  License along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
  USA.</small></p>
-<p><small>This book was created solely using free software tools.</small>
-</p>
 <p><small>International Standard Book Number: 978-1-4116-8913-8</small></p>
 <p><small>First Printing: April 2006
 <br> Second Printing: December 2010
@@ -210,7 +208,7 @@ https://michaelrsweet.github.io/epm</a></dt>
  clear. If you find errors or have a suggestion for improving the book,
  please file a bug at:</p>
 <pre>
-    <a href="https://github.com/michaelrsweet/epm/issues">https://github.com/michaelrsweet/epm/issues</a>
+<a href="https://github.com/michaelrsweet/epm/issues">https://github.com/michaelrsweet/epm/issues</a>
 </pre>
 <h2><a NAME="1_5">Acknowledgments</a></h2>
 <p>I'd like to thank the following people for their contributions to
@@ -245,7 +243,7 @@ https://michaelrsweet.github.io/epm</a></dt>
 <li>Jean Yves: BSD package and mkepmlist fixes</li>
 </ul>
 <HR NOSHADE>
-<h1 ALIGN="RIGHT"><a NAME="INTRO">1 - Introduction to EPM</a></h1>
+<h1><a NAME="INTRO">1 - Introduction to EPM</a></h1>
 <p>This chapter provides an introduction to the ESP Package Manager
  (&quot;EPM&quot;).</p>
 <h2><a NAME="2_1">What is EPM?</a></h2>
@@ -440,13 +438,13 @@ fakeroot</code> software, introducing potential security risks and
 <p>The EPM project page provides access to the current software,
  documentation, and mailing list for EPM:</p>
 <pre>
-    <a HREF="https://michaelrsweet.github.io/epm">https://michaelrsweet.github.io/epm</a>
+<a HREF="https://michaelrsweet.github.io/epm">https://michaelrsweet.github.io/epm</a>
 </pre>
 <p>The EPM source code can be downloaded in compressed tar files or via
  the popular Subversion software. Please see the EPM project page for
  complete instructions.</p>
 <HR NOSHADE>
-<h1 ALIGN="RIGHT"><a NAME="BUILDING">2 - Building EPM</a></h1>
+<h1><a NAME="BUILDING">2 - Building EPM</a></h1>
 <p>This chapter shows how to configure, build, and install the ESP
  Package Manager.</p>
 <h2><a NAME="3_1">Requirements</a></h2>
@@ -459,7 +457,7 @@ fakeroot</code> software, introducing potential security risks and
  FLTK library, version 1.1.x or 1.3.x, and (for UNIX/Linux) the X11
  libraries. FLTK is available at the following URL:</p>
 <pre>
-    <a HREF="http://www.fltk.org/">http://www.fltk.org/</a>
+<a HREF="http://www.fltk.org/">http://www.fltk.org/</a>
 </pre>
 <p>Your end-user systems will require the Bourne (or Korn or Bash) shell
  (<code>sh</code>), the <code>df(1)</code> program, the <code>tar(1)</code>
@@ -475,7 +473,7 @@ dpkg(8)</code>, to generate the software distribution on the development
  system. The <code>configure</code> script is used to configure the EPM
  software, as follows:</p>
 <pre>
-    <kbd>./configure ENTER</kbd>
+<kbd>./configure ENTER</kbd>
 </pre>
 <h3>Choosing Compilers</h3>
 <p>If the <code>configure</code> script is unable to determine the name
@@ -484,13 +482,13 @@ dpkg(8)</code>, to generate the software distribution on the development
  respectively. You can set these variables using the following commands
  in the Bourne, Korn, or Bash shells:</p>
 <pre>
-    <kbd>export CC=/foo/bar/gcc ENTER
-    export CXX=/foo/bar/gcc ENTER</kbd>
+<kbd>export CC=/foo/bar/gcc ENTER
+export CXX=/foo/bar/gcc ENTER</kbd>
 </pre>
 <p>If you are using C shell or tcsh, use the following commands instead:</p>
 <pre>
-    <kbd>setenv CC /foo/bar/gcc ENTER
-    setenv CXX /foo/bar/gcc ENTER</kbd>
+<kbd>setenv CC /foo/bar/gcc ENTER
+setenv CXX /foo/bar/gcc ENTER</kbd>
 </pre>
 <p>Run the <code>configure</code> script again to use the new commands.</p>
 <h3>Choosing Installation Directories</h3>
@@ -501,14 +499,14 @@ dpkg(8)</code>, to generate the software distribution on the development
  relocate these files</p>
 <p>to another directory:</p>
 <pre>
-    <kbd>./configure --prefix=/example/path ENTER</kbd>
+<kbd>./configure --prefix=/example/path ENTER</kbd>
 </pre>
 <p>The <code>configure</code> script also accepts the <code>--bindir</code>
 , <code>--libdir</code>, and <code>--mandir</code> options to relocate
  each directory separately, as follows:</p>
 <pre>
-    <kbd>./configure --bindir=/example/path/bin --libdir=/example/path/lib \
-        --mandir=/example/path/share/man ENTER</kbd>
+<kbd>./configure --bindir=/example/path/bin --libdir=/example/path/lib \
+    --mandir=/example/path/share/man ENTER</kbd>
 </pre>
 <h3>Options for the Setup GUI</h3>
 <p>The setup GUI requires the FLTK library. The configure script will
@@ -516,26 +514,26 @@ dpkg(8)</code>, to generate the software distribution on the development
  the FLTKCONFIG environment variable to the full path of this utility if
  it cannot be found in the current path:</p>
 <pre>
-    <kbd>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</kbd>
+<kbd>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</kbd>
 </pre>
 <p>or:</p>
 <pre>
-    <kbd>FLTKCONFIG=/foo/bar/bin/fltk-config ENTER
-    export FLTKCONFIG</kbd>
+<kbd>FLTKCONFIG=/foo/bar/bin/fltk-config ENTER
+export FLTKCONFIG</kbd>
 </pre>
 <h2><a NAME="3_3">Building the Software</a></h2>
 <p>Once you have configured the software, type the following command to
  compile it:</p>
 <pre>
-    <kbd>make ENTER</kbd>
+<kbd>make ENTER</kbd>
 </pre>
 <p>Compilation should take a few minutes at most. Then type the
  following command to determine if the software</p>
 <p>compiled successfully:</p>
 <pre>
-    <kbd>make test ENTER</kbd>
-    Portable distribution build test PASSED.
-    Native distribution build test PASSED.
+<kbd>make test ENTER</kbd>
+Portable distribution build test PASSED.
+Native distribution build test PASSED.
 </pre>
 <p>The <code>test</code> target builds a portable and native
  distribution of EPM and reports if the two distributions were generated
@@ -548,12 +546,12 @@ dpkg(8)</code>, to generate the software distribution on the development
  The <code>su(8)</code> command is usually sufficient to install
  software:</p>
 <pre>
-    <kbd>su ENTER</kbd>
+<kbd>su ENTER</kbd>
 </pre>
 <p>Operating systems such as macOS do not enable the root account by
  default. The <code>sudo(8)</code> command is used instead:</p>
 <pre>
-    <kbd>sudo <i>installation command</i> ENTER</kbd>
+<kbd>sudo <i>installation command</i> ENTER</kbd>
 </pre>
 
 <!-- NEED 2in -->
@@ -561,19 +559,19 @@ dpkg(8)</code>, to generate the software distribution on the development
 <p>Type the following command to install the EPM software using the <code>
 make</code> command:</p>
 <pre>
-    <kbd>make install ENTER</kbd>
-    Installing EPM setup in /usr/local/lib/epm
-    Installing EPM programs in /usr/local/bin
-    Installing EPM manpages in /usr/local/share/man/man1
-    Installing EPM documentation in /usr/local/share/doc/epm
+<kbd>make install ENTER</kbd>
+Installing EPM setup in /usr/local/lib/epm
+Installing EPM programs in /usr/local/bin
+Installing EPM manpages in /usr/local/share/man/man1
+Installing EPM documentation in /usr/local/share/doc/epm
 </pre>
 <p>Use the <code>sudo</code> command to install on macOS:</p>
 <pre>
-    <kbd>sudo make install ENTER</kbd>
-    Installing EPM setup in /usr/local/lib/epm
-    Installing EPM programs in /usr/local/bin
-    Installing EPM manpages in /usr/local/share/man/man1
-    Installing EPM documentation in /usr/local/share/doc/epm
+<kbd>sudo make install ENTER</kbd>
+Installing EPM setup in /usr/local/lib/epm
+Installing EPM programs in /usr/local/bin
+Installing EPM manpages in /usr/local/share/man/man1
+Installing EPM documentation in /usr/local/share/doc/epm
 </pre>
 <h3><a NAME="INSTALL_PORTABLE">Installing Using the Portable
  Distribution</a></h3>
@@ -583,7 +581,7 @@ make</code> command:</p>
  linux-2.4-intel</var>. The subdirectory name is built from the
  following template:</p>
 <pre>
-    <i>os-major.minor-architecture</i>
+<i>os-major.minor-architecture</i>
 </pre>
 <p>The <code>os</code> name is the common name for the operating system.
  <a HREF="#TABLE_2_1">Table 2.1</a> lists the abbreviations for most
@@ -636,8 +634,8 @@ make</code> command:</p>
  distribution, type the following commands to install EPM from the
  portable distribution:</p>
 <pre>
-    <kbd>cd <i>os-major.minor-architecture<i> ENTER
-    ./epm.install ENTER</i></i></kbd>
+<kbd>cd <i>os-major.minor-architecture<i> ENTER
+./epm.install ENTER</i></i></kbd>
 </pre>
 <p>The software will be installed after answering a few yes/no
  questions.</p>
@@ -676,8 +674,7 @@ directory</i> epm</code></td></tr>
 </table>
 </center>
 <HR NOSHADE>
-<h1 ALIGN="RIGHT"><a NAME="PACKAGING">3 - Packaging Your Software with
- EPM</a></h1>
+<h1><a NAME="PACKAGING">3 - Packaging Your Software with EPM</a></h1>
 <p>This chapter describes how to use EPM to package your own software
  packages.</p>
 <h2><a NAME="4_1">The Basics</a></h2>
@@ -694,13 +691,13 @@ directory</i> epm</code></td></tr>
 <p>Every list file needs to define the product name, copyright,
  description, license, README file, vendor, and version:</p>
 <pre>
-    %product Kung Foo Firewall
-    %copyright 1999-2005 by Foo Industries, All Rights Reserved.
-    %vendor Foo Industries
-    %license COPYING
-    %readme README
-    %description Kung Foo firewall software for your firewall.
-    %version 1.2.3p4 1020304
+%product Kung Foo Firewall
+%copyright 1999-2005 by Foo Industries, All Rights Reserved.
+%vendor Foo Industries
+%license COPYING
+%readme README
+%description Kung Foo firewall software for your firewall.
+%version 1.2.3p4 1020304
 </pre>
 <p>The <code>%license</code> and <code>%readme</code> directives specify
  files for the license agreement and README files for the package,
@@ -716,27 +713,27 @@ directory</i> epm</code></td></tr>
 <p>Each file in the distribution is listed on a line starting with a
  letter. The format of all lines is:</p>
 <pre>
-    type mode owner group destination source <i>options</i>
+type mode owner group destination source <i>options</i>
 </pre>
 <p>Regular files use the letter <code>f</code> for the type field:</p>
 <pre>
-    f 755 root sys /usr/bin/foo foo
+f 755 root sys /usr/bin/foo foo
 </pre>
 <p>Configuration files use the letter <code>c</code> for the type field:</p>
 <pre>
-    c 644 root sys /etc/foo.conf foo.conf
+c 644 root sys /etc/foo.conf foo.conf
 </pre>
 
 <!-- NEED 2in -->
 <p>Directories use the letter <code>d</code> for the type field and use
  a source path of &quot;-&quot;:</p>
 <pre>
-    d 755 root sys /var/spool/foo -
+d 755 root sys /var/spool/foo -
 </pre>
 <p>Finally, symbolic links use the letter <code>l</code> (lowercase L)
  for the type field:</p>
 <pre>
-    l 000 root sys /usr/bin/foobar foo
+l 000 root sys /usr/bin/foobar foo
 </pre>
 <p>The source field specifies the file to link to and can be a relative
  path.</p>
@@ -744,7 +741,7 @@ directory</i> epm</code></td></tr>
 <p>Wildcard patterns can be used in the source field to include multiple
  files on a single line:</p>
 <pre>
-    f 0444 root sys /usr/share/doc/foo *.html
+f 0444 root sys /usr/share/doc/foo *.html
 </pre>
 
 <!-- NEED 3in -->
@@ -765,8 +762,8 @@ directory</i> epm</code></td></tr>
 <p>To define a subpackage, use the <code>%subpackage</code> directive
  followed by a <code>%description</code> directive:</p>
 <pre>
-    %subpackage foo
-    %description One-Line Description of Foo
+%subpackage foo
+%description One-Line Description of Foo
 </pre>
 <p>Files, scripts, and dependencies that follow the <code>%subpackage</code>
  directive are treated as part of that subpackage. Specifying the <code>
@@ -776,19 +773,19 @@ directory</i> epm</code></td></tr>
 <!-- NEED 2in -->
 <p>You can alternate between subpackages as many times as you like:</p>
 <pre>
-    %description Main package description
-    f 0755 /usr/bin/bar bar
+%description Main package description
+f 0755 /usr/bin/bar bar
 
-    %subpackage foo
-    %description Foo programs
-    f 0755 /usr/bin/foo foo
-    %requires bla
+%subpackage foo
+%description Foo programs
+f 0755 /usr/bin/foo foo
+%requires bla
 
-    %subpackage
-    f 0644 /usr/share/man/man1/bar.1
+%subpackage
+f 0644 /usr/share/man/man1/bar.1
 
-    %subpackage foo
-    f 0644 /usr/share/man/man1/foo.1
+%subpackage foo
+f 0644 /usr/share/man/man1/foo.1
 </pre>
 <p>The above example creates a package containing the &quot;bar&quot; program and
  man page with a subpackage containing the &quot;foo&quot; program and man page.
@@ -801,12 +798,12 @@ directory</i> epm</code></td></tr>
  from list files. To build a portable software package for an
  application called &quot;foo&quot;, type the following command:</p>
 <pre>
-    <kbd>epm foo ENTER</kbd>
+<kbd>epm foo ENTER</kbd>
 </pre>
 <p>If your application uses a different base name than the list file,
  you can specify the list filename on the command-line as well:</p>
 <pre>
-    <kbd>epm foo bar.list ENTER</kbd>
+<kbd>epm foo bar.list ENTER</kbd>
 </pre>
 <center>
 <table><caption ALIGN="BOTTOM"> <a NAME="FIGURE_3_1">Figure 3.1: The EPM
@@ -821,16 +818,15 @@ directory</i> epm</code></td></tr>
  Portable packages include an installation script called<var>
  product.install</var>, where &quot;product&quot; is the name of the package:</p>
 <pre>
-    <kbd>cd os-release-arch ENTER
-    ./product.install ENTER</kbd>
+<kbd>cd os-release-arch ENTER
+./product.install ENTER</kbd>
 </pre>
 <p>After answering a few yes/no questions, the software will be
  installed. To bypass the questions, run the script with the <code>now</code>
  argument:</p>
 <pre>
-    <kbd>cd os-release-arch ENTER
-    ./product.install now ENTER</kbd>
-
+<kbd>cd os-release-arch ENTER
+./product.install now ENTER</kbd>
 </pre>
 <h3>Including the Setup GUI</h3>
 <p>EPM also provides an optional graphical setup program (<a HREF="#FIGURE_3_1">
@@ -838,7 +834,7 @@ Figure 3.1</a>). To include the setup program in your distributions,
  create a product logo image in GIF or XPM format and use the <code>
 --setup-image</code> option when creating your distribution:</p>
 <pre>
-    <kbd>epm --setup-image foo.xpm foo ENTER</kbd>
+<kbd>epm --setup-image foo.xpm foo ENTER</kbd>
 </pre>
 <p>This option is only supported when creating for portable and macOS
  software packages.</p>
@@ -848,7 +844,7 @@ Figure 3.1</a>). To include the setup program in your distributions,
 <p>EPM can also produce vendor-specific packages using the <code>-f</code>
  option:</p>
 <pre>
-    <kbd>epm -f format foo bar.list ENTER</kbd>
+<kbd>epm -f format foo bar.list ENTER</kbd>
 </pre>
 <p>The<i> format</i> option can be one of the following keywords:</p>
 <ul>
@@ -871,7 +867,7 @@ Figure 3.1</a>). To include the setup program in your distributions,
  the <code>-f</code> option to select the format. For example, to build
  an RPM distribution of EPM, type:</p>
 <pre>
-    epm -f rpm epm
+epm -f rpm epm
 </pre>
 <p>The result will be one or more RPM package files instead of the
  portable package files.</p>
@@ -936,12 +932,12 @@ pkgadd(1m)</code> command, while the<var> name.pkg.tgz</var> file is a
  where &quot;name&quot; is the product/package name you supplied on the
  command-line.</p>
 <HR NOSHADE>
-<h1 ALIGN="RIGHT"><a NAME="ADVANCED">4 - Advanced Packaging with EPM</a></h1>
+<h1><a NAME="ADVANCED">4 - Advanced Packaging with EPM</a></h1>
 <p>This chapter describes the advanced packaging features of EPM.</p>
 <h2><a NAME="5_1">Including Other List Files</a></h2>
 <p>The <code>%include</code> directive includes another list file:</p>
 <pre>
-    %include filename
+%include filename
 </pre>
 <p>Includes can usually be nested up to 250 levels depending on the host
  operating system and libraries.</p>
@@ -1000,17 +996,17 @@ No</td><td ALIGN="CENTER">Yes</td><td ALIGN="CENTER">Yes</td></tr>
 <p>Dependencies are specified using the package name and optionally the
  lower and upper version numbers:</p>
 <pre>
-    %requires foobar
-    %requires foobar 1.0
-    %incompat foobar 0.9
-    %replaces foobar
-    %replaces foobar 1.2 3.4
-    %provides foobar
+%requires foobar
+%requires foobar 1.0
+%incompat foobar 0.9
+%replaces foobar
+%replaces foobar 1.2 3.4
+%provides foobar
 </pre>
 <p>or the filename:</p>
 <pre>
-    %requires /usr/lib/libfoobar.so
-    %incompat /usr/lib/libfoobar.so.1.2
+%requires /usr/lib/libfoobar.so
+%incompat /usr/lib/libfoobar.so.1.2
 </pre>
 <p>Package dependencies are currently enforced only for the same package
  format, so a portable distribution that requires package &quot;foobar&quot; will
@@ -1024,22 +1020,22 @@ Table 4.2</a> shows the support for scripts in each package format.</p>
 <p>The <code>%preinstall</code> and <code>%postinstall</code> directives
  specify commands to be run before and after installation, respectively:</p>
 <pre>
-    %preinstall echo Command before installing
-    %postinstall echo Command after installing
+%preinstall echo Command before installing
+%postinstall echo Command after installing
 </pre>
 <p>Similarly, the <code>%prepatch</code> and <code>%postpatch</code>
  directives specify commands to be executed before and after patching
  the software:</p>
 <pre>
-    %prepatch echo Command before patching
-    %postpatch echo Command after patching
+%prepatch echo Command before patching
+%postpatch echo Command after patching
 </pre>
 <p>Finally, the <code>%preremove</code> and <code>%postremove</code>
  directives specify commands that are run before and after removal of
  the software:</p>
 <pre>
-    %preremove echo Command before removing
-    %postremove echo Command after removing
+%preremove echo Command before removing
+%postremove echo Command after removing
 </pre>
 
 <!-- NEED 3in -->
@@ -1089,15 +1085,15 @@ Yes</td><td ALIGN="CENTER">Yes</td></tr>
 <p>To include an external script file, use the <code>&lt;filename</code>
  notation:</p>
 <pre>
-    %postinstall &lt;filename
+%postinstall &lt;filename
 </pre>
 <p>To include multiple lines directly, use the <code>&lt;&lt;string</code>
  notation (a.k.a. a &quot;here&quot; document):</p>
 <pre>
-    %postinstall &lt;&lt;EOF
-    echo Command before installing
-    /usr/bin/foo
-    EOF
+%postinstall &lt;&lt;EOF
+echo Command before installing
+/usr/bin/foo
+EOF
 </pre>
 <p>Note that all commands specified in the list file will use the
  variable expansion provided by EPM, so be sure to quote any dollar sign
@@ -1131,7 +1127,7 @@ uname -r</code>:</p>
 <p>The special name <code>all</code> is used to match all operating
  systems:</p>
 <pre>
-    %system all
+%system all
 </pre>
 <p>For format-specific files, the <code>%format</code> directive can be
  used:</p>
@@ -1174,7 +1170,7 @@ uname -m</code>; &quot;arm&quot; is a synonym for &quot;armv6&quot;, &quot;armv7
 </dl>
 <p>The special name <code>all</code> is used to match all architectures:</p>
 <pre>
-    %arch all
+%arch all
 </pre>
 <p>Finally, EPM can conditionally include lines using the <code>%if</code>
 , <code>%elseif</code>, <code>%ifdef</code>, <code>%elseifdef</code>, <code>
@@ -1202,7 +1198,7 @@ f 755 root sys /usr/bin/program program.sh
  file line to prevent EPM from stripping the symbols and debugging
  information from a file:</p>
 <pre>
-    f 755 root sys /usr/lib/libfoo.so libfoo.so nostrip()
+f 755 root sys /usr/lib/libfoo.so libfoo.so nostrip()
 </pre>
 <h2><a NAME="5_6">Software Patches</a></h2>
 <p>EPM supports portable software patch distributions which contain only
@@ -1314,7 +1310,7 @@ EOF
 EOF
 </pre>
 <HR NOSHADE>
-<h1 ALIGN="RIGHT"><a NAME="EXAMPLES">5 - EPM Packaging Examples</a></h1>
+<h1><a NAME="EXAMPLES">5 - EPM Packaging Examples</a></h1>
 <p>This chapter shows how the EPM and CUPS software is packaged using
  EPM list files. The EPM list file example highlights the basic features
  of EPM, while the CUPS list file example shows the more advanced
@@ -1400,7 +1396,7 @@ f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
 %endif
 </pre>
 <HR NOSHADE>
-<h1 ALIGN="RIGHT"><a NAME="LICENSE">A - GNU General Public License</a></h1>
+<h1><a NAME="LICENSE">A - GNU General Public License</a></h1>
 <p ALIGN="CENTER">GNU GENERAL PUBLIC LICENSE
 <br> Version 2, June 1991</p>
 <p ALIGN="CENTER">Copyright (C) 1989, 1991 Free Software Foundation,
@@ -1659,7 +1655,7 @@ by James Hacker.
 Ty Coon, President of Vice
 </pre>
 <HR NOSHADE>
-<h1 ALIGN="RIGHT"><a NAME="MANPAGES">B - Command Reference</a></h1>
+<h1><a NAME="MANPAGES">B - Command Reference</a></h1>
 
 <!-- NEW PAGE -->
 
@@ -1957,7 +1953,7 @@ directory2</i><i>...</i><i>directoryN</i>
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  General Public License for more details.</p>
 <HR NOSHADE>
-<h1 ALIGN="RIGHT"><a NAME="REFERENCE">C - List File Reference</a></h1>
+<h1><a NAME="REFERENCE">C - List File Reference</a></h1>
 <p>This appendix provides a complete reference for the EPM list file and
  setup types formats.</p>
 <h2><a NAME="epm.list">The EPM List File Format</a></h2>
@@ -2241,14 +2237,14 @@ directory2</i><i>...</i><i>directoryN</i>
  and list file as provided. Substitutions occur when the variable name
  is referenced with the dollar sign ($):</p>
 <pre>
-    %postinstall &lt;&lt;EOF
-    echo What is your name:
-    read $$name
-    echo Your name is $$name
-    EOF
+%postinstall &lt;&lt;EOF
+echo What is your name:
+read $$name
+echo Your name is $$name
+EOF
 
-    f 0555 root sys ${bindir}/foo foo
-    f 0555 root sys $datadir/foo/foo.dat foo.dat
+f 0555 root sys ${bindir}/foo foo
+f 0555 root sys $datadir/foo/foo.dat foo.dat
 </pre>
 <p>Variable names can be surrounded by curly brackets (${name}) or alone
  ($name); without brackets the name is terminated by the first slash
@@ -2272,20 +2268,20 @@ directory2</i><i>...</i><i>directoryN</i>
  with the word <code>TYPE</code>. Products are defined by a line
  starting with the word <code>INSTALL</code>:</p>
 <pre>
-    # Pre-select the user packages
-    TYPE Typical End-User Configuration
-    INSTALL foo
-    INSTALL foo-help
+# Pre-select the user packages
+TYPE Typical End-User Configuration
+INSTALL foo
+INSTALL foo-help
 
-    # Pre-select the developer packages
-    TYPE Typical Developer Configuration
-    INSTALL foo
-    INSTALL foo-help
-    INSTALL foo-devel
-    INSTALL foo-examples
+# Pre-select the developer packages
+TYPE Typical Developer Configuration
+INSTALL foo
+INSTALL foo-help
+INSTALL foo-devel
+INSTALL foo-examples
 
-    # Allow the user to select packages
-    TYPE Custom Configuration
+# Allow the user to select packages
+TYPE Custom Configuration
 </pre>
 <p>In the example above, three installation types are defined. Since the
  last type includes no products, the user will be presented with the

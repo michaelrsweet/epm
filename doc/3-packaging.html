@@ -1,7 +1,7 @@
 <HTML>
 <BODY>
 
-<H1 ALIGN="RIGHT"><A NAME="PACKAGING">3 - Packaging Your Software with EPM</A></H1>
+<H1><A NAME="PACKAGING">3 - Packaging Your Software with EPM</A></H1>
 
 <P>This chapter describes how to use EPM to package your own software
 packages.</P>
@@ -25,13 +25,13 @@ letter.</P>
 license, README file, vendor, and version:</P>
 
 <PRE>
-    %product Kung Foo Firewall
-    %copyright 1999-2005 by Foo Industries, All Rights Reserved.
-    %vendor Foo Industries
-    %license COPYING
-    %readme README
-    %description Kung Foo firewall software for your firewall.
-    %version 1.2.3p4 1020304
+%product Kung Foo Firewall
+%copyright 1999-2005 by Foo Industries, All Rights Reserved.
+%vendor Foo Industries
+%license COPYING
+%readme README
+%description Kung Foo firewall software for your firewall.
+%version 1.2.3p4 1020304
 </PRE>
 
 <P>The <CODE>%license</CODE> and <CODE>%readme</CODE> directives
@@ -54,21 +54,21 @@ calculate one for you.</P>
 with a letter. The format of all lines is:
 
 <PRE>
-    type mode owner group destination source <I>options</I>
+type mode owner group destination source <I>options</I>
 </PRE>
 
 <P>Regular files use the letter <CODE>f</CODE> for the type
 field:</P>
 
 <PRE>
-    f 755 root sys /usr/bin/foo foo
+f 755 root sys /usr/bin/foo foo
 </PRE>
 
 <P>Configuration files use the letter <CODE>c</CODE> for the
 type field:</P>
 
 <PRE>
-    c 644 root sys /etc/foo.conf foo.conf
+c 644 root sys /etc/foo.conf foo.conf
 </PRE>
 
 <!-- NEED 2in -->
@@ -76,13 +76,13 @@ type field:</P>
 and use a source path of "-":</P>
 
 <PRE>
-    d 755 root sys /var/spool/foo -
+d 755 root sys /var/spool/foo -
 </PRE>
 
 <P>Finally, symbolic links use the letter <CODE>l</CODE> (lowercase L) for the type field:</P>
 
 <PRE>
-    l 000 root sys /usr/bin/foobar foo
+l 000 root sys /usr/bin/foobar foo
 </PRE>
 
 <P>The source field specifies the file to link to and can be a
@@ -94,7 +94,7 @@ relative path.</P>
 files on a single line:
 
 <PRE>
-    f 0444 root sys /usr/share/doc/foo *.html
+f 0444 root sys /usr/share/doc/foo *.html
 </PRE>
 
 <!-- NEED 3in -->
@@ -118,8 +118,8 @@ all other formats.</TD></TR>
 directive followed by a <CODE>%description</CODE> directive:</P>
 
 <PRE>
-    %subpackage foo
-    %description One-Line Description of Foo
+%subpackage foo
+%description One-Line Description of Foo
 </PRE>
 
 <P>Files, scripts, and dependencies that follow the
@@ -132,19 +132,19 @@ with no name returns processing to the main (parent) package.</P>
 like:</P>
 
 <PRE>
-    %description Main package description
-    f 0755 /usr/bin/bar bar
+%description Main package description
+f 0755 /usr/bin/bar bar
 
-    %subpackage foo
-    %description Foo programs
-    f 0755 /usr/bin/foo foo
-    %requires bla
+%subpackage foo
+%description Foo programs
+f 0755 /usr/bin/foo foo
+%requires bla
 
-    %subpackage
-    f 0644 /usr/share/man/man1/bar.1
+%subpackage
+f 0644 /usr/share/man/man1/bar.1
 
-    %subpackage foo
-    f 0644 /usr/share/man/man1/foo.1
+%subpackage foo
+f 0644 /usr/share/man/man1/foo.1
 </PRE>
 
 <P>The above example creates a package containing the "bar"
@@ -161,7 +161,7 @@ package from list files. To build a portable software package for
 an application called "foo", type the following command:</P>
 
 <PRE>
-    <KBD>epm foo ENTER</KBD>
+<KBD>epm foo ENTER</KBD>
 </PRE>
 
 <P>If your application uses a different base name than the list
@@ -169,7 +169,7 @@ file, you can specify the list filename on the command-line as
 well:</P>
 
 <PRE>
-    <KBD>epm foo bar.list ENTER</KBD>
+<KBD>epm foo bar.list ENTER</KBD>
 </PRE>
 
 
@@ -189,8 +189,8 @@ it. Portable packages include an installation script called
 package:</P>
 
 <PRE>
-    <KBD>cd os-release-arch ENTER
-    ./product.install ENTER</KBD>
+<KBD>cd os-release-arch ENTER
+./product.install ENTER</KBD>
 </PRE>
 
 <P>After answering a few yes/no questions, the software will be
@@ -198,9 +198,8 @@ installed. To bypass the questions, run the script with the
 <CODE>now</CODE> argument:</P>
 
 <PRE>
-    <KBD>cd os-release-arch ENTER
-    ./product.install now ENTER</KBD>
-
+<KBD>cd os-release-arch ENTER
+./product.install now ENTER</KBD>
 </PRE>
 
 <H3>Including the Setup GUI</H3>
@@ -212,7 +211,7 @@ format and use the <CODE>--setup-image</CODE> option when
 creating your distribution:</P>
 
 <PRE>
-    <KBD>epm --setup-image foo.xpm foo ENTER</KBD>
+<KBD>epm --setup-image foo.xpm foo ENTER</KBD>
 </PRE>
 
 <P>This option is only supported when creating for portable and
@@ -225,7 +224,7 @@ macOS software packages.</P>
 <CODE>-f</CODE> option:
 
 <PRE>
-    <KBD>epm -f format foo bar.list ENTER</KBD>
+<KBD>epm -f format foo bar.list ENTER</KBD>
 </PRE>
 
 <P>The <I>format</I> option can be one of the following keywords:
@@ -270,7 +269,7 @@ use the <CODE>-f</CODE> option to select the format. For
 example, to build an RPM distribution of EPM, type:</P>
 
 <PRE>
-    epm -f rpm epm
+epm -f rpm epm
 </PRE>
 
 <P>The result will be one or more RPM package files instead of
