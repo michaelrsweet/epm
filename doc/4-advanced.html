@@ -26,7 +26,7 @@ HREF="#TABLE_4_1">Table 4.1</A> shows the level of support for
 each package format.</P>
 
 <!-- NEED 5in -->
-<CENTER><TABLE BORDER CELLPADDING="2">
+<CENTER><TABLE BORDER="1" CELLPADDING="2">
 <CAPTION><A NAME="TABLE_4_1">Table 4.1: Dependency Support</A></CAPTION>
 <TR>
 	<TH>Format</TH>
@@ -347,7 +347,7 @@ system name is the name reported by <CODE>uname</CODE> in
 lowercase, while the operating system version is the major and
 minor version number reported by <CODE>uname -r</CODE>:
 
-<DL><DD><DL>
+<DL>
 
 	<DT><CODE>%system irix</CODE>
 	<BR>&nbsp;</DT>
@@ -370,7 +370,7 @@ minor version number reported by <CODE>uname -r</CODE>:
 	for operating systems other than IRIX and Linux 2.0.x.
 	<BR>&nbsp;</DD>
 
-</DL></DD></DL>
+</DL>
 
 <P>The special name <CODE>all</CODE> is used to match all
 operating systems:</P>
@@ -382,7 +382,7 @@ operating systems:</P>
 <P>For format-specific files, the <CODE>%format</CODE> directive
 can be used:</P>
 
-<DL><DD><DL>
+<DL>
 
 	<DT><CODE>%format rpm</CODE>
 	<BR>&nbsp;</DT>
@@ -403,7 +403,7 @@ can be used:</P>
 	<DD>Include the following files for all types of distributions.
 	<BR>&nbsp;</DD>
 
-</DL></DD></DL>
+</DL>
 
 <P>The <CODE>%arch</CODE> directive can match or not match specific
 architectures. The architecture name is the name reported by
@@ -411,7 +411,7 @@ architectures. The architecture name is the name reported by
 "intel" is a synonym for "i386", "i486", "i586", and "i686", and "powerpc" is a
 synonym for "ppc":</P>
 
-<DL><DD><DL>
+<DL>
 
 	<DT><CODE>%arch intel</CODE>
 	<BR>&nbsp;</DT>
@@ -434,7 +434,7 @@ synonym for "ppc":</P>
 	processors other than PowerPC.
 	<BR>&nbsp;</DD>
 
-</DL></DD></DL>
+</DL>
 
 <P>The special name <CODE>all</CODE> is used to match all architectures:</P>
 
@@ -451,22 +451,22 @@ synonym for "ppc":</P>
 the named variable(s) are defined to a non-empty string:</P>
 
 <PRE>
-    %if FOO
-    f 755 root sys /usr/bin/foo foo
-    %elseif BAR
-    f 755 root sys /usr/bin/bar bar
-    %endif
+%if FOO
+f 755 root sys /usr/bin/foo foo
+%elseif BAR
+f 755 root sys /usr/bin/bar bar
+%endif
 </PRE>
 
 <P><CODE>%ifdef</CODE> directives only include the text if the
 named variable(s) are defined to any value:</P>
 
 <PRE>
-    %ifdef OSTYPE
-    f 755 root sys /usr/bin/program program-$OSTYPE
-    %else
-    f 755 root sys /usr/bin/program program.sh
-    %endif
+%ifdef OSTYPE
+f 755 root sys /usr/bin/program program-$OSTYPE
+%else
+f 755 root sys /usr/bin/program program.sh
+%endif
 </PRE>
 
 <H2>Protecting Object Files from Stripping</H2>
@@ -492,11 +492,11 @@ marked</P>
 <P>as changed since the original release:</P>
 
 <PRE>
-    f 755 root sys /usr/bin/foo foo
-    F 755 root sys /usr/bin/bar bar
-    f 755 root sys /usr/share/man/man1/foo.1 foo.man
-    f 755 root sys /usr/share/man/man1/bar.1 bar.man
-    C 644 root sys /etc/foo.conf foo.conf
+f 755 root sys /usr/bin/foo foo
+F 755 root sys /usr/bin/bar bar
+f 755 root sys /usr/share/man/man1/foo.1 foo.man
+f 755 root sys /usr/share/man/man1/bar.1 bar.man
+C 644 root sys /etc/foo.conf foo.conf
 </PRE>
 
 <H2>Variables</H2>
@@ -509,10 +509,10 @@ on the command-line when running EPM.</P>
 sign (<CODE>$</CODE>) followed by the name and value:</P>
 
 <PRE>
-    $name=value
-    $prefix=/usr
-    $exec_prefix=${prefix}
-    $bindir=$exec_prefix/bin
+$name=value
+$prefix=/usr
+$exec_prefix=${prefix}
+$bindir=$exec_prefix/bin
 </PRE>
 
 <P>Variable substitution is performed when the variable is
@@ -535,9 +535,9 @@ explicitly delimit the name.</P>
 script, use <CODE>$$</CODE>:</P>
 
 <PRE>
-    %install echo Enter your name:
-    %install read $$name
-    %install echo Your name is $$name.
+%install echo Enter your name:
+%install read $$name
+%install echo Your name is $$name.
 </PRE>
 
 <H2>Init Scripts</H2>
@@ -552,7 +552,7 @@ determine the appropriate init file directories to use and create
 any required symbolic links to support the init script:</P>
 
 <PRE>
-    i 755 root sys foo foo.sh
+i 755 root sys foo foo.sh
 </PRE>
 
 <P>The previous example creates an init script named
@@ -566,7 +566,7 @@ the startup script.</P>
 <CODE>stop()</CODE> options:</P>
 
 <PRE>
-    i 755 root sys foo foo.sh "runlevel(02) start(50) stop(30)"
+i 755 root sys foo foo.sh "runlevel(02) start(50) stop(30)"
 </PRE>
 
 <H2>Literal Package Data</H2>
@@ -581,10 +581,10 @@ data is currently only supported for RPM and PKG packages.</P>
 <p>Debian packages have control files that provide metadata for each package. The <CODE>%literal(control)</CODE> directive can be used to provide this metadata:</P>
 
 <PRE>
-    %literal(control) &lt;&lt;EOF
-    Section: misc
-    Priority: extra
-    EOF
+%literal(control) &lt;&lt;EOF
+Section: misc
+Priority: extra
+EOF
 </PRE>
 
 <H3>PKG Literal Data</H3>
@@ -595,11 +595,11 @@ installations when installation commands require user input.  The
 input:</P>
 
 <PRE>
-    %literal(request) &lt;&lt;EOF
-    John Doe
-    1 Any Lane
-    Forest Lawn, OH 12345
-    EOF
+%literal(request) &lt;&lt;EOF
+John Doe
+1 Any Lane
+Forest Lawn, OH 12345
+EOF
 </PRE>
 
 <H3>RPM Literal Data</H3>
@@ -610,16 +610,16 @@ how the package is created and what metadata is included with the package. The
 the spec file:</P>
 
 <PRE>
-    %literal(spec) &lt;&lt;EOF
-    %changelog
-    * Tue Aug 26 2008 John Doe &lt;johndoe@domain.com&gt;
+%literal(spec) &lt;&lt;EOF
+%changelog
+* Tue Aug 26 2008 John Doe &lt;johndoe@domain.com&gt;
 
-    - Added new feature "bar"
+- Added new feature "bar"
 
-    * Fri Aug 1 2008 John Doe &lt;johndoe@domain.com&gt;
+* Fri Aug 1 2008 John Doe &lt;johndoe@domain.com&gt;
 
-    - Added new feature "foo"
-    EOF
+- Added new feature "foo"
+EOF
 </PRE>
 
 </BODY>

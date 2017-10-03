@@ -4,6 +4,9 @@ config.h
 config.log
 config.status
 doc/Makefile
+doc/epm-book.epub
+doc/epm-book.pdf
+doc/mantohtml
 epm
 epm.list
 epminstall

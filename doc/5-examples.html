@@ -19,86 +19,86 @@ The EPM package consists of the main package plus a
 <P>We start by defining variables for each of the autoconf directory
 variables:</P>
 
-<PRE><FONT SIZE="1">
-    $prefix=/usr
-    $exec_prefix=/usr
-    $bindir=${exec_prefix}/bin
-    $datadir=/usr/share
-    $docdir=${datadir}/doc/epm
-    $libdir=/usr/lib
-    $mandir=/usr/share/man
-    $srcdir=.
-</FONT></PRE>
+<PRE>
+$prefix=/usr
+$exec_prefix=/usr
+$bindir=${exec_prefix}/bin
+$datadir=/usr/share
+$docdir=${datadir}/doc/epm
+$libdir=/usr/lib
+$mandir=/usr/share/man
+$srcdir=.
+</PRE>
 
 <P>Then we provide the general product information that is
 required for all packages; notice the use of
 <CODE>${srcdir}</CODE> to reference the COPYING and README
 files:</P>
 
-<PRE><FONT SIZE="1">
-    %product ESP Package Manager
-    %copyright 1999-2014 by Michael R Sweet, All Rights Reserved.
-    %vendor Michael R Sweet
-    %license ${srcdir}/COPYING
-    %readme ${srcdir}/README
-    %description Universal software packaging tool for UNIX.
-    %version 4.3 430
-</FONT></PRE>
+<PRE>
+%product ESP Package Manager
+%copyright 1999-2014 by Michael R Sweet, All Rights Reserved.
+%vendor Michael R Sweet
+%license ${srcdir}/COPYING
+%readme ${srcdir}/README
+%description Universal software packaging tool for UNIX.
+%version 4.3 430
+</PRE>
 
 <P>After the product information, we include all of the non-GUI
 files that are part of EPM:</P>
 
-<PRE><FONT SIZE="1">
-    # Executables
-    %system all
-    f 0555 root sys ${bindir}/epm epm
-    f 0555 root sys ${bindir}/epminstall epminstall
-    f 0555 root sys ${bindir}/mkepmlist mkepmlist
+<PRE>
+# Executables
+%system all
+f 0555 root sys ${bindir}/epm epm
+f 0555 root sys ${bindir}/epminstall epminstall
+f 0555 root sys ${bindir}/mkepmlist mkepmlist
 
-    # Documentation
-    %subpackage documentation
-    %description Documentation for EPM
-    f 0444 root sys ${docdir}/README $srcdir/README
-    f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
-    f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
+# Documentation
+%subpackage documentation
+%description Documentation for EPM
+f 0444 root sys ${docdir}/README $srcdir/README
+f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
+f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
 
-    # Man pages
-    %subpackage man
-    %description Man pages for EPM
-    f 0444 root sys ${mandir}/man1/epm.1 $srcdir/doc/epm.man
-    f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.man
-    f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.man
-    f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.man
-</FONT></PRE>
+# Man pages
+%subpackage man
+%description Man pages for EPM
+f 0444 root sys ${mandir}/man1/epm.1 $srcdir/doc/epm.man
+f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.man
+f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.man
+f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.man
+</PRE>
 
 <P>Finally, we conditionally include the GUI files depending on
 the state of a variable called <CODE>GUIS</CODE>:</P>
 
-<PRE><FONT SIZE="1">
-    # GUI files...
-    $GUIS=setup uninst
+<PRE>
+# GUI files...
+$GUIS=setup uninst
 
-    %if GUIS
-    %subpackage
-    f 0555 root sys ${libdir}/epm/setup setup
-    f 0555 root sys ${libdir}/epm/uninst uninst
+%if GUIS
+%subpackage
+f 0555 root sys ${libdir}/epm/setup setup
+f 0555 root sys ${libdir}/epm/uninst uninst
 
-    %system darwin
-    f 0444 root sys ${datadir}/epm/setup.icns macosx/setup.icns
-    f 0444 root sys ${datadir}/epm/setup.info macosx/setup.info
-    f 0444 root sys ${datadir}/epm/setup.plist macosx/setup.plist
+%system darwin
+f 0444 root sys ${datadir}/epm/setup.icns macosx/setup.icns
+f 0444 root sys ${datadir}/epm/setup.info macosx/setup.info
+f 0444 root sys ${datadir}/epm/setup.plist macosx/setup.plist
 
-    f 0444 root sys ${datadir}/epm/uninst.icns macosx/uninst.icns
-    f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
-    f 0444 root sys ${datadir}/epm/uninst.plist macosx/uninst.plist
-    %system all
+f 0444 root sys ${datadir}/epm/uninst.icns macosx/uninst.icns
+f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
+f 0444 root sys ${datadir}/epm/uninst.plist macosx/uninst.plist
+%system all
 
-    %subpackage man
-    f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.man
-    f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
+%subpackage man
+f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.man
+f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
 
-    %endif
-</FONT></PRE>
+%endif
+</PRE>
 
 
 </BODY>
