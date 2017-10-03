@@ -1,7 +1,7 @@
 /*
  * macOS package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 2002-2015 by Michael R Sweet
+ * Copyright 2002-2017 by Michael R Sweet
  * Copyright 2002-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ make_osx(int            format,		/* I - Format */
       */
 
       if (Verbosity)
-	puts("Creating MacOS X metapackage...");
+	puts("Creating macOS metapackage...");
 
       getcwd(current, sizeof(current));
 
@@ -238,7 +238,7 @@ make_osx(int            format,		/* I - Format */
       */
 
       if (Verbosity)
-	puts("Building OSX package...");
+	puts("Building macOS package...");
 
       if (directory[0] == '/')
 	strlcpy(filename, directory, sizeof(filename));
@@ -340,7 +340,7 @@ make_osx(int            format,		/* I - Format */
 
 
 /*
- * 'make_subpackage()' - Make an OSX subpackage.
+ * 'make_subpackage()' - Make a macOS subpackage.
  */
 
 static int
@@ -388,7 +388,7 @@ make_subpackage(int        format,	/* I - Format */
   }
 
   if (Verbosity)
-    printf("Creating %s MacOS X package...\n", prodfull);
+    printf("Creating %s macOS package...\n", prodfull);
 
   getcwd(current, sizeof(current));
 
@@ -731,7 +731,7 @@ make_subpackage(int        format,	/* I - Format */
   */
 
   if (Verbosity)
-    puts("Building OSX package...");
+    puts("Building macOS package...");
 
   if (directory[0] == '/')
     strlcpy(filename, directory, sizeof(filename));

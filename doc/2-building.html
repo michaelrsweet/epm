@@ -73,16 +73,16 @@ commands.</P>
 
 <H3>Choosing Installation Directories</H3>
 
-<P>The default installation prefix is <VAR>/usr</VAR>, which
-will place the EPM programs in <VAR>/usr/bin</VAR>, the setup
-GUI in <VAR>/usr/lib/epm</VAR>, and the man pages in
-<VAR>/usr/man</VAR>. Use the <CODE>--prefix</CODE> option to
+<P>The default installation prefix is <VAR>/usr/local</VAR>, which
+will place the EPM programs in <VAR>/usr/local/bin</VAR>, the setup
+GUI in <VAR>/usr/local/lib/epm</VAR>, and the man pages in
+<VAR>/usr/local/share/man</VAR>. Use the <CODE>--prefix</CODE> option to
 relocate these files</P>
 
 <P>to another directory:</P>
 
 <PRE>
-    <KBD>./configure --prefix=/usr/local ENTER</KBD>
+    <KBD>./configure --prefix=/example/path ENTER</KBD>
 </PRE>
 
 <P>The <CODE>configure</CODE> script also accepts the
@@ -91,8 +91,8 @@ relocate these files</P>
 separately, as follows:
 
 <PRE>
-    <KBD>./configure --bindir=/usr/local/bin --libdir=/usr/local/lib \
-        --mandir=/usr/local/share/man ENTER</KBD>
+    <KBD>./configure --bindir=/example/path/bin --libdir=/example/path/lib \
+        --mandir=/example/path/share/man ENTER</KBD>
 </PRE>
 
 <H3>Options for the Setup GUI</H3>
@@ -151,7 +151,7 @@ is usually sufficient to install software:</P>
     <KBD>su ENTER</KBD>
 </PRE>
 
-<P>Operating systems such as OS X do not enable the root
+<P>Operating systems such as macOS do not enable the root
 account by default. The <CODE>sudo(8)</CODE> command is used
 instead:</P>
 
@@ -167,20 +167,20 @@ instead:</P>
 
 <PRE>
     <KBD>make install ENTER</KBD>
-    Installing EPM setup in /usr/lib/epm
-    Installing EPM programs in /usr/bin
-    Installing EPM manpages in /usr/man/man1
-    Installing EPM documentation in /usr/share/doc/epm
+    Installing EPM setup in /usr/local/lib/epm
+    Installing EPM programs in /usr/local/bin
+    Installing EPM manpages in /usr/local/share/man/man1
+    Installing EPM documentation in /usr/local/share/doc/epm
 </PRE>
 
-<P>Use the <CODE>sudo</CODE> command to install on OS X:</P>
+<P>Use the <CODE>sudo</CODE> command to install on macOS:</P>
 
 <PRE>
     <KBD>sudo make install ENTER</KBD>
-    Installing EPM setup in /usr/lib/epm
-    Installing EPM programs in /usr/bin
-    Installing EPM manpages in /usr/man/man1
-    Installing EPM documentation in /usr/share/doc/epm
+    Installing EPM setup in /usr/local/lib/epm
+    Installing EPM programs in /usr/local/bin
+    Installing EPM manpages in /usr/local/share/man/man1
+    Installing EPM documentation in /usr/local/share/doc/epm
 </PRE>
 
 <H3><A NAME="INSTALL_PORTABLE">Installing Using the Portable
@@ -241,7 +241,7 @@ in a version number string of <CODE>11.11</CODE>.</P>
 	<TD><CODE>linux</CODE></TD>
 </TR>
 <TR>
-	<TD>OS X</TD>
+	<TD>macOS</TD>
 	<TD><CODE>osx</CODE></TD>
 </TR>
 <TR>
@@ -367,7 +367,7 @@ software.</P>
 	<TD NOWRAP><CODE>rpm -i <I>directory</I>/epm-4.1.rpm</CODE></TD>
 </TR>
 <TR>
-	<TD>OS X</TD>
+	<TD>macOS</TD>
 	<TD><CODE>osx</CODE></TD>
 	<TD NOWRAP><CODE>open <I>directory</I>/<CODE>epm-4.1.pkg</CODE></TD>
 </TR>

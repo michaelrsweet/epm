@@ -1,7 +1,7 @@
 /*
  * Definitions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2015 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,8 +100,8 @@ enum
   PACKAGE_INST,				/* IRIX package format */
   PACKAGE_LSB,				/* LSB (RPM) package format */
   PACKAGE_LSB_SIGNED,			/* LSB (RPM) package format (signed) */
-  PACKAGE_OSX,				/* OS X package format */
-  PACKAGE_OSX_SIGNED,			/* OS X package format (signed) */
+  PACKAGE_OSX,				/* macOS package format */
+  PACKAGE_OSX_SIGNED,			/* macOS package format (signed) */
   PACKAGE_PKG,				/* AT&T package format (AIX, Solaris) */
   PACKAGE_RPM,				/* RedHat package format */
   PACKAGE_RPM_SIGNED,			/* RedHat package format (signed) */

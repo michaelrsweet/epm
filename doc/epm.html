@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<link rel="stylesheet" type="text/css" href="../cups-printable.css">
+	<title>epm(1)</title>
+</head>
+<body>
+<h2 class="title"><a name="epm">epm(1)</a></h2>
+<h3 class="title"><a name="NAME">Name</a></h3>
+epm - create software packages.
+<h3 class="title"><a name="SYNOPSIS">Synopsis</a></h3>
+<b>epm</b>
+[
+<b>-a</b>
+<i>architecture</i>
+] [
+<b>-f</b>
+<i>format</i>
+] [
+<b>-g</b>
+] [
+<b>-k</b>
+] [
+<b>-m</b>
+<i>name</i>
+] [
+<b>-n</b>[<b>mrs</b>] ] [
+<b>-s</b>
+<i>setup.ext</i>
+] [
+<b>--depend</b>
+] [
+<b>--help</b>
+] [
+<b>--keep-files</b>
+] [
+<b>--output-dir</b>
+<i>directory</i>
+] [
+<b>--setup-image</b>
+<i>setup.ext</i>
+] [
+<b>--setup-program</b>
+<i>/foo/bar/setup</i>
+] [
+<b>--setup-types</b>
+<i>setup.types</i>
+] [
+<b>-v</b>
+] [
+<i>name=value</i>
+...
+<i>name=value</i>
+]
+<i>product</i>
+[
+<i>listfile</i>
+]
+<h3 class="title"><a name="DESCRIPTION">Description</a></h3>
+<a href="epm.html#epm"><b>epm</b>(1)</a>
+generates software packages complete with installation, removal, and (if necessary) patch scripts.
+Unless otherwise specified, the files required for <i>product</i> are read from a file named "<i>product</i>.list".
+<h3 class="title"><a name="OPTIONS">Options</a></h3>
+The following options are recognized:
+<dl class="man">
+<dt><b>-a </b><i>architecture</i>
+<dd style="margin-left: 5.0em">Specifies the actual architecture for the software.
+Without this option the generic processor architecture is used ("intel", "sparc", "mips", etc.)
+<dt><b>-f aix</b>
+<dd style="margin-left: 5.0em">Generate an AIX distribution suitable for installation on an AIX system.
+<dt><b>-f bsd</b>
+<dd style="margin-left: 5.0em">Generate a BSD distribution suitable for installation on a FreeBSD, NetBSD, or OpenBSD system.
+<dt><b>-f deb</b>
+<dd style="margin-left: 5.0em">Generate a Debian distribution suitable for installation on a Debian Linux system.
+<dt><b>-f inst</b>
+<dd style="margin-left: 5.0em"><dt><b>-f tardist</b>
+<dd style="margin-left: 5.0em">Generate an IRIX distribution suitable for installation on an system running IRIX.
+<dt><b>-f lsb</b>
+<dd style="margin-left: 5.0em"><dt><b>-f lsb-signed</b>
+<dd style="margin-left: 5.0em">Generate RPM packages for LSB-conforming systems.
+The <i>lsb-signed</i> format uses the GPG private key you have defined in the ~/.rpmmacros file.
+<dt><b>-f native</b>
+<dd style="margin-left: 5.0em">Generate a native distribution.
+This uses <i>rpm</i> for Linux, <i>inst</i> for IRIX, <i>pkg</i> for Solaris, <i>swinstall</i> for HP-UX, <i>bsd</i> for FreeBSD, NetBSD, and OpenBSD, and <i>osx</i> for macOS.
+All other operating systems default to the <i>portable</i> format.
+<dt><b>-f osx</b>
+<dd style="margin-left: 5.0em"><dt><b>-f osx-signed</b>
+<dd style="margin-left: 5.0em">Generate a macOS software package.
+The <i>osx-signed</i> format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
+<dt><b>-f pkg</b>
+<dd style="margin-left: 5.0em">Generate an AT&amp;T software package.
+These are used primarily under Solaris.
+<dt><b>-f portable</b>
+<dd style="margin-left: 5.0em">Generate a portable distribution based on shell scripts and tar files.
+The resulting distribution is installed and removed the same way on all operating systems. [default]
+<dt><b>-f rpm</b>
+<dd style="margin-left: 5.0em"><dt><b>-f rpm-signed</b>
+<dd style="margin-left: 5.0em">Generate a Red Hat Package Manager ("RPM") distribution suitable for installation on a Red Hat Linux system.
+The <i>rpm-signed</i> format uses the GPG private key you have defined in the ~/.rpmmacros file.
+<dt><b>-f setld</b>
+<dd style="margin-left: 5.0em">Generate a Tru64 (setld) software distribution.
+<dt><b>-f slackware</b>
+<dd style="margin-left: 5.0em">Generate a Slackware Linux software distribution.
+<dt><b>-f swinstall</b>
+<dd style="margin-left: 5.0em"><dt><b>-f depot</b>
+<dd style="margin-left: 5.0em">Generate a HP-UX software distribution.
+<dt><b>-g</b>
+<dd style="margin-left: 5.0em">Disable stripping of executable files in the distribution.
+<dt><b>-k</b>
+<dd style="margin-left: 5.0em">Keep intermediate (spec, etc.) files used to create the distribution in the distribution directory.
+<dt><b>-m </b><i>name</i>
+<dd style="margin-left: 5.0em">Specifies the platform name as a string.
+The default is to use the auto-generated name from the <i>-n</i> option.
+<dt><b>-n</b>[<i>mrs</i>]
+<dd style="margin-left: 5.0em">Specifies the operating system and machine information that is included in the package name.
+Distributions normally are named "product-version-system-release-machine.ext" and "product-version-system-release-machine-patch.ext" for patch distributions.
+The "system-release-machine" information can be customized or eliminated using the appropriate trailing letters.
+Using <i>-n</i> by itself will remove the "system-release-machine" string from the filename entirely.
+The letter 'm' includes the architecture (machine).
+The letter 'r' includes the operating system version (release).
+The letter 's' includes the operating system name.
+<dt><b>-s </b><i>setup.ext</i>
+<dd style="margin-left: 5.0em"><dt><b>-v</b>
+<dd style="margin-left: 5.0em">Increases the amount of information that is reported.
+Use multiple v's for more verbose output.
+<dt><b>--depend</b>
+<dd style="margin-left: 5.0em">Lists the dependent (source) files for all files in the package.
+<dt><b>--output-dir </b><i>directory</i>
+<dd style="margin-left: 5.0em">Specifies the directory for output files.
+The default directory is based on the operating system, version, and architecture.
+<dt><b>--setup-image </b><i>setup.ext</i>
+<dd style="margin-left: 5.0em">Include the ESP Software Wizard with the specified image file with the distribution.
+This option is currently only supported by portable distributions.
+<dt><b>--setup-program </b><i>/foo/bar/setup</i>
+<dd style="margin-left: 5.0em">Specifies the setup executable to use with the distribution.
+This option is currently only supported by portable distributions.
+<dt><b>--setup-types </b><i>setup.types</i>
+<dd style="margin-left: 5.0em"></dl>
+<p>Specifies the <i>setup.types</i> file to include with the distribution.
+This option is currently only supported by portable distributions.
+<h3 class="title"><a name="ENVIRONMENT">Environment</a></h3>
+The following environment variables are supported by <b>epmR.
+</b><dl class="man">
+<dt>The common name that should be used when signing a package.
+<dd style="margin-left: 5.0em"></dl>
+<h3 class="title"><a name="LIST_FILES">List Files</a></h3>
+The EPM list file format is now described in the <i>epm.list(5)</i>
+man page.
+<h3 class="title"><a name="SEE_ALSO">See Also</a></h3>
+<a href="epminstall.html#epminstall"><b>epminstall</b>(1),</a>
+<a href="mkepmlist.html#mkepmlist"><b>mkepmlist</b>(1),</a>
+<a href="epm.list.html#epm.list"><b>epm.list</b>(5),</a>
+<a href="setup.html#setup"><b>setup</b>(1).</a>
+<h3 class="title"><a name="COPYRIGHT">Copyright</a></h3>
+Copyright &copy; 1999-2017 by Michael R Sweet, All Rights Reserved.
+<p>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+</body>
+</html>

@@ -338,7 +338,7 @@ write_combined(const char *title,	/* I - Title */
     * Then copy the data files...
     */
 
-    snprintf(filename, sizeof(filename), "%s/setup.icns", DataDir);
+    snprintf(filename, sizeof(filename), "%s/default.icns", DataDir);
     stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
@@ -364,27 +364,6 @@ write_combined(const char *title,	/* I - Title */
 
     snprintf(filename, sizeof(filename), "%s/setup.info", DataDir);
     stat(filename, &srcstat);
-
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
-                   srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Install.app/Contents/PkgInfo", NULL) < 0)
-    {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      tar_close(tarfile);
-      return (-1);
-    }
-
-    if (tar_file(tarfile, filename) < 0)
-    {
-      fprintf(stderr, "epm: Error writing file data for PkgInfo -\n    %s\n",
-	      strerror(errno));
-      tar_close(tarfile);
-      return (-1);
-    }
-
-    if (Verbosity)
-      printf("    %7.0fk PkgInfo\n", (srcstat.st_size + 1023) / 1024.0);
 
     snprintf(filename, sizeof(filename), "%s/%s.setup.plist", directory,
              prodname);
@@ -638,7 +617,7 @@ write_combined(const char *title,	/* I - Title */
     * Then copy the data files...
     */
 
-    snprintf(filename, sizeof(filename), "%s/uninst.icns", DataDir);
+    snprintf(filename, sizeof(filename), "%s/default.icns", DataDir);
     stat(filename, &srcstat);
 
     if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
@@ -661,30 +640,6 @@ write_combined(const char *title,	/* I - Title */
 
     if (Verbosity)
       printf("    %7.0fk uninst.icns\n", (srcstat.st_size + 1023) / 1024.0);
-
-    snprintf(filename, sizeof(filename), "%s/uninst.info", DataDir);
-    stat(filename, &srcstat);
-
-    if (tar_header(tarfile, TAR_NORMAL, srcstat.st_mode & (~0222),
-                   srcstat.st_size, srcstat.st_mtime, "root", "root",
-		   "Uninstall.app/Contents/PkgInfo", NULL) < 0)
-    {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
-      tar_close(tarfile);
-      return (-1);
-    }
-
-    if (tar_file(tarfile, filename) < 0)
-    {
-      fprintf(stderr, "epm: Error writing file data for PkgInfo -\n    %s\n",
-	      strerror(errno));
-      tar_close(tarfile);
-      return (-1);
-    }
-
-    if (Verbosity)
-      printf("    %7.0fk PkgInfo\n", (srcstat.st_size + 1023) / 1024.0);
 
     snprintf(filename, sizeof(filename), "%s/%s.uninst.plist", directory,
              prodname);

@@ -1,7 +1,7 @@
 .\"
 .\" Manual page for the ESP Package Manager (EPM).
 .\"
-.\" Copyright 1999-2015 by Michael R Sweet
+.\" Copyright 1999-2017 by Michael R Sweet
 .\" Copyright 1999-2008 by Easy Software Products, all rights reserved.
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "1 September 2015" "Michael R Sweet"
+.TH epm 1 "ESP Package Manager" "3 October 2017" "Michael R Sweet"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -98,13 +98,13 @@ The \fIlsb\-signed\fR format uses the GPG private key you have defined in the ~/
 .TP 5
 \fB\-f native\fR
 Generate a native distribution.
-This uses \fIrpm\fR for Linux, \fIinst\fR for IRIX, \fIpkg\fR for Solaris, \fIswinstall\fR for HP-UX, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fIosx\fR for OS X.
+This uses \fIrpm\fR for Linux, \fIinst\fR for IRIX, \fIpkg\fR for Solaris, \fIswinstall\fR for HP-UX, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fIosx\fR for macOS.
 All other operating systems default to the \fIportable\fR format.
 .TP 5
 \fB\-f osx\fR
 .TP 5
 \fB\-f osx\-signed\fR
-Generate an OS X software package.
+Generate a macOS software package.
 The \fIosx\-signed\fR format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
 .TP 5
 \fB\-f pkg\fR
@@ -189,7 +189,7 @@ man page.
 .BR epm.list (5),
 .BR setup (1).
 .SH COPYRIGHT
-Copyright \[co] 1999-2015 by Michael R Sweet, All Rights Reserved.
+Copyright \[co] 1999-2017 by Michael R Sweet, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 #
 # Makefile for the ESP Package Manager (EPM).
 #
-# Copyright 1999-2014 by Michael R Sweet
+# Copyright 1999-2017 by Michael R Sweet
 # Copyright 1999-2010 by Easy Software Products, all rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -213,13 +213,10 @@ install-guis:	setup uninst
 	-$(STRIP) $(libdir)/epm/uninst
 
 install-osx:
-	echo Installing EPM OSX data files in $(datadir)/epm
+	echo Installing EPM macOS data files in $(datadir)/epm
 	$(RM) -r $(datadir)/epm
 	-$(MKDIR) $(datadir)/epm
-	$(CP) macosx/setup.icns $(datadir)/epm
-	$(CP) macosx/setup.info $(datadir)/epm
-	$(CP) macosx/uninst.icns $(datadir)/epm
-	$(CP) macosx/uninst.info $(datadir)/epm
+	$(CP) default.icns $(datadir)/epm
 
 
 #
@@ -243,7 +240,7 @@ uninstall:
 	$(RM) -r $(docdir)
 	echo Uninstalling EPM setup/uninstall from $(libdir)/epm
 	$(RM) -r $(libdir)/epm
-	echo Uninstalling EPM OSX data files from $(datadir)/epm
+	echo Uninstalling EPM macOS data files from $(datadir)/epm
 	$(RM) -r $(datadir)/epm
 
 
@@ -288,7 +285,7 @@ test:	$(TARGETS)
 		cat test.log; \
 	fi
 	echo Starting native distribution build test...
-	if ./epm -vv -s doc/epmlogo.tif -f native epm >test.log; then \
+	if ./epm -vv -s default.png -f native epm >test.log; then \
 		echo Native distribution build test PASSED.; \
 	else \
 		echo Native distribution build test FAILED.; \
@@ -313,25 +310,18 @@ slackware: $(TARGETS)
 deb: $(TARGETS)
 	./epm -f deb -v epm
 
-gui portable: $(TARGETS)
-	./epm -v -s doc/epmlogo.gif --setup-program setup \
-		--uninstall-program uninst --data-dir macosx epm
-
 inst tardist: $(TARGETS)
 	./epm -f tardist -v epm
 
-lsb rpm: $(TARGETS)
-	./epm -f $@ -v -s doc/epmlogo.gif --setup-program setup \
-		--uninstall-program uninst --data-dir macosx epm
+gui lsb osx portable rpm: $(TARGETS)
+	./epm -f $@ -v -s default.png --setup-program setup \
+		--uninstall-program uninst --data-dir . epm
 
 pkg: $(TARGETS)
 	./epm -f pkg -v epm
 
 native: $(TARGETS)
 	./epm -f native -v epm
-
-osx: $(TARGETS)
-	./epm -f osx -v -s doc/epmlogo.tif epm
 
 swinstall depot: $(TARGETS)
 	./epm -f depot -v epm

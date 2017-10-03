@@ -14,7 +14,7 @@ Changes in EPM 4.4
 Changes in EPM 4.3
 ------------------
 
-- Now use pkgbuild on newer versions of OS X, and added support for signed
+- Now use pkgbuild on newer versions of macOS, and added support for signed
   packages (Bug #497)
 - Fixed some file handling issues when creating RPM packages (Bug #523)
 - EPM now maps the x86_64 architecture to amd64 when creating Debian packages
@@ -58,7 +58,7 @@ Changes in EPM 4.2
 - Added support for an "lsb" package format which uses RPM with the LSB
   dependencies (STR #7)
 - The configure script now supports a --with-archflags and no longer
-  automatically builds universal binaries on Mac OS X.
+  automatically builds universal binaries on macOS.
 - The epm program now automatically detects when the setup GUI is not available,
   displays a warning message, and then creates a non-GUI package.
 - RPM packages did not map %replaces to Obsoletes:
@@ -67,7 +67,7 @@ Changes in EPM 4.2
 Changes in EPM 4.1
 ------------------
 
-- Mac OS X portable packages did not create a correct Uninstall application.
+- macOS portable packages did not create a correct Uninstall application.
 - The temporary package files for portable packages are now removed after
   creation of the .tar.gz file unless the -k (keep files) option is used.
 - The RPM summary string for subpackages did not contain the first line of the
@@ -79,15 +79,15 @@ Changes in EPM 4.1
 - Multi-line descriptions were not embedded properly into portable package
   install/patch/remove scripts.
 - Updated the setup and uninstall GUIs for a nicer look-n-feel.
-- Mac OS X portable packages now show the proper name, version, and copyright
+- macOS portable packages now show the proper name, version, and copyright
   for the packaged software instead of the EPM version and copyright.
-- Fixed a problem with creation of Mac OS X metapackages with the latest Xcode.
+- Fixed a problem with creation of macOS metapackages with the latest Xcode.
 - EPM now removes the individual .rpm and .deb files when
   creating a package with subpackages unless the -k option (keep files) is used.
 - EPM now only warns about package names containing characters other than
   letters and numbers.
 - EPM now generates disk images as well as a .tar.gz file when creating portable
-  packages on Mac OS X.
+  packages on macOS.
 
 
 Changes in EPM 4.0

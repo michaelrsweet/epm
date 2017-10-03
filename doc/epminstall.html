@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<link rel="stylesheet" type="text/css" href="../cups-printable.css">
+	<title>epminstall(1)</title>
+</head>
+<body>
+<h2 class="title"><a name="epminstall">epminstall(1)</a></h2>
+<h3 class="title"><a name="NAME">Name</a></h3>
+epminstall - add a directory, file, or symlink to a list file.
+<h3 class="title"><a name="SYNOPSIS">Synopsis</a></h3>
+<b>epminstall</b>
+[
+<i>options</i>
+]
+<i>file1</i><i>file2</i><i>...</i><i>fileN</i><i>directory</i>
+<br>
+<b>epminstall</b>
+[
+<i>options</i>
+]
+<i>file1</i><i>file2</i>
+<br>
+<b>epminstall</b>
+[
+<i>options</i>
+]
+<b>-d</b>
+<i>directory1</i><i>directory2</i><i>...</i><i>directoryN</i>
+<h3 class="title"><a name="DESCRIPTION">Description</a></h3>
+<b>epminstall</b>
+adds or replaces a directory, file, or symlink
+in a list file. The default list file is "epm.list" and can be
+overridden using the <i>EPMLIST</i> environment variable or the
+<i>--list-file</i> option.
+<p>Entries are either added to the end of the list file or replaced
+in-line. Comments, directives, and variable declarations in the
+list file are preserved.
+<h3 class="title"><a name="OPTIONS">Options</a></h3>
+<b>epminstall</b>
+recognizes the standard Berkeley
+<b>install</b>(8)
+command options:
+<dl class="man">
+<dt><b>-b</b>
+<dd style="margin-left: 5.0em">Make a backup of existing files (ignored, default for <b>epm</b>.)
+<dt><b>-c</b>
+<dd style="margin-left: 5.0em">BSD old compatibility mode (ignored.)
+<dt><b>-g </b><i>group</i>
+<dd style="margin-left: 5.0em">Set the group owner of the file or directory to <i>group</i>.
+The default group is "sys".
+<dt><b>-m </b><i>mode</i>
+<dd style="margin-left: 5.0em">Set the permissions of the file or directory to <i>mode</i>.
+The default permissions are 0755 for directories and executable files and 0644 for non-executable files.
+<dt><b>-o </b><i>owner</i>
+<dd style="margin-left: 5.0em">Set the owner of the file or directory to <i>owner</i>.
+The default owner is "root".
+<dt><b>-s</b>
+<dd style="margin-left: 5.0em">Strip the files (ignored, default for <b>epm</b>.)
+<dt><b>--list-file </b><i>filename.list</i>
+<dd style="margin-left: 5.0em">Specify the list file to update.
+</dl>
+<h3 class="title"><a name="SEE_ALSO">See Also</a></h3>
+<b>epm(1),</b>
+<b>mkepmlist(1),</b>
+<a href="epm.list.html#epm.list"><b>epm.list</b>(5).</a>
+<h3 class="title"><a name="COPYRIGHT">Copyright</a></h3>
+Copyright &copy; 1999-2017 by Michael R Sweet, All Rights Reserved.
+<p>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+</body>
+</html>

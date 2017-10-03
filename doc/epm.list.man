@@ -1,7 +1,7 @@
 .\"
 .\" Manual page for the ESP Package Manager (EPM) list file format.
 .\"
-.\" Copyright 1999-2015 by Michael R Sweet
+.\" Copyright 1999-2017 by Michael R Sweet
 .\" Copyright 1999-2010 by Easy Software Products, all rights reserved.
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH epm.list 5 "ESP Package Manager" "1 September 2015" "Michael R Sweet"
+.TH epm.list 5 "ESP Package Manager" "3 October 2017" "Michael R Sweet"
 .SH NAME
 epm.list \- epm list file format.
 .SH DESCRIPTION
@@ -226,13 +226,13 @@ The optional \fIoptions\fR following the source filename can be any of the follo
 .TP 10
      order(\fIstring\fR)
 Specifies the relative startup order compared to the required and used system functions.
-Supported values include First, Early, None, Late, and Last (OSX only).
+Supported values include First, Early, None, Late, and Last (macOS only).
 .TP 10
      provides(\fIname(s)\fR)
-Specifies names of system functions that are provided by this startup item (OSX only).
+Specifies names of system functions that are provided by this startup item (macOS only).
 .TP 10
      requires(\fIname(s)\fR)
-Specifies names of system functions that are required by this startup item (OSX only).
+Specifies names of system functions that are required by this startup item (macOS only).
 .TP 10
      runlevel(\fIlevels\fR)
 Specifies the run levels to use.
@@ -245,7 +245,7 @@ Specifies the ending sequence number from 00 to 99.
 .TP 10
      uses(\fIname(s)\fR)
 Specifies names of system functions that are used by this startup
-item (OSX only).
+item (macOS only).
 
 .TP 5
 l \fImode user group destination source\fR
@@ -282,7 +282,7 @@ The dollar sign can be inserted using $$.
 .BR epminstall (1),
 .BR mkepmlist (1).
 .SH COPYRIGHT
-Copyright \[co] 1999-2015 by Michael R Sweet, All Rights Reserved.
+Copyright \[co] 1999-2017 by Michael R Sweet, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

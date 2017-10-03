@@ -113,7 +113,7 @@ main(int  argc,			// I - Number of command-line arguments
   Fl::scheme("gtk+");
 
 #ifdef __APPLE__
-  // OSX passes an extra command-line option when run from the Finder.
+  // macOS passes an extra command-line option when run from the Finder.
   // If the first command-line argument is "-psn..." then skip it and use the full path
   // to the executable to figure out the distribution directory...
   if (argc > 1)

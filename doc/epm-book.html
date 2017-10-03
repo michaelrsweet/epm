@@ -3,7 +3,7 @@
 <HEAD>
 <TITLE>Software Distribution Using the ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael R Sweet">
-<META NAME="copyright" CONTENT="Copyright 1999-2015 by Michael R Sweet">
+<META NAME="copyright" CONTENT="Copyright 1999-2017 by Michael R Sweet">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: sans-serif }
@@ -35,7 +35,7 @@ A { text-decoration: none }
 
 <!-- NEW PAGE -->
 <H2>Software Distribution Using the ESP Package Manager</H2>
-<H3>Copyright &copy; 2006-2015 by Michael R Sweet</H3>
+<H3>Copyright &copy; 2006-2017 by Michael R Sweet</H3>
 <H3>Copyright &copy; 2006-2010 by Easy Software Products</H3>
 <P><SMALL>This book may be redistributed and/or modified under the terms
  of version 2 of the GNU General Public License as published by the Free
@@ -53,7 +53,8 @@ A { text-decoration: none }
 <P><SMALL>International Standard Book Number: 978-1-4116-8913-8</SMALL></P>
 <P><SMALL>First Printing: April 2006
 <BR> Second Printing: December 2010
-<BR> Third Printing: September 2015</SMALL></P>
+<BR> Third Printing: September 2015
+<BR> Fourth Printing: October 2017</SMALL></P>
 <HR NOSHADE>
 <H1 ALIGN="CENTER"><A NAME="CONTENTS">Table of Contents</A></H1>
 <BR>
@@ -116,17 +117,10 @@ A { text-decoration: none }
 <LI><A HREF="#epm.list">The EPM List File Format</A></LI>
 <LI><A HREF="#setup.types">The setup.types File</A></LI>
 </UL>
-<B><A HREF="#RELNOTES">D - Release Notes</A></B>
-<UL>
-<LI><A HREF="#10_1">Changes in EPM v4.3</A></LI>
-<LI><A HREF="#10_2">Changes in EPM v4.2</A></LI>
-<LI><A HREF="#10_3">Changes in EPM v4.1</A></LI>
-<LI><A HREF="#10_4">Changes in EPM v4.0</A></LI>
-</UL>
 <HR NOSHADE>
 <H1 ALIGN="RIGHT"><A NAME="1">Preface</A></H1>
 <P>This book provides a tutorial and reference for the ESP Package
- Manager (&quot;EPM&quot;) software, version 4.3, and is organized into the
+ Manager (&quot;EPM&quot;) software, version 4.4, and is organized into the
  following chapters and appendices:</P>
 <UL>
 <LI><A HREF="#INTRO">1 - Introduction to EPM</A></LI>
@@ -137,7 +131,6 @@ A { text-decoration: none }
 <LI><A HREF="#LICENSE">A - Software License Agreement</A></LI>
 <LI><A HREF="#MANPAGES">B - Command Reference</A></LI>
 <LI><A HREF="#REFERENCE">C - List File Reference</A></LI>
-<LI><A HREF="#RELNOTES">D - Release Notes</A></LI>
 </UL>
 
 <!-- NEED 6in -->
@@ -217,7 +210,7 @@ https://www.msweet.org/projects.php/epm</A></DT>
  clear. If you find errors or have a suggestion for improving the book,
  please file a bug at:</P>
 <PRE>
-    <A href="https://www.msweet.org/bugs.php/epm">https://www.msweet.org/bugs.php/epm</A>
+    <A href="https://github.com/michaelrsweet/epm/issues">https://github.com/michaelrsweet/epm/issues</A>
 </PRE>
 <H2><A NAME="1_5">Acknowledgments</A></H2>
 <P>I'd like to thank the following people for their contributions to
@@ -352,7 +345,7 @@ IRIX</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD></TR>
 <TR><TD ALIGN="CENTER"><SMALL>Install.app</SMALL></TD><TD ALIGN="CENTER">
-<SMALL>OS X</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
+<SMALL>macOS</SMALL></TD><TD ALIGN="CENTER"><SMALL>Yes</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>Yes</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
 <SMALL>No</SMALL></TD><TD ALIGN="CENTER"><SMALL>No</SMALL></TD><TD ALIGN="CENTER">
@@ -447,7 +440,7 @@ fakeroot</CODE> software, introducing potential security risks and
 <P>The EPM project page provides access to the current software,
  documentation, and mailing list for EPM:</P>
 <PRE>
-    <A HREF="https://www.msweet.org/projects.php/epm">https://www.msweet.org/projects.php/epm</A>
+    <A HREF="https://michaelrsweet.github.io/epm">https://michaelrsweet.github.io/epm</A>
 </PRE>
 <P>The EPM source code can be downloaded in compressed tar files or via
  the popular Subversion software. Please see the EPM project page for
@@ -501,20 +494,21 @@ dpkg(8)</CODE>, to generate the software distribution on the development
 </PRE>
 <P>Run the <CODE>configure</CODE> script again to use the new commands.</P>
 <H3>Choosing Installation Directories</H3>
-<P>The default installation prefix is<VAR> /usr</VAR>, which will place
- the EPM programs in<VAR> /usr/bin</VAR>, the setup GUI in<VAR>
- /usr/lib/epm</VAR>, and the man pages in<VAR> /usr/man</VAR>. Use the <CODE>
---prefix</CODE> option to relocate these files</P>
+<P>The default installation prefix is<VAR> /usr/local</VAR>, which will
+ place the EPM programs in<VAR> /usr/local/bin</VAR>, the setup GUI in<VAR>
+ /usr/local/lib/epm</VAR>, and the man pages in<VAR>
+ /usr/local/share/man</VAR>. Use the <CODE>--prefix</CODE> option to
+ relocate these files</P>
 <P>to another directory:</P>
 <PRE>
-    <KBD>./configure --prefix=/usr/local ENTER</KBD>
+    <KBD>./configure --prefix=/example/path ENTER</KBD>
 </PRE>
 <P>The <CODE>configure</CODE> script also accepts the <CODE>--bindir</CODE>
 , <CODE>--libdir</CODE>, and <CODE>--mandir</CODE> options to relocate
  each directory separately, as follows:</P>
 <PRE>
-    <KBD>./configure --bindir=/usr/local/bin --libdir=/usr/local/lib \
-        --mandir=/usr/local/share/man ENTER</KBD>
+    <KBD>./configure --bindir=/example/path/bin --libdir=/example/path/lib \
+        --mandir=/example/path/share/man ENTER</KBD>
 </PRE>
 <H3>Options for the Setup GUI</H3>
 <P>The setup GUI requires the FLTK library. The configure script will
@@ -556,7 +550,7 @@ dpkg(8)</CODE>, to generate the software distribution on the development
 <PRE>
     <KBD>su ENTER</KBD>
 </PRE>
-<P>Operating systems such as OS X do not enable the root account by
+<P>Operating systems such as macOS do not enable the root account by
  default. The <CODE>sudo(8)</CODE> command is used instead:</P>
 <PRE>
     <KBD>sudo <I>installation command</I> ENTER</KBD>
@@ -568,18 +562,18 @@ dpkg(8)</CODE>, to generate the software distribution on the development
 make</CODE> command:</P>
 <PRE>
     <KBD>make install ENTER</KBD>
-    Installing EPM setup in /usr/lib/epm
-    Installing EPM programs in /usr/bin
-    Installing EPM manpages in /usr/man/man1
-    Installing EPM documentation in /usr/share/doc/epm
+    Installing EPM setup in /usr/local/lib/epm
+    Installing EPM programs in /usr/local/bin
+    Installing EPM manpages in /usr/local/share/man/man1
+    Installing EPM documentation in /usr/local/share/doc/epm
 </PRE>
-<P>Use the <CODE>sudo</CODE> command to install on OS X:</P>
+<P>Use the <CODE>sudo</CODE> command to install on macOS:</P>
 <PRE>
     <KBD>sudo make install ENTER</KBD>
-    Installing EPM setup in /usr/lib/epm
-    Installing EPM programs in /usr/bin
-    Installing EPM manpages in /usr/man/man1
-    Installing EPM documentation in /usr/share/doc/epm
+    Installing EPM setup in /usr/local/lib/epm
+    Installing EPM programs in /usr/local/bin
+    Installing EPM manpages in /usr/local/share/man/man1
+    Installing EPM documentation in /usr/local/share/doc/epm
 </PRE>
 <H3><A NAME="INSTALL_PORTABLE">Installing Using the Portable
  Distribution</A></H3>
@@ -612,7 +606,7 @@ make</CODE> command:</P>
 <TR><TD>HP-UX</TD><TD><CODE>hpux</CODE></TD></TR>
 <TR><TD>IRIX</TD><TD><CODE>irix</CODE></TD></TR>
 <TR><TD>Linux</TD><TD><CODE>linux</CODE></TD></TR>
-<TR><TD>OS X</TD><TD><CODE>osx</CODE></TD></TR>
+<TR><TD>macOS</TD><TD><CODE>osx</CODE></TD></TR>
 <TR><TD>NetBSD</TD><TD><CODE>netbsd</CODE></TD></TR>
 <TR><TD>OpenBSD</TD><TD><CODE>openbsd</CODE></TD></TR>
 <TR><TD>Solaris</TD><TD><CODE>solaris</CODE></TD></TR>
@@ -675,7 +669,7 @@ directory</I> epm</CODE></TD></TR>
  directory</I></CODE></TD></TR>
 <TR><TD>Linux</TD><TD><CODE>rpm</CODE></TD><TD NOWRAP><CODE>rpm -i<I>
  directory</I>/epm-4.1.rpm</CODE></TD></TR>
-<TR><TD>OS X</TD><TD><CODE>osx</CODE></TD><TD NOWRAP><CODE>open<I>
+<TR><TD>macOS</TD><TD><CODE>osx</CODE></TD><TD NOWRAP><CODE>open<I>
  directory</I>/<CODE>epm-4.1.pkg</CODE></CODE></TD></TR>
 <TR><TD>Solaris</TD><TD><CODE>pkg</CODE></TD><TD NOWRAP><CODE>pkgadd -d<I>
  directory</I> epm</CODE></TD></TR>
@@ -845,7 +839,7 @@ Figure 3.1</A>). To include the setup program in your distributions,
 <PRE>
     <KBD>epm --setup-image foo.xpm foo ENTER</KBD>
 </PRE>
-<P>This option is only supported when creating for portable and OS X
+<P>This option is only supported when creating for portable and macOS
  software packages.</P>
 
 <!-- NEED 5in -->
@@ -865,7 +859,7 @@ Figure 3.1</A>). To include the setup program in your distributions,
 <LI><CODE>inst</CODE> or <CODE>tardist</CODE> - IRIX software packages.</LI>
 <LI><CODE>native</CODE> - &quot;Native&quot; software packages (RPM, INST, DEPOT,
  PKG, etc.) for the platform.</LI>
-<LI><CODE>osx</CODE> - OS X software packages.</LI>
+<LI><CODE>osx</CODE> - macOS software packages.</LI>
 <LI><CODE>pkg</CODE> - Solaris software packages.</LI>
 <LI><CODE>portable</CODE> - Portable software packages (default).</LI>
 <LI><CODE>rpm</CODE> - Red Hat software packages.</LI>
@@ -913,8 +907,8 @@ Figure 3.1</A>). To include the setup program in your distributions,
 <P>IRIX packages are contained in a file called<VAR> name.tardist</VAR>,
  where &quot;name&quot; is the product/package name you supplied on the
  command-line.</P>
-<H3>OS X Package Files</H3>
-<P>OS X packages are contained in a file called<VAR> name.dmg</VAR>,
+<H3>macOS Package Files</H3>
+<P>macOS packages are contained in a file called<VAR> name.dmg</VAR>,
  where &quot;name&quot; is the product/package name you supplied on the
  command-line.</P>
 <H3>RPM Package Files</H3>
@@ -1729,12 +1723,12 @@ mrs</B>] ] [<B> -s</B><I> setup.ext</I> ] [<B> --depend</B> ] [<B>
 <DD style="margin-left: 5.0em">Generate a native distribution. This uses<I>
  rpm</I> for Linux,<I> inst</I> for IRIX,<I> pkg</I> for Solaris,<I>
  swinstall</I> for HP-UX,<I> bsd</I> for FreeBSD, NetBSD, and OpenBSD,
- and<I> osx</I> for OS X. All other operating systems default to the<I>
+ and<I> osx</I> for macOS. All other operating systems default to the<I>
  portable</I> format.</DD>
 <DT><B>-f osx</B></DT>
 <DD style="margin-left: 5.0em"></DD>
 <DT><B>-f osx-signed</B></DT>
-<DD style="margin-left: 5.0em">Generate an OS X software package. The<I>
+<DD style="margin-left: 5.0em">Generate a macOS software package. The<I>
  osx-signed</I> format uses the signing identity in the
  EPM_SIGNING_IDENTITY environment variable.</DD>
 <DT><B>-f pkg</B></DT>
@@ -1822,7 +1816,7 @@ mrs</B>] ] [<B> -s</B><I> setup.ext</I> ] [<B> --depend</B> ] [<B>
 mkepmlist</B>(1),</A> <A href="#epm.list"><B>epm.list</B>(5),</A> <A href="#setup">
 <B>setup</B>(1).</A>
 <H3 class="title"><A name="COPYRIGHT">Copyright</A></H3>
- Copyright &copy; 1999-2015 by Michael R Sweet, All Rights Reserved.
+ Copyright &copy; 1999-2017 by Michael R Sweet, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -1881,7 +1875,7 @@ directory2</I><I>...</I><I>directoryN</I>
 <B> epm(1),</B><B> mkepmlist(1),</B> <A href="#epm.list"><B>epm.list</B>
 (5).</A>
 <H3 class="title"><A name="COPYRIGHT">Copyright</A></H3>
- Copyright &copy; 1999-2015 by Michael R Sweet, All Rights Reserved.
+ Copyright &copy; 1999-2017 by Michael R Sweet, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -1930,7 +1924,7 @@ directory2</I><I>...</I><I>directoryN</I>
  <A href="#epm"><B>epm</B>(1),</A> <A href="#epminstall"><B>epminstall</B>
 (1),</A> <A href="#epm.list"><B>epm.list</B>(5).</A>
 <H3 class="title"><A name="COPYRIGHT">Copyright</A></H3>
- Copyright &copy; 1999-2015 by Michael R Sweet, All Rights Reserved.
+ Copyright &copy; 1999-2017 by Michael R Sweet, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -1964,7 +1958,7 @@ directory2</I><I>...</I><I>directoryN</I>
  <A href="#epm"><B>epm</B>(1),</A> <A href="#setup.types"><B>setup.types</B>
 (5).</A>
 <H3 class="title"><A name="COPYRIGHT">Copyright</A></H3>
- Copyright &copy; 1999-2015 by Michael R Sweet, All Rights Reserved.
+ Copyright &copy; 1999-2017 by Michael R Sweet, All Rights Reserved.
 <P>This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2, or (at your option) any
@@ -2210,15 +2204,15 @@ directory2</I><I>...</I><I>directoryN</I>
 <DT>order(<I>string</I>)</DT>
 <DD>Specifies the relative startup order compared to the required and
  used system functions. Supported values include First, Early, None,
- Late, and Last (OSX only).</DD>
+ Late, and Last (macOS only).</DD>
 <DT>provides(<I>name(s)</I>)</DT>
 <DD>Specifies names of system functions that are provided by this
- startup item (OSX only).</DD>
+ startup item (macOS only).</DD>
 
 <!-- NEED 3 -->
 <DT>requires(<I>name(s)</I>)</DT>
 <DD>Specifies names of system functions that are required by this
- startup item (OSX only).</DD>
+ startup item (macOS only).</DD>
 <DT>runlevels(<I>levels</I>)</DT>
 <DD>Specifies the run levels to use.</DD>
 <DT>start(<I>number</I>)</DT>
@@ -2227,7 +2221,7 @@ directory2</I><I>...</I><I>directoryN</I>
 <DD>Specifies the ending sequence number from 00 to 99.</DD>
 <DT>uses(<I>name(s)</I>)</DT>
 <DD>Specifies names of system functions that are used by this startup
- item (OSX only).</DD>
+ item (macOS only).</DD>
 </DL>
 <BR> &nbsp;</DD>
 
@@ -2307,127 +2301,5 @@ directory2</I><I>...</I><I>directoryN</I>
 <P>In the example above, three installation types are defined. Since the
  last type includes no products, the user will be presented with the
  full list of products to choose from.</P>
-<HR NOSHADE>
-<H1 ALIGN="RIGHT"><A NAME="RELNOTES">D - Release Notes</A></H1>
-<P>This appendix lists the change log for each release of the EPM
- software.</P>
-<H2><A NAME="10_1">Changes in EPM v4.3</A></H2>
-<UL>
-<LI>Now use pkgbuild on newer versions of OS X, and added support for
- signed packages (Bug #497)</LI>
-<LI>Fixed some file handling issues when creating RPM packages (Bug
- #523)</LI>
-<LI>EPM now maps the x86_64 architecture to amd64 when creating Debian
- packages (Bug #295)</LI>
-<LI>%format stopped working in EPM 4.2 (Bug #296)</LI>
-<LI>%literal(spec) did not insert the literal content in the correct
- location (Bug #302)</LI>
-<LI>Fixed some incorrect string handling (Bug #290)</LI>
-<LI>Fixed a compatibility issue with RPM 4.8 (Bug #292)</LI>
-<LI>Fixed a build dependency problem (Bug #291)</LI>
-<LI>The EPM makefile now uses CPPFLAGS from the configure script (Bug
- #300)</LI>
-<LI>Updated the standard path used by portable package scripts to
- include /usr/gnu/bin for Solaris (Bug #301)</LI>
-<LI>Added support for %literal(control) in Debian packages (Bug #297)</LI>
-</UL>
-<H2><A NAME="10_2">Changes in EPM v4.2</A></H2>
-<UL>
-<LI>EPM now supports a %arch conditional directive (STR #27)</LI>
-<LI>EPM now uses hard links whenever possible instead of copying files
- for distribution (STR #21)</LI>
-<LI>EPM no longer puts files in /export in the root file set for AIX
- packages (STR #15)</LI>
-<LI>EPM did not work with newer versions of RPM (STR #23, STR #25)</LI>
-<LI>EPM did not clean up temporary files from Solaris packages (STR #20)</LI>
-<LI>Building Solaris gzip'd packages failed if the pkg.gz file already
- existed (STR #16)</LI>
-<LI>Fixed handling of %preremove and %postremove for AIX packages (STR
- #22)</LI>
-<LI>Fixed directory permissions in HP-UX packages (STR #24)</LI>
-<LI>Removed unnecessary quoting of &quot;!&quot; in filenames (STR #26)</LI>
-<LI>Added support for signed RPM packages (STR #19)</LI>
-<LI>Added support for inclusion of format-specific packaging files and
- directives via a %literal directive (STR #5)</LI>
-<LI>*BSD init scripts were not installed properly.</LI>
-<LI>EPM now displays a warning message when a variable is undefined (STR
- #10)</LI>
-<LI>*BSD dependencies on versioned packages are now specified correctly
- (STR #4)</LI>
-<LI>EPM now uses /usr/sbin/pkg_create on FreeBSD (STR #2)</LI>
-<LI>FreeBSD packages are now created with a .tbz extension (STR #1)</LI>
-<LI>FreeBSD packages incorrectly assumed that chown was installed in
- /bin (STR #3)</LI>
-<LI>Added support for an &quot;lsb&quot; package format which uses RPM with the
- LSB dependencies (STR #7)</LI>
-<LI>The configure script now supports a --with-archflags and no longer
- automatically builds universal binaries on Mac OS X.</LI>
-<LI>The epm program now automatically detects when the setup GUI is not
- available, displays a warning message, and then creates a non-GUI
- package.</LI>
-<LI>RPM packages did not map %replaces to Obsoletes:</LI>
-</UL>
-<H2><A NAME="10_3">Changes in EPM v4.1</A></H2>
-<UL>
-<LI>Mac OS X portable packages did not create a correct Uninstall
- application.</LI>
-<LI>The temporary package files for portable packages are now removed
- after creation of the .tar.gz file unless the -k (keep files) option is
- used.</LI>
-<LI>The RPM summary string for subpackages did not contain the first
- line of the package description as for other package formats.</LI>
-<LI>The setup and uninst GUIs now support installing and removing RPM
- packages.</LI>
-<LI>The setup GUI now confirms acceptance of all licenses prior to
- installing the first package.</LI>
-<LI>Subpackages are no longer automatically dependent on the main
- package.</LI>
-<LI>Multi-line descriptions were not embedded properly into portable
- package install/patch/remove scripts.</LI>
-<LI>Updated the setup and uninstall GUIs for a nicer look-n-feel.</LI>
-<LI>Mac OS X portable packages now show the proper name, version, and
- copyright for the packaged software instead of the EPM version and
- copyright...</LI>
-<LI>Fixed a problem with creation of Mac OS X metapackages with the
- latest Xcode.</LI>
-<LI>EPM now removes the individual .rpm and .deb files when creating a
- package with subpackages unless the -k option (keep files) is used.</LI>
-<LI>EPM now only warns about package names containing characters other
- than letters and numbers.</LI>
-<LI>EPM now generates disk images as well as a .tar.gz file when
- creating portable packages on Mac OS X.</LI>
-</UL>
-<H2><A NAME="10_4">Changes in EPM v4.0</A></H2>
-<UL>
-<LI>New subpackage support for creating multiple dependent packages or a
- combined package with selectable subpackages, depending on the package
- format.</LI>
-<LI>Added support for compressing the package files in portable packages
- (reduces disk space requirements on platforms that provide gzip...)</LI>
-<LI>Added support for custom platform names via the new &quot;-m name&quot;
- option.</LI>
-<LI>Added support for non-numeric %release values.</LI>
-<LI>Added new --depend option to list all of the source files that a
- package depends on.</LI>
-<LI>The setup GUI now sets the EPM_INSTALL_TYPE environment variable to
- the value of the selected TYPE line in the setup.types file.</LI>
-<LI>Fixed NetBSD and OpenBSD packaging support - no longer use
- FreeBSD-specific extensions to pkg_create on those variants.</LI>
-<LI>Fixed PowerPC platform support for RPM and Debian packages.</LI>
-<LI>Many fixes to AIX package support.</LI>
-<LI>Tru64 packages with init scripts now work when installing for the
- first time.</LI>
-<LI>RPM file dependencies should now work properly.</LI>
-<LI>Portable product names containing spaces will now display properly.</LI>
-</UL>
-
-<!-- NEW SHEET
-     HEADER CENTER &quot;&quot;
-     FOOTER LEFT &quot;&quot;
-     FOOTER RIGHT &quot;&quot; -->
-<P>&nbsp;</P>
-
-<!-- NEW SHEET -->
-<P>&nbsp;</P>
 </BODY>
 </HTML>

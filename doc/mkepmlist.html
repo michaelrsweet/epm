@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+<!-- SECTION: Man Pages -->
+<head>
+	<link rel="stylesheet" type="text/css" href="../cups-printable.css">
+	<title>mkepmlist(1)</title>
+</head>
+<body>
+<h2 class="title"><a name="mkepmlist">mkepmlist(1)</a></h2>
+<h3 class="title"><a name="NAME">Name</a></h3>
+mkepmlist - make an epm list file from a directory.
+<h3 class="title"><a name="SYNOPSIS">Synopsis</a></h3>
+<b>mkepmlist</b>
+[
+<b>-g</b>
+<i>group</i>
+] [
+<b>-u</b>
+<i>user</i>
+] [
+<b>--prefix</b>
+<i>directory</i>
+]
+<i>directory</i>
+[ ...
+<i>directory</i>
+]
+<h3 class="title"><a name="DESCRIPTION">Description</a></h3>
+<b>mkepmlist</b><b>(1)</b>
+recursively generates file list entries for files, links, and directories.
+The file list is send to the standard output.
+<h3 class="title"><a name="OPTIONS">Options</a></h3>
+<b>mkepmlist</b>
+supports the following options:
+<dl class="man">
+<dt><b>-g </b><i>group</i>
+<dd style="margin-left: 5.0em">Overrides the group ownership of the files in the specified directories with the specified group name.
+<dt><b>-u </b><i>user</i>
+<dd style="margin-left: 5.0em">Overrides the user ownership of the files in the specified directories with the specified user name.
+<dt><b>--prefix </b><i>directory</i>
+<dd style="margin-left: 5.0em">Adds the specified directory to the destination path.
+For example, if you installed files to "/opt/foo" and wanted to build a distribution that installed the files in "/usr/local", the following command would generate a file
+list that is installed in "/usr/local":
+<pre class="man">
+<br>
+     mkepmlist --prefix=/usr/local /opt/foo >foo.list
+</pre>
+</dl>
+<h3 class="title"><a name="SEE_ALSO">See Also</a></h3>
+<a href="epm.html#epm"><b>epm</b>(1),</a>
+<a href="epminstall.html#epminstall"><b>epminstall</b>(1),</a>
+<a href="epm.list.html#epm.list"><b>epm.list</b>(5).</a>
+<h3 class="title"><a name="COPYRIGHT">Copyright</a></h3>
+Copyright &copy; 1999-2017 by Michael R Sweet, All Rights Reserved.
+<p>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+</body>
+</html>
