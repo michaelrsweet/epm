@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Man page to HTML conversion program.
  *
  * Copyright 2015 by Michael R Sweet
@@ -1219,8 +1217,3 @@ strmove(char       *d,			/* I - Destination */
 
   *d = '\0';
 }
-
-
-/*
- * End of "$Id$".
- */

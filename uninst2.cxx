@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
 // Copyright 1999-2015 by Michael R Sweet
@@ -723,8 +721,3 @@ update_sizes(void)
   SoftwareSize->label(sizelabel);
   SoftwareSize->redraw();
 }
-
-
-//
-// End of "$Id$".
-//

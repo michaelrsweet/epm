@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * snprintf functions for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -264,9 +262,3 @@ epm_snprintf(char       *buffer,	/* O - Output buffer */
   return (bytes);
 }
 #endif /* !HAVE_SNPRINTF */
-
-
-/*
- * End of "$Id$".
- */
-

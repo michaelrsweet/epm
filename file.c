@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * File functions for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2015 by Michael R Sweet
@@ -429,8 +427,3 @@ unlink_package(const char *ext,		/* I - Package filename extension */
   else
     return (0);
 }
-
-
-/*
- * End of "$Id$".
- */

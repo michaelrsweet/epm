@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Red Hat package gateway for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2015 by Michael R Sweet
@@ -544,7 +542,7 @@ move_rpms(const char     *prodname,	/* I - Product short name */
   else if (!strcmp(platform->sysname, "aix") && !strcmp(platform->machine, "ppc"))
     run_command(NULL, "/bin/mv %s/RPMS/ppc/%s-%s-%s.%s%s.ppc.rpm %s",
 		rpmdir, prodfull, dist->version, release, platform->sysname, platform->release,
-		rpmname); 
+		rpmname);
   else if (!strcmp(platform->machine, "ppc"))
     run_command(NULL, "/bin/mv %s/RPMS/powerpc/%s-%s-%s.powerpc.rpm %s",
 		rpmdir, prodfull, dist->version, release,
@@ -952,8 +950,3 @@ write_spec(int        format,		/* I - Subformat */
 
   return (0);
 }
-
-
-/*
- * End of "$Id$".
- */

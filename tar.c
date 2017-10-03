@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * TAR file functions for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -547,8 +545,3 @@ tar_package(tarf_t     *tar,		/* I - Tar file */
 
   return (tar_file(tar, filename));
 }
-
-
-/*
- * End of "$Id$".
- */

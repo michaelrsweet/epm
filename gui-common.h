@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // ESP Software Wizard common header file for the ESP Package Manager (EPM).
 //
 // Copyright 1999-2014 by Michael R Sweet
@@ -101,8 +99,3 @@ gui_dist_t	*gui_find_dist(const char *name, int num_d, gui_dist_t *d);
 void		gui_get_installed(void);
 void		gui_load_file(Fl_Help_View *hv, const char *filename);
 int		gui_sort_dists(const gui_dist_t *d0, const gui_dist_t *d1);
-
-
-//
-// End of "$Id$".
-//

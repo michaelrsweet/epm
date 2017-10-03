@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Support functions for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -100,8 +98,3 @@ get_vernumber(const char *version)	/* I - Version string */
   return (((numbers[0] * 100 + numbers[1]) * 100 + numbers[2]) * 100 +
           numbers[3] + offset);
 }
-
-
-/*
- * End of "$Id$".
- */

@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * External program function for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -172,8 +170,3 @@ run_command(const char *directory,	/* I - Directory for command or NULL */
   else
     return (WEXITSTATUS(status));
 }
-
-
-/*
- * End of "$Id$".
- */

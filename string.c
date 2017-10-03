@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * String functions for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -189,8 +187,3 @@ epm_strncasecmp(const char *s,		/* I - First string */
     return (-1);
 }
 #  endif /* !HAVE_STRNCASECMP */
-
-
-/*
- * End of "$Id$".
- */

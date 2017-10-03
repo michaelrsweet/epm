@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Debian package gateway for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -608,8 +606,3 @@ make_subpackage(const char     *prodname,
 
   return (0);
 }
-
-
-/*
- * End of "$Id$".
- */

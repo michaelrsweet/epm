@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Tru64 package gateway for the ESP Package Manager (EPM)
  *
  * Copyright 2001-2014 by Michael R Sweet
@@ -459,8 +457,3 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
   return (0);
 }
-
-
-/*
- * End of "$Id$".
- */

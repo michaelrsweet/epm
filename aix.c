@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * AIX package gateway for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -936,8 +934,3 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
   return (0);
 }
-
-
-/*
- * End of "$Id$".
- */

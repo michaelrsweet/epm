@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Configuration file for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -134,8 +132,3 @@
  */
 
 #define EPM_COMPRESS 0
-
-
-/*
- * End of "$Id$".
- */

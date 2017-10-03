@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * HP-UX package gateway for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -742,8 +740,3 @@ write_fileset(FILE       *fp,		/* I - File to write to */
 
   fputs("  end\n", fp);
 }
-
-
-/*
- * End of "$Id$".
- */

@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Install program replacement for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -402,8 +400,3 @@ usage(void)
 
   exit(1);
 }
-
-
-/*
- * End of "$Id$".
- */

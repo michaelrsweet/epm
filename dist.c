@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Distribution functions for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -2363,8 +2361,3 @@ update_architecture(char   *buffer,	/* I - String buffer */
   else if (!strncmp(buffer, "sun", 3))
     strlcpy(buffer, "sparc", bufsize);
 }
-
-
-/*
- * End of "$Id$".
- */

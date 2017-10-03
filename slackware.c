@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Slackware package gateway for the ESP Package Manager (EPM).
  *
  * Copyright 2003-2014 by Michael R Sweet
@@ -323,8 +321,3 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
   return (0);
 }
-
-
-/*
- * End of "$Id$".
- */

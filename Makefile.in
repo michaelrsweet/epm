@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # Makefile for the ESP Package Manager (EPM).
 #
 # Copyright 1999-2014 by Michael R Sweet
@@ -416,8 +414,3 @@ gui-common.o:	gui-common.h
 #
 
 $(OBJS):	Makefile config.h
-
-
-#
-# End of "$Id$".
-#

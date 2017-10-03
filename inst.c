@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * IRIX package gateway for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -695,8 +693,3 @@ inst_subsys(FILE       *fp,		/* I - File to write to */
 
   fputs("		endsubsys\n", fp);
 }
-
-
-/*
- * End of "$Id$".
- */

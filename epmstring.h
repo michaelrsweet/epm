@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * String definitions for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -85,7 +83,3 @@ extern int	epm_vsnprintf(char *, size_t, const char *, va_list);
 #  endif /* __cplusplus */
 
 #endif /* !_EPM_STRING_H_ */
-
-/*
- * End of "$Id$".
- */

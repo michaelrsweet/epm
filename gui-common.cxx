@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // ESP Software Wizard common functions for the ESP Package Manager (EPM).
 //
 // Copyright 1999-2014 by Michael R Sweet
@@ -333,8 +331,3 @@ gui_sort_dists(const gui_dist_t *d0,	// I - First distribution
 {
   return (strcmp(d0->name, d1->name));
 }
-
-
-//
-// End of "$Id$".
-//

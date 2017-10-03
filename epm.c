@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Main program source for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2015 by Michael R Sweet
@@ -721,8 +719,3 @@ usage(void)
 
   exit(1);
 }
-
-
-/*
- * End of "$Id$".
- */

@@ -1,7 +1,5 @@
 /*
- * "$Id$"
- *
- * Mac OS X package gateway for the ESP Package Manager (EPM).
+ * macOS package gateway for the ESP Package Manager (EPM).
  *
  * Copyright 2002-2015 by Michael R Sweet
  * Copyright 2002-2010 by Easy Software Products.
@@ -924,7 +922,3 @@ write_rtf(dist_t     *dist,		/* I - Distribution  information */
 
   return (0);
 }
-
-/*
- * End of "$Id$".
- */

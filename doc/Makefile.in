@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # Makefile for the ESP Package Manager (EPM) documentation.
 #
 # Copyright 1999-2015 by Michael R Sweet
@@ -62,8 +60,3 @@ mantohtml:	mantohtml.o
 	$(CC) -o $@ mantohtml.o
 
 $(MANPAGES):	mantohtml
-
-
-#
-# End of "$Id$".
-#

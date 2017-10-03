@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Portable package gateway for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -2943,8 +2941,3 @@ write_space_checks(const char *prodname,/* I - Distribution name */
 
   return (0);
 }
-
-
-/*
- * End of "$Id$".
- */

@@ -1,6 +1,4 @@
 .\"
-.\" "$Id$"
-.\"
 .\" Manual page for the ESP Package Manager (EPM) setup GUI.
 .\"
 .\" Copyright 1999-2015 by Michael R Sweet
@@ -53,6 +51,3 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-.\"
-.\" End of "$Id$".
-.\"

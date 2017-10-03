@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Quoted fprintf function for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -207,9 +205,3 @@ qprintf(FILE       *fp,		/* I - File to write to */
 
   return (bytes);
 }
-
-
-/*
- * End of "$Id$".
- */
-

@@ -1,6 +1,4 @@
 #
-# "$Id$"
-#
 # Sample software list file for the ESP Package Manager (EPM).
 #
 # Copyright 1999-2014 by Michael R Sweet
@@ -79,7 +77,3 @@ f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.man
 f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
 
 %endif
-
-#
-# End of "$Id$".
-#

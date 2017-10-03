@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * AT&T package gateway for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2014 by Michael R Sweet
@@ -584,8 +582,3 @@ pkg_path(const char *filename,		/* I - Source filename */
   snprintf(absname, sizeof(absname), "%s/%s", dirname, filename);
   return (absname);
 }
-
-
-/*
- * End of "$Id$".
- */

@@ -1,6 +1,4 @@
 /*
- * "$Id$"
- *
  * Definitions for the ESP Package Manager (EPM).
  *
  * Copyright 1999-2015 by Michael R Sweet
@@ -344,8 +342,3 @@ extern int	write_dist(const char *listname, dist_t *dist);
 #  endif /* __cplusplus */
 
 #endif /* !_EPM_H_ */
-
-
-/*
- * End of "$Id$".
- */
