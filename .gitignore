@@ -1,0 +1,14 @@
+Makefile
+autom4te.cache
+config.h
+config.log
+config.status
+doc/Makefile
+epm
+epm.list
+epminstall
+mkepmlist
+setup
+uninst
+*.o
+*.a
