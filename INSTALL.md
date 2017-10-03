@@ -1,48 +1,45 @@
-INSTALL - ESP Package Manager (EPM) 4.3
----------------------------------------
+How to Install EPM
+==================
 
-Complete installation instructions can be found in the file
-"doc/epm-book.html"...
-
-
-WHAT IS REQUIRED FOR EPM?
-
-    On your development system you just need a C compiler, a make
-    program, the Bourne (or Korn or Bash) shell, and gzip.
-
-    The graphical setup program needs a C++ compiler and the
-    FLTK library, version 1.1.x or 1.3.x, available at
-    "http://www.fltk.org".
-
-    EPM can generate so-called "portable" distributions that are
-    based on shell scripts and tar files.  For these types of
-    distributions your customers/users will need the Bourne (or
-    Korn or Bash) shell, a tar program, and GNU zip. The first
-    two are standard items, and GNU zip is being shipped by most
-    vendors as well.
-
-    EPM can also generate vendor-specific distributions.  These
-    require the particular vendor tool (rpm, dpkg, etc.) to load
-    the software.
+> Note: Complete installation instructions can be found in the file
+> `doc/epm-book.html`.
 
 
-HOW DO I COMPILE EPM?
+What is Required for EPM?
+-------------------------
 
-    EPM uses GNU autoconf to configure itself for your system.
-    To build it, use:
+On your development system you just need a C compiler, a make program, a POSIX
+shell (Bourne, Korn, Bash, etc.), and gzip.
 
-        ./configure ENTER
-	make ENTER
+The graphical setup program needs a C++ compiler and the FLTK library, version
+1.1.x or 1.3.x, available at <http://www.fltk.org>.
 
-    The default installation prefix is /usr; if you want to put
-    EPM in /usr/local, do:
+EPM can generate so-called "portable" distributions that are based on shell
+scripts and tar files.  For these types of distributions your customers/users
+will need a POXIX shell (Bourne, Korn, Bash, etc.), a tar program, and gzip.
+The first two are standard items, and gzip is being shipped by most vendors as
+well.
 
-        ./configure --prefix=/usr/local ENTER
-	make ENTER
+EPM can also generate vendor-specific distributions.  These require the
+particular vendor tool (rpm, dpkg, etc.) to load the software.
 
-    Once EPM is compiled you can type:
 
-        su ENTER
-	make install ENTER
+How Do I Compile EPM?
+---------------------
 
-    to install the software in /usr/bin.
+EPM uses GNU autoconf to configure itself for your system.  To build it, use:
+
+    ./configure ENTER
+    make ENTER
+
+The default installation prefix is `/usr/local`; if you want to put EPM in a
+different location, use the `--prefix` option to the configure script:
+
+    ./configure --prefix=/path/to/use ENTER
+    make ENTER
+
+Once EPM is compiled you can type:
+
+    sudo make install ENTER
+
+to install the software.
