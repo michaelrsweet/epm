@@ -1,7 +1,7 @@
 /*
  * Debian package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -242,6 +242,8 @@ make_subpackage(const char     *prodname,
 
   if (!strcmp(platform->machine, "intel"))
     fputs("Architecture: i386\n", fp);
+  if (!strcmp(platform->machine, "x86_64"))
+    fputs("Architecture: amd64\n", fp);
   else if (!strcmp(platform->machine, "ppc"))
     fputs("Architecture: powerpc\n", fp);
   else
