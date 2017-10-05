@@ -14,7 +14,7 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "3 October 2017" "Michael R Sweet"
+.TH epm 1 "ESP Package Manager" "4 October 2017" "Michael R Sweet"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -54,6 +54,9 @@ epm \- create software packages.
 ] [
 .B \-\-setup\-types
 .I setup.types
+] [
+.B \-\-uninstall\-program
+.I /foo/bar/uninst
 ] [
 .B \-v
 ] [
@@ -175,6 +178,10 @@ This option is currently only supported by portable distributions.
 \fB\-\-setup\-types \fIsetup.types\fR
 .LP
 Specifies the \fIsetup.types\fR file to include with the distribution.
+This option is currently only supported by portable distributions.
+.TP 5
+\fB\-\-uninstall\-program \fI/foo/bar/uninst\fR
+Specifies the uninst executable to use with the distribution.
 This option is currently only supported by portable distributions.
 .SH ENVIRONMENT
 The following environment variables are supported by \fBepm\R.

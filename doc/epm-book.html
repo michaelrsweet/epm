@@ -29,8 +29,11 @@ A { text-decoration: none }
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<h1 ALIGN="CENTER">Software Distribution with ESP Package Manager</h1>
+<p ALIGN="CENTER"><img ALT="EPM" HEIGHT="128" SRC="../default-256.png" WIDTH="128">
+</p>
+<h1 ALIGN="CENTER">Software Distribution
+<br> with
+<br> ESP Package Manager</h1>
 <p ALIGN="CENTER">MICHAEL R. SWEET</p>
 
 <!-- NEW PAGE -->
@@ -496,8 +499,7 @@ setenv CXX /foo/bar/gcc ENTER</kbd>
  place the EPM programs in<var> /usr/local/bin</var>, the setup GUI in<var>
  /usr/local/lib/epm</var>, and the man pages in<var>
  /usr/local/share/man</var>. Use the <code>--prefix</code> option to
- relocate these files</p>
-<p>to another directory:</p>
+ relocate these files to another directory:</p>
 <pre>
 <kbd>./configure --prefix=/example/path ENTER</kbd>
 </pre>
@@ -808,7 +810,7 @@ f 0644 /usr/share/man/man1/foo.1
 <center>
 <table><caption ALIGN="BOTTOM"> <a NAME="FIGURE_3_1">Figure 3.1: The EPM
  Setup GUI</a></caption>
-<tr><td><img ALT="The EPM Setup GUI" HEIGHT="371" SRC="setup.png" WIDTH="592">
+<tr><td><img ALT="The EPM Setup GUI" HEIGHT="436" SRC="setup.png" WIDTH="724">
 </td></tr>
 </table>
 </center>
@@ -1205,10 +1207,7 @@ f 755 root sys /usr/lib/libfoo.so libfoo.so nostrip()
  the differences between the original and patch release. Patch files are
  specified using uppercase letters for the affected files. In the
  following example, the files<var> /usr/bin/bar</var> and<var>
- /etc/foo.conf</var> are marked</p>
-
-<!-- NEED 2in -->
-<p>as changed since the original release:</p>
+ /etc/foo.conf</var> are marked as changed since the original release:</p>
 <pre>
 f 755 root sys /usr/bin/foo foo
 F 755 root sys /usr/bin/bar bar
@@ -1340,9 +1339,9 @@ $srcdir=.
 %copyright 1999-2014 by Michael R Sweet, All Rights Reserved.
 %vendor Michael R Sweet
 %license ${srcdir}/COPYING
-%readme ${srcdir}/README
+%readme ${srcdir}/README.md
 %description Universal software packaging tool for UNIX.
-%version 4.3 430
+%version 4.4 440
 </pre>
 <p>After the product information, we include all of the non-GUI files
  that are part of EPM:</p>
@@ -1356,7 +1355,7 @@ f 0555 root sys ${bindir}/mkepmlist mkepmlist
 # Documentation
 %subpackage documentation
 %description Documentation for EPM
-f 0444 root sys ${docdir}/README $srcdir/README
+f 0444 root sys ${docdir}/README $srcdir/README.md
 f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
 f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
 
@@ -1380,13 +1379,7 @@ f 0555 root sys ${libdir}/epm/setup setup
 f 0555 root sys ${libdir}/epm/uninst uninst
 
 %system darwin
-f 0444 root sys ${datadir}/epm/setup.icns macosx/setup.icns
-f 0444 root sys ${datadir}/epm/setup.info macosx/setup.info
-f 0444 root sys ${datadir}/epm/setup.plist macosx/setup.plist
-
-f 0444 root sys ${datadir}/epm/uninst.icns macosx/uninst.icns
-f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
-f 0444 root sys ${datadir}/epm/uninst.plist macosx/uninst.plist
+f 0444 root sys ${datadir}/epm/default.icns default.icns
 %system all
 
 %subpackage man
@@ -1670,8 +1663,9 @@ mrs</b>] ] [<b> -s</b><i> setup.ext</i> ] [<b> --depend</b> ] [<b>
  --help</b> ] [<b> --keep-files</b> ] [<b> --output-dir</b><i> directory</i>
  ] [<b> --setup-image</b><i> setup.ext</i> ] [<b> --setup-program</b><i>
  /foo/bar/setup</i> ] [<b> --setup-types</b><i> setup.types</i> ] [<b>
- -v</b> ] [<i> name=value</i> ...<i> name=value</i> ]<i> product</i> [<i>
- listfile</i> ]
+ --uninstall-program</b><i> /foo/bar/uninst</i> ] [<b> -v</b> ] [<i>
+ name=value</i> ...<i> name=value</i> ]<i> product</i> [<i> listfile</i>
+ ]
 <h3 class="title"><a name="DESCRIPTION">Description</a></h3>
  <a href="#epm"><b>epm</b>(1)</a> generates software packages complete
  with installation, removal, and (if necessary) patch scripts. Unless
@@ -1787,6 +1781,12 @@ mrs</b>] ] [<b> -s</b><i> setup.ext</i> ] [<b> --depend</b> ] [<b>
 <p>Specifies the<i> setup.types</i> file to include with the
  distribution. This option is currently only supported by portable
  distributions.</p>
+<dl class="man">
+<dt><b>--uninstall-program</b><i> /foo/bar/uninst</i></dt>
+<dd style="margin-left: 5.0em">Specifies the uninst executable to use
+ with the distribution. This option is currently only supported by
+ portable distributions.</dd>
+</dl>
 <h3 class="title"><a name="ENVIRONMENT">Environment</a></h3>
  The following environment variables are supported by<b> epmR.</b>
 <dl class="man">

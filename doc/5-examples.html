@@ -40,9 +40,9 @@ files:</P>
 %copyright 1999-2014 by Michael R Sweet, All Rights Reserved.
 %vendor Michael R Sweet
 %license ${srcdir}/COPYING
-%readme ${srcdir}/README
+%readme ${srcdir}/README.md
 %description Universal software packaging tool for UNIX.
-%version 4.3 430
+%version 4.4 440
 </PRE>
 
 <P>After the product information, we include all of the non-GUI
@@ -58,7 +58,7 @@ f 0555 root sys ${bindir}/mkepmlist mkepmlist
 # Documentation
 %subpackage documentation
 %description Documentation for EPM
-f 0444 root sys ${docdir}/README $srcdir/README
+f 0444 root sys ${docdir}/README $srcdir/README.md
 f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
 f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
 
@@ -84,13 +84,7 @@ f 0555 root sys ${libdir}/epm/setup setup
 f 0555 root sys ${libdir}/epm/uninst uninst
 
 %system darwin
-f 0444 root sys ${datadir}/epm/setup.icns macosx/setup.icns
-f 0444 root sys ${datadir}/epm/setup.info macosx/setup.info
-f 0444 root sys ${datadir}/epm/setup.plist macosx/setup.plist
-
-f 0444 root sys ${datadir}/epm/uninst.icns macosx/uninst.icns
-f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
-f 0444 root sys ${datadir}/epm/uninst.plist macosx/uninst.plist
+f 0444 root sys ${datadir}/epm/default.icns default.icns
 %system all
 
 %subpackage man
