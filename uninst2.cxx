@@ -1,7 +1,7 @@
 //
 // ESP Software Removal Wizard main entry for the ESP Package Manager (EPM).
 //
-// Copyright 1999-2015 by Michael R Sweet
+// Copyright 1999-2017 by Michael R Sweet
 // Copyright 1999-2010 by Easy Software Products.
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,8 @@
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
 #include <FL/Fl_XPM_Image.H>
+#include <FL/Fl_JPEG_Image.H>
+#include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_GIF_Image.H>
 #include <errno.h>
 #include <ctype.h>
@@ -54,6 +56,7 @@ extern int statfs(const char *, struct statfs *);
 #endif // __osf__
 
 #ifdef __APPLE__
+#  include <CoreFoundation/CoreFoundation.h>
 #  include <Security/Authorization.h>
 #  include <Security/AuthorizationTags.h>
 
@@ -99,28 +102,24 @@ main(int  argc,			// I - Number of command-line arguments
   Fl::scheme("gtk+");
 
 #ifdef __APPLE__
-  // macOS passes an extra command-line option when run from the Finder.
-  // If the first command-line argument is "-psn..." then skip it and use the full path
-  // to the executable to figure out the distribution directory...
-  if (argc > 1)
+  // macOS uses the setup program in a bundle, so get the bundle's directory.
+  CFBundleRef mainBundle = CFBundleGetMainBundle();
+  char mainPath[1024] = "";
+
+  if (mainBundle)
   {
-    if (strncmp(argv[1], "-psn", 4) == 0)
+    CFURLRef mainURL = CFBundleCopyBundleURL(mainBundle);
+    CFStringRef mainCFPath = CFURLCopyFileSystemPath(mainURL, kCFURLPOSIXPathStyle);
+
+    if (CFStringGetCString(mainCFPath, mainPath, sizeof(mainPath), kCFStringEncodingUTF8))
     {
-      char		*ptr;		// Pointer into basedir
-      static char	basedir[1024];	// Base directory (static so it can be used below)
-
-
-      strlcpy(basedir, argv[0], sizeof(basedir));
-      if ((ptr = strrchr(basedir, '/')) != NULL)
-        *ptr = '\0';
-      if ((ptr = strrchr(basedir, '/')) != NULL && !strcasecmp(ptr, "/MacOS"))
-      {
-        // Got the base directory, now add "Resources" to it...
-	*ptr = '\0';
-	strlcat(basedir, "/Resources", sizeof(basedir));
-	chdir(basedir);
-      }
+      strlcat(mainPath, "/Contents/Resources", sizeof(mainPath));
+      fprintf(stderr, "Using \"%s\" as the distribution directory.\n", mainPath);
+      chdir(mainPath);
     }
+
+    CFRelease(mainCFPath);
+    CFRelease(mainURL);
   }
 #endif // __APPLE__
 
@@ -299,6 +298,10 @@ load_image(void)
     img = new Fl_XPM_Image("setup.xpm");
   else if (!access("setup.gif", 0))
     img = new Fl_GIF_Image("setup.gif");
+  else if (!access("setup.jpg", 0))
+    img = new Fl_JPEG_Image("setup.jpg");
+  else if (!access("setup.png", 0))
+    img = new Fl_PNG_Image("setup.png");
   else
     img = NULL;
 

@@ -1,7 +1,7 @@
 //
 // ESP Software Installation Wizard main entry for the ESP Package Manager (EPM).
 //
-// Copyright 1999-2015 by Michael R Sweet
+// Copyright 1999-2017 by Michael R Sweet
 // Copyright 1999-2010 by Easy Software Products.
 //
 // This program is free software; you can redistribute it and/or modify
@@ -18,6 +18,8 @@
 #define _DEFINE_GLOBALS_
 #include "setup.h"
 #include <FL/Fl_GIF_Image.H>
+#include <FL/Fl_JPEG_Image.H>
+#include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_XPM_Image.H>
 #include <FL/x.H>
 #include <FL/filename.H>
@@ -54,6 +56,7 @@ extern int statfs(const char *, struct statfs *);
 #endif // __osf__
 
 #ifdef __APPLE__
+#  include <CoreFoundation/CoreFoundation.h>
 #  include <Security/Authorization.h>
 #  include <Security/AuthorizationTags.h>
 
@@ -105,7 +108,7 @@ main(int  argc,			// I - Number of command-line arguments
      char *argv[])		// I - Command-line arguments
 {
   Fl_Window	*w;		// Main window...
-  const char	*distdir;	// Distribution directory
+  const char	*distdir = ".";	// Distribution directory
 
 
   // Use GTK+ scheme for all operating systems...
@@ -113,44 +116,31 @@ main(int  argc,			// I - Number of command-line arguments
   Fl::scheme("gtk+");
 
 #ifdef __APPLE__
-  // macOS passes an extra command-line option when run from the Finder.
-  // If the first command-line argument is "-psn..." then skip it and use the full path
-  // to the executable to figure out the distribution directory...
-  if (argc > 1)
+  // macOS uses the setup program in a bundle, so get the bundle's directory.
+  CFBundleRef mainBundle = CFBundleGetMainBundle();
+  char mainPath[1024] = "";
+
+  if (mainBundle)
   {
-    if (strncmp(argv[1], "-psn", 4) == 0)
+    CFURLRef mainURL = CFBundleCopyBundleURL(mainBundle);
+    CFStringRef mainCFPath = CFURLCopyFileSystemPath(mainURL, kCFURLPOSIXPathStyle);
+
+    if (CFStringGetCString(mainCFPath, mainPath, sizeof(mainPath), kCFStringEncodingUTF8))
     {
-      char		*ptr;		// Pointer into basedir
-      static char	basedir[1024];	// Base directory (static so it can be used below)
-
-
-      strlcpy(basedir, argv[0], sizeof(basedir));
-      if ((ptr = strrchr(basedir, '/')) != NULL)
-        *ptr = '\0';
-      if ((ptr = strrchr(basedir, '/')) != NULL && !strcasecmp(ptr, "/MacOS"))
-      {
-        // Got the base directory, now add "Resources" to it...
-	*ptr = '\0';
-	strlcat(basedir, "/Resources", sizeof(basedir));
-	distdir = basedir;
-	chdir(basedir);
-      }
-      else
-        distdir = ".";
-
+      strlcat(mainPath, "/Contents/Resources", sizeof(mainPath));
+      fprintf(stderr, "Using \"%s\" as the distribution directory.\n", mainPath);
+      distdir = mainPath;
     }
-    else
-      distdir = argv[1];
+
+    CFRelease(mainCFPath);
+    CFRelease(mainURL);
   }
   else
-    distdir = ".";
-#else
-  // Get the directory that has the software in it...
-  if (argc > 1)
-    distdir = argv[1];
-  else
-    distdir = ".";
 #endif // __APPLE__
+
+  // Get the directory that has the software in it...
+  if (argc > 1 && argv[1][0] != '-')
+    distdir = argv[1];
 
   w = make_window();
 
@@ -238,7 +228,7 @@ get_dists(const char *d)	// I - Directory to look in
   // Get the files in the specified directory...
   if (chdir(d))
   {
-    perror("setup: Unable to change to distribution directory");
+    fprintf(stderr, "setup: Unable to change to distribution directory \"%s\": %s\n", d, strerror(errno));
     exit(1);
   }
 
@@ -368,7 +358,8 @@ get_dists(const char *d)	// I - Directory to look in
 
   if (NumDists == 0)
   {
-    fl_alert("No software found to install!");
+//    fl_alert("No software found to install!");
+    fl_alert("No software found to install in \"%s\".", d);
     exit(1);
   }
 
@@ -705,6 +696,10 @@ load_image(void)
     img = new Fl_XPM_Image("setup.xpm");
   else if (!access("setup.gif", 0))
     img = new Fl_GIF_Image("setup.gif");
+  else if (!access("setup.jpg", 0))
+    img = new Fl_JPEG_Image("setup.jpg");
+  else if (!access("setup.png", 0))
+    img = new Fl_PNG_Image("setup.png");
   else
     img = NULL;
 

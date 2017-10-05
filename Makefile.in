@@ -285,7 +285,9 @@ test:	$(TARGETS)
 		cat test.log; \
 	fi
 	echo Starting native distribution build test...
-	if ./epm -vv -s default.png -f native epm >test.log; then \
+	if ./epm -vv -s default.png -f native \
+		--setup-program setup --uninstall-program uninst \
+		epm >test.log; then \
 		echo Native distribution build test PASSED.; \
 	else \
 		echo Native distribution build test FAILED.; \
@@ -313,7 +315,11 @@ deb: $(TARGETS)
 inst tardist: $(TARGETS)
 	./epm -f tardist -v epm
 
-gui lsb osx portable rpm: $(TARGETS)
+gui: $(TARGETS)
+	./epm -f portable -v -s default.png --setup-program setup \
+		--uninstall-program uninst --data-dir . epm
+
+lsb osx portable rpm: $(TARGETS)
 	./epm -f $@ -v -s default.png --setup-program setup \
 		--uninstall-program uninst --data-dir . epm
 

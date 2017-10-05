@@ -1,7 +1,7 @@
 #
 # Sample software list file for the ESP Package Manager (EPM).
 #
-# Copyright 1999-2014 by Michael R Sweet
+# Copyright 1999-2017 by Michael R Sweet
 # Copyright 1999-2007 by Easy Software Products, all rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -28,10 +28,10 @@ $srcdir=@srcdir@
 
 # Product information
 %product ESP Package Manager
-%copyright 1999-2007 by Easy Software Products, All Rights Reserved.
+%copyright 1999-2017 by Michael R Sweet, All Rights Reserved.
 %vendor Easy Software Products
 %license ${srcdir}/COPYING
-%readme ${srcdir}/README
+%readme ${srcdir}/README.md
 %description Universal software packaging tool for UNIX.
 %version @VERSION@ @VERNUMBER@
 
@@ -44,7 +44,7 @@ f 0555 root sys ${bindir}/mkepmlist mkepmlist
 # Documentation
 %subpackage documentation
 %description Documentation
-f 0444 root sys ${docdir}/README $srcdir/README
+f 0444 root sys ${docdir}/README $srcdir/README.md
 f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
 f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
 
@@ -65,11 +65,7 @@ f 0555 root sys ${libdir}/epm/setup setup
 f 0555 root sys ${libdir}/epm/uninst uninst
 
 %system darwin
-f 0444 root sys ${datadir}/epm/setup.icns macosx/setup.icns
-f 0444 root sys ${datadir}/epm/setup.info macosx/setup.info
-
-f 0444 root sys ${datadir}/epm/uninst.icns macosx/uninst.icns
-f 0444 root sys ${datadir}/epm/uninst.info macosx/uninst.info
+f 0444 root sys ${datadir}/epm/default.icns default.icns
 %system all
 
 %subpackage man

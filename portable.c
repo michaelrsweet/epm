@@ -362,9 +362,6 @@ write_combined(const char *title,	/* I - Title */
     if (Verbosity)
       printf("    %7.0fk setup.icns\n", (srcstat.st_size + 1023) / 1024.0);
 
-    snprintf(filename, sizeof(filename), "%s/setup.info", DataDir);
-    stat(filename, &srcstat);
-
     snprintf(filename, sizeof(filename), "%s/%s.setup.plist", directory,
              prodname);
     if ((fp = fopen(filename, "w")) == NULL)
@@ -517,6 +514,10 @@ write_combined(const char *title,	/* I - Title */
 
     if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
       setup_img = "setup.gif";
+    else if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".jpg"))
+      setup_img = "setup.jpg";
+    else if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".png"))
+      setup_img = "setup.png";
     else
       setup_img = "setup.xpm";
 
