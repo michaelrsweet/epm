@@ -184,8 +184,9 @@ This option is currently only supported by portable distributions.
 Specifies the uninst executable to use with the distribution.
 This option is currently only supported by portable distributions.
 .SH ENVIRONMENT
-The following environment variables are supported by \fBepm\R.
-.TP 5 EPM_SIGNING_IDENTITY
+The following environment variables are supported by \fBepm\fR:
+.TP 5
+.B EPM_SIGNING_IDENTITY
 The common name that should be used when signing a package.
 .SH LIST FILES
 The EPM list file format is now described in the \fIepm.list(5)\fR

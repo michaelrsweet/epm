@@ -8,39 +8,21 @@ ESP Package Manager.</P>
 
 <H2>Requirements</H2>
 
-<P>EPM requires very little pre-installed software to work. Most
-items will likely be provided as part of your OS. Your
-development system will need a C compiler, the
-<CODE>make(1)</CODE> program (GNU, BSD, and most vendor
-<CODE>make</CODE> programs should work), the Bourne (or Korn or
-Bash) shell (<CODE>sh(1)</CODE>), and <CODE>gzip(1)</CODE>.</P>
+<P>EPM requires very little pre-installed software to work. Most items will likely be provided as part of your OS. Your development system will need a C compiler, the <CODE>make(1)</CODE> program (GNU, BSD, and most vendor <CODE>make</CODE> programs should work), a POSIX shell (Bourne, Korn, Bash, etc.), and <CODE>gzip(1)</CODE>.</P>
 
-<P>The optional graphical setup program requires a C++ compiler,
-the FLTK library, version 1.1.x or 1.3.x, and (for UNIX/Linux) the X11
-libraries. FLTK is available at the following URL:</P>
+<P>The optional graphical setup program requires a C++ compiler, the FLTK library, version 1.1.x or 1.3.x, and (for UNIX/Linux) the X11 libraries. FLTK is available at the following URL:</P>
 
 <PRE>
 <A HREF="http://www.fltk.org/">http://www.fltk.org/</A>
 </PRE>
 
-<P>Your end-user systems will require the Bourne (or Korn or
-Bash) shell (<CODE>sh</CODE>), the <CODE>df(1)</CODE> program,
-the <CODE>tar(1)</CODE> program, and the <CODE>gzip(1)</CODE>
-program to install portable distributions. All but the last are
-standard items, and most vendors include <CODE>gzip</CODE> as
-well.</P>
+<P>Your end-user systems will require a POSIX shell, the <CODE>df(1)</CODE> program, the <CODE>tar(1)</CODE> program, and the <CODE>gzip(1)</CODE> program to install portable distributions. All but the last are standard items, and most vendors include <CODE>gzip</CODE> as well.</P>
 
-<P>EPM can also generate vendor-specific distributions.  These
-require the particular vendor tool, such as <CODE>rpm(8)</CODE>
-and <CODE>dpkg(8)</CODE>, to generate the software distribution
-on the development system and load the software distribution on
-the end-user system.</P>
+<P>EPM can also generate vendor-specific distributions.  These require the particular vendor tool, such as <CODE>rpm(8)</CODE> and <CODE>dpkg(8)</CODE>, to generate the software distribution on the development system and load the software distribution on the end-user system.</P>
 
 <H2>Configuring the Software</H2>
 
-<P>EPM uses GNU <CODE>autoconf(1)</CODE> to configure itself for
-your system. The <CODE>configure</CODE> script is used to
-configure the EPM software, as follows:</P>
+<P>EPM uses GNU <CODE>autoconf(1)</CODE> to configure itself for your system. The <CODE>configure</CODE> script is used to configure the EPM software, as follows:</P>
 
 <PRE>
 <KBD>./configure ENTER</KBD>
@@ -48,45 +30,31 @@ configure the EPM software, as follows:</P>
 
 <H3>Choosing Compilers</H3>
 
-<P>If the <CODE>configure</CODE> script is unable to determine
-the name of your C or C++ compiler, set the <CODE>CC</CODE> and
-<CODE>CXX</CODE> environment variables to point to the C and C++
-compiler programs, respectively. You can set these variables
-using the following commands in the Bourne, Korn, or Bash
-shells:</P>
+<P>If the <CODE>configure</CODE> script is unable to determine the name of your C or C++ compiler, set the <CODE>CC</CODE> and <CODE>CXX</CODE> environment variables to point to the C and C++ compiler programs, respectively. You can set these variables using the following commands in the Bourne, Korn, or Bash shells:</P>
 
 <PRE>
 <KBD>export CC=/foo/bar/gcc ENTER
 export CXX=/foo/bar/gcc ENTER</KBD>
 </PRE>
 
-<P>If you are using C shell or tcsh, use the following commands
-instead:</P>
+<P>If you are using C shell or tcsh, use the following commands instead:</P>
 
 <PRE>
 <KBD>setenv CC /foo/bar/gcc ENTER
 setenv CXX /foo/bar/gcc ENTER</KBD>
 </PRE>
 
-<P>Run the <CODE>configure</CODE> script again to use the new
-commands.</P>
+<P>Run the <CODE>configure</CODE> script again to use the new commands.</P>
 
 <H3>Choosing Installation Directories</H3>
 
-<P>The default installation prefix is <VAR>/usr/local</VAR>, which
-will place the EPM programs in <VAR>/usr/local/bin</VAR>, the setup
-GUI in <VAR>/usr/local/lib/epm</VAR>, and the man pages in
-<VAR>/usr/local/share/man</VAR>. Use the <CODE>--prefix</CODE> option to
-relocate these files to another directory:</P>
+<P>The default installation prefix is <VAR>/usr/local</VAR>, which will place the EPM programs in <VAR>/usr/local/bin</VAR>, the setup GUI in <VAR>/usr/local/lib/epm</VAR>, and the man pages in <VAR>/usr/local/share/man</VAR>. Use the <CODE>--prefix</CODE> option to relocate these files to another directory:</P>
 
 <PRE>
 <KBD>./configure --prefix=/example/path ENTER</KBD>
 </PRE>
 
-<P>The <CODE>configure</CODE> script also accepts the
-<CODE>--bindir</CODE>, <CODE>--libdir</CODE>, and
-<CODE>--mandir</CODE> options to relocate each directory
-separately, as follows:
+<P>The <CODE>configure</CODE> script also accepts the <CODE>--bindir</CODE>, <CODE>--libdir</CODE>, and <CODE>--mandir</CODE> options to relocate each directory separately, as follows:
 
 <PRE>
 <KBD>./configure --bindir=/example/path/bin --libdir=/example/path/lib \
@@ -95,11 +63,7 @@ separately, as follows:
 
 <H3>Options for the Setup GUI</H3>
 
-<P>The setup GUI requires the FLTK library. The configure script
-will look for the <CODE>fltk-config</CODE> utility that comes
-with FLTK. Set the FLTKCONFIG environment variable to the
-full path of this utility if it cannot be found in the current
-path:</P>
+<P>The setup GUI requires the FLTK library. The configure script will look for the <CODE>fltk-config</CODE> utility that comes with FLTK. Set the FLTKCONFIG environment variable to the full path of this utility if it cannot be found in the current path:</P>
 
 <PRE>
 <KBD>setenv FLTKCONFIG /foo/bar/bin/fltk-config ENTER</KBD>
@@ -114,17 +78,13 @@ export FLTKCONFIG</KBD>
 
 <H2>Building the Software</H2>
 
-<P>Once you have configured the software, type the following
-command to compile it:</P>
+<P>Once you have configured the software, type the following command to compile it:</P>
 
 <PRE>
 <KBD>make ENTER</KBD>
 </PRE>
 
-<P>Compilation should take a few minutes at most. Then type the
-following command to determine if the software</P>
-
-<P>compiled successfully:</P>
+<P>Compilation should take a few minutes at most. Then type the following command to determine if the software compiled successfully:</P>
 
 <PRE>
 <KBD>make test ENTER</KBD>
@@ -132,26 +92,17 @@ Portable distribution build test PASSED.
 Native distribution build test PASSED.
 </PRE>
 
-<P>The <CODE>test</CODE> target builds a portable and native
-distribution of EPM and reports if the two distributions were
-generated successfully.</P>
+<P>The <CODE>test</CODE> target builds a portable and native distribution of EPM and reports if the two distributions were generated successfully.</P>
 
 <H2>Installing the Software</H2>
 
-<P>Now that you have compiled and tested the software, you can
-install it using the <CODE>make</CODE> command or one of the
-distributions that was created. You should be logged in as the
-super-user unless you specified installation directories for
-which you have write permission. The <CODE>su(8)</CODE> command
-is usually sufficient to install software:</P>
+<P>Now that you have compiled and tested the software, you can install it using the <CODE>make</CODE> command or one of the distributions that was created. You should be logged in as the super-user unless you specified installation directories for which you have write permission. The <CODE>su(8)</CODE> command is usually sufficient to install software:</P>
 
 <PRE>
 <KBD>su ENTER</KBD>
 </PRE>
 
-<P>Operating systems such as macOS do not enable the root
-account by default. The <CODE>sudo(8)</CODE> command is used
-instead:</P>
+<P>Operating systems such as macOS do not enable the root account by default. The <CODE>sudo(8)</CODE> command is used instead:</P>
 
 <PRE>
 <KBD>sudo <I>installation command</I> ENTER</KBD>
@@ -160,8 +111,7 @@ instead:</P>
 <!-- NEED 2in -->
 <H3>Installing Using the <CODE>make</CODE> Command</H3>
 
-<P>Type the following command to install the EPM software using the
-<CODE>make</CODE> command:</P>
+<P>Type the following command to install the EPM software using the <CODE>make</CODE> command:</P>
 
 <PRE>
 <KBD>make install ENTER</KBD>
@@ -181,30 +131,17 @@ Installing EPM manpages in /usr/local/share/man/man1
 Installing EPM documentation in /usr/local/share/doc/epm
 </PRE>
 
-<H3><A NAME="INSTALL_PORTABLE">Installing Using the Portable
-Distribution</A></H3>
+<H3><A NAME="INSTALL_PORTABLE">Installing Using the Portable Distribution</A></H3>
 
-<P>The portable distribution can be found in a subdirectory
-named using the operating system, version, and architecture. For
-example, the subdirectory for a Linux 2.4.x system on an
-Intel-based system would be <VAR>linux-2.4-intel</VAR>. The
-subdirectory name is built from the following template:</P>
+<P>The portable distribution can be found in a subdirectory named using the operating system, version, and architecture. For example, the subdirectory for a Linux 2.4.x system on an Intel-based system would be <VAR>linux-2.4-intel</VAR>. The subdirectory name is built from the following template:</P>
 
 <PRE>
 <I>os-major.minor-architecture</I>
 </PRE>
 
-<P>The <CODE>os</CODE> name is the common name for the operating
-system. <A HREF="#TABLE_2_1">Table 2.1</A> lists the
-abbreviations for most operating systems.</P>
+<P>The <CODE>os</CODE> name is the common name for the operating system. <A HREF="#TABLE_2_1">Table 2.1</A> lists the abbreviations for most operating systems.</P>
 
-<P>The <CODE>major.minor</CODE> string is the operating system
-version number. Any patch revision information is stripped from
-the version number, as are leading characters before the major
-version number. For example, HP-UX version B.11.11 will result
-in a version number string of <CODE>11.11</CODE>.</P>
-
-<P>&nbsp;</P>
+<P>The <CODE>major.minor</CODE> string is the operating system version number. Any patch revision information is stripped from the version number, as are leading characters before the major version number. For example, HP-UX version B.11.11 will result in a version number string of <CODE>11.11</CODE>.</P>
 
 <CENTER><TABLE BORDER="1" CELLPADDING="2">
 <CAPTION><A NAME="TABLE_2_1">Table 2.1: Operating System Name Abbreviations</A></CAPTION>
@@ -295,31 +232,20 @@ in a version number string of <CODE>11.11</CODE>.</P>
 </TR>
 </TABLE></CENTER>
 
-<P>&nbsp;</P>
+<P>The <CODE>architecture</CODE> string identifies the target processor. <A HREF="#TABLE_2_2">Table 2.2</A> lists the supported processors.</P>
 
-<P>The <CODE>architecture</CODE> string identifies the target
-processor. <A HREF="#TABLE_2_2">Table 2.2</A> lists the supported
-processors.</P>
-
-<P>Once you have determined the subdirectory containing the
-distribution, type the following commands to install EPM from
-the portable distribution:</P>
+<P>Once you have determined the subdirectory containing the distribution, type the following commands to install EPM from the portable distribution:</P>
 
 <PRE>
 <KBD>cd <I>os-major.minor-architecture<I> ENTER
 ./epm.install ENTER</KBD>
 </PRE>
 
-<P>The software will be installed after answering a few yes/no
-questions.</P>
+<P>The software will be installed after answering a few yes/no questions.</P>
 
 <H3>Installing Using the Native Distribution</H3>
 
-<P>The <CODE>test</CODE> target also builds a distribution in the
-native operating system format, if supported. <A
-HREF="#TABLE_2_3">Table 2.3</A> lists the native formats for each
-supported operating system and the command to run to install the
-software.</P>
+<P>The <CODE>test</CODE> target also builds a distribution in the native operating system format, if supported. <A HREF="#TABLE_2_3">Table 2.3</A> lists the native formats for each supported operating system and the command to run to install the software.</P>
 
 <!-- NEED 5in -->
 <CENTER><TABLE BORDER="1" CELLPADDING="2">

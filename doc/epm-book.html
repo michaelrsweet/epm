@@ -454,19 +454,18 @@ fakeroot</code> software, introducing potential security risks and
 <p>EPM requires very little pre-installed software to work. Most items
  will likely be provided as part of your OS. Your development system
  will need a C compiler, the <code>make(1)</code> program (GNU, BSD, and
- most vendor <code>make</code> programs should work), the Bourne (or
- Korn or Bash) shell (<code>sh(1)</code>), and <code>gzip(1)</code>.</p>
+ most vendor <code>make</code> programs should work), a POSIX shell
+ (Bourne, Korn, Bash, etc.), and <code>gzip(1)</code>.</p>
 <p>The optional graphical setup program requires a C++ compiler, the
  FLTK library, version 1.1.x or 1.3.x, and (for UNIX/Linux) the X11
  libraries. FLTK is available at the following URL:</p>
 <pre>
 <a HREF="http://www.fltk.org/">http://www.fltk.org/</a>
 </pre>
-<p>Your end-user systems will require the Bourne (or Korn or Bash) shell
- (<code>sh</code>), the <code>df(1)</code> program, the <code>tar(1)</code>
- program, and the <code>gzip(1)</code> program to install portable
- distributions. All but the last are standard items, and most vendors
- include <code>gzip</code> as well.</p>
+<p>Your end-user systems will require a POSIX shell, the <code>df(1)</code>
+ program, the <code>tar(1)</code> program, and the <code>gzip(1)</code>
+ program to install portable distributions. All but the last are
+ standard items, and most vendors include <code>gzip</code> as well.</p>
 <p>EPM can also generate vendor-specific distributions. These require
  the particular vendor tool, such as <code>rpm(8)</code> and <code>
 dpkg(8)</code>, to generate the software distribution on the development
@@ -530,8 +529,7 @@ export FLTKCONFIG</kbd>
 <kbd>make ENTER</kbd>
 </pre>
 <p>Compilation should take a few minutes at most. Then type the
- following command to determine if the software</p>
-<p>compiled successfully:</p>
+ following command to determine if the software compiled successfully:</p>
 <pre>
 <kbd>make test ENTER</kbd>
 Portable distribution build test PASSED.
@@ -593,7 +591,6 @@ Installing EPM documentation in /usr/local/share/doc/epm
  number, as are leading characters before the major version number. For
  example, HP-UX version B.11.11 will result in a version number string
  of <code>11.11</code>.</p>
-<p>&nbsp;</p>
 <center>
 <table BORDER="1" CELLPADDING="2"><caption> <a NAME="TABLE_2_1">Table
  2.1: Operating System Name Abbreviations</a></caption>
@@ -629,7 +626,6 @@ Installing EPM documentation in /usr/local/share/doc/epm
 <br> UltraSPARC</td><td><code>sparc</code></td></tr>
 </table>
 </center>
-<p>&nbsp;</p>
 <p>The <code>architecture</code> string identifies the target processor.
  <a HREF="#TABLE_2_2">Table 2.2</a> lists the supported processors.</p>
 <p>Once you have determined the subdirectory containing the
@@ -807,14 +803,6 @@ f 0644 /usr/share/man/man1/foo.1
 <pre>
 <kbd>epm foo bar.list ENTER</kbd>
 </pre>
-<center>
-<table><caption ALIGN="BOTTOM"> <a NAME="FIGURE_3_1">Figure 3.1: The EPM
- Setup GUI</a></caption>
-<tr><td><img ALT="The EPM Setup GUI" HEIGHT="436" SRC="setup.png" WIDTH="724">
-</td></tr>
-</table>
-</center>
-<p>&nbsp;</p>
 <h3>Installing the Software Package</h3>
 <p>Once you have created the software package, you can install it.
  Portable packages include an installation script called<var>
@@ -830,6 +818,11 @@ f 0644 /usr/share/man/man1/foo.1
 <kbd>cd os-release-arch ENTER
 ./product.install now ENTER</kbd>
 </pre>
+
+<!-- NEED 5in -->
+<p ALIGN="CENTER"><a NAME="FIGURE_3_1">Figure 3.1: The EPM Setup GUI</a>
+<br> <img ALT="The EPM Setup GUI" HEIGHT="436" SRC="setup.png" WIDTH="724">
+</p>
 <h3>Including the Setup GUI</h3>
 <p>EPM also provides an optional graphical setup program (<a HREF="#FIGURE_3_1">
 Figure 3.1</a>). To include the setup program in your distributions,
@@ -1788,10 +1781,11 @@ mrs</b>] ] [<b> -s</b><i> setup.ext</i> ] [<b> --depend</b> ] [<b>
  portable distributions.</dd>
 </dl>
 <h3 class="title"><a name="ENVIRONMENT">Environment</a></h3>
- The following environment variables are supported by<b> epmR.</b>
+ The following environment variables are supported by<b> epm</b>:
 <dl class="man">
-<dt>The common name that should be used when signing a package.</dt>
-<dd style="margin-left: 5.0em"></dd>
+<dt><b>EPM_SIGNING_IDENTITY</b></dt>
+<dd style="margin-left: 5.0em">The common name that should be used when
+ signing a package.</dd>
 </dl>
 <h3 class="title"><a name="LIST_FILES">List Files</a></h3>
  The EPM list file format is now described in the<i> epm.list(5)</i> man
