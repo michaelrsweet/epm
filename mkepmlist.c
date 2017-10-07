@@ -1,7 +1,7 @@
 /*
  * List file generation utility for the ESP Package Manager (EPM).
  *
- * Copyright 2003-2014 by Michael R Sweet
+ * Copyright 2003-2017 by Michael R Sweet
  * Copyright 2003-2005 by Easy Software Products
  * Copyright 2003 Andreas Voegele
  *
@@ -453,8 +453,7 @@ process_dir(const char *srcpath,/* I - Source path */
 
   if ((dir = opendir(srcpath)) == NULL)
   {
-    fprintf(stderr, "mkepmlist: Unable to open directory \"%s\" - %s.\n",
-            srcpath, strerror(errno));
+    fprintf(stderr, "mkepmlist: Unable to open directory \"%s\": %s.\n", srcpath, strerror(errno));
 
     return (-1);
   }
@@ -530,8 +529,7 @@ process_file(const char *src,	/* I - Source path */
 
   if (lstat(src, &srcinfo))
   {
-    fprintf(stderr, "mkepmlist: Unable to stat \"%s\" - %s.\n", src,
-            strerror(errno));
+    fprintf(stderr, "mkepmlist: Unable to stat \"%s\": %s.\n", src, strerror(errno));
     return (-1);
   }
 
@@ -559,8 +557,7 @@ process_file(const char *src,	/* I - Source path */
 
     if ((linklen = readlink(src, link, sizeof(link) - 1)) < 0)
     {
-      fprintf(stderr, "mkepmlist: Unable to read symlink \"%s\" - %s.\n",
-	      src, strerror(errno));
+      fprintf(stderr, "mkepmlist: Unable to read symlink \"%s\": %s.\n", src, strerror(errno));
       return (-1);
     }
 

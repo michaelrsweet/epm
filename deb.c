@@ -223,8 +223,7 @@ make_subpackage(const char     *prodname,
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create control file \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create control file \"%s\": %s\n", filename, strerror(errno));
     return (1);
   }
 
@@ -321,8 +320,7 @@ make_subpackage(const char     *prodname,
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -360,8 +358,7 @@ make_subpackage(const char     *prodname,
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -418,8 +415,7 @@ make_subpackage(const char     *prodname,
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -461,8 +457,7 @@ make_subpackage(const char     *prodname,
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -497,8 +492,7 @@ make_subpackage(const char     *prodname,
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", filename, strerror(errno));
     return (1);
   }
 

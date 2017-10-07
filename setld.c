@@ -1,7 +1,7 @@
 /*
  * Tru64 package gateway for the ESP Package Manager (EPM)
  *
- * Copyright 2001-2014 by Michael R Sweet
+ * Copyright 2001-2017 by Michael R Sweet
  * Copyright 2001-2010 by Easy Software Products
  * Copyright 2001 by Aneesh Kumar (aneesh.kumar@digital.com) at Digital India.
  *
@@ -206,8 +206,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(scpname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create subset control program \"%s\" - %s\n",
-            scpname, strerror(errno));
+    fprintf(stderr, "epm: Unable to create subset control program \"%s\": %s\n", scpname, strerror(errno));
     return (1);
   }
 
@@ -287,8 +286,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(miname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create master inventory file \"%s\" - %s\n",
-            miname, strerror(errno));
+    fprintf(stderr, "epm: Unable to create master inventory file \"%s\": %s\n", miname, strerror(errno));
     return (1);
   }
 
@@ -325,8 +323,7 @@ make_setld(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(keyname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create key file \"%s\" - %s\n",
-            keyname, strerror(errno));
+    fprintf(stderr, "epm: Unable to create key file \"%s\": %s\n", keyname, strerror(errno));
     return (1);
   }
 

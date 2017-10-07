@@ -146,8 +146,7 @@ make_osx(int            format,		/* I - Format */
 	       prodname);
       if ((fp = fopen(filename, "w")) == NULL)
       {
-	fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
-		filename, strerror(errno));
+	fprintf(stderr, "epm: Unable to create description file \"%s\": %s\n", filename, strerror(errno));
 	return (1);
       }
 
@@ -180,8 +179,7 @@ make_osx(int            format,		/* I - Format */
 	       prodname);
       if ((fp = fopen(filename, "w")) == NULL)
       {
-	fprintf(stderr, "epm: Unable to create package information file \"%s\" - %s\n",
-		filename, strerror(errno));
+	fprintf(stderr, "epm: Unable to create package information file \"%s\": %s\n", filename, strerror(errno));
 	return (1);
       }
 
@@ -445,8 +443,7 @@ make_subpackage(int        format,	/* I - Format */
     snprintf(filename, sizeof(filename), "%s/%s-desc.plist", directory, prodfull);
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
-	      filename, strerror(errno));
+      fprintf(stderr, "epm: Unable to create description file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -474,8 +471,7 @@ make_subpackage(int        format,	/* I - Format */
     snprintf(filename, sizeof(filename), "%s/%s-info.plist", directory, prodfull);
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create package information file \"%s\" - %s\n",
-	      filename, strerror(errno));
+      fprintf(stderr, "epm: Unable to create package information file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -530,8 +526,7 @@ make_subpackage(int        format,	/* I - Format */
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create preinstall script \"%s\" - %s\n",
-              filename, strerror(errno));
+      fprintf(stderr, "epm: Unable to create preinstall script \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -565,8 +560,7 @@ make_subpackage(int        format,	/* I - Format */
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create postinstall script \"%s\" - %s\n",
-              filename, strerror(errno));
+      fprintf(stderr, "epm: Unable to create postinstall script \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -650,8 +644,7 @@ make_subpackage(int        format,	/* I - Format */
 	           directory, prodfull, file->dst);
 	  if ((fp = fopen(filename, "w")) == NULL)
 	  {
-	    fprintf(stderr, "epm: Unable to create init data file \"%s\" - %s\n",
-        	    filename, strerror(errno));
+	    fprintf(stderr, "epm: Unable to create init data file \"%s\": %s\n", filename, strerror(errno));
 	    return (1);
 	  }
 
@@ -679,8 +672,7 @@ make_subpackage(int        format,	/* I - Format */
 	           directory, prodfull, file->dst);
 	  if ((fp = fopen(filename, "w")) == NULL)
 	  {
-	    fprintf(stderr, "epm: Unable to create init strings file \"%s\" - %s\n",
-        	    filename, strerror(errno));
+	    fprintf(stderr, "epm: Unable to create init strings file \"%s\": %s\n", filename, strerror(errno));
 	    return (1);
 	  }
 
@@ -879,8 +871,7 @@ write_rtf(dist_t     *dist,		/* I - Distribution  information */
 
   if ((fp = fopen(welcome, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create welcome file \"%s\" - %s\n",
-            welcome, strerror(errno));
+    fprintf(stderr, "epm: Unable to create welcome file \"%s\": %s\n", welcome, strerror(errno));
     return (1);
   }
 

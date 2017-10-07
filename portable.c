@@ -301,8 +301,6 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_DIR, (mode_t)0755, (size_t)0, deftime, "root", "root",
                    "Install.app", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -310,8 +308,6 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_DIR, (mode_t)0755, (size_t)0, deftime, "root", "root",
                    "Install.app/Contents", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -319,8 +315,6 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_DIR, (mode_t)0755, (size_t)0, deftime, "root", "root",
                    "Install.app/Contents/MacOS", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -328,8 +322,6 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_DIR, (mode_t)0755, (size_t)0, deftime, "root", "root",
                    "Install.app/Contents/Resources", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -345,16 +337,12 @@ write_combined(const char *title,	/* I - Title */
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
 		   "Install.app/Contents/Resources/setup.icns", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
 
     if (tar_file(tarfile, filename) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for setup.icns -\n    %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -416,16 +404,12 @@ write_combined(const char *title,	/* I - Title */
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
 		   "Install.app/Contents/Info.plist", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
 
     if (tar_file(tarfile, filename) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for Info.plist -\n    %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -474,8 +458,7 @@ write_combined(const char *title,	/* I - Title */
 
     if (stat(SetupProgram, &srcstat))
     {
-      fprintf(stderr, "epm: Unable to stat GUI setup program %s - %s\n",
-	      SetupProgram, strerror(errno));
+      fprintf(stderr, "epm: Unable to stat GUI setup program %s: %s\n", SetupProgram, strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -489,16 +472,12 @@ write_combined(const char *title,	/* I - Title */
 	           srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
 #endif /* __APPLE__ */
     {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
 
     if (tar_file(tarfile, SetupProgram) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for setup -\n    %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -526,16 +505,12 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
 	           srcstat.st_mtime, "root", "root", filename, NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
 
     if (tar_file(tarfile, setup) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      setup_img, strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -555,16 +530,12 @@ write_combined(const char *title,	/* I - Title */
       if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
 		     srcstat.st_mtime, "root", "root", filename, NULL) < 0)
       {
-	fprintf(stderr, "epm: Error writing file header - %s\n",
-		strerror(errno));
         tar_close(tarfile);
 	return (-1);
       }
 
       if (tar_file(tarfile, types) < 0)
       {
-	fprintf(stderr, "epm: Error writing file data for setup.types -\n    %s\n",
-		strerror(errno));
         tar_close(tarfile);
 	return (-1);
       }
@@ -581,8 +552,6 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
                    "Uninstall.app", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -590,8 +559,6 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
                    "Uninstall.app/Contents", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -599,8 +566,6 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
                    "Uninstall.app/Contents/MacOS", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -608,8 +573,6 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_DIR, 0755, 0, deftime, "root", "root",
                    "Uninstall.app/Contents/Resources", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing directory header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -625,16 +588,12 @@ write_combined(const char *title,	/* I - Title */
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
 		   "Uninstall.app/Contents/Resources/uninst.icns", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
 
     if (tar_file(tarfile, filename) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for uninst.icns -\n    %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -696,8 +655,6 @@ write_combined(const char *title,	/* I - Title */
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
 		   "Uninstall.app/Contents/Info.plist", NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -705,8 +662,6 @@ write_combined(const char *title,	/* I - Title */
     if (tar_file(tarfile, filename) < 0)
     {
       tar_close(tarfile);
-      fprintf(stderr, "epm: Error writing file data for Info.plist -\n    %s\n",
-	      strerror(errno));
       return (-1);
     }
 
@@ -723,8 +678,7 @@ write_combined(const char *title,	/* I - Title */
 
     if (stat(UninstProgram, &srcstat))
     {
-      fprintf(stderr, "epm: Unable to stat GUI uninstall program %s - %s\n",
-	      UninstProgram, strerror(errno));
+      fprintf(stderr, "epm: Unable to stat GUI uninstall program %s: %s\n", UninstProgram, strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -738,16 +692,12 @@ write_combined(const char *title,	/* I - Title */
 	           srcstat.st_mtime, "root", "root", "uninst", NULL) < 0)
 #endif /* __APPLE__ */
     {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
 
     if (tar_file(tarfile, UninstProgram) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for uninst -\n    %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -768,16 +718,12 @@ write_combined(const char *title,	/* I - Title */
     if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
 	           srcstat.st_mtime, "root", "root", filename, NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
 
     if (tar_file(tarfile, setup) < 0)
     {
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      setup_img, strerror(errno));
       tar_close(tarfile);
       return (-1);
     }
@@ -1413,8 +1359,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 	case 'i' : /* Init script */
             if (stat(file->src, &srcstat))
 	    {
-	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
-	              strerror(errno));
+	      fprintf(stderr, "epm: Cannot stat \"%s\": %s\n", file->src, strerror(errno));
 	      tar_close(tarfile);
 	      return (1);
 	    }
@@ -1446,16 +1391,12 @@ write_distfiles(const char *directory,	/* I - Directory */
 	                   srcstat.st_mtime, file->user, file->group,
 			   filename, NULL) < 0)
 	    {
-	      fprintf(stderr, "epm: Error writing file header - %s\n",
-	              strerror(errno));
 	      tar_close(tarfile);
 	      return (1);
 	    }
 
 	    if (tar_file(tarfile, file->src) < 0)
 	    {
-	      fprintf(stderr, "epm: Error writing file data - %s\n",
-	              strerror(errno));
 	      tar_close(tarfile);
 	      return (1);
 	    }
@@ -1478,8 +1419,6 @@ write_distfiles(const char *directory,	/* I - Directory */
 	    if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
 	                   file->user, file->group, file->dst, file->src) < 0)
 	    {
-	      fprintf(stderr, "epm: Error writing link header - %s\n",
-	              strerror(errno));
 	      tar_close(tarfile);
 	      return (1);
 	    }
@@ -1522,8 +1461,7 @@ write_distfiles(const char *directory,	/* I - Directory */
 	case 'i' : /* Init script */
             if (stat(file->src, &srcstat))
 	    {
-	      fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
-	              strerror(errno));
+	      fprintf(stderr, "epm: Cannot stat \"%s\": %s\n", file->src, strerror(errno));
 	      tar_close(tarfile);
 	      return (1);
 	    }
@@ -1555,16 +1493,12 @@ write_distfiles(const char *directory,	/* I - Directory */
 	                   srcstat.st_mtime, file->user, file->group,
 			   filename, NULL) < 0)
 	    {
-	      fprintf(stderr, "epm: Error writing file header - %s\n",
-	              strerror(errno));
 	      tar_close(tarfile);
 	      return (1);
 	    }
 
 	    if (tar_file(tarfile, file->src) < 0)
 	    {
-	      fprintf(stderr, "epm: Error writing file data - %s\n",
-	              strerror(errno));
 	      tar_close(tarfile);
 	      return (1);
 	    }
@@ -1587,8 +1521,6 @@ write_distfiles(const char *directory,	/* I - Directory */
 	    if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
 	                   file->user, file->group, file->dst, file->src) < 0)
 	    {
-	      fprintf(stderr, "epm: Error writing link header - %s\n",
-	              strerror(errno));
 	      tar_close(tarfile);
 	      return (1);
 	    }
@@ -1631,8 +1563,7 @@ write_distfiles(const char *directory,	/* I - Directory */
           case 'I' : /* Init script */
               if (stat(file->src, &srcstat))
 	      {
-		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
-	        	strerror(errno));
+		fprintf(stderr, "epm: Cannot stat \"%s\": %s\n", file->src, strerror(errno));
 		tar_close(tarfile);
 		return (1);
 	      }
@@ -1659,16 +1590,12 @@ write_distfiles(const char *directory,	/* I - Directory */
 	                     srcstat.st_mtime, file->user, file->group,
 			     filename, NULL) < 0)
 	      {
-		fprintf(stderr, "epm: Error writing file header - %s\n",
-	        	strerror(errno));
 		tar_close(tarfile);
 		return (1);
 	      }
 
 	      if (tar_file(tarfile, file->src) < 0)
 	      {
-		fprintf(stderr, "epm: Error writing file data - %s\n",
-	        	strerror(errno));
 		tar_close(tarfile);
 		return (1);
 	      }
@@ -1686,8 +1613,6 @@ write_distfiles(const char *directory,	/* I - Directory */
 	      if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
 	                     file->user, file->group, file->dst, file->src) < 0)
 	      {
-		fprintf(stderr, "epm: Error writing link header - %s\n",
-	        	strerror(errno));
 		tar_close(tarfile);
 		return (1);
 	      }
@@ -1719,8 +1644,7 @@ write_distfiles(const char *directory,	/* I - Directory */
           case 'I' : /* Init script */
               if (stat(file->src, &srcstat))
 	      {
-		fprintf(stderr, "epm: Cannot stat %s - %s\n", file->src,
-	        	strerror(errno));
+		fprintf(stderr, "epm: Cannot stat \"%s\": %s\n", file->src, strerror(errno));
 		tar_close(tarfile);
 		return (1);
 	      }
@@ -1747,16 +1671,12 @@ write_distfiles(const char *directory,	/* I - Directory */
 	                     srcstat.st_mtime, file->user, file->group,
 			     filename, NULL) < 0)
 	      {
-		fprintf(stderr, "epm: Error writing file header - %s\n",
-	        	strerror(errno));
 		tar_close(tarfile);
 		return (1);
 	      }
 
 	      if (tar_file(tarfile, file->src) < 0)
 	      {
-		fprintf(stderr, "epm: Error writing file data - %s\n",
-	        	strerror(errno));
 		tar_close(tarfile);
 		return (1);
 	      }
@@ -1774,8 +1694,6 @@ write_distfiles(const char *directory,	/* I - Directory */
 	      if (tar_header(tarfile, TAR_SYMLINK, file->mode, 0, deftime,
 	                     file->user, file->group, file->dst, file->src) < 0)
 	      {
-		fprintf(stderr, "epm: Error writing link header - %s\n",
-	        	strerror(errno));
 		tar_close(tarfile);
 		return (1);
 	      }
@@ -2213,17 +2131,11 @@ write_instfiles(tarf_t     *tarfile,	/* I - Distribution tar file */
                    srcstat.st_size, srcstat.st_mtime, "root", "root",
 		   dstname, NULL) < 0)
     {
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       return (-1);
     }
 
     if (tar_file(tarfile, srcname) < 0)
-    {
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
       return (-1);
-    }
 
     if (Verbosity)
       printf("    %7.0fk %s.%s\n", (srcstat.st_size + 1023) / 1024.0,

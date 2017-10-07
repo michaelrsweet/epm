@@ -1,7 +1,7 @@
 /*
  * AIX package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -122,8 +122,7 @@ make_aix(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create lpp_name file \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create lpp_name file \"%s\": %s\n", filename, strerror(errno));
     return (1);
   }
 
@@ -553,8 +552,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create .al file \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create .al file \"%s\": %s\n", filename, strerror(errno));
     return (1);
   }
 
@@ -619,8 +617,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create .cfgfiles file \"%s\" - %s\n",
-            filename, strerror(errno));
+    fprintf(stderr, "epm: Unable to create .cfgfiles file \"%s\": %s\n", filename, strerror(errno));
     return (1);
   }
 
@@ -650,8 +647,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create .copyright file \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create .copyright file \"%s\": %s\n", filename, strerror(errno));
     return (1);
   }
 
@@ -673,8 +669,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create .pre_i file \"%s\" - %s\n",
-              filename, strerror(errno));
+      fprintf(stderr, "epm: Unable to create .pre_i file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -700,8 +695,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create .post_i file \"%s\" - %s\n",
-              filename, strerror(errno));
+      fprintf(stderr, "epm: Unable to create .post_i file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -727,8 +721,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create .unpre_i file \"%s\" - %s\n",
-              filename, strerror(errno));
+      fprintf(stderr, "epm: Unable to create .unpre_i file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -754,8 +747,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create .unpost_i file \"%s\" - %s\n",
-              filename, strerror(errno));
+      fprintf(stderr, "epm: Unable to create .unpost_i file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -782,8 +774,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(filename, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create .inventory file \"%s\" - %s\n",
-            filename, strerror(errno));
+    fprintf(stderr, "epm: Unable to create .inventory file \"%s\": %s\n", filename, strerror(errno));
     return (1);
   }
 
@@ -884,8 +875,7 @@ write_liblpp(const char     *prodname,	/* I - Product short name */
     fclose(fp);
   else
   {
-    fprintf(stderr, "epm: Unable to create .README file \"%s\" - %s\n",
-            filename, strerror(errno));
+    fprintf(stderr, "epm: Unable to create .README file \"%s\": %s\n", filename, strerror(errno));
     return (1);
   }
 

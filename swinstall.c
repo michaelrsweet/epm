@@ -1,7 +1,7 @@
 /*
  * HP-UX package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -102,8 +102,7 @@ make_swinstall(const char     *prodname,/* I - Product short name */
 
     if ((fp = fopen(preinstall, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preinstall,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", preinstall, strerror(errno));
       return (1);
     }
 
@@ -148,8 +147,7 @@ make_swinstall(const char     *prodname,/* I - Product short name */
 
     if ((fp = fopen(postinstall, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postinstall,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", postinstall, strerror(errno));
       return (1);
     }
 
@@ -197,8 +195,7 @@ make_swinstall(const char     *prodname,/* I - Product short name */
 
     if ((fp = fopen(preremove, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preremove,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", preremove, strerror(errno));
       return (1);
     }
 
@@ -242,8 +239,7 @@ make_swinstall(const char     *prodname,/* I - Product short name */
 
     if ((fp = fopen(postremove, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postremove,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", postremove, strerror(errno));
       return (1);
     }
 
@@ -340,8 +336,7 @@ make_swinstall(const char     *prodname,/* I - Product short name */
 
       if ((fp = fopen(filename, "w")) == NULL)
       {
-	fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
-        	filename, strerror(errno));
+	fprintf(stderr, "epm: Unable to create description file \"%s\": %s\n", filename, strerror(errno));
 	return (1);
       }
 
@@ -365,8 +360,7 @@ make_swinstall(const char     *prodname,/* I - Product short name */
 
 	if ((fp = fopen(filename, "w")) == NULL)
 	{
-	  fprintf(stderr, "epm: Unable to create description file \"%s\" - %s\n",
-        	  filename, strerror(errno));
+	  fprintf(stderr, "epm: Unable to create description file \"%s\": %s\n", filename, strerror(errno));
 	  return (1);
 	}
 
@@ -390,8 +384,7 @@ make_swinstall(const char     *prodname,/* I - Product short name */
 
   if ((fp = fopen(infoname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create info file \"%s\" - %s\n", infoname,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create info file \"%s\": %s\n", infoname, strerror(errno));
     return (1);
   }
 

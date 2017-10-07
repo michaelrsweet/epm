@@ -1,7 +1,7 @@
 /*
  * Red Hat package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2015 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,8 +88,7 @@ make_rpm(int            format,		/* I - Subformat */
 
   if ((fp = fopen(specname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create spec file \"%s\" - %s\n", specname,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create spec file \"%s\": %s\n", specname, strerror(errno));
     return (1);
   }
 
@@ -311,7 +310,7 @@ make_rpm(int            format,		/* I - Subformat */
 
       if (stat(SetupProgram, &srcstat))
       {
-	fprintf(stderr, "epm: Unable to stat GUI setup program %s - %s\n",
+	fprintf(stderr, "epm: Unable to stat GUI setup program %s: %s\n",
 		SetupProgram, strerror(errno));
 	tar_close(tarfile);
 	return (-1);
@@ -320,16 +319,12 @@ make_rpm(int            format,		/* I - Subformat */
       if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
 	             srcstat.st_mtime, "root", "root", "setup", NULL) < 0)
       {
-	fprintf(stderr, "epm: Error writing file header - %s\n",
-		strerror(errno));
 	tar_close(tarfile);
 	return (-1);
       }
 
       if (tar_file(tarfile, SetupProgram) < 0)
       {
-	fprintf(stderr, "epm: Error writing file data for setup -\n    %s\n",
-		strerror(errno));
 	tar_close(tarfile);
 	return (-1);
       }
@@ -345,22 +340,22 @@ make_rpm(int            format,		/* I - Subformat */
 
       if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".gif"))
 	setup_img = "setup.gif";
+      else if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".jpg"))
+	setup_img = "setup.jpg";
+      else if (strlen(setup) > 4 && !strcmp(setup + strlen(setup) - 4, ".png"))
+	setup_img = "setup.png";
       else
 	setup_img = "setup.xpm";
 
       if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
 	             srcstat.st_mtime, "root", "root", setup_img, NULL) < 0)
       {
-	fprintf(stderr, "epm: Error writing file header - %s\n",
-		strerror(errno));
 	tar_close(tarfile);
 	return (-1);
       }
 
       if (tar_file(tarfile, setup) < 0)
       {
-	fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-		setup_img, strerror(errno));
 	tar_close(tarfile);
 	return (-1);
       }
@@ -377,18 +372,14 @@ make_rpm(int            format,		/* I - Subformat */
 	stat(types, &srcstat);
 
 	if (tar_header(tarfile, TAR_NORMAL, 0444, srcstat.st_size,
-		       srcstat.st_mtime, "root", "root", types, NULL) < 0)
+		       srcstat.st_mtime, "root", "root", "setup.types", NULL) < 0)
 	{
-	  fprintf(stderr, "epm: Error writing file header - %s\n",
-		  strerror(errno));
           tar_close(tarfile);
 	  return (-1);
 	}
 
 	if (tar_file(tarfile, types) < 0)
 	{
-	  fprintf(stderr, "epm: Error writing file data for setup.types -\n    %s\n",
-		  strerror(errno));
           tar_close(tarfile);
 	  return (-1);
 	}
@@ -403,7 +394,7 @@ make_rpm(int            format,		/* I - Subformat */
 
       if (stat(UninstProgram, &srcstat))
       {
-	fprintf(stderr, "epm: Unable to stat GUI uninstall program %s - %s\n",
+	fprintf(stderr, "epm: Unable to stat GUI uninstall program %s: %s\n",
 		UninstProgram, strerror(errno));
 	tar_close(tarfile);
 	return (-1);
@@ -412,16 +403,12 @@ make_rpm(int            format,		/* I - Subformat */
       if (tar_header(tarfile, TAR_NORMAL, 0555, srcstat.st_size,
 	             srcstat.st_mtime, "root", "root", "uninst", NULL) < 0)
       {
-	fprintf(stderr, "epm: Error writing file header - %s\n",
-		strerror(errno));
 	tar_close(tarfile);
 	return (-1);
       }
 
       if (tar_file(tarfile, UninstProgram) < 0)
       {
-	fprintf(stderr, "epm: Error writing file data for uninst -\n    %s\n",
-		strerror(errno));
 	tar_close(tarfile);
 	return (-1);
       }

@@ -958,7 +958,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	  add_depend(dist, DEPEND_REQUIRES, temp, subpkg);
 	else
 	{
-	  fprintf(stderr, "epm: Unknown directive \"%s\" ignored!\n", line);
+	  fprintf(stderr, "epm: Unknown directive \"%s\" ignored.\n", line);
 	  fprintf(stderr, "     %s %s\n", line, temp);
 	}
       }
@@ -1009,8 +1009,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
         type = line[0];
 	if (!isspace(line[1] & 255))
 	{
-	  fprintf(stderr, "epm: Expected whitespace after file type - %s\n",
-	          line);
+	  fprintf(stderr, "epm: Expected whitespace after file type: %s\n", line);
 	  continue;
 	}
 
@@ -1018,29 +1017,25 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	mode = strtol(temp, &temp, 8);
 	if (temp == (line + 2))
 	{
-	  fprintf(stderr, "epm: Expected file permissions after file type - %s\n",
-	          line);
+	  fprintf(stderr, "epm: Expected file permissions after file type: %s\n", line);
 	  continue;
 	}
 
         if (get_string(&temp, user, sizeof(user)) == NULL)
 	{
-	  fprintf(stderr, "epm: Expected user after file permissions - %s\n",
-	          line);
+	  fprintf(stderr, "epm: Expected user after file permissions: %s\n", line);
 	  continue;
 	}
 
         if (get_string(&temp, group, sizeof(group)) == NULL)
 	{
-	  fprintf(stderr, "epm: Expected group after user - %s\n",
-	          line);
+	  fprintf(stderr, "epm: Expected group after user: %s\n", line);
 	  continue;
 	}
 
         if (get_string(&temp, dst, sizeof(dst)) == NULL)
 	{
-	  fprintf(stderr, "epm: Expected destination after group - %s\n",
-	          line);
+	  fprintf(stderr, "epm: Expected destination after group: %s\n", line);
 	  continue;
 	}
 
@@ -1093,8 +1088,7 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 	    dir = opendir(src);
 
           if (dir == NULL)
-	    fprintf(stderr, "epm: Unable to open directory \"%s\" - %s\n",
-	            src, strerror(errno));
+	    fprintf(stderr, "epm: Unable to open directory \"%s\": %s\n", src, strerror(errno));
           else
 	  {
 	   /*
@@ -1218,7 +1212,7 @@ sort_dist_files(dist_t *dist)		/* I - Distribution to sort */
 	file --;
       }
       else
-        fprintf(stderr, "epm: Duplicate destination path \"%s\" with different info!\n"
+        fprintf(stderr, "epm: Duplicate destination path \"%s\" with different info:\n"
 	                "     \"%c %04o %s %s\" from source \"%s\"\n"
 			"     \"%c %04o %s %s\" from source \"%s\"\n",
 	        file[0].dst,
@@ -1481,7 +1475,7 @@ expand_name(char   *buffer,		/* O - Output string */
 	buffer  += strlen(buffer);
       }
       else if (warn)
-        fprintf(stderr, "epm: Variable \"%s\" undefined!\n", var);
+        fprintf(stderr, "epm: Variable \"%s\" undefined.\n", var);
     }
     else
     {
@@ -1510,8 +1504,7 @@ get_file(const char *filename,		/* I  - File to read from */
 
   if (stat(filename, &info))
   {
-    fprintf(stderr, "epm: Unable to stat \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to stat \"%s\": %s\n", filename, strerror(errno));
     return (NULL);
   }
 
@@ -1525,15 +1518,13 @@ get_file(const char *filename,		/* I  - File to read from */
 
   if ((fp = fopen(filename, "r")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to open \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to open \"%s\": %s\n", filename, strerror(errno));
     return (NULL);
   }
 
   if ((fread(buffer, 1, (size_t)info.st_size, fp)) < info.st_size)
   {
-    fprintf(stderr, "epm: Unable to read \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to read \"%s\": %s\n", filename, strerror(errno));
     fclose(fp);
     return (NULL);
   }
@@ -1600,7 +1591,7 @@ get_inline(const char *term,		/* I  - Termination string */
 
     if (left < 2)
     {
-      fputs("epm: Inline script too long!\n", stderr);
+      fputs("epm: Inline script too long.\n", stderr);
       break;
     }
   }
@@ -1862,7 +1853,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
         * Nested %if...
 	*/
 
-        fputs("epm: Warning, nested %ifdef's are not supported!\n", stderr);
+        fputs("epm: Warning, nested %ifdef's are not supported.\n", stderr);
 	continue;
       }
 
@@ -1936,7 +1927,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
         * Nested %if...
 	*/
 
-        fputs("epm: Warning, nested %if's are not supported!\n", stderr);
+        fputs("epm: Warning, nested %if's are not supported.\n", stderr);
 	continue;
       }
 
@@ -2010,7 +2001,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
         * No matching %if/%ifdef statement...
 	*/
 
-        fputs("epm: Warning, no matching %if or %ifdef for %else!\n", stderr);
+        fputs("epm: Warning, no matching %if or %ifdef for %else.\n", stderr);
 	break;
       }
 
@@ -2034,7 +2025,7 @@ get_line(char           *buffer,	/* I - Buffer to read into */
         * No matching %if/%ifdef statement...
 	*/
 
-        fputs("epm: Warning, no matching %if or %ifdef for %endif!\n", stderr);
+        fputs("epm: Warning, no matching %if or %ifdef for %endif.\n", stderr);
 	break;
       }
 
@@ -2108,7 +2099,7 @@ get_string(char   **src,		/* IO - Source string */
 
       if (!*srcptr)
       {
-        fputs("epm: Expected character after backslash!\n", stderr);
+        fputs("epm: Expected character after backslash.\n", stderr);
 
         *src = srcptr;
         *dst = '\0';
@@ -2132,7 +2123,7 @@ get_string(char   **src,		/* IO - Source string */
 
 	  if (!*srcptr)
 	  {
-            fputs("epm: Expected character after backslash!\n", stderr);
+            fputs("epm: Expected character after backslash.\n", stderr);
 
             *src = srcptr;
             *dst = '\0';
@@ -2149,7 +2140,7 @@ get_string(char   **src,		/* IO - Source string */
 
       if (!*srcptr)
       {
-        fprintf(stderr, "epm: Expected end quote %c!\n", quote);
+        fprintf(stderr, "epm: Expected end quote %c.\n", quote);
 
         *src = srcptr;
 	*dst = '\0';

@@ -1,7 +1,7 @@
 /*
  * File functions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2015 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -420,8 +420,7 @@ unlink_package(const char *ext,		/* I - Package filename extension */
 
   if (unlink(filename))
   {
-    fprintf(stderr, "epm: Unable to remove \"%s\" - %s\n", filename,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to remove \"%s\": %s\n", filename, strerror(errno));
     return (-1);
   }
   else

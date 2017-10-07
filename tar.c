@@ -1,7 +1,7 @@
 /*
  * TAR file functions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,6 +20,13 @@
  */
 
 #include "epm.h"
+
+
+/*
+ * Local globals...
+ */
+
+static char     last_pathname[1024] = "";
 
 
 /*
@@ -241,7 +248,10 @@ tar_file(tarf_t     *fp,		/* I - Tar file to write to */
   */
 
   if ((file = fopen(filename, "rb")) == NULL)
+  {
+    fprintf(stderr, "epm: Unable to open \"%s\": %s\n", filename, strerror(errno));
     return (-1);
+  }
 
  /*
   * Copy the file to the tar file...
@@ -272,6 +282,7 @@ tar_file(tarf_t     *fp,		/* I - Tar file to write to */
 
     if (fwrite(buffer, 1, nbytes, fp->file) < nbytes)
     {
+      fprintf(stderr, "epm: Unable to write file data for \"%s\": %s\n", last_pathname, strerror(errno));
       fclose(file);
       return (-1);
     }
@@ -418,7 +429,24 @@ tar_header(tarf_t     *fp,		/* I - Tar file to write to */
   sprintf(record.header.chksum, "%6o", sum);
 
   if (fwrite(&record, 1, sizeof(record), fp->file) < sizeof(record))
+  {
+    static const char * const types[] =
+    {
+      "file",
+      "link",
+      "symbolic link",
+      "character file",
+      "block file",
+      "directory",
+      "named pipe",
+      "contiguous file"
+    };
+
+    fprintf(stderr, "epm: Error writing %s header for \"%s\": %s\n", types[type - '0'], pathname, strerror(errno));
     return (-1);
+  }
+
+  strlcpy(last_pathname, pathname, sizeof(last_pathname));
 
   fp->blocks ++;
   return (0);
@@ -530,8 +558,7 @@ tar_package(tarf_t     *tar,		/* I - Tar file */
   snprintf(filename, sizeof(filename), "%s/%s", directory, name);
   if (stat(filename, &filestat))
   {
-    fprintf(stderr, "epm: Error reading package file \"%s\": %s\n",
-            filename, strerror(errno));
+    fprintf(stderr, "epm: Error reading package file \"%s\": %s\n", filename, strerror(errno));
     return (-1);
   }
 

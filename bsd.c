@@ -1,7 +1,7 @@
 /*
  * Free/Net/OpenBSD package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -123,8 +123,7 @@ make_subpackage(
 
   if ((fp = fopen(descrname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create descr file \"%s\" - %s\n", descrname,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create descr file \"%s\": %s\n", descrname, strerror(errno));
     return (1);
   }
 
@@ -144,8 +143,7 @@ make_subpackage(
 
   if ((fp = fopen(commentname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create comment file \"%s\" - %s\n", commentname,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create comment file \"%s\": %s\n", commentname, strerror(errno));
     return (1);
   }
 
@@ -177,8 +175,7 @@ make_subpackage(
 
   if ((fp = fopen(plistname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create plist file \"%s\" - %s\n", plistname,
-            strerror(errno));
+    fprintf(stderr, "epm: Unable to create plist file \"%s\": %s\n", plistname, strerror(errno));
     return (1);
   }
 

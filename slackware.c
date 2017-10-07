@@ -1,7 +1,7 @@
 /*
  * Slackware package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 2003-2014 by Michael R Sweet
+ * Copyright 2003-2017 by Michael R Sweet
  * Copyright 2003-2010 by Easy Software Products.
  *
  * Contributed by Alec Thomas <$givenname at korn dot ch>
@@ -117,8 +117,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
   if (uname(&platform))
   {
-    fprintf(stderr, "ERROR: Can't get platform information - %s\n",
-            strerror(errno));
+    fprintf(stderr, "ERROR: Can't get platform information: %s\n", strerror(errno));
 
     return (1);
   }
@@ -223,8 +222,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
     if ((fp = fopen(filename, "w")) == NULL)
     {
-      fprintf(stderr, "ERROR: Couldn't create Slackware description file \"%s\" - %s\n",
-              filename, strerror(errno));
+      fprintf(stderr, "ERROR: Couldn't create Slackware description file \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 
@@ -255,8 +253,7 @@ make_subpackage(const char *prodname,	/* I - Product short name */
 
     if (!(fp = fopen(filename, "w")))
     {
-      fprintf(stderr, "ERROR: Couldn't create post install script \"%s\" - %s\n",
-              filename, strerror(errno));
+      fprintf(stderr, "ERROR: Couldn't create post install script \"%s\": %s\n", filename, strerror(errno));
       return (1);
     }
 

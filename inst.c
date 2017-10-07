@@ -1,7 +1,7 @@
 /*
  * IRIX package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2014 by Michael R Sweet
+ * Copyright 1999-2017 by Michael R Sweet
  * Copyright 1999-2006 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -98,7 +98,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(specname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create spec file \"%s\" - %s\n", specname,
+    fprintf(stderr, "epm: Unable to create spec file \"%s\": %s\n", specname,
             strerror(errno));
     return (1);
   }
@@ -209,7 +209,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
     if ((fp = fopen(preinstall, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preinstall,
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", preinstall,
               strerror(errno));
       return (1);
     }
@@ -263,7 +263,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
     if ((fp = fopen(postinstall, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postinstall,
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", postinstall,
               strerror(errno));
       return (1);
     }
@@ -317,7 +317,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
     if ((fp = fopen(preremove, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", preremove,
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", preremove,
               strerror(errno));
       return (1);
     }
@@ -373,7 +373,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
     if ((fp = fopen(postremove, "w")) == NULL)
     {
-      fprintf(stderr, "epm: Unable to create script file \"%s\" - %s\n", postremove,
+      fprintf(stderr, "epm: Unable to create script file \"%s\": %s\n", postremove,
               strerror(errno));
       return (1);
     }
@@ -412,7 +412,7 @@ make_inst(const char     *prodname,	/* I - Product short name */
 
   if ((fp = fopen(idbname, "w")) == NULL)
   {
-    fprintf(stderr, "epm: Unable to create idb file \"%s\" - %s\n", idbname,
+    fprintf(stderr, "epm: Unable to create idb file \"%s\": %s\n", idbname,
             strerror(errno));
     return (1);
   }
@@ -517,24 +517,10 @@ make_inst(const char     *prodname,	/* I - Product short name */
     stat(srcname, &fileinfo);
     if (tar_header(tarfile, TAR_NORMAL, fileinfo.st_mode, fileinfo.st_size,
 	           fileinfo.st_mtime, "root", "sys", dstname, NULL) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file header - %s\n",
-	      strerror(errno));
       return (-1);
-    }
 
     if (tar_file(tarfile, srcname) < 0)
-    {
-      if (Verbosity)
-        puts("");
-
-      fprintf(stderr, "epm: Error writing file data for %s -\n    %s\n",
-	      dstname, strerror(errno));
       return (-1);
-    }
 
     if (Verbosity)
     {
