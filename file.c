@@ -312,10 +312,9 @@ unlink_directory(const char *directory)	/* I - Directory */
 
     snprintf(filename, sizeof(filename), "%s/%s", directory, dent->d_name);
 
-    if (stat(filename, &fileinfo))
+    if (lstat(filename, &fileinfo))
     {
-      fprintf(stderr, "epm: Unable to stat \"%s\": %s\n", filename,
-              strerror(errno));
+      fprintf(stderr, "epm: Unable to stat \"%s\": %s\n", filename, strerror(errno));
       continue;
     }
 
