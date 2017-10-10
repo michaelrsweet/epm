@@ -4,7 +4,7 @@
 #
 
 if test $# != 1; then
-	echo "Usage: tools/makesrcdist version"
+	echo "Usage: ./makesrcdist version"
 	exit 1
 fi
 
