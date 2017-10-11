@@ -1371,7 +1371,7 @@ $GUIS=setup uninst
 f 0555 root sys ${libdir}/epm/setup setup
 f 0555 root sys ${libdir}/epm/uninst uninst
 
-%system darwin
+%system macos
 f 0444 root sys ${datadir}/epm/default.icns default.icns
 %system all
 
@@ -1697,11 +1697,11 @@ mrs</b>] ] [<b> -s</b><i> setup.ext</i> ] [<b> --depend</b> ] [<b>
  swinstall</i> for HP-UX,<i> bsd</i> for FreeBSD, NetBSD, and OpenBSD,
  and<i> osx</i> for macOS. All other operating systems default to the<i>
  portable</i> format.</dd>
-<dt><b>-f osx</b></dt>
+<dt><b>-f macos</b></dt>
 <dd style="margin-left: 5.0em"></dd>
-<dt><b>-f osx-signed</b></dt>
+<dt><b>-f macos-signed</b></dt>
 <dd style="margin-left: 5.0em">Generate a macOS software package. The<i>
- osx-signed</i> format uses the signing identity in the
+ macos-signed</i> format uses the signing identity in the
  EPM_SIGNING_IDENTITY environment variable.</dd>
 <dt><b>-f pkg</b></dt>
 <dd style="margin-left: 5.0em">Generate an AT&amp;T software package. These
