@@ -96,7 +96,7 @@ EPM_OBJS	=	aix.o \
 			dist.o \
 			file.o \
 			inst.o \
-			osx.o \
+			macos.o \
 			pkg.o \
 			portable.o \
 			qprintf.o \
