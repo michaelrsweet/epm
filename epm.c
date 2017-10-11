@@ -76,8 +76,8 @@ main(int  argc,				/* I - Number of command-line args */
 		  "inst",
 		  "rpm",
 		  "rpm",
-		  "osx",
-		  "osx",
+		  "macos",
+		  "macos",
 		  "pkg",
 		  "rpm",
 		  "rpm",
@@ -171,10 +171,10 @@ main(int  argc,				/* I - Number of command-line args */
 	      format = PACKAGE_LSB;
 	    else if (!strcasecmp(temp, "lsb-signed"))
 	      format = PACKAGE_LSB_SIGNED;
-	    else if (!strcasecmp(temp, "osx"))
-	      format = PACKAGE_OSX;
-	    else if (!strcasecmp(temp, "osx-signed"))
-	      format = PACKAGE_OSX_SIGNED;
+	    else if (!strcasecmp(temp, "macos") || !strcasecmp(temp, "osx"))
+	      format = PACKAGE_MACOS;
+	    else if (!strcasecmp(temp, "macos-signed") || !strcasecmp(temp, "osx-signed"))
+	      format = PACKAGE_MACOS_SIGNED;
 	    else if (!strcasecmp(temp, "pkg"))
 	      format = PACKAGE_PKG;
 	    else if (!strcasecmp(temp, "rpm"))
@@ -213,7 +213,7 @@ main(int  argc,				/* I - Number of command-line args */
 #elif defined(__svr4__) || defined(__SVR4) || defined(M_XENIX)
 	      format = PACKAGE_PKG;
 #elif defined(__APPLE__)
-              format = PACKAGE_OSX;
+              format = PACKAGE_MACOS;
 #else
 	      format = PACKAGE_PORTABLE;
 #endif
@@ -567,8 +567,8 @@ main(int  argc,				/* I - Number of command-line args */
     case PACKAGE_INST :
         i = make_inst(prodname, directory, platname, dist, &platform);
 	break;
-    case PACKAGE_OSX :
-    case PACKAGE_OSX_SIGNED :
+    case PACKAGE_MACOS :
+    case PACKAGE_MACOS_SIGNED :
         i = make_osx(format, prodname, directory, platname, dist, &platform, setup);
 	break;
     case PACKAGE_PKG :
@@ -648,7 +648,7 @@ static void
 info(void)
 {
   puts(EPM_VERSION);
-  puts("Copyright 1999-2007 by Easy Software Products.");
+  puts("Copyright 1999-2017 by Michael R Sweet.");
   puts("");
   puts("EPM is free software and comes with ABSOLUTELY NO WARRANTY; for details");
   puts("see the GNU General Public License in the file COPYING or at");
@@ -672,7 +672,7 @@ usage(void)
   puts("    Use the named architecture instead of the local one.");
   puts("-g");
   puts("    Don't strip executables in distributions.");
-  puts("-f {aix,bsd,deb,depot,inst,native,pkg,portable,rpm,setld,slackware,swinstall,tardist}");
+  puts("-f {aix,bsd,deb,depot,inst,macos,macos-signed,native,pkg,portable,rpm,setld,slackware,swinstall,tardist}");
   puts("    Set distribution format.");
   puts("-k");
   puts("    Keep intermediate files (spec files, etc.)");
@@ -682,8 +682,8 @@ usage(void)
   puts("-n[mrs]");
   puts("    Set distribution filename to include machine (m), OS release (r),");
   puts("    and/or OS name (s).");
-  puts("-s setup.xpm");
-  puts("    Enable the setup GUI and use \"setup.xpm\" for the setup image.");
+  puts("-s setup.ext");
+  puts("    Enable the setup GUI and use \"setup.ext\" for the setup image.");
   puts("-u");
 #if EPM_COMPRESS == 0
   puts("    Do not compress files in packages (default).");

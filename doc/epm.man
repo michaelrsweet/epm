@@ -14,7 +14,7 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "4 October 2017" "Michael R Sweet"
+.TH epm 1 "ESP Package Manager" "10 October 2017" "Michael R Sweet"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -104,11 +104,11 @@ Generate a native distribution.
 This uses \fIrpm\fR for Linux, \fIinst\fR for IRIX, \fIpkg\fR for Solaris, \fIswinstall\fR for HP-UX, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fIosx\fR for macOS.
 All other operating systems default to the \fIportable\fR format.
 .TP 5
-\fB\-f osx\fR
+\fB\-f macos\fR
 .TP 5
-\fB\-f osx\-signed\fR
+\fB\-f macos\-signed\fR
 Generate a macOS software package.
-The \fIosx\-signed\fR format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
+The \fImacos\-signed\fR format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
 .TP 5
 \fB\-f pkg\fR
 Generate an AT&T software package.

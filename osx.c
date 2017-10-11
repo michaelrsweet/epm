@@ -754,7 +754,7 @@ make_subpackage(int        format,	/* I - Format */
 
   if (have_pkgbuild)
   {
-    if (format == PACKAGE_OSX_SIGNED)
+    if (format == PACKAGE_MACOS_SIGNED)
     {
       const char *identity = getenv("EPM_SIGNING_IDENTITY");
       if (!identity)

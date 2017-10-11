@@ -100,8 +100,8 @@ enum
   PACKAGE_INST,				/* IRIX package format */
   PACKAGE_LSB,				/* LSB (RPM) package format */
   PACKAGE_LSB_SIGNED,			/* LSB (RPM) package format (signed) */
-  PACKAGE_OSX,				/* macOS package format */
-  PACKAGE_OSX_SIGNED,			/* macOS package format (signed) */
+  PACKAGE_MACOS,			/* macOS package format */
+  PACKAGE_MACOS_SIGNED,			/* macOS package format (signed) */
   PACKAGE_PKG,				/* AT&T package format (AIX, Solaris) */
   PACKAGE_RPM,				/* RedHat package format */
   PACKAGE_RPM_SIGNED,			/* RedHat package format (signed) */

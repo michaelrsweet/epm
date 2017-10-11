@@ -10,8 +10,11 @@ doc/mantohtml
 epm
 epm.list
 epminstall
+linux-*
+macos-*
 mkepmlist
 setup
+solaris-*
 uninst
 *.o
 *.a

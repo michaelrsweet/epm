@@ -557,7 +557,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
 
     fclose(fp);
 
-    strlcpy(platform->sysname, "macosx", sizeof(platform->sysname));
+    strlcpy(platform->sysname, "macos", sizeof(platform->sysname));
   }
 #endif /* __APPLE__ */
 
@@ -1708,9 +1708,16 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 
           if (!strncmp(value, "dunix", 5))
 	    memcpy(value, "tru64", 5); /* Keep existing nul/version */
-          else if (!strncmp(value, "darwin", 6) &&
-	           !strcmp(platform->sysname, "macosx"))
-	    memcpy(value, "macosx", 6); /* Keep existing nul/version */
+          else if ((!strncmp(value, "darwin", 6) || !strncmp(value, "macosx", 6)) &&
+	           !strcmp(platform->sysname, "macos"))
+          {
+           /*
+            * Convert "darwin*" and "macosx*" to "macos*"
+            */
+
+	    memcpy(value, "macos", 5);
+	    memmove(value + 5, value + 6, strlen(value + 6) + 1);
+	  }
 
           if ((ptr = strchr(value, '-')) != NULL)
 	    len = ptr - value;
@@ -1774,6 +1781,9 @@ get_line(char           *buffer,	/* I - Buffer to read into */
 	       *ptr++ = *bufptr++);
 
 	  *ptr = '\0';
+
+          if (!strcasecmp(value, "osx"))
+            strlcpy(value, "macos", sizeof(value));
 
 	  match = !strcasecmp(value, format) ? SKIP_FORMAT : 0;
 
