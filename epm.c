@@ -652,7 +652,8 @@ info(void)
   puts("");
   puts("EPM is free software and comes with ABSOLUTELY NO WARRANTY; for details");
   puts("see the GNU General Public License in the file COPYING or at");
-  puts("\"http://www.fsf.org/gpl.html\".  Report all problems to \"epm@easysw.com\".");
+  puts("\"http://www.fsf.org/gpl.html\".  Report all problems to");
+  puts("\"https://github.com/michaelrsweet/epm/issues\".");
   puts("");
 }
 

@@ -905,8 +905,7 @@ write_common(dist_t     *dist,		/* I - Distribution */
   fputs("#!/bin/sh\n", fp);
   fprintf(fp, "# %s script for %s version %s.\n", title,
           dist->product, dist->version);
-  fputs("# Produced using " EPM_VERSION "; report problems to epm@easysw.com.\n",
-        fp);
+  fputs("# Produced using " EPM_VERSION " (https://michaelrsweet.github.io/epm).\n", fp);
   fprintf(fp, "#%%product %s", dist->product);
   if (subpackage)
   {
