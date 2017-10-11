@@ -147,7 +147,7 @@ distclean:
 	$(RM) $(OBJS)
 	$(RM) $(TARGETS)
 	$(RM) config.cache config.h config.log config.status
-	$(RM) Makefile doc/Makefile macosx/Makefile
+	$(RM) Makefile doc/Makefile
 	$(RM) epm.list
 
 
@@ -212,7 +212,7 @@ install-guis:	setup uninst
 	$(CP) uninst $(libdir)/epm
 	-$(STRIP) $(libdir)/epm/uninst
 
-install-osx:
+install-macos:
 	echo Installing EPM macOS data files in $(datadir)/epm
 	$(RM) -r $(datadir)/epm
 	-$(MKDIR) $(datadir)/epm
@@ -319,7 +319,7 @@ gui: $(TARGETS)
 	./epm -f portable -v -s default.png --setup-program setup \
 		--uninstall-program uninst --data-dir . epm
 
-lsb osx portable rpm: $(TARGETS)
+lsb macos portable rpm: $(TARGETS)
 	./epm -f $@ -v -s default.png --setup-program setup \
 		--uninstall-program uninst --data-dir . epm
 

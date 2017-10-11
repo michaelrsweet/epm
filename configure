@@ -4673,7 +4673,7 @@ else
 
 	if test "$uname" = Darwin; then
 		GUILIBS="$GUILIBS -framework Security"
-		INSTALL_OSX="install-osx"
+		INSTALL_OSX="install-macos"
 	else
 		INSTALL_OSX=""
 	fi
