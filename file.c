@@ -38,7 +38,6 @@ copy_file(const char *dst,		/* I - Destination file */
   char		buffer[8192];		/* Copy buffer */
   char		*slash;			/* Pointer to trailing slash */
   size_t	bytes;			/* Number of bytes read/written */
-  struct stat	srcinfo;		/* Source file information */
 
 
  /*
@@ -51,19 +50,6 @@ copy_file(const char *dst,		/* I - Destination file */
 
   if (access(buffer, F_OK))
     make_directory(buffer, 0755, owner, group);
-
- /*
-  * Try doing a hard link instead of a copy...
-  */
-
-  unlink(dst);
-
-  if (!stat(src, &srcinfo) &&
-      (!mode || srcinfo.st_mode == mode) &&
-      (owner == (uid_t)-1 || srcinfo.st_uid == owner) &&
-      (group == (gid_t)-1 || srcinfo.st_gid == group) &&
-      !link(src, dst))
-    return (0);
 
  /*
   * Open files...
