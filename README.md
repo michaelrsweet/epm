@@ -4,8 +4,9 @@ ESP Package Manager (EPM) 4.4
 What is EPM?
 ------------
 
-EPM is a simple tool that generates software and patch distributions in various
-formats, including:
+EPM is a simple cross-platform tool that generates software and patch
+distributions in various formats from a list of files.  Supported formats
+include:
 
 - AIX software packages ("installp")
 - AT&T software packages ("pkgadd"), used by Solaris and others
@@ -21,7 +22,13 @@ formats, including:
 
 EPM also includes graphical "setup" and "uninstall" programs that can be
 provided with your distributions to make installation and removal of more than
-one package a snap.
+one package a snap.  The installers can be customized with product logos,
+"readme" files, and click-wrap licenses as desired.
+
+EPM is provided as free software under version 2 of the GNU General Public
+license.
+
+> Note: This software is currently in maintenance mode.
 
 
 How Do I Compile EPM?
@@ -33,8 +40,8 @@ See the file `INSTALL.md` for more info on that.
 How Do I Use EPM?
 -----------------
 
-Please look at the EPM manual; preformatted copies are included in the
-`doc/epm-manual.html` and `doc/epm-manual.pdf` files.
+Please look at the EPM manual.  A preformatted copy is included with the source
+archive in the file `doc/epm-book.html`.
 
 An example EPM software list file is provided with this distribution in the
 file `epm.list`.
