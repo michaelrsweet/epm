@@ -198,8 +198,8 @@ install: all @INSTALL_GUIS@ @INSTALL_OSX@
 	-$(MKDIR) $(docdir)
 	$(RM) $(docdir)/COPYING
 	$(CP) $(srcdir)/COPYING $(docdir)
-	$(RM) $(docdir)/README
-	$(CP) $(srcdir)/README $(docdir)
+	$(RM) $(docdir)/README.md
+	$(CP) $(srcdir)/README.md $(docdir)
 	$(RM) $(docdir)/epm-book.html
 	$(CP) $(srcdir)/doc/epm-book.html $(docdir)
 
