@@ -1,6 +1,12 @@
 Changes in EPM
 ==============
 
+Changes in EPM 4.4.1
+--------------------
+
+- "make install" failed due to the README filename changing (Issue #59)
+
+
 Changes in EPM 4.4
 ------------------
 
