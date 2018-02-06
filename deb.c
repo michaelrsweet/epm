@@ -278,7 +278,7 @@ make_subpackage(const char     *prodname,
 	  else
 	  {
 	    if (d->vernumber[1] < INT_MAX)
-	      fprintf(fp, " (>= %s, <= %s)", d->version[0], d->version[1]);
+	      fprintf(fp, " (>= %s), %s (<= %s)", d->version[0], d->product, d->version[1]);
 	    else
 	      fprintf(fp, " (>= %s)", d->version[0]);
 	  }
