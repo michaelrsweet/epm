@@ -20,6 +20,7 @@
  */
 
 #include "epm.h"
+#include <stdbool.h>
 
 
 /*
@@ -231,22 +232,26 @@ make_rpm(int            format,		/* I - Subformat */
     build_option = "-signed ";
   else
     build_option = "";
+  
+  bool use_new_rpm = false;
+  if( access( "/usr/bin/rpmbuild", F_OK ) == -1 )
+    use_new_rpm = true;
 
   if (!strcmp(platform->machine, "intel"))
   {
-    if (run_command(NULL, EPM_RPMBUILD " -bb --buildroot \"%s/buildroot\" "
+    if (run_command(NULL, use_new_rpm ? EPM_RPMBUILD : EPM_RPMBUILD_NEW " -bb --buildroot \"%s/buildroot\" "
                           EPM_RPMARCH "i386 %s%s", absdir, build_option,
 			  specname))
       return (1);
   }
   else if (!strcmp(platform->machine, "ppc"))
   {
-    if (run_command(NULL, EPM_RPMBUILD " -bb --buildroot \"%s/buildroot\" "
+    if (run_command(NULL, use_new_rpm ? EPM_RPMBUILD : EPM_RPMBUILD_NEW " -bb --buildroot \"%s/buildroot\" "
                           EPM_RPMARCH "ppc %s%s", absdir, build_option,
 			  specname))
       return (1);
   }
-  else if (run_command(NULL, EPM_RPMBUILD " -bb --buildroot \"%s/buildroot\" "
+  else if (run_command(NULL, use_new_rpm ? EPM_RPMBUILD : EPM_RPMBUILD_NEW " -bb --buildroot \"%s/buildroot\" "
                        EPM_RPMARCH "%s %s%s", absdir, platform->machine,
 		       build_option, specname))
     return (1);
