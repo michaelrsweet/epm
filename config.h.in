@@ -50,6 +50,7 @@
  */
 
 #define EPM_RPMBUILD	"rpm"
+#define EPM_RPMBUILD_NEW "rpmbuild"
 
 
 /*
