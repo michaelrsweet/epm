@@ -7,7 +7,7 @@ Changes in EPM 4.4.1
 - "make install" failed due to the README filename changing (Issue #59)
 - The configure script incorrectly substituted "NONE" for the installation
   prefix (Issue #67)
-- Cleaned up old sprintf usage in many places.
+- Cleaned up old sprintf and strcpy usage in many places.
 
 
 Changes in EPM 4.4
