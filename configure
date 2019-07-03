@@ -4663,8 +4663,8 @@ if test "x$FLTKCONFIG" = x; then
 	INSTALL_GUIS=""
 	INSTALL_OSX=""
 
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&5
-$as_echo "$as_me: WARNING: Sorry, setup GUI requires FLTK 1.1.x." >&2;}
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, setup GUI requires FLTK 1.1.x or later." >&5
+$as_echo "$as_me: WARNING: Sorry, setup GUI requires FLTK 1.1.x or later." >&2;}
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
 	GUIS="setup uninst"
@@ -4705,8 +4705,8 @@ if test -n "$GCC"; then
 	fi
 
 	# Add useful warning options...
-	CFLAGS="-Wall -Wformat -Wno-format-y2k -Wunused $CFLAGS"
-	CXXFLAGS="-Wall -Wformat -Wno-format-y2k -Wunused $CXXFLAGS"
+	CFLAGS="-Wall -Wformat -Wno-format-truncation -Wno-format-y2k -Wunused $CFLAGS"
+	CXXFLAGS="-Wall -Wformat -Wno-format-truncation -Wno-format-y2k -Wunused $CXXFLAGS"
 
 	# See if GCC supports -fno-rtti...
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if GCC supports -fno-rtti" >&5

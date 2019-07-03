@@ -141,7 +141,7 @@ if test "x$FLTKCONFIG" = x; then
 	INSTALL_GUIS=""
 	INSTALL_OSX=""
 
-	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x.])
+	AC_MSG_WARN([Sorry, setup GUI requires FLTK 1.1.x or later.])
 else
 	CXXFLAGS="`$FLTKCONFIG --cflags` ${CXXFLAGS}"
 	GUIS="setup uninst"
@@ -182,8 +182,8 @@ if test -n "$GCC"; then
 	fi
 
 	# Add useful warning options...
-	CFLAGS="-Wall -Wformat -Wno-format-y2k -Wunused $CFLAGS"
-	CXXFLAGS="-Wall -Wformat -Wno-format-y2k -Wunused $CXXFLAGS"
+	CFLAGS="-Wall -Wformat -Wno-format-truncation -Wno-format-y2k -Wunused $CFLAGS"
+	CXXFLAGS="-Wall -Wformat -Wno-format-truncation -Wno-format-y2k -Wunused $CXXFLAGS"
 
 	# See if GCC supports -fno-rtti...
 	AC_MSG_CHECKING(if GCC supports -fno-rtti)
