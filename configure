@@ -2186,7 +2186,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 VERSION="4.4.1"
-VERNUMBER=440
+VERNUMBER=441
 
 
 cat >>confdefs.h <<_ACEOF
@@ -4847,10 +4847,9 @@ esac
 
 
 
-#dnl Fix "prefix" variable if it hasn't been specified...
-#if test "$prefix" = "NONE"; then
-#	prefix="/usr"
-#fi
+if test "$prefix" = "NONE"; then
+	prefix="/usr/local"
+fi
 
 if test "$exec_prefix" = "NONE"; then
 	exec_prefix="$prefix"

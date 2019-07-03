@@ -1,7 +1,7 @@
 dnl
 dnl Configuration script for the ESP Package Manager (EPM).
 dnl
-dnl Copyright 1999-2017 by Michael R Sweet
+dnl Copyright 1999-2019 by Michael R Sweet
 dnl Copyright 1999-2007 by Easy Software Products, all rights reserved.
 dnl
 dnl This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@ AC_CONFIG_HEADER(config.h)
 dnl Version number...
 
 VERSION="AC_PACKAGE_VERSION"
-VERNUMBER=440
+VERNUMBER=441
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
@@ -274,10 +274,10 @@ esac
 
 AC_SUBST(ARFLAGS)
 
-#dnl Fix "prefix" variable if it hasn't been specified...
-#if test "$prefix" = "NONE"; then
-#	prefix="/usr"
-#fi
+dnl Fix "prefix" variable if it hasn't been specified...
+if test "$prefix" = "NONE"; then
+	prefix="/usr/local"
+fi
 
 dnl Fix "exec_prefix" variable if it hasn't been specified...
 if test "$exec_prefix" = "NONE"; then
