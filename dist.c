@@ -1,7 +1,7 @@
 /*
  * Distribution functions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2017 by Michael R Sweet
+ * Copyright 1999-2019 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -544,7 +544,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
       if ((ptr = strstr(line, "<string>")) != NULL)
         sscanf(ptr + 8, "%d.%d", &major, &minor);
 
-      sprintf(platform->release, "%d.%d", major, minor);
+      snprintf(platform->release, sizeof(platform->release), "%d.%d", major, minor);
     }
     else
     {
@@ -581,8 +581,7 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   * combine them...
   */
 
-  sprintf(platform->release, "%d.%d", atoi(platform->version),
-          atoi(platform->release));
+  snprintf(platform->release, sizeof(platform->release), "%d.%d", atoi(platform->version), atoi(platform->release));
 #else
  /*
   * Remove any extra junk from the release number - we just want the

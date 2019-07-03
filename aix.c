@@ -1,7 +1,7 @@
 /*
  * AIX package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2017 by Michael R Sweet
+ * Copyright 1999-2019 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -498,7 +498,7 @@ aix_version(const char *version)	/* I - EPM version number */
   memset(verparts, 0, sizeof(verparts));
   sscanf(version, "%d.%d.%d.%d", verparts + 0, verparts + 1,
          verparts + 2, verparts + 3);
-  sprintf(aix, "%d.%d.%d.%d", verparts[0], verparts[1],
+  snprintf(aix, sizeof(aix), "%d.%d.%d.%d", verparts[0], verparts[1],
           verparts[2], verparts[3]);
 
   return (aix);

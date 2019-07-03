@@ -1,7 +1,7 @@
 /*
  * TAR file functions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2017 by Michael R Sweet
+ * Copyright 1999-2019 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -401,11 +401,11 @@ tar_header(tarf_t     *fp,		/* I - Tar file to write to */
     strlcpy(record.header.prefix, pathname, (size_t)(pathsep - pathname + 1));
   }
 
-  sprintf(record.header.mode, "%-6o ", (unsigned)mode);
-  sprintf(record.header.uid, "%o ", pwd == NULL ? 0 : (unsigned)pwd->pw_uid);
-  sprintf(record.header.gid, "%o ", grp == NULL ? 0 : (unsigned)grp->gr_gid);
-  sprintf(record.header.size, "%011o", (unsigned)size);
-  sprintf(record.header.mtime, "%011o", (unsigned)mtime);
+  snprintf(record.header.mode, sizeof(record.header.mode), "%-6o ", (unsigned)mode);
+  snprintf(record.header.uid, sizeof(record.header.uid), "%o ", pwd == NULL ? 0 : (unsigned)pwd->pw_uid);
+  snprintf(record.header.gid, sizeof(record.header.gid), "%o ", grp == NULL ? 0 : (unsigned)grp->gr_gid);
+  snprintf(record.header.size, sizeof(record.header.size), "%011o", (unsigned)size);
+  snprintf(record.header.mtime, sizeof(record.header.mtime), "%011o", (unsigned)mtime);
   memset(&(record.header.chksum), ' ', sizeof(record.header.chksum));
   record.header.linkflag = type;
   if (type == TAR_SYMLINK)
@@ -426,7 +426,7 @@ tar_header(tarf_t     *fp,		/* I - Tar file to write to */
   * Put the correct checksum in place and write the header...
   */
 
-  sprintf(record.header.chksum, "%6o", sum);
+  snprintf(record.header.chksum, sizeof(record.header.chksum), "%6o", sum);
 
   if (fwrite(&record, 1, sizeof(record), fp->file) < sizeof(record))
   {

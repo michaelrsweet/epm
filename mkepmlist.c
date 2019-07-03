@@ -1,7 +1,7 @@
 /*
  * List file generation utility for the ESP Package Manager (EPM).
  *
- * Copyright 2003-2017 by Michael R Sweet
+ * Copyright 2003-2019 by Michael R Sweet
  * Copyright 2003-2005 by Easy Software Products
  * Copyright 2003 Andreas Voegele
  *
@@ -253,7 +253,7 @@ get_group(gid_t gid)		/* I - Group ID */
     * Unable to find group ID; just return the number...
     */
 
-    sprintf(buf, "%u", (unsigned)gid);
+    snprintf(buf, sizeof(buf), "%u", (unsigned)gid);
     name = buf;
   }
 
@@ -305,7 +305,7 @@ get_user(uid_t uid)		/* I - User ID */
     * Unable to find user ID; just return the number...
     */
 
-    sprintf(buf, "%u", (unsigned)uid);
+    snprintf(buf, sizeof(buf), "%u", (unsigned)uid);
     name = buf;
   }
 

@@ -1,7 +1,7 @@
 /*
  * Main program source for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2015 by Michael R Sweet
+ * Copyright 1999-2019 by Michael R Sweet
  * Copyright 1999-2008 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -428,7 +428,7 @@ main(int  argc,				/* I - Number of command-line args */
     */
 
     if (custom_name)
-      sprintf(directory, "%s", custom_name);
+      strlcpy(directory, custom_name, sizeof(directory));
     else
       snprintf(directory, sizeof(directory), "%s-%s-%s", platform.sysname,
              platform.release, platform.machine);
