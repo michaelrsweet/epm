@@ -182,8 +182,19 @@ if test -n "$GCC"; then
 	fi
 
 	# Add useful warning options...
-	CFLAGS="-Wall -Wformat -Wno-format-truncation -Wno-format-y2k -Wunused $CFLAGS"
-	CXXFLAGS="-Wall -Wformat -Wno-format-truncation -Wno-format-y2k -Wunused $CXXFLAGS"
+	CFLAGS="-Wall -Wformat -Wno-format-y2k -Wunused $CFLAGS"
+	CXXFLAGS="-Wall -Wformat -Wno-format-y2k -Wunused $CXXFLAGS"
+
+	# See if GCC supports -Wno-format-truncation...
+	AC_MSG_CHECKING(if GCC supports -Wno-format-truncation)
+	OLDCFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -Werror -Wno-format-truncation"
+	AC_TRY_COMPILE(,,[
+		CFLAGS="$OLDCFLAGS -Wno-format-truncation"
+		CXXFLAGS="$CXXFLAGS -Wno-format-truncation"
+		AC_MSG_RESULT(yes)],[
+		AC_MSG_RESULT(no)
+		CFLAGS="$OLDCFLAGS"])
 
 	# See if GCC supports -fno-rtti...
 	AC_MSG_CHECKING(if GCC supports -fno-rtti)

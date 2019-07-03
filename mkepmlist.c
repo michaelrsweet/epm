@@ -57,6 +57,7 @@ char		*hash_search(struct node *a, unsigned id);
 void		info(void);
 int		process_dir(const char *srcpath, const char *dstpath);
 int		process_file(const char *src, const char *dstpath);
+char		*quote_string(char *q, const char *s, size_t qsize);
 void		usage(void);
 
 
@@ -424,7 +425,7 @@ void
 info(void)
 {
   puts(EPM_VERSION);
-  puts("Copyright 1999-2017 by Michael R Sweet.");
+  puts("Copyright 1999-2019 by Michael R Sweet.");
   puts("");
   puts("EPM is free software and comes with ABSOLUTELY NO WARRANTY; for details");
   puts("see the GNU General Public License in the file COPYING or at");
@@ -509,7 +510,9 @@ process_file(const char *src,	/* I - Source path */
   ssize_t	linklen;	/* Length of link path */
   size_t	dstlen;		/* Length of destination path */
   char		link[1024],	/* Link for source */
-		dst[1024];	/* Temporary destination path */
+		dst[1024],	/* Temporary destination path */
+		qdst[1024],	/* Quoted destination */
+		qsrc[1024];	/* Quoted source/link */
 
 
  /*
@@ -544,8 +547,7 @@ process_file(const char *src,	/* I - Source path */
     * Directory...
     */
 
-    qprintf(stdout, "d %o %s %s %s -\n", (unsigned)(srcinfo.st_mode & 07777),
-	    get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), dst);
+    printf("d %o %s %s %s -\n", (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), quote_string(qdst, dst, sizeof(qdst)));
 
     if (process_dir(src, dst))
       return (-1);
@@ -564,9 +566,7 @@ process_file(const char *src,	/* I - Source path */
 
     link[linklen] = '\0';
 
-    qprintf(stdout, "l %o %s %s %s %s\n",
-            (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid),
-	    get_group(srcinfo.st_gid), dst, link);
+    printf("l %o %s %s %s %s\n", (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), quote_string(qdst, dst, sizeof(qdst)), quote_string(qsrc, link, sizeof(qsrc)));
   }
   else if (S_ISREG(srcinfo.st_mode))
   {
@@ -574,12 +574,38 @@ process_file(const char *src,	/* I - Source path */
     * Regular file...
     */
 
-    qprintf(stdout, "f %o %s %s %s %s\n",
-            (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid),
-	    get_group(srcinfo.st_gid), dst, src);
+    printf("f %o %s %s %s %s\n", (unsigned)(srcinfo.st_mode & 07777), get_user(srcinfo.st_uid), get_group(srcinfo.st_gid), quote_string(qdst, dst, sizeof(qdst)), quote_string(qsrc, src, sizeof(qsrc)));
   }
 
   return (0);
+}
+
+
+/*
+ * 'quote_string()' - Quote space, backslash, and $ in a string...
+ */
+
+char *					/* O - Quoted string */
+quote_string(char       *q,		/* I - Quoted string buffer */
+             const char *s,		/* I - Original string */
+             size_t     qsize)		/* I - Size of buffer */
+{
+  char	*qptr, *qend;
+
+
+  for (qptr = q, qend = q + qsize - 2; *s;)
+  {
+    if (*s == '\\' || *s == ' ' || *s == '\t')
+      *qptr++ = '\\';
+    else if (*s == '$')
+      *qptr++ = '$';
+
+    *qptr++ = *s++;
+  }
+
+  *qptr = '\0';
+
+  return (q);
 }
 
 
