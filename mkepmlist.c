@@ -593,7 +593,7 @@ quote_string(char       *q,		/* I - Quoted string buffer */
   char	*qptr, *qend;
 
 
-  for (qptr = q, qend = q + qsize - 2; *s;)
+  for (qptr = q, qend = q + qsize - 2; *s && qptr < qend;)
   {
     if (*s == '\\' || *s == ' ' || *s == '\t')
       *qptr++ = '\\';
