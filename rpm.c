@@ -1,7 +1,7 @@
 /*
  * Red Hat package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2017 by Michael R Sweet
+ * Copyright 1999-2019 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -115,7 +115,7 @@ make_rpm(int            format,		/* I - Subformat */
 
 #ifdef EPM_RPMTOPDIR
   fprintf(fp, "%%define _topdir %s\n", absdir);
-  strcpy(rpmdir, absdir);
+  strlcpy(rpmdir, absdir, sizeof(rpmdir));
 #else
   if (getenv("RPMDIR"))
     strlcpy(rpmdir, getenv("RPMDIR"), sizeof(rpmdir));

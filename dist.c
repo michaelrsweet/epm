@@ -566,11 +566,11 @@ get_platform(struct utsname *platform)	/* O - Platform info */
   */
 
 #ifdef __sgi
-  strcpy(platform->machine, "mips");
+  strlcpy(platform->machine, "mips", sizeof(platform->machine));
 #elif defined(__hpux)
-  strcpy(platform->machine, "hppa");
+  strlcpy(platform->machine, "hppa", sizeof(platform->machine));
 #elif defined(_AIX)
-  strcpy(platform->machine, "ppc");
+  strlcpy(platform->machine, "ppc", sizeof(platform->machine));
 #else
   update_architecture(platform->machine, sizeof(platform->machine));
 #endif /* __sgi */
@@ -1050,10 +1050,10 @@ read_dist(const char     *filename,	/* I - Main distribution list file */
 
 #ifdef __osf__ /* Remap group "sys" to "system" */
         if (!strcmp(group, "sys"))
-	  strcpy(group, "system");
+	  strlcpy(group, "system", sizeof(group));
 #elif defined(__linux) /* Remap group "sys" to "root" */
         if (!strcmp(group, "sys"))
-	  strcpy(group, "root");
+	  strlcpy(group, "root", sizeof(group));
 #endif /* __osf__ */
 
         if ((temp = strrchr(src, '/')) == NULL)
