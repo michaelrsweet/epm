@@ -15,15 +15,18 @@
 // GNU General Public License for more details.
 //
 
+#ifndef _GUI_COMMON_H_
+#  define _GUI_COMMON_H_
+
 //
 // Include necessary headers...
 //
 
-#include "epmstring.h"
-#include "epm.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <FL/Fl_Help_View.H>
+#  include "epmstring.h"
+#  include "epm.h"
+#  include <stdio.h>
+#  include <stdlib.h>
+#  include <FL/Fl_Help_View.H>
 
 
 //
@@ -74,11 +77,11 @@ typedef int (*compare_func_t)(const void *, const void *);
 // Globals...
 //
 
-#ifdef _DEFINE_GLOBALS_
-#  define VAR
-#else
-#  define VAR	extern
-#endif // _DEFINE_GLOBALS_
+#  ifdef _DEFINE_GLOBALS_
+#    define VAR
+#  else
+#    define VAR	extern
+#  endif // _DEFINE_GLOBALS_
 
 VAR int			NumDists;	// Number of distributions in directory
 VAR gui_dist_t		*Dists;		// Distributions in directory
@@ -99,3 +102,5 @@ gui_dist_t	*gui_find_dist(const char *name, int num_d, gui_dist_t *d);
 void		gui_get_installed(void);
 void		gui_load_file(Fl_Help_View *hv, const char *filename);
 int		gui_sort_dists(const gui_dist_t *d0, const gui_dist_t *d1);
+
+#endif // !_GUI_COMMON_H_

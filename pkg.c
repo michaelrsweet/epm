@@ -1,7 +1,7 @@
 /*
  * AT&T package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2017 by Michael R Sweet
+ * Copyright 1999-2019 by Michael R Sweet
  * Copyright 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,7 +55,7 @@ make_pkg(const char     *prodname,	/* I - Product short name */
   depend_t	*d;			/* Current dependency */
   tarf_t	*tarfile;		/* Distribution file */
   time_t	curtime;		/* Current time info */
-  struct tm	*curdate;		/* Current date info */
+  struct tm	curdate;		/* Current date info */
   const char	*runlevels;		/* Run levels */
 
 
@@ -92,16 +92,16 @@ make_pkg(const char     *prodname,	/* I - Product short name */
     return (1);
   }
 
-  curtime = time(NULL);
-  curdate = gmtime(&curtime);
+  time(&curtime);
+  gmtime_r(&curtime, &curdate);
 
   fprintf(fp, "PKG=%s\n", prodname);
   fprintf(fp, "NAME=%s\n", dist->product);
   fprintf(fp, "VERSION=%s\n", dist->version);
   fprintf(fp, "VENDOR=%s\n", dist->vendor);
   fprintf(fp, "PSTAMP=epm%04d%02d%02d%02d%02d%02d\n",
-          curdate->tm_year + 1900, curdate->tm_mon + 1, curdate->tm_mday,
-	  curdate->tm_hour, curdate->tm_min, curdate->tm_sec);
+          curdate.tm_year + 1900, curdate.tm_mon + 1, curdate.tm_mday,
+	  curdate.tm_hour, curdate.tm_min, curdate.tm_sec);
 
   if (dist->num_descriptions > 0)
     fprintf(fp, "DESC=%s\n", dist->descriptions[0].description);

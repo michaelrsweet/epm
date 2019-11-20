@@ -1236,7 +1236,7 @@ write_dist(const char *listname,	/* I - File to write to */
   FILE		*listfile;		/* Output file */
   file_t	*file;			/* Current file entry */
   time_t	curtime;		/* Current time */
-  struct tm	*curdate;		/* Current date */
+  struct tm	curdate;		/* Current date */
   char		curstring[256];		/* Current date/time string */
   const char	*subpkg;		/* Current subpackage */
   static const char *commands[] =	/* Command strings */
@@ -1279,11 +1279,11 @@ write_dist(const char *listname,	/* I - File to write to */
   * Write the list file...
   */
 
-  curtime = time(NULL);
-  curdate = localtime(&curtime);
+  time(&curtime);
+  localtime_r(&curtime, &curdate);
 
   strftime(curstring, sizeof(curstring), "# List file created on %c by "
-           EPM_VERSION "\n", curdate);
+           EPM_VERSION "\n", &curdate);
   fputs(curstring, listfile);
 
   if (dist->product[0])
