@@ -584,7 +584,12 @@ make_subpackage(const char     *prodname,
   if (Verbosity)
     printf("Building Debian %s binary distribution...\n", name);
 
-  if (run_command(directory, "dpkg --build %s", name))
+  // run with 'fakeroot' if command available and epm not run as root
+  if (geteuid() && !run_command(NULL, "fakeroot --version")) {
+    if (run_command(directory, "fakeroot dpkg --build %s", name))
+      return (1);
+  }
+  else if (run_command(directory, "dpkg --build %s", name))
     return (1);
 
  /*
