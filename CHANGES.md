@@ -10,6 +10,8 @@ Changes in EPM 4.5
   `$` character (Issue #62)
 - The configure script incorrectly substituted "NONE" for the installation
   prefix (Issue #67)
+- Fixed mantohtml helper program - was depending on private CUPS headers for
+  some reason (Issue #72)
 - Cleaned up old sprintf and strcpy usage in many places.
 
 
