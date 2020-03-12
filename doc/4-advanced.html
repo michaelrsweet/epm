@@ -36,13 +36,6 @@ each package format.</P>
 	<TH>%requires</TH>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">aix</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-</TR>
-<TR>
 	<TD ALIGN="CENTER">bsd</TD>
 	<TD ALIGN="CENTER">Yes</TD>
 	<TD ALIGN="CENTER">No</TD>
@@ -57,25 +50,11 @@ each package format.</P>
 	<TD ALIGN="CENTER">Yes</TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">inst</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-</TR>
-<TR>
 	<TD ALIGN="CENTER">osx</TD>
 	<TD ALIGN="CENTER">No</TD>
 	<TD ALIGN="CENTER">No</TD>
 	<TD ALIGN="CENTER">No</TD>
 	<TD ALIGN="CENTER">No</TD>
-</TR>
-<TR>
-	<TD ALIGN="CENTER">pkg</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
 </TR>
 <TR>
 	<TD ALIGN="CENTER">portable</TD>
@@ -89,27 +68,6 @@ each package format.</P>
 	<TD ALIGN="CENTER">Yes</TD>
 	<TD ALIGN="CENTER">Yes</TD>
 	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-</TR>
-<TR>
-	<TD ALIGN="CENTER">setld</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-</TR>
-<TR>
-	<TD ALIGN="CENTER">slackware</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-</TR>
-<TR>
-	<TD ALIGN="CENTER">swinstall</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
 	<TD ALIGN="CENTER">Yes</TD>
 </TR>
 </TABLE></CENTER>
@@ -213,15 +171,6 @@ of the software:</P>
 	<TH><SMALL>%postremove</SMALL></TH>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">aix</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-</TR>
-<TR>
 	<TD ALIGN="CENTER">bsd</TD>
 	<TD ALIGN="CENTER">No</TD>
 	<TD ALIGN="CENTER">Yes</TD>
@@ -240,15 +189,6 @@ of the software:</P>
 	<TD ALIGN="CENTER">Yes</TD>
 </TR>
 <TR>
-	<TD ALIGN="CENTER">inst</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-</TR>
-<TR>
 	<TD ALIGN="CENTER">osx</TD>
 	<TD ALIGN="CENTER">Yes</TD>
 	<TD ALIGN="CENTER">Yes</TD>
@@ -256,15 +196,6 @@ of the software:</P>
 	<TD ALIGN="CENTER">No</TD>
 	<TD ALIGN="CENTER">No</TD>
 	<TD ALIGN="CENTER">No</TD>
-</TR>
-<TR>
-	<TD ALIGN="CENTER">pkg</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
 </TR>
 <TR>
 	<TD ALIGN="CENTER">portable</TD>
@@ -277,33 +208,6 @@ of the software:</P>
 </TR>
 <TR>
 	<TD ALIGN="CENTER">rpm</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-</TR>
-<TR>
-	<TD ALIGN="CENTER">setld</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-</TR>
-<TR>
-	<TD ALIGN="CENTER">slackware</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">Yes</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-	<TD ALIGN="CENTER">No</TD>
-</TR>
-<TR>
-	<TD ALIGN="CENTER">swinstall</TD>
 	<TD ALIGN="CENTER">Yes</TD>
 	<TD ALIGN="CENTER">Yes</TD>
 	<TD ALIGN="CENTER">No</TD>
@@ -581,21 +485,6 @@ data is currently only supported for RPM and PKG packages.</P>
 %literal(control) &lt;&lt;EOF
 Section: misc
 Priority: extra
-EOF
-</PRE>
-
-<H3>PKG Literal Data</H3>
-
-<P>PKG packages support request files that are used to do batch
-installations when installation commands require user input.  The
-<CODE>%literal(request)</CODE> directive can be used to provide this user
-input:</P>
-
-<PRE>
-%literal(request) &lt;&lt;EOF
-John Doe
-1 Any Lane
-Forest Lawn, OH 12345
 EOF
 </PRE>
 

@@ -1,8 +1,8 @@
 .\"
 .\" Manual page for the ESP Package Manager (EPM) setup types file format.
 .\"
-.\" Copyright 1999-2017 by Michael R Sweet
-.\" Copyright 1999-2007 by Easy Software Products, all rights reserved.
+.\" Copyright © 1999-2020 by Michael R Sweet
+.\" Copyright © 1999-2007 by Easy Software Products, all rights reserved.
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH setup.types 5 "ESP Package Manager" "3 October 2017" "Michael R Sweet"
+.TH setup.types 5 "ESP Package Manager" "March 11, 2020" "Michael R Sweet"
 .SH NAME
 setup.types \- epm gui setup types file format.
 .SH DESCRIPTION
@@ -51,7 +51,7 @@ Since the last type includes no products, the user will be presented with the fu
 .BR epm (1),
 .BR setup (1).
 .SH COPYRIGHT
-Copyright \[co] 1999-2017 by Michael R Sweet, All Rights Reserved.
+Copyright \[co] 1999-2020 by Michael R Sweet, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

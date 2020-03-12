@@ -1,7 +1,7 @@
 .\"
 .\" Manual page for the ESP Package Manager (EPM).
 .\"
-.\" Copyright 1999-2017 by Michael R Sweet
+.\" Copyright 1999-2020 by Michael R Sweet
 .\" Copyright 1999-2007 by Easy Software Products, all rights reserved.
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH mkepmlist 1 "ESP Package Manager" "3 October 2017" "Michael R Sweet"
+.TH mkepmlist 1 "ESP Package Manager" "March 11, 2020" "Michael R Sweet"
 .SH NAME
 mkepmlist \- make an epm list file from a directory.
 .SH SYNOPSIS
@@ -60,7 +60,7 @@ list that is installed in "/usr/local":
 .BR epminstall (1),
 .BR epm.list (5).
 .SH COPYRIGHT
-Copyright \[co] 1999-2017 by Michael R Sweet, All Rights Reserved.
+Copyright \[co] 1999-2020 by Michael R Sweet, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

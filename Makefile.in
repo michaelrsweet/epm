@@ -1,8 +1,8 @@
 #
 # Makefile for the ESP Package Manager (EPM).
 #
-# Copyright 1999-2017 by Michael R Sweet
-# Copyright 1999-2010 by Easy Software Products, all rights reserved.
+# Copyright © 1999-2020 by Michael R Sweet
+# Copyright © 1999-2010 by Easy Software Products, all rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,24 +90,18 @@ TARGETS		=	libepm.a \
 			epminstall \
 			mkepmlist \
 			@GUIS@
-EPM_OBJS	=	aix.o \
-			bsd.o \
+EPM_OBJS	=	bsd.o \
 			deb.o \
 			dist.o \
 			file.o \
-			inst.o \
 			macos.o \
-			pkg.o \
 			portable.o \
 			qprintf.o \
 			rpm.o \
 			run.o \
-			setld.o \
-			slackware.o \
 			snprintf.o \
 			string.o \
 			support.o \
-			swinstall.o \
 			tar.o
 SETUP_OBJS	=	setup.o \
 			setup2.o \
@@ -149,18 +143,6 @@ distclean:
 	$(RM) config.cache config.h config.log config.status
 	$(RM) Makefile doc/Makefile
 	$(RM) epm.list
-
-
-#
-# Run the clang.llvm.org static code analysis tool on the C sources.
-#
-
-.PHONY: clang clang-changes
-clang:
-	$(RM) -r clang
-	scan-build -V -k -o `pwd`/clang $(MAKE) $(MFLAGS) clean all
-clang-changes:
-	scan-build -V -k -o `pwd`/clang $(MAKE) $(MFLAGS) all
 
 
 #
@@ -301,20 +283,11 @@ test:	$(TARGETS)
 # Make distributions using EPM...
 #
 
-aix: $(TARGETS)
-	./epm -f aix -v epm
-
 bsd: $(TARGETS)
 	./epm -f bsd -v epm
 
-slackware: $(TARGETS)
-	./epm -f slackware -v epm
-
 deb: $(TARGETS)
 	./epm -f deb -v epm
-
-inst tardist: $(TARGETS)
-	./epm -f tardist -v epm
 
 gui: $(TARGETS)
 	./epm -f portable -v -s default.png --setup-program setup \
@@ -324,14 +297,8 @@ lsb macos portable rpm: $(TARGETS)
 	./epm -f $@ -v -s default.png --setup-program setup \
 		--uninstall-program uninst --data-dir . epm
 
-pkg: $(TARGETS)
-	./epm -f pkg -v epm
-
 native: $(TARGETS)
 	./epm -f native -v epm
-
-swinstall depot: $(TARGETS)
-	./epm -f depot -v epm
 
 
 #

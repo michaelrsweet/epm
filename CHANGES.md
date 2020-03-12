@@ -1,9 +1,10 @@
 Changes in EPM
 ==============
 
-Changes in EPM 4.4.1
---------------------
+Changes in EPM 4.5
+------------------
 
+- Dropped support for AIX, AT&T, Tru64, HP-UX, IRIX, and Slackware packages.
 - "make install" failed due to the README filename changing (Issue #59)
 - The `mkepmlist` utility did not correctly handle filenames containing the
   `$` character (Issue #62)

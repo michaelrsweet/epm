@@ -70,15 +70,10 @@ The following options are recognized:
 <dt><b>-a </b><i>architecture</i>
 <dd style="margin-left: 5.0em">Specifies the actual architecture for the software.
 Without this option the generic processor architecture is used ("intel", "sparc", "mips", etc.)
-<dt><b>-f aix</b>
-<dd style="margin-left: 5.0em">Generate an AIX distribution suitable for installation on an AIX system.
 <dt><b>-f bsd</b>
 <dd style="margin-left: 5.0em">Generate a BSD distribution suitable for installation on a FreeBSD, NetBSD, or OpenBSD system.
 <dt><b>-f deb</b>
 <dd style="margin-left: 5.0em">Generate a Debian distribution suitable for installation on a Debian Linux system.
-<dt><b>-f inst</b>
-<dd style="margin-left: 5.0em"><dt><b>-f tardist</b>
-<dd style="margin-left: 5.0em">Generate an IRIX distribution suitable for installation on an system running IRIX.
 <dt><b>-f lsb</b>
 <dd style="margin-left: 5.0em"><dt><b>-f lsb-signed</b>
 <dd style="margin-left: 5.0em">Generate RPM packages for LSB-conforming systems.
@@ -91,9 +86,6 @@ All other operating systems default to the <i>portable</i> format.
 <dd style="margin-left: 5.0em"><dt><b>-f macos-signed</b>
 <dd style="margin-left: 5.0em">Generate a macOS software package.
 The <i>macos-signed</i> format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
-<dt><b>-f pkg</b>
-<dd style="margin-left: 5.0em">Generate an AT&amp;T software package.
-These are used primarily under Solaris.
 <dt><b>-f portable</b>
 <dd style="margin-left: 5.0em">Generate a portable distribution based on shell scripts and tar files.
 The resulting distribution is installed and removed the same way on all operating systems. [default]
@@ -101,13 +93,6 @@ The resulting distribution is installed and removed the same way on all operatin
 <dd style="margin-left: 5.0em"><dt><b>-f rpm-signed</b>
 <dd style="margin-left: 5.0em">Generate a Red Hat Package Manager ("RPM") distribution suitable for installation on a Red Hat Linux system.
 The <i>rpm-signed</i> format uses the GPG private key you have defined in the ~/.rpmmacros file.
-<dt><b>-f setld</b>
-<dd style="margin-left: 5.0em">Generate a Tru64 (setld) software distribution.
-<dt><b>-f slackware</b>
-<dd style="margin-left: 5.0em">Generate a Slackware Linux software distribution.
-<dt><b>-f swinstall</b>
-<dd style="margin-left: 5.0em"><dt><b>-f depot</b>
-<dd style="margin-left: 5.0em">Generate a HP-UX software distribution.
 <dt><b>-g</b>
 <dd style="margin-left: 5.0em">Disable stripping of executable files in the distribution.
 <dt><b>-k</b>
@@ -162,7 +147,7 @@ man page.
 <a href="epm.list.html#epm.list"><b>epm.list</b>(5),</a>
 <a href="setup.html#setup"><b>setup</b>(1).</a>
 <h3 class="title"><a name="COPYRIGHT">Copyright</a></h3>
-Copyright &copy; 1999-2017 by Michael R Sweet, All Rights Reserved.
+Copyright &copy; 1999-2020 by Michael R Sweet, All Rights Reserved.
 <p>This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2, or (at your option)

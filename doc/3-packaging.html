@@ -227,36 +227,20 @@ macOS software packages.</P>
 
 <UL>
 
-	<LI><CODE>aix</CODE> - AIX software packages.
-
 	<LI><CODE>bsd</CODE> - FreeBSD, NetBSD, or OpenBSD
-	software packages.
-
-	<LI><CODE>depot</CODE> or <CODE>swinstall</CODE> - HP-UX
 	software packages.
 
 	<LI><CODE>dpkg</CODE> - Debian software packages.
 
-	<LI><CODE>inst</CODE> or <CODE>tardist</CODE> - IRIX
-	software packages.
-
 	<LI><CODE>native</CODE> - "Native" software packages
-	(RPM, INST, DEPOT, PKG, etc.) for the platform.
+	(RPM, etc.) for the platform.
 
 	<LI><CODE>osx</CODE> - macOS software packages.
-
-	<LI><CODE>pkg</CODE> - Solaris software packages.
 
 	<LI><CODE>portable</CODE> - Portable software
 	packages (default).
 
 	<LI><CODE>rpm</CODE> - Red Hat software packages.
-
-	<LI><CODE>setld</CODE> - Tru64 (setld) software
-	packages.
-
-	<LI><CODE>slackware</CODE> - Slackware software
-	packages.
 
 </UL>
 
@@ -280,28 +264,11 @@ directory is based on the operating system name, version, and
 architecture. Each package format will leave different files in
 the output directory.</P>
 
-<H3>AIX Package Files</H3>
-
-<P>AIX packages are contained in a file called
-<VAR>name.bff</VAR>, where "name" is the product/package name you
-supplied on the command-line.</P>
-
 <H3>BSD Package Files</H3>
 
 <P>BSD packages are contained in a file called
 <VAR>name.tgz</VAR>, where "name" is the product/package name you
 supplied on the command-line.</P>
-
-<H3>HP-UX Package Files</H3>
-
-<P>HP-UX packages are contained in two files called
-<VAR>name.depot.gz</VAR> and <VAR>name.depot.tgz</VAR>, where
-"name" is the product/package name you supplied on the
-command-line. The <VAR>name.depot.gz</VAR> file can be supplied
-directly to the <CODE>swinstall(1m)</CODE> command, while the
-<VAR>name.depot.tgz</VAR> file contains a compressed
-<CODE>tar(1)</CODE> archive that can be used to install the
-software from CD-ROM or network filesystem.</P>
 
 <H3>Debian Package Files</H3>
 
@@ -312,12 +279,6 @@ supplied on the command-line. The <VAR>name.deb.tgz</VAR> file
 contains a compressed <CODE>tar</CODE> archive containing
 <VAR>name.deb</VAR> and <VAR>name-subpackage.deb</VAR> files that
 can be installed from CD-ROM, disk, or network filesystem.</P>
-
-<H3>IRIX Package Files</H3>
-
-<P>IRIX packages are contained in a file called
-<VAR>name.tardist</VAR>, where "name" is the product/package name
-you supplied on the command-line.</P>
 
 <H3>macOS Package Files</H3>
 
@@ -334,29 +295,6 @@ supplied on the command-line. The <VAR>name.rpm.tgz</VAR> file
 contains a compressed <CODE>tar</CODE> archive containing
 <VAR>name.rpm</VAR> and <VAR>name-subpackage.rpm</VAR> files that
 can be installed from CD-ROM, disk, or network filesystem.</P>
-
-<H3>Slackware Package Files</H3>
-
-<P>Slackware packages are contained in a file called
-<VAR>name.tgz</VAR>, where "name" is the product/package name you
-supplied on the command-line.</P>
-
-<H3>Solaris Package Files</H3>
-
-<P>Solaris packages are contained in two files called
-<VAR>name.pkg.gz</VAR> and <VAR>name.pkg.tgz</VAR>, where "name"
-is the product/package name you supplied on the command-line. The
-<VAR>name.pkg.gz</VAR> file is a compressed package file that can
-be used directly with the <CODE>pkgadd(1m)</CODE> command, while
-the <VAR>name.pkg.tgz</VAR> file is a compressed <CODE>tar</CODE>
-archive that can be used to install the software from CD-ROM,
-disk, or network filesystem.</P>
-
-<H3>Tru64 Package Files</H3>
-
-<P>Tru64 packages are contained in a file called
-<VAR>name.tar.gz</VAR>, where "name" is the product/package name
-you supplied on the command-line.</P>
 
 </BODY>
 </HTML>

@@ -1,8 +1,8 @@
 .\"
 .\" Manual page for the ESP Package Manager (EPM).
 .\"
-.\" Copyright 1999-2017 by Michael R Sweet
-.\" Copyright 1999-2008 by Easy Software Products, all rights reserved.
+.\" Copyright © 1999-2020 by Michael R Sweet
+.\" Copyright © 1999-2008 by Easy Software Products, all rights reserved.
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH epm 1 "ESP Package Manager" "10 October 2017" "Michael R Sweet"
+.TH epm 1 "ESP Package Manager" "March 11, 2020" "Michael R Sweet"
 .SH NAME
 epm \- create software packages.
 .SH SYNOPSIS
@@ -79,19 +79,11 @@ The following options are recognized:
 Specifies the actual architecture for the software.
 Without this option the generic processor architecture is used ("intel", "sparc", "mips", etc.)
 .TP 5
-\fB\-f aix\fR
-Generate an AIX distribution suitable for installation on an AIX system.
-.TP 5
 \fB\-f bsd\fR
 Generate a BSD distribution suitable for installation on a FreeBSD, NetBSD, or OpenBSD system.
 .TP 5
 \fB\-f deb\fR
 Generate a Debian distribution suitable for installation on a Debian Linux system.
-.TP 5
-\fB\-f inst\fR
-.TP 5
-\fB\-f tardist\fR
-Generate an IRIX distribution suitable for installation on an system running IRIX.
 .TP 5
 \fB\-f lsb\fR
 .TP 5
@@ -110,10 +102,6 @@ All other operating systems default to the \fIportable\fR format.
 Generate a macOS software package.
 The \fImacos\-signed\fR format uses the signing identity in the EPM_SIGNING_IDENTITY environment variable.
 .TP 5
-\fB\-f pkg\fR
-Generate an AT&T software package.
-These are used primarily under Solaris.
-.TP 5
 \fB\-f portable\fR
 Generate a portable distribution based on shell scripts and tar files.
 The resulting distribution is installed and removed the same way on all operating systems. [default]
@@ -123,17 +111,6 @@ The resulting distribution is installed and removed the same way on all operatin
 \fB\-f rpm\-signed\fR
 Generate a Red Hat Package Manager ("RPM") distribution suitable for installation on a Red Hat Linux system.
 The \fIrpm\-signed\fR format uses the GPG private key you have defined in the ~/.rpmmacros file.
-.TP 5
-\fB\-f setld\fR
-Generate a Tru64 (setld) software distribution.
-.TP 5
-\fB\-f slackware\fR
-Generate a Slackware Linux software distribution.
-.TP 5
-\fB\-f swinstall\fR
-.TP 5
-\fB\-f depot\fR
-Generate a HP-UX software distribution.
 .TP 5
 \fB\-g\fR
 Disable stripping of executable files in the distribution.
@@ -197,7 +174,7 @@ man page.
 .BR epm.list (5),
 .BR setup (1).
 .SH COPYRIGHT
-Copyright \[co] 1999-2017 by Michael R Sweet, All Rights Reserved.
+Copyright \[co] 1999-2020 by Michael R Sweet, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

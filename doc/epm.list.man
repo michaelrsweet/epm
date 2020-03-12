@@ -14,7 +14,7 @@
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
-.TH epm.list 5 "ESP Package Manager" "3 October 2017" "Michael R Sweet"
+.TH epm.list 5 "ESP Package Manager" "March 11, 20207" "Michael R Sweet"
 .SH NAME
 epm.list \- epm list file format.
 .SH DESCRIPTION
@@ -282,7 +282,7 @@ The dollar sign can be inserted using $$.
 .BR epminstall (1),
 .BR mkepmlist (1).
 .SH COPYRIGHT
-Copyright \[co] 1999-2017 by Michael R Sweet, All Rights Reserved.
+Copyright \[co] 1999-2020 by Michael R Sweet, All Rights Reserved.
 .LP
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
