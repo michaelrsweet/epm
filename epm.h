@@ -1,8 +1,8 @@
 /*
  * Definitions for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2017 by Michael R Sweet
- * Copyright 1999-2010 by Easy Software Products.
+ * Copyright © 1999-2020 by Michael R Sweet
+ * Copyright © 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,20 +94,14 @@ extern "C" {
 enum
 {
   PACKAGE_PORTABLE,			/* Shell-script based EPM */
-  PACKAGE_AIX,				/* AIX package format */
   PACKAGE_BSD,				/* BSD package format */
   PACKAGE_DEB,				/* Debian package format */
-  PACKAGE_INST,				/* IRIX package format */
   PACKAGE_LSB,				/* LSB (RPM) package format */
   PACKAGE_LSB_SIGNED,			/* LSB (RPM) package format (signed) */
   PACKAGE_MACOS,			/* macOS package format */
   PACKAGE_MACOS_SIGNED,			/* macOS package format (signed) */
-  PACKAGE_PKG,				/* AT&T package format (AIX, Solaris) */
   PACKAGE_RPM,				/* RedHat package format */
-  PACKAGE_RPM_SIGNED,			/* RedHat package format (signed) */
-  PACKAGE_SETLD,			/* Tru64 package format */
-  PACKAGE_SLACKWARE,			/* Slackware package format */
-  PACKAGE_SWINSTALL			/* HP-UX package format */
+  PACKAGE_RPM_SIGNED			/* RedHat package format (signed) */
 };
 
 /*
@@ -269,9 +263,6 @@ extern const char *get_runlevels(file_t *file, const char *deflevels);
 extern int	get_start(file_t *file, int defstart);
 extern int	get_stop(file_t *file, int defstop);
 extern int	get_vernumber(const char *version);
-extern int	make_aix(const char *prodname, const char *directory,
-		         const char *platname, dist_t *dist,
-			 struct utsname *platform);
 extern int	make_bsd(const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform);
@@ -280,16 +271,10 @@ extern int	make_deb(const char *prodname, const char *directory,
 			 struct utsname *platform);
 extern int	make_directory(const char *directory, mode_t mode, uid_t owner,
 		               gid_t group);
-extern int	make_inst(const char *prodname, const char *directory,
-		          const char *platname, dist_t *dist,
-			  struct utsname *platform);
 extern int	make_link(const char *dst, const char *src);
 extern int	make_osx(int format, const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform, const char *setup);
-extern int	make_pkg(const char *prodname, const char *directory,
-		         const char *platname, dist_t *dist,
-			 struct utsname *platform);
 extern int	make_portable(const char *prodname, const char *directory,
 		              const char *platname, dist_t *dist,
 			      struct utsname *platform, const char *setup,
@@ -298,15 +283,6 @@ extern int	make_rpm(int format, const char *prodname, const char *directory,
 		         const char *platname, dist_t *dist,
 			 struct utsname *platform, const char *setup,
 			 const char *types);
-extern int	make_setld(const char *prodname, const char *directory,
-		           const char *platname, dist_t *dist,
-			   struct utsname *platform);
-extern int	make_slackware(const char *prodname, const char *directory,
-		               const char *platname, dist_t *dist,
-			       struct utsname *platform);
-extern int	make_swinstall(const char *prodname, const char *directory,
-		               const char *platname, dist_t *dist,
-			       struct utsname *platform);
 extern dist_t	*new_dist(void);
 extern int	qprintf(FILE *fp, const char *format, ...);
 extern dist_t	*read_dist(const char *filename, struct utsname *platform,

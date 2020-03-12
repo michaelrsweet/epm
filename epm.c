@@ -70,20 +70,14 @@ main(int  argc,				/* I - Number of command-line args */
   static char	*formats[] =		/* Distribution format strings */
 		{
 		  "portable",
-		  "aix",
 		  "bsd",
 		  "deb",
-		  "inst",
 		  "rpm",
 		  "rpm",
 		  "macos",
 		  "macos",
-		  "pkg",
 		  "rpm",
-		  "rpm",
-		  "setld",
-		  "slackware",
-		  "swinstall"
+		  "rpm"
 		};
 
 
@@ -158,15 +152,10 @@ main(int  argc,				/* I - Number of command-line args */
 
 	    if (!strcasecmp(temp, "portable"))
 	      format = PACKAGE_PORTABLE;
-	    else if (!strcasecmp(temp, "aix"))
-	      format = PACKAGE_AIX;
 	    else if (!strcasecmp(temp, "bsd"))
 	      format = PACKAGE_BSD;
 	    else if (!strcasecmp(temp, "deb"))
 	      format = PACKAGE_DEB;
-	    else if (!strcasecmp(temp, "inst") ||
-	             !strcasecmp(temp, "tardist"))
-	      format = PACKAGE_INST;
 	    else if (!strcasecmp(temp, "lsb"))
 	      format = PACKAGE_LSB;
 	    else if (!strcasecmp(temp, "lsb-signed"))
@@ -175,19 +164,10 @@ main(int  argc,				/* I - Number of command-line args */
 	      format = PACKAGE_MACOS;
 	    else if (!strcasecmp(temp, "macos-signed") || !strcasecmp(temp, "osx-signed"))
 	      format = PACKAGE_MACOS_SIGNED;
-	    else if (!strcasecmp(temp, "pkg"))
-	      format = PACKAGE_PKG;
 	    else if (!strcasecmp(temp, "rpm"))
 	      format = PACKAGE_RPM;
 	    else if (!strcasecmp(temp, "rpm-signed"))
 	      format = PACKAGE_RPM_SIGNED;
-	    else if (!strcasecmp(temp, "setld"))
-	      format = PACKAGE_SETLD;
-	    else if (!strcasecmp(temp, "slackware"))
-	      format = PACKAGE_SLACKWARE;
-	    else if (!strcasecmp(temp, "swinstall") ||
-	             !strcasecmp(temp, "depot"))
-	      format = PACKAGE_SWINSTALL;
 	    else if (!strcasecmp(temp, "native"))
 #if defined(__linux)
             {
@@ -200,18 +180,8 @@ main(int  argc,				/* I - Number of command-line args */
 	      else
 		format = PACKAGE_DEB;
             }
-#elif defined(__sgi)
-	      format = PACKAGE_INST;
-#elif defined(__osf__)
-	      format = PACKAGE_SETLD;
-#elif defined(__hpux)
-	      format = PACKAGE_SWINSTALL;
-#elif defined(_AIX)
-              format = PACKAGE_AIX;
 #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
 	      format = PACKAGE_BSD;
-#elif defined(__svr4__) || defined(__SVR4) || defined(M_XENIX)
-	      format = PACKAGE_PKG;
 #elif defined(__APPLE__)
               format = PACKAGE_MACOS;
 #else
@@ -548,54 +518,30 @@ main(int  argc,				/* I - Number of command-line args */
         i = make_portable(prodname, directory, platname, dist, &platform,
 	                  setup, types);
 	break;
-    case PACKAGE_AIX :
-        i = make_aix(prodname, directory, platname, dist, &platform);
-	break;
+
     case PACKAGE_BSD :
         i = make_bsd(prodname, directory, platname, dist, &platform);
 	break;
-	case PACKAGE_SLACKWARE :
-        i = make_slackware(prodname, directory, platname, dist, &platform);
-	break;
+
     case PACKAGE_DEB :
         if (geteuid())
 	  fputs("epm: Warning - file permissions and ownership may not be correct\n"
-	        "     in Debian packages unless you run EPM as root!\n", stderr);
+	        "     in Debian packages unless you run EPM as root.\n", stderr);
 
         i = make_deb(prodname, directory, platname, dist, &platform);
 	break;
-    case PACKAGE_INST :
-        i = make_inst(prodname, directory, platname, dist, &platform);
-	break;
+
     case PACKAGE_MACOS :
     case PACKAGE_MACOS_SIGNED :
         i = make_osx(format, prodname, directory, platname, dist, &platform, setup);
 	break;
-    case PACKAGE_PKG :
-        i = make_pkg(prodname, directory, platname, dist, &platform);
-	break;
+
     case PACKAGE_LSB :
     case PACKAGE_LSB_SIGNED :
     case PACKAGE_RPM :
     case PACKAGE_RPM_SIGNED :
         i = make_rpm(format, prodname, directory, platname, dist, &platform,
 	             setup, types);
-	break;
-    case PACKAGE_SETLD :
-        if (geteuid())
-	  fputs("epm: Warning - file permissions and ownership may not be correct\n"
-	        "     in Tru64 packages unless you run EPM as root!\n", stderr);
-
-        i = make_setld(prodname, directory, platname, dist, &platform);
-	break;
-    case PACKAGE_SWINSTALL :
-        if (geteuid())
-	{
-	  fputs("epm: Error - HP-UX packages must be built as root!\n", stderr);
-          i = 1;
-	}
-	else
-          i = make_swinstall(prodname, directory, platname, dist, &platform);
 	break;
   }
 
@@ -648,7 +594,7 @@ static void
 info(void)
 {
   puts(EPM_VERSION);
-  puts("Copyright 1999-2019 by Michael R Sweet.");
+  puts("Copyright (c) 1999-2020 by Michael R Sweet.");
   puts("");
   puts("EPM is free software and comes with ABSOLUTELY NO WARRANTY; for details");
   puts("see the GNU General Public License in the file COPYING or at");
@@ -673,7 +619,7 @@ usage(void)
   puts("    Use the named architecture instead of the local one.");
   puts("-g");
   puts("    Don't strip executables in distributions.");
-  puts("-f {aix,bsd,deb,depot,inst,macos,macos-signed,native,pkg,portable,rpm,setld,slackware,swinstall,tardist}");
+  puts("-f {bsd,deb,lsb,lsb-signed,macos,macos-signed,native,portable,rpm,rpm-signed}");
   puts("    Set distribution format.");
   puts("-k");
   puts("    Keep intermediate files (spec files, etc.)");
