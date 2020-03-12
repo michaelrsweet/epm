@@ -1,8 +1,8 @@
 /*
  * Red Hat package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2019 by Michael R Sweet
- * Copyright 1999-2010 by Easy Software Products.
+ * Copyright © 1999-2020 by Michael R Sweet
+ * Copyright © 1999-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,11 +129,11 @@ make_rpm(int            format,		/* I - Subformat */
 
   snprintf(filename, sizeof(filename), "%s/BUILD", directory);
 
-  make_directory(filename, 0777, getuid(), getgid());
+  make_directory(filename, 0, getuid(), getgid());
 
   snprintf(filename, sizeof(filename), "%s/RPMS", directory);
 
-  make_directory(filename, 0777, getuid(), getgid());
+  make_directory(filename, 0, getuid(), getgid());
 
   snprintf(filename, sizeof(filename), "%s/rpms", directory);
   symlink("RPMS", filename);
@@ -146,7 +146,7 @@ make_rpm(int            format,		/* I - Subformat */
     snprintf(filename, sizeof(filename), "%s/RPMS/%s", directory,
              platform->machine);
 
-  make_directory(filename, 0777, getuid(), getgid());
+  make_directory(filename, 0, getuid(), getgid());
 
  /*
   * Now list all of the subpackages...

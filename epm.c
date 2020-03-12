@@ -1,8 +1,8 @@
 /*
  * Main program source for the ESP Package Manager (EPM).
  *
- * Copyright 1999-2019 by Michael R Sweet
- * Copyright 1999-2008 by Easy Software Products.
+ * Copyright © 1999-2020 by Michael R Sweet
+ * Copyright © 1999-2008 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -530,7 +530,7 @@ main(int  argc,				/* I - Number of command-line args */
   * Make build directory...
   */
 
-  make_directory(directory, 0777, getuid(), getgid());
+  make_directory(directory, 0, getuid(), getgid());
 
  /*
   * Make the distribution in the correct format...

@@ -1,8 +1,8 @@
 /*
  * macOS package gateway for the ESP Package Manager (EPM).
  *
- * Copyright 2002-2017 by Michael R Sweet
- * Copyright 2002-2010 by Easy Software Products.
+ * Copyright © 2002-2020 by Michael R Sweet
+ * Copyright © 2002-2010 by Easy Software Products.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,10 +104,10 @@ make_osx(int            format,		/* I - Format */
 	puts("Copying temporary resource files...");
 
       snprintf(filename, sizeof(filename), "%s/MetaPackage", directory);
-      make_directory(filename, 0777, 0, 0);
+      make_directory(filename, 0755, 0, 0);
 
       snprintf(filename, sizeof(filename), "%s/MetaResources", directory);
-      make_directory(filename, 0777, 0, 0);
+      make_directory(filename, 0755, 0, 0);
 
       if (dist->license[0])
       {
@@ -399,7 +399,7 @@ make_subpackage(int        format,	/* I - Format */
     puts("Copying temporary resource files...");
 
   snprintf(filename, sizeof(filename), "%s/%s/Resources", directory, prodfull);
-  make_directory(filename, 0777, 0, 0);
+  make_directory(filename, 0755, 0, 0);
 
   if (!have_pkgbuild)
   {
@@ -665,7 +665,7 @@ make_subpackage(int        format,	/* I - Format */
           snprintf(filename, sizeof(filename),
 	           "%s/%s/Package/Library/StartupItems/%s/Resources/English.lproj",
 	           directory, prodfull, file->dst);
-          make_directory(filename, 0777, 0, 0);
+          make_directory(filename, 0755, 0, 0);
 
           snprintf(filename, sizeof(filename),
 	           "%s/%s/Package/Library/StartupItems/%s/Resources/English.lproj/Localizable.strings",
@@ -699,8 +699,7 @@ make_subpackage(int        format,	/* I - Format */
 	  if (Verbosity > 1)
 	    printf("Directory %s...\n", filename);
 
-          make_directory(filename, file->mode, pwd ? pwd->pw_uid : 0,
-			 grp ? grp->gr_gid : 0);
+          make_directory(filename, file->mode, pwd ? pwd->pw_uid : 0, grp ? grp->gr_gid : 0);
           break;
       case 'l' :
           if (!strncmp(file->dst, "/etc/", 5) || !strncmp(file->dst, "/var/", 5))
@@ -738,7 +737,7 @@ make_subpackage(int        format,	/* I - Format */
     */
 
     snprintf(pkgdir, sizeof(pkgdir), "%s/Packages", filename);
-    make_directory(pkgdir, 0777, 0, 0);
+    make_directory(pkgdir, 0755, 0, 0);
 
     snprintf(pkgname, sizeof(pkgname), "%s/Packages/%s.pkg", filename,
              prodfull);

@@ -4,13 +4,15 @@ Changes in EPM
 Changes in EPM 4.5
 ------------------
 
-- Dropped support for AIX, AT&T, Tru64, HP-UX, IRIX, and Slackware packages.
+- Dropped support for AIX, AT&T (Solaris), Tru64, HP-UX, IRIX, and Slackware
+  packages.
 - "make install" failed due to the README filename changing (Issue #59)
 - The `mkepmlist` utility did not correctly handle filenames containing the
   `$` character (Issue #62)
 - The configure script incorrectly substituted "NONE" for the installation
   prefix (Issue #67)
-- Fixed mantohtml helper program - was depending on private CUPS headers for
+- Fixed some over-zealous permissions on temporary build directories (Issue #71)
+- Fixed the mantohtml helper program - was depending on private CUPS headers for
   some reason (Issue #72)
 - Cleaned up old sprintf and strcpy usage in many places.
 

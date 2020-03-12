@@ -57,7 +57,7 @@ See the file `CHANGES.md` for change information.
 Resources
 ---------
 
-The official home page for EPM is <https://michaelrsweet.github.io/epm>.
+The official home page for EPM is <https://www.msweet.org/epm>.
 
 Report all problems and submit all patches/pull requests using the Github issue
 tracking pages at <https://github.com/michaelrsweet/epm/issues>.
