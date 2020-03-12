@@ -96,8 +96,6 @@ enum
   PACKAGE_PORTABLE,			/* Shell-script based EPM */
   PACKAGE_BSD,				/* BSD package format */
   PACKAGE_DEB,				/* Debian package format */
-  PACKAGE_LSB,				/* LSB (RPM) package format */
-  PACKAGE_LSB_SIGNED,			/* LSB (RPM) package format (signed) */
   PACKAGE_MACOS,			/* macOS package format */
   PACKAGE_MACOS_SIGNED,			/* macOS package format (signed) */
   PACKAGE_RPM,				/* RedHat package format */

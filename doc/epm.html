@@ -73,14 +73,10 @@ Without this option the generic processor architecture is used ("intel", "sparc"
 <dt><b>-f bsd</b>
 <dd style="margin-left: 5.0em">Generate a BSD distribution suitable for installation on a FreeBSD, NetBSD, or OpenBSD system.
 <dt><b>-f deb</b>
-<dd style="margin-left: 5.0em">Generate a Debian distribution suitable for installation on a Debian Linux system.
-<dt><b>-f lsb</b>
-<dd style="margin-left: 5.0em"><dt><b>-f lsb-signed</b>
-<dd style="margin-left: 5.0em">Generate RPM packages for LSB-conforming systems.
-The <i>lsb-signed</i> format uses the GPG private key you have defined in the ~/.rpmmacros file.
+<dd style="margin-left: 5.0em">Generate a Debian distribution suitable for installation on a Debian-based Linux system.
 <dt><b>-f native</b>
 <dd style="margin-left: 5.0em">Generate a native distribution.
-This uses <i>rpm</i> for Linux, <i>inst</i> for IRIX, <i>pkg</i> for Solaris, <i>swinstall</i> for HP-UX, <i>bsd</i> for FreeBSD, NetBSD, and OpenBSD, and <i>osx</i> for macOS.
+This uses <i>deb</i> or <i>rpm</i> for Linux, <i>bsd</i> for FreeBSD, NetBSD, and OpenBSD, and <i>macos</i> for macOS.
 All other operating systems default to the <i>portable</i> format.
 <dt><b>-f macos</b>
 <dd style="margin-left: 5.0em"><dt><b>-f macos-signed</b>
@@ -91,7 +87,7 @@ The <i>macos-signed</i> format uses the signing identity in the EPM_SIGNING_IDEN
 The resulting distribution is installed and removed the same way on all operating systems. [default]
 <dt><b>-f rpm</b>
 <dd style="margin-left: 5.0em"><dt><b>-f rpm-signed</b>
-<dd style="margin-left: 5.0em">Generate a Red Hat Package Manager ("RPM") distribution suitable for installation on a Red Hat Linux system.
+<dd style="margin-left: 5.0em">Generate a Red Hat Package Manager ("RPM") distribution suitable for installation on an RPM-based Linux system.
 The <i>rpm-signed</i> format uses the GPG private key you have defined in the ~/.rpmmacros file.
 <dt><b>-g</b>
 <dd style="margin-left: 5.0em">Disable stripping of executable files in the distribution.

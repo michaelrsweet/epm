@@ -83,17 +83,11 @@ Without this option the generic processor architecture is used ("intel", "sparc"
 Generate a BSD distribution suitable for installation on a FreeBSD, NetBSD, or OpenBSD system.
 .TP 5
 \fB\-f deb\fR
-Generate a Debian distribution suitable for installation on a Debian Linux system.
-.TP 5
-\fB\-f lsb\fR
-.TP 5
-\fB\-f lsb\-signed\fR
-Generate RPM packages for LSB-conforming systems.
-The \fIlsb\-signed\fR format uses the GPG private key you have defined in the ~/.rpmmacros file.
+Generate a Debian distribution suitable for installation on a Debian-based Linux system.
 .TP 5
 \fB\-f native\fR
 Generate a native distribution.
-This uses \fIrpm\fR for Linux, \fIinst\fR for IRIX, \fIpkg\fR for Solaris, \fIswinstall\fR for HP-UX, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fIosx\fR for macOS.
+This uses \fIdeb\fR or \fIrpm\fR for Linux, \fIbsd\fR for FreeBSD, NetBSD, and OpenBSD, and \fImacos\fR for macOS.
 All other operating systems default to the \fIportable\fR format.
 .TP 5
 \fB\-f macos\fR
@@ -109,7 +103,7 @@ The resulting distribution is installed and removed the same way on all operatin
 \fB\-f rpm\fR
 .TP 5
 \fB\-f rpm\-signed\fR
-Generate a Red Hat Package Manager ("RPM") distribution suitable for installation on a Red Hat Linux system.
+Generate a Red Hat Package Manager ("RPM") distribution suitable for installation on an RPM-based Linux system.
 The \fIrpm\-signed\fR format uses the GPG private key you have defined in the ~/.rpmmacros file.
 .TP 5
 \fB\-g\fR

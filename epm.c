@@ -156,10 +156,6 @@ main(int  argc,				/* I - Number of command-line args */
 	      format = PACKAGE_BSD;
 	    else if (!strcasecmp(temp, "deb"))
 	      format = PACKAGE_DEB;
-	    else if (!strcasecmp(temp, "lsb"))
-	      format = PACKAGE_LSB;
-	    else if (!strcasecmp(temp, "lsb-signed"))
-	      format = PACKAGE_LSB_SIGNED;
 	    else if (!strcasecmp(temp, "macos") || !strcasecmp(temp, "osx"))
 	      format = PACKAGE_MACOS;
 	    else if (!strcasecmp(temp, "macos-signed") || !strcasecmp(temp, "osx-signed"))
@@ -536,8 +532,6 @@ main(int  argc,				/* I - Number of command-line args */
         i = make_osx(format, prodname, directory, platname, dist, &platform, setup);
 	break;
 
-    case PACKAGE_LSB :
-    case PACKAGE_LSB_SIGNED :
     case PACKAGE_RPM :
     case PACKAGE_RPM_SIGNED :
         i = make_rpm(format, prodname, directory, platname, dist, &platform,
@@ -619,7 +613,7 @@ usage(void)
   puts("    Use the named architecture instead of the local one.");
   puts("-g");
   puts("    Don't strip executables in distributions.");
-  puts("-f {bsd,deb,lsb,lsb-signed,macos,macos-signed,native,portable,rpm,rpm-signed}");
+  puts("-f {bsd,deb,macos,macos-signed,native,portable,rpm,rpm-signed}");
   puts("    Set distribution format.");
   puts("-k");
   puts("    Keep intermediate files (spec files, etc.)");
