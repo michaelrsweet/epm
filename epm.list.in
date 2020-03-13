@@ -1,8 +1,8 @@
 #
 # Sample software list file for the ESP Package Manager (EPM).
 #
-# Copyright 1999-2017 by Michael R Sweet
-# Copyright 1999-2007 by Easy Software Products, all rights reserved.
+# Copyright © 1999-2020 by Michael R Sweet
+# Copyright © 1999-2007 by Easy Software Products, all rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ $srcdir=@srcdir@
 
 # Product information
 %product ESP Package Manager
-%copyright 1999-2017 by Michael R Sweet, All Rights Reserved.
-%vendor Easy Software Products
+%copyright 1999-2020 by Michael R Sweet, All Rights Reserved.
+%vendor Michael R Sweet
 %license ${srcdir}/COPYING
 %readme ${srcdir}/README.md
 %description Universal software packaging tool for UNIX.
@@ -51,10 +51,10 @@ f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
 # Man pages
 %subpackage man
 %description Man pages
-f 0444 root sys ${mandir}/man1/epm.1 $srcdir/doc/epm.man
-f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.man
-f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.man
-f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.man
+f 0444 root sys ${mandir}/man1 $srcdir/doc/epm.1
+f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.1
+f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.1
+f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.5
 
 # GUI files...
 $GUIS=@GUIS@
@@ -69,7 +69,7 @@ f 0444 root sys ${datadir}/epm/default.icns default.icns
 %system all
 
 %subpackage man
-f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.man
-f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
+f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.1
+f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.5
 
 %endif
