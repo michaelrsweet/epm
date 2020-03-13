@@ -85,17 +85,24 @@ d 755 root sys /var/spool/foo -
 l 000 root sys /usr/bin/foobar foo
 </PRE>
 
-<P>The source field specifies the file to link to and can be a
-relative path.</P>
+<P>The source field specifies the file to link to and can be a relative path. Just as with the <code>ln</code> command, source paths are relative to the destination directory. For example, the symbolic link <var>/usr/bin/foobar</var> above points to the file <var>/usr/bin/foo</var>.</P>
 
 <H3>Wildcards</H3>
 
-<P>Wildcard patterns can be used in the source field to include multiple
-files on a single line:
+<P>Wildcard patterns can be used in the source field to include multiple files on a single line. The destination field contains the destination directory for the matched files:
 
 <PRE>
 f 0444 root sys /usr/share/doc/foo *.html
 </PRE>
+
+<p>For example, if the source directory contains three HTML files, <var>bar.html</var>, <var>baz.html</var>, and <var>foo.html</var>, the wildcard line above would expand to:</p>
+
+<pre>
+f 0444 root sys /usr/share/doc/foo/bar.html bar.html
+f 0444 root sys /usr/share/doc/foo/baz.html baz.html
+f 0444 root sys /usr/share/doc/foo/foo.html foo.html
+</pre>
+
 
 <!-- NEED 3in -->
 <H3>Subpackages</H3>
