@@ -15,4 +15,5 @@ git tag -m "Tag $version" v$version
 git push origin v$version
 
 echo Creating epm-$version-source.tar.gz...
-git archive --format tar HEAD | gzip -v9 >epm-$version-source.tar.gz
+git archive --format tar --prefix=epm-$version/ HEAD | gzip -v9 >epm-$version.tar.gz
+gpg --detach-sign epm-$version.tar.gz
