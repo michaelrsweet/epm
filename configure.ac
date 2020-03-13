@@ -19,21 +19,18 @@ AC_INIT([EPM],[4.5],[https://github.com/michaelrsweet/epm/issues],[epm],[https:/
 AC_CONFIG_HEADER(config.h)
 
 dnl Version number...
-
 VERSION="AC_PACKAGE_VERSION"
 VERNUMBER=450
 AC_SUBST(VERSION)
 AC_SUBST(VERNUMBER)
 AC_DEFINE_UNQUOTED(EPM_VERSION, "ESP Package Manager v$VERSION")
 
-dnl Get the operating system...
+dnl Get the build and host platforms and split the host_os value
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
 
-uname=`uname`
-uversion=`uname -r | sed -e '1,$s/[[^0-9]]//g'`
+[host_os_name=`echo $host_os | sed -e '1,$s/[0-9.]*$//g'`]
 
-if test "$uname" = "IRIX64"; then
-    uname="IRIX"
-fi
 
 dnl Clear default debugging options and set normal optimization by
 dnl default unless the user asks for debugging specifically.
@@ -80,22 +77,14 @@ AC_PROG_CXX(clang++ c++ g++)
 AC_PROG_RANLIB
 AC_PATH_PROG(AR,ar)
 AC_PATH_PROG(CHMOD,chmod)
+AC_PATH_PROGS(CODE_SIGN, codesign true)
 AC_PATH_PROG(CP,cp)
 AC_PATH_PROG(GZIP,gzip)
 if test x$GZIP = x; then
-	AC_MSG_ERROR(GNU zip not found but required!)
+	AC_MSG_ERROR([GNU zip not found but required.])
 fi
-AC_PATH_PROG(HTMLDOC,htmldoc)
+AC_PATH_PROGS(HTMLDOC, htmldoc echo)
 AC_PATH_PROG(MKDIR,mkdir)
-AC_PATH_PROG(NROFF,nroff)
-if test x$NROFF = x; then
-	AC_PATH_PROG(GROFF,groff)
-	if test x$GROFF = x; then
-        	NROFF="echo"
-	else
-        	NROFF="$GROFF -T ascii"
-	fi
-fi
 AC_PATH_PROG(RM,rm)
 AC_PATH_PROG(RPM,rpm)
 AC_PATH_PROG(RPMBUILD,rpmbuild)
@@ -104,12 +93,6 @@ AC_PATH_PROG(STRIP,strip)
 dnl Architecture checks...
 AC_C_CONST
 AC_C_CHAR_UNSIGNED
-
-if test "$uname" = "IRIX"; then
-	if test `uname -r` = 6.5; then
-		STRIP="$STRIP -f -s -k -l -h"
-	fi
-fi
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -122,11 +105,7 @@ AC_CHECK_HEADER(sys/vfs.h,AC_DEFINE(HAVE_SYS_VFS_H))
 
 dnl Checks for string functions.
 AC_CHECK_FUNCS(strcasecmp strdup strlcat strlcpy strncasecmp)
-if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
-	AC_MSG_WARN(Forcing snprintf emulation for HP-UX.)
-else
-	AC_CHECK_FUNCS(snprintf vsnprintf)
-fi
+AC_CHECK_FUNCS(snprintf vsnprintf)
 AC_SEARCH_LIBS(gethostname, socket)
 
 if test "x$enable_gui" != xno; then
@@ -148,7 +127,7 @@ else
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
 
-	if test "$uname" = Darwin; then
+	if test "$host_os_name" = darwin; then
 		GUILIBS="$GUILIBS -framework Security"
 		INSTALL_OSX="install-macos"
 	else
@@ -162,8 +141,8 @@ AC_SUBST(GUIS)
 AC_SUBST(GUILIBS)
 
 dnl Set the default compression value...
-case "$uname" in
-	Darwin* | *BSD | Linux* | SunOS*)
+case "$host_os_name" in
+	darwin* | *bsd* | linux* | sunos*)
 		# macOS, *BSD, Linux, and Solaris come with gzip standard
 		AC_DEFINE(EPM_COMPRESS, 1)
 		;;
@@ -215,67 +194,11 @@ if test -n "$GCC"; then
 		AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no))
 	CFLAGS="$OLDCFLAGS"
-
-	# See if we are running HP-UX or Solaris; if so, try the
-	# -fpermissive option...
-	case $uname in
-		SunOS* | HP-UX*)
-			AC_MSG_CHECKING(if GCC supports -fpermissive)
-
-			OLDCFLAGS="$CFLAGS"
-			CFLAGS="$CFLAGS -fpermissive"
-			AC_TRY_COMPILE(,,
-				CXXFLAGS="$CXXFLAGS -fpermissive"
-				AC_MSG_RESULT(yes),
-				AC_MSG_RESULT(no))
-			CFLAGS="$OLDCFLAGS"
-			;;
-
-		*)
-			;;
-	esac
-else
-	case $uname in
-		AIX*)
-			if test -z "$OPTIM"; then
-				OPTIM="-O2"
-			fi
-			;;
-		HP-UX*)
-			if test -z "$OPTIM"; then
-				OPTIM="+O2"
-			fi
-			OPTIM="$OPTIM +DAportable"
-			;;
-        	IRIX*)
-			if test -z "$OPTIM"; then
-        			OPTIM="-O2"
-			fi
-			if test $uversion -ge 62; then
-				OPTIM="$OPTIM -n32 -mips3"
-				OPTIM="$OPTIM -OPT:Olimit=3000"
-				OPTIM="-fullwarn -woff 1209,1506,1692 $OPTIM"
-			else
-				OPTIM="-fullwarn $OPTIM"
-			fi
-			;;
-		SunOS*)
-			# Solaris
-			if test -z "$OPTIM"; then
-				OPTIM="-xO4"
-			fi
-			;;
-		*)
-			# Running some other operating system...
-			echo "Building EPM with default compiler optimizations.  Set the CFLAGS and CXXFLAGS"
-			echo "environment variable before running configure to override them."
-			;;
-	esac
 fi
 
 dnl Flags for "ar" command...
-case $uname in
-        Darwin* | *BSD*)
+case $host_os_name in
+        darwin* | *bsd*)
                 ARFLAGS="-rc"
                 ;;
         *)
@@ -318,24 +241,6 @@ if test "$datadir" = "\${prefix}/share"; then
 	fi
 elif test "$datadir" = "\${datarootdir}"; then
 	datadir="$datarootdir"
-fi
-
-dnl Fix "mandir" variable if it hasn't been specified...
-if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
-	case "$uname" in
-        	*BSD* | Darwin* | Linux*)
-        		# BSD, Darwin (macOS), and Linux
-        		mandir="/usr/share/man"
-        		;;
-        	IRIX*)
-        		# SGI IRIX
-        		mandir="/usr/share/catman/u_man"
-        		;;
-        	*)
-        		# All others
-        		mandir="/usr/man"
-        		;;
-	esac
 fi
 
 dnl EPM_SOFTWARE needs special attention for the default location...

@@ -14,6 +14,7 @@ Changes in EPM 4.5
 - Fixed some over-zealous permissions on temporary build directories (Issue #71)
 - Fixed the mantohtml helper program - was depending on private CUPS headers for
   some reason (Issue #72)
+- Fixed some build system issues (Issue #75, Issue #76)
 - Cleaned up old sprintf and strcpy usage in many places.
 
 

@@ -642,12 +642,11 @@ STRIP
 RPMBUILD
 RPM
 RM
-GROFF
-NROFF
 MKDIR
 HTMLDOC
 GZIP
 CP
+CODE_SIGN
 CHMOD
 AR
 RANLIB
@@ -663,6 +662,14 @@ CC
 OPTIM
 ARCHFLAGS
 LDFLAGS
+host_os
+host_vendor
+host_cpu
+host
+build_os
+build_vendor
+build_cpu
+build
 VERNUMBER
 VERSION
 target_alias
@@ -1321,6 +1328,10 @@ Fine tuning of the installation directories:
 _ACEOF
 
   cat <<\_ACEOF
+
+System types:
+  --build=BUILD     configure for building on BUILD [guessed]
+  --host=HOST       cross-compile to build programs to run on HOST [BUILD]
 _ACEOF
 fi
 
@@ -2184,7 +2195,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers config.h"
 
 
-
 VERSION="4.5"
 VERNUMBER=450
 
@@ -2194,13 +2204,109 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-
-uname=`uname`
-uversion=`uname -r | sed -e '1,$s/[^0-9]//g'`
-
-if test "$uname" = "IRIX64"; then
-    uname="IRIX"
+ac_aux_dir=
+for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
+  if test -f "$ac_dir/install-sh"; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/install-sh -c"
+    break
+  elif test -f "$ac_dir/install.sh"; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/install.sh -c"
+    break
+  elif test -f "$ac_dir/shtool"; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/shtool install -c"
+    break
+  fi
+done
+if test -z "$ac_aux_dir"; then
+  as_fn_error $? "cannot find install-sh, install.sh, or shtool in \"$srcdir\" \"$srcdir/..\" \"$srcdir/../..\"" "$LINENO" 5
 fi
+
+# These three variables are undocumented and unsupported,
+# and are intended to be withdrawn in a future Autoconf release.
+# They can cause serious problems if a builder's source tree is in a directory
+# whose full name contains unusual characters.
+ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
+ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
+ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
+
+
+# Make sure we can run config.sub.
+$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+$as_echo_n "checking build system type... " >&6; }
+if ${ac_cv_build+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+test "x$ac_build_alias" = x &&
+  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
+ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
+  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
+$as_echo "$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+$as_echo_n "checking host system type... " >&6; }
+if ${ac_cv_host+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
+$as_echo "$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+
+host_os_name=`echo $host_os | sed -e '1,$s/[0-9.]*$//g'`
+
 
 
 CFLAGS="${CFLAGS:=}"
@@ -3290,6 +3396,51 @@ $as_echo "no" >&6; }
 fi
 
 
+for ac_prog in codesign true
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_CODE_SIGN+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $CODE_SIGN in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_CODE_SIGN="$CODE_SIGN" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_CODE_SIGN="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+CODE_SIGN=$ac_cv_path_CODE_SIGN
+if test -n "$CODE_SIGN"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $CODE_SIGN" >&5
+$as_echo "$CODE_SIGN" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$CODE_SIGN" && break
+done
+
 # Extract the first word of "cp", so it can be a program name with args.
 set dummy cp; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -3371,10 +3522,12 @@ fi
 
 
 if test x$GZIP = x; then
-	as_fn_error $? "GNU zip not found but required!" "$LINENO" 5
+	as_fn_error $? "GNU zip not found but required." "$LINENO" 5
 fi
-# Extract the first word of "htmldoc", so it can be a program name with args.
-set dummy htmldoc; ac_word=$2
+for ac_prog in htmldoc echo
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if ${ac_cv_path_HTMLDOC+:} false; then :
@@ -3412,6 +3565,9 @@ else
 $as_echo "no" >&6; }
 fi
 
+
+  test -n "$HTMLDOC" && break
+done
 
 # Extract the first word of "mkdir", so it can be a program name with args.
 set dummy mkdir; ac_word=$2
@@ -3453,93 +3609,6 @@ $as_echo "no" >&6; }
 fi
 
 
-# Extract the first word of "nroff", so it can be a program name with args.
-set dummy nroff; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_NROFF+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $NROFF in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_NROFF="$NROFF" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_NROFF="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-NROFF=$ac_cv_path_NROFF
-if test -n "$NROFF"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $NROFF" >&5
-$as_echo "$NROFF" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-if test x$NROFF = x; then
-	# Extract the first word of "groff", so it can be a program name with args.
-set dummy groff; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_GROFF+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $GROFF in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_GROFF="$GROFF" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_GROFF="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-GROFF=$ac_cv_path_GROFF
-if test -n "$GROFF"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GROFF" >&5
-$as_echo "$GROFF" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-	if test x$GROFF = x; then
-        	NROFF="echo"
-	else
-        	NROFF="$GROFF -T ascii"
-	fi
-fi
 # Extract the first word of "rm", so it can be a program name with args.
 set dummy rm; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -4214,12 +4283,6 @@ if test $ac_cv_c_char_unsigned = yes && test "$GCC" != yes; then
 fi
 
 
-if test "$uname" = "IRIX"; then
-	if test `uname -r` = 6.5; then
-		STRIP="$STRIP -f -s -k -l -h"
-	fi
-fi
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
 $as_echo_n "checking for ANSI C header files... " >&6; }
 if ${ac_cv_header_stdc+:} false; then :
@@ -4538,11 +4601,7 @@ _ACEOF
 fi
 done
 
-if test "$uname" = "HP-UX" -a "$uversion" = "1020"; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Forcing snprintf emulation for HP-UX." >&5
-$as_echo "$as_me: WARNING: Forcing snprintf emulation for HP-UX." >&2;}
-else
-	for ac_func in snprintf vsnprintf
+for ac_func in snprintf vsnprintf
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -4554,7 +4613,6 @@ _ACEOF
 fi
 done
 
-fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing gethostname" >&5
 $as_echo_n "checking for library containing gethostname... " >&6; }
 if ${ac_cv_search_gethostname+:} false; then :
@@ -4671,7 +4729,7 @@ else
 	GUILIBS="`$FLTKCONFIG --use-images --ldstaticflags`"
 	INSTALL_GUIS="install-guis"
 
-	if test "$uname" = Darwin; then
+	if test "$host_os_name" = darwin; then
 		GUILIBS="$GUILIBS -framework Security"
 		INSTALL_OSX="install-macos"
 	else
@@ -4684,8 +4742,8 @@ fi
 
 
 
-case "$uname" in
-	Darwin* | *BSD | Linux* | SunOS*)
+case "$host_os_name" in
+	darwin* | *bsd* | linux* | sunos*)
 		# macOS, *BSD, Linux, and Solaris come with gzip standard
 		$as_echo "#define EPM_COMPRESS 1" >>confdefs.h
 
@@ -4791,83 +4849,10 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	CFLAGS="$OLDCFLAGS"
-
-	# See if we are running HP-UX or Solaris; if so, try the
-	# -fpermissive option...
-	case $uname in
-		SunOS* | HP-UX*)
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if GCC supports -fpermissive" >&5
-$as_echo_n "checking if GCC supports -fpermissive... " >&6; }
-
-			OLDCFLAGS="$CFLAGS"
-			CFLAGS="$CFLAGS -fpermissive"
-			cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  CXXFLAGS="$CXXFLAGS -fpermissive"
-				{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-			CFLAGS="$OLDCFLAGS"
-			;;
-
-		*)
-			;;
-	esac
-else
-	case $uname in
-		AIX*)
-			if test -z "$OPTIM"; then
-				OPTIM="-O2"
-			fi
-			;;
-		HP-UX*)
-			if test -z "$OPTIM"; then
-				OPTIM="+O2"
-			fi
-			OPTIM="$OPTIM +DAportable"
-			;;
-        	IRIX*)
-			if test -z "$OPTIM"; then
-        			OPTIM="-O2"
-			fi
-			if test $uversion -ge 62; then
-				OPTIM="$OPTIM -n32 -mips3"
-				OPTIM="$OPTIM -OPT:Olimit=3000"
-				OPTIM="-fullwarn -woff 1209,1506,1692 $OPTIM"
-			else
-				OPTIM="-fullwarn $OPTIM"
-			fi
-			;;
-		SunOS*)
-			# Solaris
-			if test -z "$OPTIM"; then
-				OPTIM="-xO4"
-			fi
-			;;
-		*)
-			# Running some other operating system...
-			echo "Building EPM with default compiler optimizations.  Set the CFLAGS and CXXFLAGS"
-			echo "environment variable before running configure to override them."
-			;;
-	esac
 fi
 
-case $uname in
-        Darwin* | *BSD*)
+case $host_os_name in
+        darwin* | *bsd*)
                 ARFLAGS="-rc"
                 ;;
         *)
@@ -4905,23 +4890,6 @@ if test "$datadir" = "\${prefix}/share"; then
 	fi
 elif test "$datadir" = "\${datarootdir}"; then
 	datadir="$datarootdir"
-fi
-
-if test "$mandir" = "\${prefix}/man" -a "$prefix" = "/usr"; then
-	case "$uname" in
-        	*BSD* | Darwin* | Linux*)
-        		# BSD, Darwin (macOS), and Linux
-        		mandir="/usr/share/man"
-        		;;
-        	IRIX*)
-        		# SGI IRIX
-        		mandir="/usr/share/catman/u_man"
-        		;;
-        	*)
-        		# All others
-        		mandir="/usr/man"
-        		;;
-	esac
 fi
 
 if test x$softwaredir = x; then
