@@ -670,12 +670,23 @@ d 755 root sys /var/spool/foo -
 l 000 root sys /usr/bin/foobar foo
 </pre>
 <p>The source field specifies the file to link to and can be a relative
- path.</p>
+ path. Just as with the <code>ln</code> command, source paths are
+ relative to the destination directory. For example, the symbolic link<var>
+ /usr/bin/foobar</var> above points to the file<var> /usr/bin/foo</var>.</p>
 <h3>Wildcards</h3>
 <p>Wildcard patterns can be used in the source field to include multiple
- files on a single line:</p>
+ files on a single line. The destination field contains the destination
+ directory for the matched files:</p>
 <pre>
 f 0444 root sys /usr/share/doc/foo *.html
+</pre>
+<p>For example, if the source directory contains three HTML files,<var>
+ bar.html</var>,<var> baz.html</var>, and<var> foo.html</var>, the
+ wildcard line above would expand to:</p>
+<pre>
+f 0444 root sys /usr/share/doc/foo/bar.html bar.html
+f 0444 root sys /usr/share/doc/foo/baz.html baz.html
+f 0444 root sys /usr/share/doc/foo/foo.html foo.html
 </pre>
 
 <!-- NEED 3in -->
@@ -1515,10 +1526,10 @@ mrs</b>] ] [<b> -s</b><i> setup.ext</i> ] [<b> --depend</b> ] [<b>
  name=value</i> ...<i> name=value</i> ]<i> product</i> [<i> listfile</i>
  ]
 <h3 class="title"><a name="DESCRIPTION">Description</a></h3>
- <a href="#epm"><b>epm</b>(1)</a> generates software packages complete
- with installation, removal, and (if necessary) patch scripts. Unless
- otherwise specified, the files required for<i> product</i> are read
- from a file named &quot;<i>product</i>.list&quot;.
+<b> epm</b>(1) generates software packages complete with installation,
+ removal, and (if necessary) patch scripts. Unless otherwise specified,
+ the files required for<i> product</i> are read from a file named &quot;<i>
+product</i>.list&quot;.
 <h3 class="title"><a name="OPTIONS">Options</a></h3>
  The following options are recognized:
 <dl class="man">
@@ -1575,8 +1586,6 @@ mrs</b>] ] [<b> -s</b><i> setup.ext</i> ] [<b> --depend</b> ] [<b>
  the filename entirely. The letter 'm' includes the architecture
  (machine). The letter 'r' includes the operating system version
  (release). The letter 's' includes the operating system name.</dd>
-<dt><b>-s</b><i> setup.ext</i></dt>
-<dd style="margin-left: 5.0em"></dd>
 <dt><b>-v</b></dt>
 <dd style="margin-left: 5.0em">Increases the amount of information that
  is reported. Use multiple v's for more verbose output.</dd>
@@ -1587,6 +1596,8 @@ mrs</b>] ] [<b> -s</b><i> setup.ext</i> ] [<b> --depend</b> ] [<b>
 <dd style="margin-left: 5.0em">Specifies the directory for output files.
  The default directory is based on the operating system, version, and
  architecture.</dd>
+<dt><b>-s</b><i> setup.ext</i></dt>
+<dd style="margin-left: 5.0em"></dd>
 <dt><b>--setup-image</b><i> setup.ext</i></dt>
 <dd style="margin-left: 5.0em">Include the ESP Software Wizard with the
  specified image file with the distribution. This option is currently
@@ -1618,9 +1629,8 @@ mrs</b>] ] [<b> -s</b><i> setup.ext</i> ] [<b> --depend</b> ] [<b>
  The EPM list file format is now described in the<i> epm.list(5)</i> man
  page.
 <h3 class="title"><a name="SEE_ALSO">See Also</a></h3>
- <a href="#epminstall"><b>epminstall</b>(1),</a> <a href="#mkepmlist"><b>
-mkepmlist</b>(1),</a> <a href="#epm.list"><b>epm.list</b>(5),</a> <a href="#setup">
-<b>setup</b>(1).</a>
+<b> epminstall</b>(1),<b> mkepmlist</b>(1),<b> epm.list</b>(5),<b> setup</b>
+(1).
 <h3 class="title"><a name="COPYRIGHT">Copyright</a></h3>
  Copyright &copy; 1999-2020 by Michael R Sweet, All Rights Reserved.
 <p>This program is free software; you can redistribute it and/or modify
