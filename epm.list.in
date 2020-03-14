@@ -51,7 +51,8 @@ f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
 # Man pages
 %subpackage man
 %description Man pages
-f 0444 root sys ${mandir}/man1 $srcdir/doc/epm.1
+d 0755 root sys ${mandir}/man1 -
+f 0444 root sys ${mandir}/man1/epm.1 $srcdir/doc/epm.1
 f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.1
 f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.1
 f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.5
