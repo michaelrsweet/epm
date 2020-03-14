@@ -1,6 +1,12 @@
 Changes in EPM
 ==============
 
+Changes in EPM 4.5.1
+--------------------
+
+- Fixed a typo in the epm.list file (Issue #78)
+
+
 Changes in EPM 4.5
 ------------------
 
