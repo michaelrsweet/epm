@@ -3,7 +3,7 @@
 <HEAD>
 <TITLE>Software Distribution with ESP Package Manager</TITLE>
 <META NAME="author" CONTENT="Michael R Sweet">
-<META NAME="copyright" CONTENT="Copyright 1999-2017 by Michael R Sweet">
+<META NAME="copyright" CONTENT="Copyright © 1999-2020 by Michael R Sweet">
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
 <STYLE TYPE="text/css"><!--
 BODY { font-family: sans-serif; }
@@ -52,10 +52,6 @@ A { text-decoration: none; }
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
  USA.</small></p>
 <p><small>International Standard Book Number: 978-1-4116-8913-8</small></p>
-<p><small>First Printing: April 2006
-<br> Second Printing: December 2010
-<br> Third Printing: September 2015
-<br> Fourth Printing: October 2017</small></p>
 <HR NOSHADE>
 <h1 ALIGN="CENTER"><a NAME="CONTENTS">Table of Contents</a></h1>
 <br>
@@ -121,7 +117,7 @@ A { text-decoration: none; }
 <HR NOSHADE>
 <h1><a NAME="1">Preface</a></h1>
 <p>This book provides a tutorial and reference for the ESP Package
- Manager (&quot;EPM&quot;) software, version 4.4, and is organized into the
+ Manager (&quot;EPM&quot;) software, version 4.5, and is organized into the
  following chapters and appendices:</p>
 <ul>
 <li><a HREF="#INTRO">1 - Introduction to EPM</a></li>
@@ -188,22 +184,15 @@ A { text-decoration: none; }
 <!-- NEED 4in -->
 <h2><a NAME="1_3">Other References</a></h2>
 <dl>
-<dt><a HREF="https://michaelrsweet.github.io/epm">
-https://michaelrsweet.github.io/epm</a></dt>
+<dt><a HREF="https://www.msweet.org/epm">https://www.msweet.org/epm</a></dt>
 <dd>The official home page of the ESP Package Manager software.
 <br> &nbsp;</dd>
 <dt><a HREF="http://www.debian.org/devel/">http://www.debian.org/devel/</a>
 </dt>
 <dd>Debian Developers' Corner
 <br> &nbsp;</dd>
-<dt><a HREF="http://techpubs.sgi.com/">http://techpubs.sgi.com/</a></dt>
-<dd>IRIX Documentation On-Line
-<br> &nbsp;</dd>
 <dt><a HREF="http://www.rpm.org/">http://www.rpm.org/</a></dt>
 <dd>The Red Hat Package Manager home page.
-<br> &nbsp;</dd>
-<dt><a HREF="http://docs.sun.com/">http://docs.sun.com/</a></dt>
-<dd>Solaris Documentation On-Line
 <br> &nbsp;</dd>
 </dl>
 <h2><a NAME="1_4">Help Me Improve This Book!</a></h2>
@@ -695,15 +684,6 @@ f 0444 root sys /usr/share/doc/foo/foo.html foo.html
  if your package includes developer files, you might provide them as a
  subpackage so that users that will not be developing add-ons to your
  software can omit them from the installation.</p>
-<center>
-<table BGCOLOR="#cccccc" BORDER="1" CELLPADDING="5" WIDTH="80%">
-<tr><td><b>Note:</b>
-<br> Subpackages are implemented as native subsets of the main package
- for the AIX, HPUX, IRIX, Solaris, and Tru64 formats and as separate
- packages that depend on the main (parent) package for all other
- formats.</td></tr>
-</table>
-</center>
 <p>To define a subpackage, use the <code>%subpackage</code> directive
  followed by a <code>%description</code> directive:</p>
 <pre>
@@ -981,20 +961,20 @@ EOF
  system version is the major and minor version number reported by <code>
 uname -r</code>:</p>
 <dl>
-<dt><code>%system irix</code>
+<dt><code>%system macos</code>
 <br> &nbsp;</dt>
 <dd>Only include the following files when building a distribution for
- the IRIX operating system.
+ the macOS operating system.
 <br> &nbsp;</dd>
 <dt><code>%system linux-2.0</code>
 <br> &nbsp;</dt>
 <dd>Only include the following files when building a distribution for
  Linux 2.0.x.
 <br> &nbsp;</dd>
-<dt><code>%system !irix !linux-2.0</code>
+<dt><code>%system !macos !linux-2.0</code>
 <br> &nbsp;</dt>
 <dd>Only include the following files when building a distribution for
- operating systems other than IRIX and Linux 2.0.x.
+ operating systems other than macOS and Linux 2.0.x.
 <br> &nbsp;</dd>
 </dl>
 <p>The special name <code>all</code> is used to match all operating
@@ -1216,15 +1196,17 @@ f 0555 root sys ${bindir}/mkepmlist mkepmlist
 %description Documentation for EPM
 f 0444 root sys ${docdir}/README $srcdir/README.md
 f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
+f 0444 root sys ${docdir}/epm-book.epub $srcdir/doc/epm-book.epub
 f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
+f 0444 root sys ${docdir}/epm-book.pdf $srcdir/doc/epm-book.pdf
 
 # Man pages
 %subpackage man
 %description Man pages for EPM
 f 0444 root sys ${mandir}/man1/epm.1 $srcdir/doc/epm.man
-f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.man
-f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.man
-f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.man
+f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.1
+f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.1
+f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.5
 </pre>
 <p>Finally, we conditionally include the GUI files depending on the
  state of a variable called <code>GUIS</code>:</p>
@@ -1242,8 +1224,8 @@ f 0444 root sys ${datadir}/epm/default.icns default.icns
 %system all
 
 %subpackage man
-f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.man
-f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
+f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.1
+f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.5
 
 %endif
 </pre>

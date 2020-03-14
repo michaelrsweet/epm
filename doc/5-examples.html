@@ -60,15 +60,17 @@ f 0555 root sys ${bindir}/mkepmlist mkepmlist
 %description Documentation for EPM
 f 0444 root sys ${docdir}/README $srcdir/README.md
 f 0444 root sys ${docdir}/COPYING $srcdir/COPYING
+f 0444 root sys ${docdir}/epm-book.epub $srcdir/doc/epm-book.epub
 f 0444 root sys ${docdir}/epm-book.html $srcdir/doc/epm-book.html
+f 0444 root sys ${docdir}/epm-book.pdf $srcdir/doc/epm-book.pdf
 
 # Man pages
 %subpackage man
 %description Man pages for EPM
 f 0444 root sys ${mandir}/man1/epm.1 $srcdir/doc/epm.man
-f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.man
-f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.man
-f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.man
+f 0444 root sys ${mandir}/man1/epminstall.1 $srcdir/doc/epminstall.1
+f 0444 root sys ${mandir}/man1/mkepmlist.1 $srcdir/doc/mkepmlist.1
+f 0444 root sys ${mandir}/man5/epm.list.5 $srcdir/doc/epm.list.5
 </PRE>
 
 <P>Finally, we conditionally include the GUI files depending on
@@ -88,8 +90,8 @@ f 0444 root sys ${datadir}/epm/default.icns default.icns
 %system all
 
 %subpackage man
-f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.man
-f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.man
+f 0444 root sys ${mandir}/man1/setup.1 $srcdir/doc/setup.1
+f 0444 root sys ${mandir}/man5/setup.types.5 $srcdir/doc/setup.types.5
 
 %endif
 </PRE>
