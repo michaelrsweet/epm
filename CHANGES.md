@@ -5,6 +5,7 @@ Changes in EPM 4.5.1
 --------------------
 
 - Fixed a typo in the epm.list file (Issue #78)
+- Fixed macro usage in the setup.types man page (Issue #81)
 
 
 Changes in EPM 4.5
