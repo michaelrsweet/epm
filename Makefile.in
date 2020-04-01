@@ -86,6 +86,7 @@ TARGETS		=	libepm.a \
 			epminstall \
 			mkepmlist \
 			@GUIS@
+
 EPM_OBJS	=	bsd.o \
 			deb.o \
 			dist.o \
@@ -99,12 +100,15 @@ EPM_OBJS	=	bsd.o \
 			string.o \
 			support.o \
 			tar.o
+
 SETUP_OBJS	=	setup.o \
 			setup2.o \
 			gui-common.o
+
 UNINST_OBJS	=	uninst.o \
 			uninst2.o \
 			gui-common.o
+
 OBJS		=	epm.o \
 			$(EPM_OBJS) \
 			epminstall.o \
@@ -114,23 +118,25 @@ OBJS		=	epm.o \
 
 
 # Make all targets...
-all:	$(TARGETS) Makefile config.h
+all:	$(TARGETS) Makefile config.h docs
 
+docs:
+	( cd doc ; make )
 
 # Clean all generated files...
 clean:
 	$(RM) $(OBJS)
 	$(RM) $(TARGETS)
-
+	( cd doc ; make clean )
 
 # Clean all generated and configuration files...
 distclean:
 	$(RM) $(OBJS)
 	$(RM) $(TARGETS)
 	$(RM) config.cache config.h config.log config.status
-	$(RM) Makefile doc/Makefile
 	$(RM) epm.list
-
+	( cd doc ; make distclean )
+	$(RM) Makefile 
 
 # Install all targets...
 install: all @INSTALL_GUIS@ @INSTALL_OSX@
