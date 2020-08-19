@@ -84,6 +84,11 @@ if test x$GZIP = x; then
 	AC_MSG_ERROR([GNU zip not found but required.])
 fi
 AC_PATH_PROGS(HTMLDOC, htmldoc echo)
+AC_PROG_INSTALL
+if test "$INSTALL" = "$ac_install_sh"; then
+        # Use full path to install-sh script...
+        INSTALL="`pwd`/install-sh -c"
+fi
 AC_PATH_PROG(MKDIR,mkdir)
 AC_PATH_PROG(RM,rm)
 AC_PATH_PROG(RPM,rpm)
