@@ -15,7 +15,7 @@ dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl GNU General Public License for more details.
 dnl
 
-AC_INIT([EPM],[4.5],[https://github.com/michaelrsweet/epm/issues],[epm],[https://www.msweet.org/epm])
+AC_INIT([EPM],[4.5.1],[https://github.com/michaelrsweet/epm/issues],[epm],[https://www.msweet.org/epm])
 AC_CONFIG_HEADER(config.h)
 
 dnl Version number...
@@ -45,19 +45,21 @@ AC_ARG_WITH(archflags, [  --with-archflags=flags  specify architecture flags [[d
 	ARCHFLAGS="${ARCHFLAGS:=}")
 AC_SUBST(ARCHFLAGS)
 
-AC_ARG_WITH(optim, [  --with-optim=flags      specify optimization flags [[default=auto]]],
-	OPTIM="$withval",
-	OPTIM="${OPTIM:=}")
+AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging, default=no])
+AC_ARG_ENABLE(sanitizer, [  --enable-sanitizer      build with AddressSanitizer, default=no])
+
+if test "x$enable_debug" = xyes; then
+ 	OPTIM="-g"
+ 	CSFLAGS=""
+else
+	OPTIM="-Os -g"
+	CSFLAGS="-o runtime"
+fi
+
+AC_SUBST(CSFLAGS)
 AC_SUBST(OPTIM)
 
-AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [[default=no]]],
-if eval "test x$enable_debug = xyes"; then
- 	OPTIM="-g $OPTIM"
-else
-	LDFLAGS="$LDFLAGS -s"
-fi)
-
-AC_ARG_ENABLE(gui, [  --enable-gui            turn on GUI utilities [[default=auto]]])
+AC_ARG_ENABLE(gui, [  --enable-gui            turn on GUI utilities, default=auto])
 
 AC_ARG_WITH(docdir, [  --with-docdir=/dir      set directory for documentation
                           [[default=${datadir}/doc/epm]]],
@@ -160,9 +162,14 @@ esac
 
 dnl Update compiler options...
 if test -n "$GCC"; then
-	# Add standard optimization options...
-	if test -z "$OPTIM"; then
-        	OPTIM="-Os"
+	if test x$enable_sanitizer = xyes; then
+		# Use -fsanitize=address with debugging...
+		OPTIM="-g -fsanitize=address"
+	else
+		# Otherwise use the Fortify enhancements to catch any unbounded
+		# string operations...
+		CFLAGS="$CFLAGS -D_FORTIFY_SOURCE=2"
+		CXXFLAGS="$CXXFLAGS -D_FORTIFY_SOURCE=2"
 	fi
 
 	# Add useful warning options...

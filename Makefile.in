@@ -34,9 +34,11 @@ STRIP		=	@STRIP@
 # Program options...
 ARFLAGS		=	@ARFLAGS@
 ARCHFLAGS	=	@ARCHFLAGS@
+ASAN_OPTIONS	=	leak_check_at_exit=false
 CFLAGS		=	$(ARCHFLAGS) @CFLAGS@ $(OPTIM)
-CODESIGN_IDENTITY =	Developer ID
+CODESIGN_IDENTITY =	-
 CPPFLAGS	=	@CPPFLAGS@
+CSFLAGS		=	-s "$(CODESIGN_IDENTITY)" --timestamp @CSFLAGS@
 CXXFLAGS	=	$(ARCHFLAGS) @CXXFLAGS@ $(OPTIM)
 GUILIBS		=	@GUILIBS@
 LDFLAGS		=	$(ARCHFLAGS) @LDFLAGS@ $(OPTIM)
@@ -243,7 +245,7 @@ epm:	epm.o libepm.a
 	echo Linking epm...
 	$(CC) $(LDFLAGS) -o epm epm.o libepm.a $(LIBS)
 	echo Code signing $@...
-	$(CODE_SIGN) -s "$(CODESIGN_IDENTITY)" $@
+	$(CODE_SIGN) $(CSFLAGS) -i org.msweet.epm.$@ $@
 
 epm.o:	epm.h epmstring.h
 
@@ -253,7 +255,7 @@ epminstall:	epminstall.o libepm.a
 	echo Linking epminstall...
 	$(CC) $(LDFLAGS) -o epminstall epminstall.o libepm.a $(LIBS)
 	echo Code signing $@...
-	$(CODE_SIGN) -s "$(CODESIGN_IDENTITY)" $@
+	$(CODE_SIGN) $(CSFLAGS) -i org.msweet.epm.$@ $@
 
 epminstall.o:	epm.h epmstring.h
 
@@ -263,7 +265,7 @@ mkepmlist:	mkepmlist.o libepm.a
 	echo Linking mkepmlist...
 	$(CC) $(LDFLAGS) -o mkepmlist mkepmlist.o libepm.a $(LIBS)
 	echo Code signing $@...
-	$(CODE_SIGN) -s "$(CODESIGN_IDENTITY)" $@
+	$(CODE_SIGN) $(CSFLAGS) -i org.msweet.epm.$@ $@
 
 mkepmlist.o:	epm.h epmstring.h
 
