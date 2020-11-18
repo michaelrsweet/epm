@@ -22,7 +22,8 @@ one package a snap.  The installers can be customized with product logos,
 EPM is provided as free software under version 2 of the GNU General Public
 license.
 
-> Note: This software is currently in maintenance mode.
+> Note: Future versions of this software will be maintained and developed by
+> [Jim Jagielski](https://jimjag.github.io/).
 
 
 How Do I Compile EPM?
@@ -57,10 +58,10 @@ See the file `CHANGES.md` for change information.
 Resources
 ---------
 
-The official home page for EPM is <https://www.msweet.org/epm>.
+The official home page for EPM is <https://jimjag.github.io/epm/>.
 
 Report all problems and submit all patches/pull requests using the Github issue
-tracking pages at <https://github.com/michaelrsweet/epm/issues>.
+tracking pages at <https://github.com/jimjag/epm/issues>.
 
 
 Legal Stuff
