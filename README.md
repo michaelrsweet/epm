@@ -23,7 +23,7 @@ EPM is provided as free software under version 2 of the GNU General Public
 license.
 
 > Note: Future versions of this software will be maintained and developed by
-> [Jim Jagielski](https://jimjag.github.io/).
+> [Jim Jagielski](https://github.com/jimjag).
 
 
 How Do I Compile EPM?
