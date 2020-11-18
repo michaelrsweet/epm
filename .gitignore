@@ -1,7 +1,7 @@
 # Don't need the OS's leftovers.
 **/.DS_Store
 
-# Targets build by the configure phase
+# Targets built by the configure phase
 /Makefile
 /autom4te.cache
 /config.h
@@ -12,13 +12,26 @@
 # Tool(s) built to facilitate the building of the product
 /doc/mantohtml
 
-# Actual targets build for distribution
+# Actual targets built for distribution
 /epm
 /epm.list
 /epminstall
 /mkepmlist
 /setup
 /uninst
+
+# more targets built for distribution
+doc/epm-book.epub
+doc/epm-book.html
+doc/epm-book.pdf
+
+# manpage targets built for distribution
+doc/epm.1.html
+doc/epminstall.1.html
+doc/mkepmlist.1.html
+doc/setup.1.html
+doc/epm.list.5.html
+doc/setup.types.5.html
 
 # Flotsam left by the make process
 *.o

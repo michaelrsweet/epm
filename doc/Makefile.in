@@ -57,13 +57,17 @@ VPATH		=	$(srcdir)
 
 # Man page generation rule...
 .SUFFIXES:	.html .1 .5
-.1.html .5.html:
-	$(RM) $@
-	./mantohtml $< >$@
+%.1.html: %.1
+	./mantohtml $< $@
+ 
+%.5.html: %.5
+	./mantohtml $< $@
 
 
 # Targets...
-MANPAGES	=	epm.html epminstall.html mkepmlist.html setup.html
+MANPAGES	=	epm.1.html epminstall.1.html mkepmlist.1.html setup.1.html \
+			epm.list.5.html setup.types.5.html
+
 HTMLFILES	=	title.html preface.html 1-intro.html 2-building.html \
 			3-packaging.html 4-advanced.html 5-examples.html \
 			a-license.html b-manpages.html c-reference.html \
@@ -74,12 +78,16 @@ BOOKS		=	epm-book.epub epm-book.html epm-book.pdf
 # Make everything (requires HTMLDOC)
 all:	$(MANPAGES) $(BOOKS)
 
+# Clean it like you mean it
+distclean: clean
+	$(RM) Makefile
+
 # Clean generated programs
 clean:
-	$(RM) mantohtml mantohtml.o
+	$(RM) mantohtml mantohtml.o $(MANPAGES) $(BOOKS)
 
 # Install documentation
-install:
+install: all
 	echo Installing EPM manpages in $(BUILDROOT)$(mandir)/man1
 	$(INSTALL) -d -m 755 $(BUILDROOT)$(mandir)/man1
 	for file in epm.1 epminstall.1 mkepmlist. setup.1; do \
